@@ -82,32 +82,26 @@
       "type": "array",
       "description": "nonpreferredLabels"
     },
-    "nameTranslated": {
-       "type": ["string", "null"]
-    },
     "RID": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "fullName": {
       "type": "string"
     },
     "acronym": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "ICO": {
-      "type": ["integer", "null"]
+      "type": "integer"
     },
     "nameType": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "marcCode": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "dataCiteCode": {
-      "type": ["string", "null"]
-    },
-    "formerTitles": {
-      "type": "array"
+      "type": "string"
     },
     "aliases": {
       "type": "array"
@@ -119,7 +113,7 @@
       "type": "array"
     },
     "pair": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "hint": {
       "type": "object",
@@ -131,10 +125,10 @@
       }
     },
     "coarType": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "dataCiteType": {
-      "type": ["string", "null"]
+      "type": "string"
     }
   }
 }

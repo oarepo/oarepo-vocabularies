@@ -69,6 +69,24 @@ class RecordRefactorMethods:
         return self.__getattribute__(name)
 
     @staticmethod
+    def _generic_refactor(
+        record: dict, delete_keys: list, vocabulary_meta: dict
+    ) -> dict:
+        new_record = copy.deepcopy(record)
+        delete_keys = ["title", "level", "slug"] + delete_keys
+
+        new_record["title"] = RecordRefactorMethods._title(record)
+        new_record["type"] = vocabulary_meta.get("code")
+
+        # Delete keys
+        for k, v in record.items():
+            for item in delete_keys:
+                if item in k:
+                    del new_record[k]
+
+        return new_record
+
+    @staticmethod
     def _delete_keys(record: dict, keys: list) -> dict:
         """Delete keys from the dict"""
 
@@ -83,11 +101,7 @@ class RecordRefactorMethods:
 
     @staticmethod
     def _title(record: dict) -> dict:
-        """Generic parsing method to parse title_<lang>
-
-        :returns: <lang_code>:value
-        :rtype: dict
-        """
+        """Generic parsing method to parse title_<lang>"""
         titles: dict = {
             k.rsplit("_")[1]: v
             for k, v in record.items()
@@ -96,14 +110,11 @@ class RecordRefactorMethods:
 
         return titles
 
-    @staticmethod
-    def _type(vocabulary_meta: dict):
-        """Vocabulary types"""
-        # TODO Unique pid_type
-
-        vocabulary_type = vocabulary_meta.get("code", None)
-
-        return {"id": vocabulary_type, "pid_type": vocabulary_type[:6]}
+    # @staticmethod
+    # def _type(vocabulary_meta: dict):
+    #     """Returns pid_type or first 6 chars from 'code' field as fallback"""
+    #     vocabulary_type = vocabulary_meta.get("code", None)
+    #     return {"id": vocabulary_type, "pid_type": vocabulary_type[:6]}
 
     @staticmethod
     def _related_uri(record: dict) -> dict:
@@ -114,7 +125,7 @@ class RecordRefactorMethods:
         }
 
     @staticmethod
-    def _alpha3Code(record: dict) -> dict:
+    def _alpha3(record: dict) -> dict:
         return {
             k.split("_")[1]: v
             for k, v in record.items()
@@ -135,220 +146,174 @@ class RecordRefactorMethods:
         ]
 
     @staticmethod
+    def _remove_if_none(record: dict) -> dict:
+        return {k: v for k, v in record.items() if v}
+
+    @staticmethod
     def countries(record: dict, vocabulary_meta) -> dict:
-        """Countries vocabulary refactor method"""
+        delete_keys = ["alpha3"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
 
-        delete_keys = ["title", "level", "slug", "alpha3"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
+        new_record["alpha3Code"] = RecordRefactorMethods._alpha3(record)
 
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
-        new_record["alpha3Code"] = RecordRefactorMethods._alpha3Code(record)
-
-        return new_record
+        return RecordRefactorMethods._remove_if_none(new_record)
 
     @staticmethod
     def licenses(record: dict, vocabulary_meta: dict) -> dict:
-        """Licenses vocabulary refactor method"""
-        delete_keys = ["title", "relatedURI", "slug", "level"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
+        delete_keys = ["relatedURI"]
 
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
+
         new_record["relatedURI"] = RecordRefactorMethods._related_uri(record)
-        new_record["icon"] = new_record["icon"] if new_record["icon"] else ""
 
-        return new_record
+        return RecordRefactorMethods._remove_if_none(new_record)
 
     @staticmethod
     def languages(record: dict, vocabulary_meta) -> dict:
-        """Languages vocabulary refactor method"""
-        delete_keys = ["title", "level", "slug", "alpha3"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
+        delete_keys = ["alpha3"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
 
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
-        new_record["alpha3Code"] = RecordRefactorMethods._alpha3Code(record)
+        new_record["alpha3Code"] = RecordRefactorMethods._alpha3(record)
 
-        return new_record
+        return RecordRefactorMethods._remove_if_none(new_record)
 
     @staticmethod
     def institutions(record: dict, vocabulary_meta) -> dict:
-        """Institutions vocabulary refactor method"""
         delete_keys = [
-            "title",
             "tag",
             "nonpreferredLabels",
-            "slug",
-            "level",
             "relatedURI",
             "contexts",
         ]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
 
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
 
         new_record["tags"] = [
             v for k, v in record.items() if "tag" in k and v is not None
         ]
 
-        non_prefered_labels = {
-            k: v for k, v in record.items() if "nonpreferredLabels" in k
-        }
-
-        new_record["nonpreferredLabels"] = [
-            {k.split("_")[1]: v}  # language
-            for k, v in non_prefered_labels.items()
-            if v is not None
-        ]
+        new_record["nonpreferredLabels"] = RecordRefactorMethods._non_preferred_labels(
+            record
+        )
 
         new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
-        new_record["RID"]: str = str(record.get("RID"))
 
         new_record["contexts"] = [
             v for k, v in record.items() if "contexts" in k and v is not None
         ]
 
-        return new_record
+        # RID field to str
+        new_record["RID"] = str(record["RID"]) if record["RID"] else None
+
+        return RecordRefactorMethods._remove_if_none(new_record)
 
     @staticmethod
     def funders(record: dict, vocabulary_meta) -> dict:
         delete_keys = [
-            "title",
-            "slug",
-            "level",
             "relatedURI",
-            "formerTitles",
             "aliases",
             "nonpreferredLabels",
         ]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
 
-        new_record["type"] = vocabulary_meta["code"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
+
         new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
-
-        # Former titles
-        former_titles_labels = {k: v for k, v in record.items() if "formerTitles" in k}
-
-        new_record["formerTitles"] = [
-            {k.split("_")[1]: v}  # language
-            for k, v in former_titles_labels.items()
-            if v is not None
-        ]
 
         # Aliases
         new_record["aliases"] = [
             v for k, v in record.items() if "aliases" in k and v is not None
         ]
 
-        # non_prefered_labels = {
-        #     k: v for k, v in record.items() if "nonpreferredLabels" in k
-        # }
-        #
-        # new_record["nonpreferredLabels"] = [
-        #     {k.split("_")[1]: v}  # language
-        #     for k, v in non_prefered_labels.items()
-        #     if v is not None
-        # ]
+        # Non-Preferred labels
+        new_record["nonpreferredLabels"] = RecordRefactorMethods._non_preferred_labels(
+            record
+        )
+
+        return RecordRefactorMethods._remove_if_none(new_record)
+
+    @staticmethod
+    def access_rights(record: dict, vocabulary_meta) -> dict:
+        delete_keys = ["relatedURI"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
+
+        new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
+
+        return RecordRefactorMethods._remove_if_none(new_record)
+
+    @staticmethod
+    def contributor_type(record: dict, vocabulary_meta) -> dict:
+        delete_keys = ["relatedURI"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
+
+        new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
+
+        return RecordRefactorMethods._remove_if_none(new_record)
+
+    @staticmethod
+    def item_relation_type(record: dict, vocabulary_meta) -> dict:
+        delete_keys = ["hint"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
+
+        new_record["hint"] = {
+            k.split("_")[1]: v
+            for k, v in record.items()
+            if "hint" in k and v is not None
+        }
+
+        return RecordRefactorMethods._remove_if_none(new_record)
+
+    @staticmethod
+    def resource_type_related_item(record: dict, vocabulary_meta) -> dict:
+        delete_keys = ["nonpreferredLables", "relatedURI"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
 
         new_record["nonpreferredLabels"] = RecordRefactorMethods._non_preferred_labels(
             record
         )
 
-        return new_record
-
-    @staticmethod
-    def access_rights(record: dict, vocabulary_meta) -> dict:
-        delete_keys = ["title", "slug", "level", "relatedURI"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
-
-        new_record["type"] = vocabulary_meta["code"]
         new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
 
-        return new_record
-
-    @staticmethod
-    def contributor_type(record: dict, vocabulary_meta) -> dict:
-        delete_keys = ["title", "slug", "level", "relatedURI"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
-
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
-
-        return new_record
-
-    @staticmethod
-    def item_relation_type(record: dict, vocabulary_meta) -> dict:
-        delete_keys = ["title", "level", "slug", "hint"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
-
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
-        new_record["hint"] = {
-            k.split("_")[1]: v
-            for k, v in record.items()
-            if "hint" in k and v is not None
-        }
-
-        return new_record
-
-    @staticmethod
-    def resource_type_related_item(record: dict, vocabulary_meta) -> dict:
-        delete_keys = ["title", "level", "slug", "nonpreferredLables", "relatedURI"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
-
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
-
-        non_prefered_labels = {
-            k: v for k, v in record.items() if "nonpreferredLabels" in k
-        }
-
-        new_record["nonpreferredLabels"] = [
-            {k.split("_")[1]: v}  # language
-            for k, v in non_prefered_labels.items()
-            if v is not None
-        ]
-
-        new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
-
-        return new_record
+        return RecordRefactorMethods._remove_if_none(new_record)
 
     @staticmethod
     def resource_type(record: dict, vocabulary_meta) -> dict:
-        delete_keys = ["title", "level", "slug", "relatedURI", "nonpreferredLabels"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
+        delete_keys = ["relatedURI", "nonpreferredLabels"]
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
 
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
-        new_record["hint"] = {
-            k.split("_")[1]: v
-            for k, v in record.items()
-            if "hint" in k and v is not None
-        }
-
-        non_prefered_labels = {
-            k: v for k, v in record.items() if "nonpreferredLabels" in k
-        }
-
-        new_record["nonpreferredLabels"] = [
-            {k.split("_")[1]: v}  # language
-            for k, v in non_prefered_labels.items()
-            if v is not None
-        ]
+        new_record["nonpreferredLabels"] = RecordRefactorMethods._non_preferred_labels(
+            record
+        )
 
         new_record["relatedURI"]: dict = RecordRefactorMethods._related_uri(record)
 
-        return new_record
+        return RecordRefactorMethods._remove_if_none(new_record)
 
     @staticmethod
     def subject_categories(record: dict, vocabulary_meta) -> dict:
-        delete_keys = ["title", "level", "slug"]
-        new_record = RecordRefactorMethods._delete_keys(record, delete_keys)
-
-        new_record["type"] = vocabulary_meta["code"]
-        new_record["title"] = RecordRefactorMethods._title(record)
+        delete_keys = []
+        new_record = RecordRefactorMethods._generic_refactor(
+            record, delete_keys, vocabulary_meta
+        )
 
         return new_record
 

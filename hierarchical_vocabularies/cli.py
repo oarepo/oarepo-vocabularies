@@ -3,6 +3,7 @@ import json
 import click
 import numpy as np
 import pandas as pd
+import sqlalchemy
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, system_process
 from invenio_app.factory import create_api, create_app
