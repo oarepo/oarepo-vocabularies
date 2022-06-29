@@ -17,7 +17,7 @@ from hierarchical_vocabularies.services.service import (
 )
 
 from .utils import (
-    RecordRefactorMethods,
+    RecordRefactor,
     RecordsStack,
     VocabularyRecord,
     clean_df,
@@ -123,7 +123,7 @@ def import_v2(filepath):
     vocabulary_items = vocabulary_data.to_dict(orient="records")
 
     vocabulary_code = vocabulary_meta_dict["code"]
-    vocabulary_refactor_func = RecordRefactorMethods().refactor_method(vocabulary_code)
+    vocabulary_refactor_func = RecordRefactor().refactor_method(vocabulary_code)
 
     vocabulary_records: list[VocabularyRecord] = []
 
