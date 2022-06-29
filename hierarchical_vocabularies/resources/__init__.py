@@ -4,9 +4,6 @@
 # """Resources module."""
 
 
-from .resource import (
-    HierarchicalVocabulariesResource,
-    HierarchicalVocabulariesResourceConfig,
-)
+from .resource import HVocabulariesResourceConfig, HVocabulariesResource
 
-__all__ = ("HierarchicalVocabulariesResource", "HierarchicalVocabulariesResourceConfig")
+__all__ = (HVocabulariesResourceConfig, HVocabulariesResource)

@@ -2,12 +2,6 @@
 
 """Services module."""
 
-from .service import (
-    HierarchicalVocabulariesService,
-    HierarchicalVocabulariesServiceConfig,
-)
+from .service import HVocabulariesServiceConfig, HVocabulariesService
 
-__all__ = (
-    "HierarchicalVocabulariesService",
-    "HierarchicalVocabulariesServiceConfig",
-)
+__all__ = (HVocabulariesServiceConfig, HVocabulariesService)

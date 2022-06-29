@@ -3,12 +3,12 @@
 """Invenio module for managing vocabularies."""
 
 from . import config
-from .resources.resource import HierarchicalVocabulariesResource
-from .services.service import HierarchicalVocabulariesService
+from .resources import HVocabulariesResource
+from .services import HVocabulariesService
 
 
 class HierarchicalVocabularies(object):
-    """Hierarchical-Vocabularies extension."""
+    """Hierarchical vocabularies extension."""
 
     def __init__(self, app=None):
         """Extension initialization."""
@@ -24,12 +24,12 @@ class HierarchicalVocabularies(object):
         app.extensions["hierarchical_vocabularies"] = self
 
     def init_resource(self, app):
-        """Initialize Hierarchical-vocabulary resources."""
+        """Initialize Hierarchical vocabulary resources."""
         # Generic Vocabularies
-        self.service = HierarchicalVocabulariesService(
+        self.service = HVocabulariesService(
             config=app.config["HVOCABULARIES_SERVICE_CONFIG"],
         )
-        self.resource = HierarchicalVocabulariesResource(
+        self.resource = HVocabulariesResource(
             service=self.service,
             config=app.config["HVOCABULARIES_RESOURCE_CONFIG"],
         )
@@ -37,5 +37,5 @@ class HierarchicalVocabularies(object):
     def init_config(self, app):
         """Initialize configuration."""
         for k in dir(config):
-            if k.startswith("HVOCABULARIES_"):
+            if k.startswith("HVOCABULARIES"):
                 app.config.setdefault(k, getattr(config, k))

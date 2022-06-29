@@ -3,11 +3,11 @@
 """Hierarchical Vocabularies configuration."""
 
 
-from .resources.resource import HierarchicalVocabulariesResourceConfig
-from .services.service import HierarchicalVocabulariesServiceConfig
+from .resources.resource import HVocabulariesResourceConfig
+from .services.service import HVocabulariesServiceConfig
 
-VOCABULARIES_RESOURCE_CONFIG = HierarchicalVocabulariesResourceConfig
+HVOCABULARIES_RESOURCE_CONFIG = HVocabulariesResourceConfig
 """Configure the resource."""
 
-VOCABULARIES_SERVICE_CONFIG = HierarchicalVocabulariesServiceConfig
+HVOCABULARIES_SERVICE_CONFIG = HVocabulariesServiceConfig
 """Configure the service."""

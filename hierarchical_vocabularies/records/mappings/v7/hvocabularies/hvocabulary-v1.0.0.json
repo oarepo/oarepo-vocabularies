@@ -1,0 +1,184 @@
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "custom_id_path": {
+          "type": "custom",
+          "tokenizer": "custom_id_hierarchy",
+          "filter": [
+            "trim"
+          ]
+        }
+      },
+      "tokenizer": {
+        "custom_id_hierarchy": {
+          "type": "path_hierarchy",
+          "delimiter": "/"
+        }
+      },
+      "script": {
+        "source": "ctx._source.level = emit(params['_source']['id'].splitOnToken('/').length)"
+      }
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "runtime": {
+    },
+    "properties": {
+      "$schema": {
+        "type": "keyword",
+        "index": "false"
+      },
+      "created": {
+        "type": "date"
+      },
+      "updated": {
+        "type": "date"
+      },
+      "uuid": {
+        "type": "keyword"
+      },
+      "version_id": {
+        "type": "integer"
+      },
+      "level": {
+        "type": "long",
+        "script": {
+          "source": "emit(params['_source']['id'].splitOnToken('/').length)"
+        }
+      },
+      "id": {
+        "type": "keyword",
+        "fields": {
+          "text": {
+            "type": "search_as_you_type"
+          },
+          "mypath": {
+            "type": "text",
+            "analyzer": "custom_id_path",
+            "fielddata": true
+          }
+        }
+      },
+      "type": {
+        "type": "object",
+        "properties": {
+          "pid_type": {
+            "type": "keyword"
+          },
+          "id": {
+            "type": "keyword"
+          }
+        }
+      },
+      "pid": {
+        "type": "object",
+        "properties": {
+          "pk": {
+            "type": "integer"
+          },
+          "pid_type": {
+            "type": "keyword"
+          },
+          "obj_type": {
+            "type": "keyword"
+          },
+          "status": {
+            "type": "keyword"
+          }
+        }
+      },
+      "title_sort": {
+        "type": "keyword"
+      },
+      "title": {
+        "type": "object",
+        "dynamic": true,
+        "properties": {
+          "en": {
+            "type": "search_as_you_type",
+            "copy_to": "title_sort"
+          }
+        }
+      },
+      "description": {
+        "type": "object",
+        "dynamic": true
+      },
+      "icon": {
+        "type": "keyword",
+        "index": "false"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "props": {
+        "type": "object",
+        "dynamic": true
+      },
+      "relatedURI": {
+        "type": "object",
+        "dynamic": true
+      },
+      "alpha3Code": {
+        "type": "object",
+        "dynamic": true
+      },
+      "nonpreferredLabels": {
+        "type": "nested",
+        "dynamic": true
+      },
+      "nameTranslated": {
+        "type": "keyword"
+      },
+      "RID": {
+        "type": "keyword"
+      },
+      "fullName": {
+        "type": "keyword"
+      },
+      "acronym": {
+        "type": "keyword"
+      },
+      "ICO": {
+        "type": "keyword"
+      },
+      "nameType": {
+        "type": "keyword"
+      },
+      "marcCode": {
+        "type": "keyword"
+      },
+      "dataCiteCode": {
+        "type": "keyword"
+      },
+      "formerTitles": {
+        "type": "nested",
+        "dynamic": true
+      },
+      "aliases": {
+        "type": "keyword"
+      },
+      "CEA": {
+        "type": "keyword"
+      },
+      "contexts": {
+        "type": "keyword"
+      },
+      "pair": {
+        "type": "keyword"
+      },
+      "hint": {
+        "type": "object",
+        "dynamic": true
+      },
+      "coarType": {
+        "type": "keyword"
+      },
+      "dataCiteType": {
+        "type": "keyword"
+      }
+    }
+  }
+}
