@@ -51,59 +51,7 @@ def hvocabularies():
 
 @hvocabularies.command()
 @click.argument("filepath", type=click.Path(exists=True))
-def import_v(filepath):
-    """Import vocabulary from XLS"""
-    click.echo("Loading file:")
-    click.echo(click.format_filename(filepath))
-    df = pd.read_excel(filepath)
-
-    print("\n")
-
-    # Find 2 consecutive empty rows
-    split_index = find_empty_line_index(df=df)
-    print("split_index", split_index)
-    # Refactor and clean the df
-    vocabulary_meta, vocabulary_data = clean_df(df=df, split_index=split_index)
-
-    print(vocabulary_meta.head())
-    print("\n")
-    # print(vocabulary_data.to_json(orient='records', indent=1, force_ascii=False))
-    print("\n")
-    # print(vocabulary_data.to_json(indent=2, orient='records'))
-
-    aaa = vocabulary_data.to_dict(orient="records")
-
-    print(vocabulary_meta.to_dict())
-
-    all_nodes: list[TreeNode] = [
-        TreeNode(name=record["slug"], **record) for record in aaa
-    ]
-
-    tree_root = TreeRoot()
-    for i, new_node in enumerate(all_nodes):
-
-        if i == 0:
-            # First iteration (set Root)
-            new_node.parent_oid = tree_root.oid  # Set Node ID to TreeRoot class
-            new_node.parent_index = tree_root.index
-            tree_root.add_child(new_node)
-            tree_root.add_node(new_node)
-        else:
-            # Get last Node from upper/parent levels list
-            parent_node: TreeNode = tree_root.levels[new_node.level - 1][-1]
-            new_node.parent_oid = parent_node.oid  # Set parent ID
-            new_node.parent_index = parent_node.index  # Set parent Index
-            parent_node.add_child(new_node)
-            tree_root.add_node(new_node)
-
-    tree_root.print_tree_references(show_id="index")
-    x = tree_root.build_tree()
-    # tree_root.print_tree_shape()
-
-
-@hvocabularies.command()
-@click.argument("filepath", type=click.Path(exists=True))
-def import_v2(filepath):
+def import_file(filepath):
     """Import vocabulary from XLS"""
     click.echo(f"Loading file: {click.format_filename(filepath)}")
 

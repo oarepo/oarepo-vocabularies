@@ -90,7 +90,7 @@ class RecordRefactor:
                 if item in k:
                     del new_record[k]
 
-        # Vocabulary mandatory fields
+        # Vocabulary common fields
         new_record["title"] = RecordRefactor._title(record)
         new_record["type"] = vocabulary_meta.get("code")
 
@@ -114,6 +114,7 @@ class RecordRefactor:
             if "hint" in k and v is not None
         }
 
+        # Put all records with str value to props + set original as None to be removed then
         new_record["props"] = {}
         no_props = ["type", "icon", "id", "pid"]
 
