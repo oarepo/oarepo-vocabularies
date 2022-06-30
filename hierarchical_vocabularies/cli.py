@@ -116,9 +116,7 @@ def import_v2(filepath):
     # Refactor and clean the df
     vocabulary_meta, vocabulary_data = clean_df(df=df, split_index=split_index)
 
-    # print(vocabulary_data[["tags_0", "tags_1"]])
-    # print(vocabulary_data.dtypes)
-
+    # DF to Dict
     vocabulary_meta_dict = vocabulary_meta.to_dict(orient="index")[0]
     vocabulary_items = vocabulary_data.to_dict(orient="records")
 

@@ -114,6 +114,13 @@ class RecordRefactor:
             if "hint" in k and v is not None
         }
 
+        new_record["props"] = {}
+        no_props = ["type", "icon", "id", "pid"]
+
+        for k, v in new_record.items():
+            if isinstance(v, str) and k not in no_props:
+                new_record["props"].update({k: v})
+
         # TODO Put refactor code into methods for readability
 
         return new_record
@@ -224,7 +231,7 @@ class RecordRefactor:
 
     @staticmethod
     def subject_categories(record: dict, vocabulary_meta) -> dict:
-        # Vocabulary specific keys:
+        # No specific keys
         new_record = RecordRefactor._generic_refactor(record, vocabulary_meta)
         return new_record
 
