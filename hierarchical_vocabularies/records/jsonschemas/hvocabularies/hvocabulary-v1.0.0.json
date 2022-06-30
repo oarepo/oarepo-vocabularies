@@ -82,26 +82,8 @@
       "type": "array",
       "description": "nonpreferredLabels"
     },
-    "RID": {
-      "type": "string"
-    },
-    "fullName": {
-      "type": "string"
-    },
-    "acronym": {
-      "type": "string"
-    },
     "ICO": {
       "type": "integer"
-    },
-    "nameType": {
-      "type": "string"
-    },
-    "marcCode": {
-      "type": "string"
-    },
-    "dataCiteCode": {
-      "type": "string"
     },
     "aliases": {
       "type": "array"
@@ -112,9 +94,6 @@
     "contexts": {
       "type": "array"
     },
-    "pair": {
-      "type": "string"
-    },
     "hint": {
       "type": "object",
       "description": "hint",
@@ -123,12 +102,6 @@
           "type": "string"
         }
       }
-    },
-    "coarType": {
-      "type": "string"
-    },
-    "dataCiteType": {
-      "type": "string"
     }
   }
 }

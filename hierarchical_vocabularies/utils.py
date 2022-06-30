@@ -120,6 +120,7 @@ class RecordRefactor:
         for k, v in new_record.items():
             if isinstance(v, str) and k not in no_props:
                 new_record["props"].update({k: v})
+                new_record[k] = None
 
         # TODO Put refactor code into methods for readability
 
@@ -233,7 +234,7 @@ class RecordRefactor:
     def subject_categories(record: dict, vocabulary_meta) -> dict:
         # No specific keys
         new_record = RecordRefactor._generic_refactor(record, vocabulary_meta)
-        return new_record
+        return RecordRefactor._remove_if_none(new_record)
 
 
 class VocabularyRecord:

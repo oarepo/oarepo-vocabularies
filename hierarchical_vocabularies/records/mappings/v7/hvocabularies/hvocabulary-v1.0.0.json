@@ -129,28 +129,7 @@
         "type": "nested",
         "dynamic": true
       },
-      "nameTranslated": {
-        "type": "keyword"
-      },
-      "RID": {
-        "type": "keyword"
-      },
-      "fullName": {
-        "type": "keyword"
-      },
-      "acronym": {
-        "type": "keyword"
-      },
       "ICO": {
-        "type": "keyword"
-      },
-      "nameType": {
-        "type": "keyword"
-      },
-      "marcCode": {
-        "type": "keyword"
-      },
-      "dataCiteCode": {
         "type": "keyword"
       },
       "formerTitles": {
@@ -172,12 +151,6 @@
       "hint": {
         "type": "object",
         "dynamic": true
-      },
-      "coarType": {
-        "type": "keyword"
-      },
-      "dataCiteType": {
-        "type": "keyword"
       }
     }
   }
