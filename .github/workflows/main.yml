@@ -7,7 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.9" ]
+        python-version: [ "3.9" ] 
+        db-service: [postgresql13] 
+        search-service: [elasticsearch7]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -36,7 +38,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip wheel setuptools
           cp setup-basic.cfg setup.cfg
-          pip install -e .[tests]
+          pip install -e .[tests,postgresql,elasticsearch7]
 
       - name: Test with pytest
         run: |
