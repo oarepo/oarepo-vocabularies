@@ -61,7 +61,7 @@ jobs:
       - name: Install dependencies
         run: |
           cp setup-basic.cfg setup.cfg
-	  pip install ".[$EXTRAS]"
+          pip install ".[$EXTRAS]"
           pip freeze
           docker --version
           docker-compose --version
