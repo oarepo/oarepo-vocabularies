@@ -69,3 +69,4 @@ target/
 
 # Vim swapfiles
 .*.sw?
+.DS_Store
