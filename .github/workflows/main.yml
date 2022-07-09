@@ -48,7 +48,7 @@ jobs:
       - name: Install dependencies
         run: |
           cp setup-basic.cfg setup.cfg
-          pip install ".[$EXTRAS,$DB_EXTRAS,$SEARCH_EXTRAS]"
+          pip install ".[$EXTRAS,postgresql,elasticsearch7]"
           pip freeze
           docker --version
           docker-compose --version
