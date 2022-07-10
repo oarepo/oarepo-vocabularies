@@ -4,6 +4,7 @@ cd $(dirname "$0")
 
 export version=$(cat oarepo_vocabularies/__init__.py | grep '__version__' | sed "s/^.*= *//" | tr -d "'")
 
+export module_name="oarepo_vocabularies"
 export extra_options=""
 export suffix="-basic"
 export description="Basic schema for vocabularies."
@@ -151,5 +152,6 @@ export install_requires
 export entry_points
 export package_exclude
 export extra_options
+export module_name="oarepo_vocabularies_model_builder"
 
 envsubst <setup-proto.cfg >setup-model-builder.cfg

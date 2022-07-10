@@ -17,6 +17,7 @@ rm -rf *.egg-info || true
 
 # create model builder extension package
 cp -r oarepo_vocabularies/models oarepo_vocabularies_model_builder/
+cp oarepo_vocabularies/__init__.py oarepo_vocabularies_model_builder/
 cp setup-model-builder.cfg setup.cfg
 python setup.py sdist bdist_wheel
 rm -rf *.egg-info || true
