@@ -12,6 +12,8 @@ from tests.utils import replace_timestamps
 
 FUNDERS_FILE = os.path.join(os.path.dirname(__file__), 'data/funders.xlsx')
 INSTITUTIONS_FILE = os.path.join(os.path.dirname(__file__), 'data/institutions.xlsx')
+FUNDERS_LOADED_FILE = os.path.join(os.path.dirname(__file__), 'data/funders-loaded.json')
+INSTITUTIONS_TRANSFORMED_FILE = os.path.join(os.path.dirname(__file__), 'data/institutions-transformed.json')
 CATALOGUE_FILE = os.path.join(os.path.dirname(__file__), 'data/catalogue.yaml')
 
 
@@ -19,7 +21,7 @@ def test_excel_reader():
     rdr = ExcelReader(
         vocabulary_type='funders', origin=FUNDERS_FILE)
     data = list(rdr.read())
-    with open('data/funders-loaded.json', 'r') as f:
+    with open(FUNDERS_LOADED_FILE, 'r') as f:
         expected_data = json.load(f)
     assert data == expected_data
 
@@ -32,7 +34,7 @@ def test_hierarchy_transformer():
     for d in data:
         tr.apply(d)
     data = [x.entry for x in data]
-    with open('data/institutions-transformed.json', 'r') as f:
+    with open(INSTITUTIONS_TRANSFORMED_FILE, 'r') as f:
         expected_data = json.load(f)
     assert data == expected_data
 
