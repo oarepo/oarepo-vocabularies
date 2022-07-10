@@ -47,6 +47,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          ./generate_setup_cfg.sh
           cp setup-basic.cfg setup.cfg
           pip install ".[$EXTRAS,postgresql,elasticsearch7]"
           pip freeze
