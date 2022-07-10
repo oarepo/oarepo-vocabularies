@@ -50,6 +50,7 @@ jobs:
           ./generate_setup_cfg.sh
           cp setup-basic-local.cfg setup.cfg
           cat setup.cfg
+          pip install "."
           pip install ".[$EXTRAS,postgresql,elasticsearch7]"
           pip freeze
           docker --version
