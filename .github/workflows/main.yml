@@ -53,6 +53,8 @@ jobs:
 
       - name: Install dependencies from basic-local config
         run: |
+          cp setup-basic-local.cfg setup.cfg
+          pip install -e "."
           pip install -e ".[$EXTRAS,postgresql,elasticsearch7]"
           pip freeze
           docker --version
