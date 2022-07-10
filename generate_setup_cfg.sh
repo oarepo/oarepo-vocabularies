@@ -91,7 +91,12 @@ envsubst <setup-proto.cfg >setup-basic-local.cfg
 
 export suffix=""
 export description=""
-export install_requires=""
+
+IFS= read -r -d '' install_requires <<EOM
+    invenio-vocabularies>=0.11.6
+    openpyxl>=3.0.0<4.0.0
+EOM
+
 IFS= read -r -d '' package_exclude <<EOM
     tests
     tests.*
