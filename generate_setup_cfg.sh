@@ -79,8 +79,13 @@ oarepo_vocabularies.models =
     *.yaml
 EOM
 
+IFS= read -r -d '' install_requires <<EOM
+    invenio-vocabularies>=0.11.6
+    openpyxl>=3.0.0<4.0.0
+EOM
 
-export install_requires=""
+
+export install_requires
 export packages
 envsubst <setup-proto.cfg >setup-basic-local.cfg
 
