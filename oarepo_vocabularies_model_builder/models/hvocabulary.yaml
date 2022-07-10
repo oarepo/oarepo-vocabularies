@@ -1,0 +1,25 @@
+oarepo:use: [ invenio ]
+
+settings:
+  elasticsearch:
+    templates:
+      v7:
+        settings:
+          analysis:
+            analyzer:
+              oarepo_hvocabularies_analyzer:
+                tokenizer: oarepo_hvocabularies_tokenizer
+              oarepo_hvocabularies_reverse_analyzer:
+                tokenizer: oarepo_hvocabularies_reverse_tokenizer
+
+            tokenizer:
+              oarepo_hvocabularies_tokenizer:
+                type: path_hierarchy
+                delimiter: '/'
+              oarepo_hvocabularies_reverse_tokenizer:
+                type: path_hierarchy
+                reverse: true
+                delimiter: '/'
+
+
+

@@ -20,12 +20,7 @@ jobs:
           pip install setuptools wheel babel
       - name: Build package
         run: |
-          ./generate_setup_cfg.sh
-          cp setup-library.cfg setup.cfg
-          python setup.py sdist bdist_wheel
-          cp setup-basic.cfg setup.cfg
-          python setup.py sdist bdist_wheel
-          ls -la dist
+          ./build.sh
       - name: Publish
         uses: pypa/gh-action-pypi-publish@v1.5.0
         with:

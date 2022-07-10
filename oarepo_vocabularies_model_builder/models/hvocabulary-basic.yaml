@@ -1,0 +1,46 @@
+oarepo:use: [ "./hvocabulary-basic-model.yaml", "./hvocabulary.yaml" ]
+settings:
+  package: 'oarepo_vocabularies.basic'
+  schema-server: 'local://'
+  collection-url: "/v/"
+  python:
+    record-prefix: 'OARepoVocabulariesBasic'
+    flask-extension-name: 'oarepo-vocabularies-basic'
+    ext-class: 'oarepo_vocabularies.basic.ext.OARepoVocabulariesBasicExt'
+
+    record-service-bases: [ "oarepo_vocabularies.services.service.OARepoVocabulariesServiceBase" ]
+    record-service-config-bases: [ "oarepo_vocabularies.services.config.OARepoVocabulariesServiceConfigBase" ]
+    # TODO: fix name in generator
+    record-search-options-bases: ["oarepo_vocabularies.services.search.OARepoVocabulariesSearchOptionsBase"]
+    record-service-config-generate-links: false
+
+    record-class: 'oarepo_vocabularies.basic.records.api.OARepoVocabularyBasic'
+    record-bases: [ "oarepo_vocabularies.records.api.OARepoVocabularyBase" ]
+    record-dumper-bases: [ "oarepo_vocabularies.records.dumper.OARepoVocabularyDumperBase" ]
+    record-metadata-bases: [ "oarepo_vocabularies.records.models.OARepoVocabularyMetadataBase" ]
+    generate-record-pid-field: false
+    record-dumper-extensions: [ "*OARepoVocabularyBase.dumper_extensions" ]
+
+    # TODO: fix name in generator
+    record-resource-config-class-bases: [ "oarepo_vocabularies.resources.config.OARepoVocabulariesResourceConfigBase" ]
+    record-resource-class-bases: [ "oarepo_vocabularies.resources.resource.OARepoVocabulariesResourceBase" ]
+
+    create-blueprint-from-app: 'oarepo_vocabularies.basic.views.create_basic_blueprint_from_app'
+
+plugins:
+  builder:
+    disable:
+      - poetry
+      - cookiecutter
+      - invenio_ext_poetry
+      - invenio_sample_app_poetry
+      - invenio_record_metadata_alembic_poetry
+      - invenio_record_metadata_models_poetry
+      - invenio_record_resource_poetry
+      - invenio_record_search_poetry
+      - invenio_record_jsonschemas_poetry
+      - invenio_script_bootstrap
+      - invenio_script_runserver
+      - invenio_script_import_sample_data
+      - script_sample_data
+      - invenio_script_runserver

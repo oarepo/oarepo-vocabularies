@@ -6,20 +6,15 @@ export version=$(cat oarepo_vocabularies/__init__.py | grep '__version__' | sed 
 
 export suffix="-basic"
 export description="Basic schema for vocabularies."
-IFS= read -r -d '' install_requires << EOM
+IFS= read -r -d '' install_requires <<EOM
     oarepo_vocabularies>=${version}
 EOM
 
-IFS= read -r -d '' package_exclude << EOM
-    oarepo_vocabularies.models*
-    oarepo_vocabularies.records*
-    oarepo_vocabularies.resources*
-    oarepo_vocabularies.services*
-    tests
-    tests.*
+IFS= read -r -d '' packages <<EOM
+    oarepo_vocabularies_basic
 EOM
 
-IFS= read -r -d '' entry_points << EOM
+IFS= read -r -d '' entry_points <<EOM
 ;flask.commands =
 ;    vocabularies = invenio_vocabularies.cli:vocabularies
 invenio_base.apps =
@@ -36,15 +31,17 @@ invenio_jsonschemas.schemas =
     oarepo_vocabularies.basic = oarepo_vocabularies.basic.records.jsonschemas
 invenio_search.mappings =
     oarepo_vocabularies.basic = oarepo_vocabularies.basic.records.mappings
+oarepo.models =
+    hvocabulary-basic = oarepo_vocabularies.models.registration:hvocabulary_basic_model
 EOM
 
 export install_requires
 export entry_points
-export package_exclude
+export packages
 
-envsubst < setup-proto.cfg >setup-basic.cfg
+envsubst <setup-proto.cfg >setup-basic.cfg
 
-IFS= read -r -d '' entry_points << EOM
+IFS= read -r -d '' entry_points <<EOM
 ;flask.commands =
 ;    vocabularies = invenio_vocabularies.cli:vocabularies
 invenio_base.apps =
@@ -63,31 +60,77 @@ invenio_jsonschemas.schemas =
     oarepo_vocabularies.basic = oarepo_vocabularies.basic.records.jsonschemas
 invenio_search.mappings =
     oarepo_vocabularies.basic = oarepo_vocabularies.basic.records.mappings
+oarepo.models =
+    hvocabulary-basic = oarepo_vocabularies.models.registration:hvocabulary_basic_model
+    hvocabulary = oarepo_vocabularies.models.registration:hvocabulary
+EOM
+
+IFS= read -r -d '' packages <<EOM
+    oarepo_vocabularies
+    oarepo_vocabularies.basic
+    oarepo_vocabularies.datastreams
+    oarepo_vocabularies.models
+    oarepo_vocabularies.records
+    oarepo_vocabularies.resources
+    oarepo_vocabularies.services
+
+[options.package_data]
+  oarepo_vocabularies.models =
+    *.yaml
 EOM
 
 
 export install_requires=""
-envsubst < setup-proto.cfg >setup-basic-local.cfg
-
+export packages
+envsubst <setup-proto.cfg >setup-basic-local.cfg
 
 export suffix=""
 export description=""
 export install_requires=""
-IFS= read -r -d '' package_exclude << EOM
-    oarepo_vocabularies.basic*
+IFS= read -r -d '' package_exclude <<EOM
     tests
     tests.*
 EOM
 
-IFS= read -r -d '' entry_points << EOM
+IFS= read -r -d '' entry_points <<EOM
 invenio_base.apps =
     oarepo_vocabularies = oarepo_vocabularies.ext:OARepoVocabulariesExt
 invenio_base.api_apps =
     oarepo_vocabularies = oarepo_vocabularies.ext:OARepoVocabulariesExt
+oarepo.models =
+    hvocabulary = oarepo_vocabularies.models.registration:hvocabulary
 EOM
 
 export install_requires
 export entry_points
 export package_exclude
 
-envsubst < setup-proto.cfg >setup-library.cfg
+envsubst <setup-proto.cfg >setup-library.cfg
+
+export suffix="-model-builder"
+export description="Model builder extension."
+IFS= read -r -d '' install_requires <<EOM
+EOM
+
+
+IFS= read -r -d '' packages <<EOM
+    oarepo_vocabularies_model_builder
+    oarepo_vocabularies_model_builder.models
+
+[options.package_data]
+  oarepo_vocabularies_model_builder.models =
+    *.yaml
+EOM
+
+
+IFS= read -r -d '' entry_points <<EOM
+oarepo.models =
+    hvocabulary = oarepo_vocabularies_model_builder.models.registration:hvocabulary
+    hvocabulary-basic = oarepo_vocabularies_model_builder.models.registration:hvocabulary_basic_model
+EOM
+
+export install_requires
+export entry_points
+export package_exclude
+
+envsubst <setup-proto.cfg >setup-model-builder.cfg
