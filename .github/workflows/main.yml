@@ -51,7 +51,7 @@ jobs:
           cp setup-basic-local.cfg setup.cfg
           cat setup.cfg
 
-      - name: Install dependencies
+      - name: Install dependencies from basic-local config
         run: |
           pip install -e ".[$EXTRAS,postgresql,elasticsearch7]"
           pip freeze
