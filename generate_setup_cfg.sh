@@ -75,8 +75,8 @@ IFS= read -r -d '' packages <<EOM
     oarepo_vocabularies.services
 
 [options.package_data]
-  oarepo_vocabularies.models =
-    *.yaml
+    oarepo_vocabularies.models =
+        *.yaml
 EOM
 
 
@@ -118,8 +118,8 @@ IFS= read -r -d '' packages <<EOM
     oarepo_vocabularies_model_builder.models
 
 [options.package_data]
-  oarepo_vocabularies_model_builder.models =
-    *.yaml
+    oarepo_vocabularies_model_builder.models =
+        *.yaml
 EOM
 
 
