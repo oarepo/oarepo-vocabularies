@@ -6,7 +6,7 @@ from invenio_vocabularies.datastreams import DataStreamFactory
 from invenio_vocabularies.records.models import VocabularyType
 
 
-class YAMLCatalogueReader:
+class YAMLVocabularyCatalogue:
     """
     TODO: when invenio supports factories in cli, consider moving to factories & invenio catalogue
 
@@ -15,7 +15,7 @@ class YAMLCatalogueReader:
 
     - code: <code>
       pid: <pid_type>           # optional, if not set, equal to code
-      service: <service-name>   # service to use, defaults to config.OAREPO_DEFAULT_VOCABULARY_SERVICE if not set
+      service: <service-name>   # service to use, defaults to config.OAREPO_VOCABULARIES_DEFAULT_SERVICE if not set
       title:
         cs: <title in czech>
         en: <title in english>...
@@ -34,9 +34,9 @@ class YAMLCatalogueReader:
             for entry in data:
                 vt = VocabularyType.query.filter_by(id=entry['code']).one_or_none()
                 if not vt:
-                    VocabularyType.create(id=entry['code'], pid_type=data.get('pid', entry['code']))
-                vocabulary_file = open(os.path.join(yaml_dir_path, entry['file']))
-                service_name = entry.get('service') or current_app.config['OAREPO_DEFAULT_VOCABULARY_SERVICE']
+                    VocabularyType.create(id=entry['code'], pid_type=entry.get('pid', entry['code']))
+                vocabulary_file = os.path.join(yaml_dir_path, entry['file'])
+                service_name = entry.get('service') or current_app.config['OAREPO_VOCABULARIES_DEFAULT_SERVICE']
                 yield entry['code'], service_name, vocabulary_file
         finally:
             if isinstance(fp_or_fname, str):

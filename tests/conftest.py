@@ -21,6 +21,8 @@ fixtures are available.
 # issue. Once we depend on Flask-Login v0.6.0 as the minimal version in
 # Flask-Security-Invenio/Invenio-Accounts we can remove this patch again.
 from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies.datastreams.excel import ExcelReader
+from oarepo_vocabularies.datastreams.hierarchy import HierarchyTransformer
 
 try:
     # Werkzeug <2.1
@@ -85,6 +87,12 @@ def app_config(app_config):
     app_config[
         "RECORDS_REFRESOLVER_STORE"
     ] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config['VOCABULARIES_DATASTREAM_READERS'] = {
+        "excel": ExcelReader,
+    }
+    app_config['VOCABULARIES_DATASTREAM_TRANSFORMERS'] = {
+        "hierarchy": HierarchyTransformer,
+    }
     return app_config
 
 

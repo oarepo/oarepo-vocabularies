@@ -23,13 +23,13 @@ IFS= read -r -d '' entry_points << EOM
 ;flask.commands =
 ;    vocabularies = invenio_vocabularies.cli:vocabularies
 invenio_base.apps =
-    oarepo_vocabularies = oarepo_vocabularies.basic.ext:OARepoVocabulariesBasicExt
+    oarepo_vocabularies_basic =oarepo_vocabularies.basic.ext:OARepoVocabulariesBasicExt
 invenio_base.api_apps =
-    oarepo_vocabularies = oarepo_vocabularies.basic.ext:OARepoVocabulariesBasicExt
+    oarepo_vocabularies_basic =oarepo_vocabularies.basic.ext:OARepoVocabulariesBasicExt
 invenio_base.api_blueprints =
-    invenio_vocabularies = oarepo_vocabularies.basic.views:create_basic_blueprint_from_app
+    oarepo_vocabularies_basic = oarepo_vocabularies.basic.views:create_basic_blueprint_from_app
 invenio_db.alembic =
-    oarepo_vocabularies = oarepo_vocabularies.basic:alembic
+    oarepo_vocabularies_basic =oarepo_vocabularies.basic:alembic
 invenio_db.models =
      oarepo_vocabulary_model = oarepo_vocabularies.basic.records.models
 invenio_jsonschemas.schemas =
@@ -43,6 +43,28 @@ export entry_points
 export package_exclude
 
 envsubst < setup-proto.cfg >setup-basic.cfg
+
+IFS= read -r -d '' entry_points << EOM
+;flask.commands =
+;    vocabularies = invenio_vocabularies.cli:vocabularies
+invenio_base.apps =
+    oarepo_vocabularies_basic =oarepo_vocabularies.basic.ext:OARepoVocabulariesBasicExt
+    oarepo_vocabularies = oarepo_vocabularies.ext:OARepoVocabulariesExt
+invenio_base.api_apps =
+    oarepo_vocabularies_basic =oarepo_vocabularies.basic.ext:OARepoVocabulariesBasicExt
+    oarepo_vocabularies = oarepo_vocabularies.ext:OARepoVocabulariesExt
+invenio_base.api_blueprints =
+    oarepo_vocabularies_basic = oarepo_vocabularies.basic.views:create_basic_blueprint_from_app
+invenio_db.alembic =
+    oarepo_vocabularies_basic =oarepo_vocabularies.basic:alembic
+invenio_db.models =
+     oarepo_vocabulary_model = oarepo_vocabularies.basic.records.models
+invenio_jsonschemas.schemas =
+    oarepo_vocabularies.basic = oarepo_vocabularies.basic.records.jsonschemas
+invenio_search.mappings =
+    oarepo_vocabularies.basic = oarepo_vocabularies.basic.records.mappings
+EOM
+
 
 export install_requires=""
 envsubst < setup-proto.cfg >setup-basic-local.cfg
@@ -58,6 +80,10 @@ IFS= read -r -d '' package_exclude << EOM
 EOM
 
 IFS= read -r -d '' entry_points << EOM
+invenio_base.apps =
+    oarepo_vocabularies = oarepo_vocabularies.ext:OARepoVocabulariesExt
+invenio_base.api_apps =
+    oarepo_vocabularies = oarepo_vocabularies.ext:OARepoVocabulariesExt
 EOM
 
 export install_requires
