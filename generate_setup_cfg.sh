@@ -4,6 +4,7 @@ cd $(dirname "$0")
 
 export version=$(cat oarepo_vocabularies/__init__.py | grep '__version__' | sed "s/^.*= *//" | tr -d "'")
 
+export extra_options=""
 export suffix="-basic"
 export description="Basic schema for vocabularies."
 IFS= read -r -d '' install_requires <<EOM
@@ -73,7 +74,9 @@ IFS= read -r -d '' packages <<EOM
     oarepo_vocabularies.records
     oarepo_vocabularies.resources
     oarepo_vocabularies.services
+EOM
 
+IFS= read -r -d '' extra_options <<EOM
 [options.package_data]
 oarepo_vocabularies.models =
     *.yaml
@@ -87,10 +90,12 @@ EOM
 
 export install_requires
 export packages
+export extra_options
 envsubst <setup-proto.cfg >setup-basic-local.cfg
 
 export suffix=""
 export description=""
+export extra_options=""
 
 IFS= read -r -d '' install_requires <<EOM
     invenio-vocabularies>=0.11.6
@@ -126,6 +131,9 @@ EOM
 IFS= read -r -d '' packages <<EOM
     oarepo_vocabularies_model_builder
     oarepo_vocabularies_model_builder.models
+EOM
+
+IFS= read -r -d '' extra_options <<EOM
 
 [options.package_data]
 oarepo_vocabularies_model_builder.models =
@@ -142,5 +150,6 @@ EOM
 export install_requires
 export entry_points
 export package_exclude
+export extra_options
 
 envsubst <setup-proto.cfg >setup-model-builder.cfg
