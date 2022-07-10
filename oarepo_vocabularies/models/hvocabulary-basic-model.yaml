@@ -9,7 +9,7 @@ model:
     # invenio vocabulary
     uuid:
       type: keyword
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
     indexed_at:
@@ -18,11 +18,11 @@ model:
         generate: false
 
     created:
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
     updated:
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
     type:
@@ -31,8 +31,10 @@ model:
           type: keyword
         id:
           type: keyword
-      oarepo:marshmallow:     # type is required but is not in invenio base schema, so add here
+      oarepo:marshmallow: # type is required but is not in invenio base schema, so add here
         field: ma_fields.Str(required=True, attribute="type.id")
+        generate: false
+        "*generate": true
     pid:
       properties:
         pk:
@@ -45,12 +47,12 @@ model:
           type: keyword
         status:
           type: keyword
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
     title_sort:
       type: keyword
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
     title:
@@ -62,7 +64,7 @@ model:
       oarepo:mapping:
         dynamic: true
         type: object
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
     description:
@@ -74,7 +76,7 @@ model:
       oarepo:mapping:
         dynamic: true
         type: object
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
     icon:
@@ -82,7 +84,7 @@ model:
       oarepo:mapping:
         index: false
         type: keyword
-      oarepo:marshmallow:    # leave invenio-vocabularies default
+      oarepo:marshmallow: # leave invenio-vocabularies default
         generate: false
 
 

@@ -2,6 +2,7 @@ import os
 
 import yaml
 from flask import current_app
+from invenio_db import db
 from invenio_vocabularies.datastreams import DataStreamFactory
 from invenio_vocabularies.records.models import VocabularyType
 
@@ -35,6 +36,7 @@ class YAMLVocabularyCatalogue:
                 vt = VocabularyType.query.filter_by(id=entry['code']).one_or_none()
                 if not vt:
                     VocabularyType.create(id=entry['code'], pid_type=entry.get('pid', entry['code']))
+                    db.session.commit()
                 vocabulary_file = os.path.join(yaml_dir_path, entry['file'])
                 service_name = entry.get('service') or current_app.config['OAREPO_VOCABULARIES_DEFAULT_SERVICE']
                 yield entry['code'], service_name, vocabulary_file
@@ -43,7 +45,9 @@ class YAMLVocabularyCatalogue:
                 fp.close()
 
     def create_or_update_vocabularies(self, fp_or_fname, identity, update=False):
+        ret = {}
         for vocabulary_type, service, vocabulary_file in self.iter(fp_or_fname):
+            print('Processing', vocabulary_type)
             ds = DataStreamFactory.create(
                 readers_config=[{
                     'type': 'excel',
@@ -74,4 +78,9 @@ class YAMLVocabularyCatalogue:
                     errored.append(result.errors)
                 else:
                     success += 1
-            return success, errored, filtered
+            ret[vocabulary_type] = {
+                'success': success,
+                'errored': errored,
+                'filtered': filtered
+            }
+        return ret

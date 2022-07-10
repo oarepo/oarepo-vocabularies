@@ -70,6 +70,9 @@ EOM
 IFS= read -r -d '' packages <<EOM
     oarepo_vocabularies
     oarepo_vocabularies.basic
+    oarepo_vocabularies.basic.records
+    oarepo_vocabularies.basic.resources
+    oarepo_vocabularies.basic.services
     oarepo_vocabularies.datastreams
     oarepo_vocabularies.models
     oarepo_vocabularies.records
