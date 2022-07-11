@@ -45,6 +45,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Run build
+        run: |
+          ./build.sh
+
       - name: Install dependencies from basic-local config
         run: |
           ./local_install.sh
@@ -55,4 +59,3 @@ jobs:
       - name: Run tests
         run: |
           ./run-tests.sh
-

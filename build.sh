@@ -12,6 +12,7 @@ mkdir dist
 # create library distribution
 (
   cd oarepo-vocabularies
+  cat setup.cfg
   python setup.py sdist bdist_wheel
   cp dist/* ../dist/
 )
@@ -19,6 +20,7 @@ mkdir dist
 # create basic data model entry points and package
 (
   cd oarepo-vocabularies-basic
+  cat setup.cfg
   python setup.py sdist bdist_wheel
   cp dist/* ../dist/
 )
@@ -26,6 +28,7 @@ mkdir dist
 # create model builder extension package
 (
   cd oarepo-vocabularies-model-builder
+  cat setup.cfg
   python setup.py sdist bdist_wheel
   cp dist/* ../dist/
 )
