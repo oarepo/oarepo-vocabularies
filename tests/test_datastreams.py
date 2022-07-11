@@ -83,3 +83,12 @@ def test_load_vocabulary(app, basic_service, client_with_credentials):
         'type': 'test',
         'updated': 'TS'
     }
+
+
+def test_to_dict():
+    rdr = ExcelReader()
+    assert rdr.to_dict((['a'], [1])) == [{'a': '1'}]
+    assert rdr.to_dict((['a_b'], [1])) == [{'a': {'b': '1'}}]
+    assert rdr.to_dict((['a_0'], [1])) == [{'a': ['1']}]
+    assert rdr.to_dict((['a_1'], [1])) == [{'a': [None, '1']}]
+    assert rdr.to_dict((['a_cs_0'], [1])) == [{'a': {'cs': ['1']}}]
