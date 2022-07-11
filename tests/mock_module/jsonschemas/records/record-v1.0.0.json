@@ -16,7 +16,10 @@
     "pid": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["pk", "status"],
+      "required": [
+        "pk",
+        "status"
+      ],
       "properties": {
         "pk": {
           "type": "integer"
@@ -40,14 +43,11 @@
         "title": {
           "type": "string"
         },
-        "languages": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              }
+        "hierarchy": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
             }
           }
         }

@@ -15,7 +15,7 @@ class YAMLVocabularyCatalogue:
     File format: array of the following:
 
     - code: <code>
-      pid: <pid_type>           # optional, if not set, equal to code
+      pid-type: <pid_type>           # optional, if not set, equal to code
       service: <service-name>   # service to use, defaults to config.OAREPO_VOCABULARIES_DEFAULT_SERVICE if not set
       title:
         cs: <title in czech>
@@ -35,7 +35,7 @@ class YAMLVocabularyCatalogue:
             for entry in data:
                 vt = VocabularyType.query.filter_by(id=entry['code']).one_or_none()
                 if not vt:
-                    VocabularyType.create(id=entry['code'], pid_type=entry.get('pid', entry['code']))
+                    VocabularyType.create(id=entry['code'], pid_type=entry.get('pid-type', entry['code']))
                     db.session.commit()
                 vocabulary_file = os.path.join(yaml_dir_path, entry['file'])
                 service_name = entry.get('service') or current_app.config['OAREPO_VOCABULARIES_DEFAULT_SERVICE']

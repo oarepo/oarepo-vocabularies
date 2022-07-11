@@ -1,8 +1,5 @@
 model:
   oarepo:marshmallow:
-    generate: false
-    "*generate": true   # generate only if this module is not imported as a library
-    class: oarepo_vocabularies.basic.services.schema.OARepoVocabulariesBasicSchema
     base-classes: [ "invenio_vocabularies.services.schema.BaseVocabularySchema" ]
 
   properties:
@@ -33,8 +30,7 @@ model:
           type: keyword
       oarepo:marshmallow: # type is required but is not in invenio base schema, so add here
         field: ma_fields.Str(required=True, attribute="type.id")
-        generate: false
-        "*generate": true
+
     pid:
       properties:
         pk:

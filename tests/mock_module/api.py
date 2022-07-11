@@ -22,6 +22,8 @@ from invenio_records_resources.records.systemfields import (
 )
 from invenio_vocabularies.records.api import Vocabulary
 
+from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies.records.system_fields.pid_hierarchy_relation import PIDHierarchyRelation
 from . import models
 
 
@@ -36,10 +38,11 @@ class Record(RecordBase):
     # Definitions of relationships from a bibliographic record to the
     # generic vocabularies.
     relations = RelationsField(
-        languages=PIDListRelation(
-            "metadata.languages",
+        hierarchy=PIDHierarchyRelation(
+            "metadata.hierarchy",
             keys=["id", "title"],
-            pid_field=Vocabulary.pid.with_type_ctx("languages"),
+            pid_field=OARepoVocabularyBasic.pid.with_type_ctx("hierarchy"),
+            cache_key='hierarchy-relation'
         ),
     )
 

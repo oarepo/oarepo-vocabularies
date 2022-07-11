@@ -8,6 +8,8 @@ def replace_timestamps(data):
         for k, v in list(data.items()):
             if k in ('created', 'updated'):
                 data[k] = 'TS'
+            elif k == '@v':
+                data[k] = 'VER'
             else:
                 replace_timestamps(v)
     elif isinstance(data, list):
