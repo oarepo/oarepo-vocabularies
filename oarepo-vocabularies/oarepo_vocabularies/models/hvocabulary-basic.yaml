@@ -1,18 +1,18 @@
 oarepo:use: [ "./hvocabulary-basic-model.yaml", "./hvocabulary.yaml" ]
 settings:
-  package: 'oarepo_vocabularies.basic'
+  package: 'oarepo_vocabularies_basic'
   schema-server: 'local://'
   collection-url: "/v/"
   python:
     record-prefix: 'OARepoVocabulariesBasic'
     flask-extension-name: 'oarepo-vocabularies-basic'
-    ext-class: 'oarepo_vocabularies.basic.ext.OARepoVocabulariesBasicExt'
-    record-class: 'oarepo_vocabularies.basic.records.api.OARepoVocabularyBasic'
-    create-blueprint-from-app: 'oarepo_vocabularies.basic.views.create_basic_blueprint_from_app'
+    ext-class: 'oarepo_vocabularies_basic.ext.OARepoVocabulariesBasicExt'
+    record-class: 'oarepo_vocabularies_basic.records.api.OARepoVocabularyBasic'
+    create-blueprint-from-app: 'oarepo_vocabularies_basic.views.create_basic_blueprint_from_app'
 
 model:
   oarepo:marshmallow:
-    class: oarepo_vocabularies.basic.services.schema.OARepoVocabulariesBasicSchema
+    class: oarepo_vocabularies_basic.services.schema.OARepoVocabulariesBasicSchema
 
 plugins:
   builder:

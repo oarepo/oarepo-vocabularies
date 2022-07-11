@@ -1,0 +1,119 @@
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "oarepo_hvocabularies_analyzer": {
+                    "tokenizer": "oarepo_hvocabularies_tokenizer"
+                },
+                "oarepo_hvocabularies_reverse_analyzer": {
+                    "tokenizer": "oarepo_hvocabularies_reverse_tokenizer"
+                }
+            },
+            "tokenizer": {
+                "oarepo_hvocabularies_tokenizer": {
+                    "type": "path_hierarchy",
+                    "delimiter": "/"
+                },
+                "oarepo_hvocabularies_reverse_tokenizer": {
+                    "type": "path_hierarchy",
+                    "reverse": true,
+                    "delimiter": "/"
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "uuid": {
+                "type": "keyword",
+                "ignore_above": 50
+            },
+            "indexed_at": {
+                "type": "date"
+            },
+            "created": {
+                "type": "date"
+            },
+            "updated": {
+                "type": "date"
+            },
+            "type": {
+                "properties": {
+                    "pid_type": {
+                        "type": "keyword",
+                        "ignore_above": 50
+                    },
+                    "id": {
+                        "type": "keyword",
+                        "ignore_above": 50
+                    }
+                },
+                "type": "object"
+            },
+            "pid": {
+                "properties": {
+                    "pk": {
+                        "type": "integer"
+                    },
+                    "pid_type": {
+                        "type": "keyword",
+                        "ignore_above": 50
+                    },
+                    "obj_type": {
+                        "type": "keyword",
+                        "ignore_above": 50
+                    },
+                    "status": {
+                        "type": "keyword",
+                        "ignore_above": 50
+                    }
+                },
+                "type": "object"
+            },
+            "title_sort": {
+                "type": "keyword",
+                "ignore_above": 50
+            },
+            "title": {
+                "type": "object",
+                "dynamic": true
+            },
+            "description": {
+                "type": "object",
+                "dynamic": true
+            },
+            "icon": {
+                "type": "keyword",
+                "index": false,
+                "ignore_above": 50
+            },
+            "hierarchy": {
+                "type": "object",
+                "properties": {
+                    "level": {
+                        "type": "integer"
+                    },
+                    "path": {
+                        "type": "text",
+                        "copy_to": "hierarchy_reverse_path",
+                        "analyzer": "oarepo_hvocabularies_analyzer",
+                        "search_analyzer": "standard"
+                    },
+                    "reverse_path": {
+                        "type": "text",
+                        "analyzer": "oarepo_hvocabularies_reverse_analyzer",
+                        "search_analyzer": "standard"
+                    }
+                }
+            },
+            "id": {
+                "type": "keyword",
+                "ignore_above": 50
+            },
+            "$schema": {
+                "type": "keyword",
+                "ignore_above": 50
+            }
+        }
+    }
+}

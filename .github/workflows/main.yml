@@ -45,15 +45,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Update setups
-        run: |
-          ./generate_setup_cfg.sh
-          cp setup-basic-local.cfg setup.cfg
-          cat setup.cfg
-
       - name: Install dependencies from basic-local config
         run: |
-          pip install -e ".[$EXTRAS,postgresql,elasticsearch7]"
+          ./local_install.sh
           pip freeze
           docker --version
           docker-compose --version

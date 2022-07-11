@@ -22,7 +22,7 @@ from invenio_records_resources.records.systemfields import (
 )
 from invenio_vocabularies.records.api import Vocabulary
 
-from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 from oarepo_vocabularies.records.system_fields.pid_hierarchy_relation import PIDHierarchyRelation
 from . import models
 

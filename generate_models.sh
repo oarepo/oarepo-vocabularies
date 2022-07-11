@@ -11,6 +11,10 @@ test -f .venv-model-builder/bin/oarepo-compile-model || (
 )
 
 # clean previous sources, except of models and common packages
-rm -rf oarepo_vocabularies/basic
+rm -rf oarepo-vocabularies-basic/oarepo_vocabularies_basic
 
-.venv-model-builder/bin/oarepo-compile-model -vvv --output-directory . oarepo_vocabularies/models/hvocabulary-basic.yaml
+.venv-model-builder/bin/oarepo-compile-model -vvv --output-directory oarepo-vocabularies-basic \
+  oarepo-vocabularies/oarepo_vocabularies/models/hvocabulary-basic.yaml
+
+cp oarepo-vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-basic/oarepo_vocabularies_basic/
+

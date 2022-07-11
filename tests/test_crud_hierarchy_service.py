@@ -2,7 +2,7 @@ import pytest
 from invenio_records_resources.services.records.results import RecordList
 
 from oarepo_vocabularies.services.service import NoParentError
-from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 
 
 def test_parent(basic_service, identity, hierarchy_records):

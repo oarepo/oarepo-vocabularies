@@ -1,7 +1,7 @@
 import pytest
 from invenio_pidstore.errors import PIDDeletedError
 
-from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 
 
 def test_create(lang_type, lang_data, basic_service, identity):

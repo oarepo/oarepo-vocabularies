@@ -22,20 +22,20 @@ class VocabularyHierarchyPIDFieldContext(VocabularyPIDFieldContext):
         )
 
         # Resolve: TODO: speed this up by making several requests at once?
-        pids = []
+        resolved_pid = None
         records = []
         last_pid = ''
         for current_id in pid_value.split('/'):
             current_id = last_pid + current_id
             last_pid = current_id + '/'
             pid, record = resolver.resolve(current_id)
-            pids.append(pid)
+            resolved_pid = pid
             records.append(record)
 
         # order from this to ancestors
         records = list(reversed(records))
 
         records[0].ancestors = records
-        self.field._set_cache(records[0], pids[0])
+        self.field._set_cache(records[0], resolved_pid)
 
         return records[0]

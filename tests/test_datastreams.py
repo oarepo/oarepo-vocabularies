@@ -4,7 +4,7 @@ import os
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.datastreams import StreamEntry
 
-from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 from oarepo_vocabularies.datastreams.catalogue import YAMLVocabularyCatalogue
 from oarepo_vocabularies.datastreams.excel import ExcelReader
 from oarepo_vocabularies.datastreams.hierarchy import HierarchyTransformer

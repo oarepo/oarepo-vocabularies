@@ -2,7 +2,7 @@
 # Tests
 #
 
-from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 from tests.utils import replace_timestamps
 
 
@@ -80,8 +80,8 @@ def test_search(app, client_with_credentials, lang_type, lang_record):
     d = res.json
     assert d['aggregations']['_schema'] == {'buckets': [{'doc_count': 1,
                                                          'is_selected': False,
-                                                         'key': 'local://oarepo-vocabularies.basic-1.0.0.json',
-                                                         'label': 'local://oarepo-vocabularies.basic-1.0.0.json'}],
+                                                         'key': 'local://oarepo-vocabularies-basic-1.0.0.json',
+                                                         'label': 'local://oarepo-vocabularies-basic-1.0.0.json'}],
                                             'label': ''}
     assert d['hits']['total'] == 1
     assert d['hits']['hits'][0]['title']['en'] == 'English'

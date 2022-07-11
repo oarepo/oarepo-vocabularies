@@ -2,30 +2,36 @@
 
 set -e
 
-rm -rf *.egg-info || true
-./generate_setup_cfg.sh
+cp oarepo_vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-basic/oarepo_vocabularies_basic/
+cp oarepo_vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-model-builder/oarepo_vocabularies_model_builder/
+
+mkdir dist
 
 # create library distribution
-cp setup-library.cfg setup.cfg
-python setup.py sdist bdist_wheel
-rm -rf *.egg-info || true
+(
+  cd oarepo-vocabularies
+  python setup.py sdist bdist_wheel
+  cp dist/* ../dist/
+)
 
 # create basic data model entry points and package
-cp setup-basic.cfg setup.cfg
-python setup.py sdist bdist_wheel
-rm -rf *.egg-info || true
+(
+  cd oarepo-vocabularies-basic
+  python setup.py sdist bdist_wheel
+  cp dist/* ../dist/
+)
 
 # create model builder extension package
-cp -r oarepo_vocabularies/models oarepo_vocabularies_model_builder/
-cp oarepo_vocabularies/__init__.py oarepo_vocabularies_model_builder/
-cp setup-model-builder.cfg setup.cfg
-python setup.py sdist bdist_wheel
-rm -rf *.egg-info || true
+(
+  cd oarepo-vocabularies-model-builder
+  python setup.py sdist bdist_wheel
+  cp dist/* ../dist/
+)
 
 # just list created stuff
 ls -la dist
 
-for i in dist/*.tar.gz ; do
+for i in dist/*.tar.gz; do
   echo
   echo Listing $i
   tar -tf $i

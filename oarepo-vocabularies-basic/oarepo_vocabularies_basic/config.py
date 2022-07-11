@@ -1,0 +1,13 @@
+from oarepo_vocabularies_basic.resources.config import (
+    OARepoVocabulariesBasicResourceConfig,
+)
+from oarepo_vocabularies_basic.resources.resource import OARepoVocabulariesBasicResource
+from oarepo_vocabularies_basic.services.config import (
+    OARepoVocabulariesBasicServiceConfig,
+)
+from oarepo_vocabularies_basic.services.service import OARepoVocabulariesBasicService
+
+OAREPO_VOCABULARIES_BASIC_RESOURCE_CONFIG = OARepoVocabulariesBasicResourceConfig
+OAREPO_VOCABULARIES_BASIC_RESOURCE_CLASS = OARepoVocabulariesBasicResource
+OAREPO_VOCABULARIES_BASIC_SERVICE_CONFIG = OARepoVocabulariesBasicServiceConfig
+OAREPO_VOCABULARIES_BASIC_SERVICE_CLASS = OARepoVocabulariesBasicService

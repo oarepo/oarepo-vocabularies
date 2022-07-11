@@ -1,4 +1,4 @@
-from oarepo_vocabularies.basic.records.api import OARepoVocabularyBasic
+from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 from tests.utils import api_path, replace_timestamps
 
 
