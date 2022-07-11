@@ -2,8 +2,10 @@
 
 set -e
 
-cp oarepo_vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-basic/oarepo_vocabularies_basic/
-cp oarepo_vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-model-builder/oarepo_vocabularies_model_builder/
+cp oarepo-vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-basic/oarepo_vocabularies_basic/
+cp oarepo-vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-model-builder/oarepo_vocabularies_model_builder/
+
+cp -r oarepo-vocabularies/oarepo_vocabularies/models/*yaml oarepo-vocabularies-model-builder/oarepo_vocabularies_model_builder/models/
 
 mkdir dist
 
