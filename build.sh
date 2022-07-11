@@ -38,3 +38,4 @@ for i in dist/*.tar.gz; do
   echo Listing $i
   tar -tf $i
 done
+
