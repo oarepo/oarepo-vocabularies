@@ -139,11 +139,7 @@ def test_marshmallow(hierarchy_records):
 def test_service_create(mock_service, hierarchy_records):
     created = mock_service.create(system_identity, {
         'metadata': {
-            'hierarchy': [
-                {'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
-                {'id': 'a/b', 'title': {'en': 'a-b'}},
-                {'id': 'a', 'title': {'en': 'a'}}
-            ],
+            'hierarchy': 'a/b/c',
             'title': 'Test'
         }
     })
