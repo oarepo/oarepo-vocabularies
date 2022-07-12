@@ -23,6 +23,7 @@ fixtures are available.
 from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 from oarepo_vocabularies.datastreams.excel import ExcelReader
 from oarepo_vocabularies.datastreams.hierarchy import HierarchyTransformer
+from tests.mock_module.services import MockService, MockServiceConfig
 
 try:
     # Werkzeug <2.1
@@ -290,3 +291,8 @@ def cache():
         yield current_cache
     finally:
         current_cache.clear()
+
+
+@pytest.fixture()
+def mock_service(app):
+    return MockService(MockServiceConfig())

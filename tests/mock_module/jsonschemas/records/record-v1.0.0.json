@@ -33,6 +33,12 @@
             "M",
             "D"
           ]
+        },
+        "pid_type": {
+          "type": "string"
+        },
+        "obj_type": {
+          "type": "string"
         }
       }
     },

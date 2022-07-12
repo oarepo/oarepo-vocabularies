@@ -1,9 +1,11 @@
 #
 # Fixtures
 #
+import copy
 from functools import partial
 
 import pytest
+from invenio_access.permissions import system_identity
 from invenio_indexer.api import RecordIndexer
 from invenio_search import current_search_client
 from marshmallow import ValidationError
@@ -132,3 +134,52 @@ def test_marshmallow(hierarchy_records):
             ],
             'title': 'Test'
         })
+
+
+def test_service_create(mock_service, hierarchy_records):
+    created = mock_service.create(system_identity, {
+        'metadata': {
+            'hierarchy': [
+                {'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+                {'id': 'a/b', 'title': {'en': 'a-b'}},
+                {'id': 'a', 'title': {'en': 'a'}}
+            ],
+            'title': 'Test'
+        }
+    })
+    data = copy.deepcopy(created.data)
+    data.pop('id')
+    data['links'].pop('self')
+    assert replace_timestamps(data) == {
+        'created': 'TS',
+        'links': {},
+        'metadata': {
+            'hierarchy': [
+                {'@v': 'VER', 'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+                {'@v': 'VER', 'id': 'a/b', 'title': {'en': 'a-b'}},
+                {'@v': 'VER', 'id': 'a', 'title': {'en': 'a'}}
+            ],
+            'title': 'Test'
+        },
+        'revision_id': 1,
+        'updated': 'TS'
+    }
+
+    read = mock_service.read(system_identity, created.id)
+    data = copy.deepcopy(read.data)
+    data.pop('id')
+    data['links'].pop('self')
+    assert replace_timestamps(data) == {
+        'created': 'TS',
+        'links': {},
+        'metadata': {
+            'hierarchy': [
+                {'@v': 'VER', 'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+                {'@v': 'VER', 'id': 'a/b', 'title': {'en': 'a-b'}},
+                {'@v': 'VER', 'id': 'a', 'title': {'en': 'a'}}
+            ],
+            'title': 'Test'
+        },
+        'revision_id': 1,
+        'updated': 'TS'
+    }

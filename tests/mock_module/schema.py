@@ -1,5 +1,6 @@
 import marshmallow.fields as ma_fields
 import marshmallow as ma
+from invenio_records_resources.services.records.schema import BaseRecordSchema
 from invenio_vocabularies.services.schema import i18n_strings
 
 from oarepo_vocabularies.services.schema import VocabularyRelationField, VocabularyRelationSchema
@@ -10,6 +11,10 @@ class HierarchySchema(VocabularyRelationSchema):
     title = i18n_strings
 
 
-class MockSchema(ma.Schema):
+class MockMetadataSchema(ma.Schema):
     title = ma_fields.Str()
     hierarchy = VocabularyRelationField(Record.relations.hierarchy, HierarchySchema, many=False)
+
+
+class MockSchema(BaseRecordSchema):
+    metadata = ma_fields.Nested(MockMetadataSchema())
