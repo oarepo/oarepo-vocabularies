@@ -20,9 +20,12 @@ fixtures are available.
 # 2.1. Flask-Login v0.6.0 (yet to be released at the time of writing) fixes the
 # issue. Once we depend on Flask-Login v0.6.0 as the minimal version in
 # Flask-Security-Invenio/Invenio-Accounts we can remove this patch again.
+from invenio_records_resources.resources import RecordResource
+
 from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 from oarepo_vocabularies.datastreams.excel import ExcelReader
 from oarepo_vocabularies.datastreams.hierarchy import HierarchyTransformer
+from tests.mock_module.resources import MockResourceConfig
 from tests.mock_module.services import MockService, MockServiceConfig
 
 try:
@@ -296,3 +299,11 @@ def cache():
 @pytest.fixture()
 def mock_service(app):
     return MockService(MockServiceConfig())
+
+
+@pytest.fixture()
+def mock_resource(mock_service, app):
+    resource = RecordResource(MockResourceConfig(), mock_service)
+    blueprint = resource.as_blueprint()
+    app.register_blueprint(blueprint)
+    return resource
