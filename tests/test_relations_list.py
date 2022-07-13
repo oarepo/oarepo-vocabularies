@@ -18,7 +18,7 @@ from tests.utils import replace_timestamps
 @pytest.fixture()
 def mock_record(hierarchy_records):
     """An example mock record."""
-    return Record.create({}, metadata={"title": "Test", "hierarchy": {"id": "a/b/c"}})
+    return Record.create({}, metadata={"title": "Test", "hlist": [{"id": "a/b"}, {"id": "a/c"}]})
 
 
 @pytest.fixture()
@@ -39,54 +39,19 @@ def mock_search():
 #
 # Tests
 #
-def test_mock_record(mock_record):
-    """Basic smoke test."""
-    assert mock_record.schema
-    assert mock_record.pid
-
-
-def test_linked_record(mock_record, hierarchy_records):
-    """Linked record fetching."""
-    # Dereference the linked language record
-    hier_record = mock_record.relations.hierarchy()
-    assert len(hier_record.ancestors) == 3
-
-
-def test_dereferencing(mock_record):
-    """Record dereferencing."""
-    # Dereference the linked language record
-    mock_record.relations.hierarchy.dereference()
-    deferenced_lang_records = mock_record.metadata["hierarchy"]
-    assert replace_timestamps(deferenced_lang_records) == [
-        {
-            '@v': 'VER',
-            'id': 'a/b/c',
-            'title': {'en': 'a-b-c'}
-        },
-        {
-            '@v': 'VER',
-            'id': 'a/b',
-            'title': {'en': 'a-b'}
-        },
-        {
-            '@v': 'VER',
-            'id': 'a',
-            'title': {'en': 'a'}
-        }
-    ]
-
 
 def test_dumping(mock_record):
     """Record schema validation."""
     # Create a record linked to a language record.
     data = mock_record.dumps()["metadata"]
     assert replace_timestamps(data) == {
-        'hierarchy': [
-            {'@v': 'VER', 'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+        'hlist': [
             {'@v': 'VER', 'id': 'a/b', 'title': {'en': 'a-b'}},
+            {'@v': 'VER', 'id': 'a/c', 'title': {'en': 'a-c'}},
             {'@v': 'VER', 'id': 'a', 'title': {'en': 'a'}}
         ],
-        'title': 'Test'}
+        'title': 'Test'
+    }
 
 
 def test_indexing(mock_record, mock_indexer, mock_search):
@@ -98,9 +63,9 @@ def test_indexing(mock_record, mock_indexer, mock_search):
     record = Record.loads(data["_source"])
 
     expected = {
-        'hierarchy': [
-            {'@v': 'VER', 'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+        'hlist': [
             {'@v': 'VER', 'id': 'a/b', 'title': {'en': 'a-b'}},
+            {'@v': 'VER', 'id': 'a/c', 'title': {'en': 'a-c'}},
             {'@v': 'VER', 'id': 'a', 'title': {'en': 'a'}}
         ],
         'title': 'Test'
@@ -117,8 +82,8 @@ def test_marshmallow(hierarchy_records):
     schema = MockSchema()
     loaded = schema.load({
         'metadata': {
-            'hierarchy': [
-                {'@v': 'VER', 'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+            'hlist': [
+                {'@v': 'VER', 'id': 'a/c', 'title': {'en': 'a-c'}},
                 {'@v': 'VER', 'id': 'a/b', 'title': {'en': 'a-b'}},
                 {'@v': 'VER', 'id': 'a', 'title': {'en': 'a'}}
             ],
@@ -127,14 +92,14 @@ def test_marshmallow(hierarchy_records):
     })
     assert loaded == {
         'metadata': {
-            'hierarchy': {'id': 'a/b/c'},
+            'hlist': [{'id': 'a/b'}, {'id': 'a/c'}],
             'title': 'Test'
         }
     }
     with pytest.raises(ValidationError):
         schema.load({
             'metadata': {
-                'hierarchy': [
+                'hlist': [
                     {'@v': 'VER', 'id': 'a/b/c/d', 'title': {'en': 'a-b-c-d'}},
                 ],
                 'title': 'Test'
@@ -145,7 +110,7 @@ def test_marshmallow(hierarchy_records):
 def test_service_create(mock_service, hierarchy_records):
     created = mock_service.create(system_identity, {
         'metadata': {
-            'hierarchy': 'a/b/c',
+            'hlist': [{'id': 'a/b'}, {'id': 'a/c'}],
             'title': 'Test'
         }
     })
@@ -156,9 +121,9 @@ def test_service_create(mock_service, hierarchy_records):
         'created': 'TS',
         'links': {},
         'metadata': {
-            'hierarchy': [
-                {'@v': 'VER', 'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+            'hlist': [
                 {'@v': 'VER', 'id': 'a/b', 'title': {'en': 'a-b'}},
+                {'@v': 'VER', 'id': 'a/c', 'title': {'en': 'a-c'}},
                 {'@v': 'VER', 'id': 'a', 'title': {'en': 'a'}}
             ],
             'title': 'Test'
@@ -175,9 +140,9 @@ def test_service_create(mock_service, hierarchy_records):
         'created': 'TS',
         'links': {},
         'metadata': {
-            'hierarchy': [
-                {'@v': 'VER', 'id': 'a/b/c', 'title': {'en': 'a-b-c'}},
+            'hlist': [
                 {'@v': 'VER', 'id': 'a/b', 'title': {'en': 'a-b'}},
+                {'@v': 'VER', 'id': 'a/c', 'title': {'en': 'a-c'}},
                 {'@v': 'VER', 'id': 'a', 'title': {'en': 'a'}}
             ],
             'title': 'Test'

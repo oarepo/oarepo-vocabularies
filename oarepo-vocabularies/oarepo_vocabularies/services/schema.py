@@ -74,7 +74,7 @@ class VocabularyRelationField(ma_fields.Field):
         # check if data exist in vocabulary
         if not self.context.get('skip_vocabulary_check'):
             self._check_vocabulary(value)
-
+        value.sort(key=lambda x: (-len(x['id'].split('/')), x['id']))
         return value if self.many else value[0]
 
     def _check_vocabulary(self, value):

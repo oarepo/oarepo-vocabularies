@@ -14,6 +14,7 @@ class HierarchySchema(VocabularyRelationSchema):
 class MockMetadataSchema(ma.Schema):
     title = ma_fields.Str()
     hierarchy = VocabularyRelationField(Record.relations.hierarchy, HierarchySchema, many=False)
+    hlist = VocabularyRelationField(Record.relations.hierarchy, HierarchySchema, many=True)
 
 
 class MockSchema(BaseRecordSchema):

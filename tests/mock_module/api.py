@@ -23,7 +23,8 @@ from invenio_records_resources.records.systemfields import (
 from invenio_vocabularies.records.api import Vocabulary
 
 from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
-from oarepo_vocabularies.records.system_fields.pid_hierarchy_relation import PIDHierarchyRelation
+from oarepo_vocabularies.records.system_fields.pid_hierarchy_relation import PIDHierarchyRelation, \
+    PIDHierarchyListRelation
 from . import models
 
 
@@ -44,6 +45,12 @@ class Record(RecordBase):
             pid_field=OARepoVocabularyBasic.pid.with_type_ctx("hierarchy"),
             cache_key='hierarchy-relation'
         ),
+        hlist=PIDHierarchyListRelation(
+            "metadata.hlist",
+            keys=["id", "title"],
+            pid_field=OARepoVocabularyBasic.pid.with_type_ctx("hierarchy"),
+            cache_key='hierarchy-relation-list'
+        )
     )
 
     dumper = ElasticsearchDumper(
