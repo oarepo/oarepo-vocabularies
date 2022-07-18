@@ -69,12 +69,15 @@ def extra_entry_points():
     return {
         "invenio_db.models": [
             "mock_module = tests.mock_module.models",
+            "mock_module_gen = mock_module_gen.records.models",
         ],
         "invenio_jsonschemas.schemas": [
             "mock_module = tests.mock_module.jsonschemas",
+            "mock_module_gen = mock_module_gen.records.jsonschemas",
         ],
         "invenio_search.mappings": [
             "records = tests.mock_module.mappings",
+            "mock_module_gen = mock_module_gen.records.mappings",
         ],
     }
 

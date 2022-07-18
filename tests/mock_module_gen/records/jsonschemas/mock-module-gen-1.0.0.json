@@ -1,0 +1,59 @@
+{
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "hierarchy": {
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "object",
+                    "propertyNames": {
+                        "pattern": "^[a-z]{2}$"
+                    },
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "id": {
+            "type": "string"
+        },
+        "created": {
+            "type": "string",
+            "format": "date"
+        },
+        "updated": {
+            "type": "string",
+            "format": "date"
+        },
+        "$schema": {
+            "type": "string"
+        },
+        "hlist": {
+            "type": "array",
+            "items": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "object",
+                        "propertyNames": {
+                            "pattern": "^[a-z]{2}$"
+                        },
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "type": "object"
+}

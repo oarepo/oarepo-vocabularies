@@ -8,6 +8,7 @@ test -f .venv-model-builder/bin/oarepo-compile-model || (
   source .venv-model-builder/bin/activate
   pip install -U setuptools pip wheel
   pip install oarepo-model-builder
+  pip install -e oarepo-oarepo-vocabularies-model-builder
 )
 
 # clean previous sources, except of models and common packages
@@ -18,3 +19,7 @@ rm -rf oarepo-vocabularies-basic/oarepo_vocabularies_basic
 
 cp oarepo-vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-basic/oarepo_vocabularies_basic/
 
+
+# generate test model
+test -d tests/mock_module_gen && rm -rf tests/mock_module_gen
+.venv-model-builder/bin/oarepo-compile-model --output-directory tests -vvv tests/test_model.yaml

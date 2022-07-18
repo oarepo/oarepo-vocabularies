@@ -26,6 +26,8 @@ trap cleanup EXIT
 
 eval "$(docker-services-cli up --db ${DB:-postgresql} --search ${SEARCH:-elasticsearch} --cache ${CACHE:-redis} --mq ${MQ:-rabbitmq} --env)"
 
+export PYTHONPATH=$PWD/oarepo-vocabularies:$PWD/oarepo-vocabularies-basic:$PWD/oarepo-vocabularies-model-builder:$PWD/tests
+
 python -m pytest
 tests_exit_code=$?
 exit "$tests_exit_code"
