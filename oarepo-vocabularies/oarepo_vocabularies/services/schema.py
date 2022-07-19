@@ -12,9 +12,11 @@ class VocabularyRelationSchema(ma.Schema):
 
 
 class VocabularyRelationField(ma_fields.Field):
-    def __init__(self, related_field, cls_or_instance: typing.Union[ma.Schema, type], *, many=False,
+    def __init__(self, cls_or_instance: typing.Union[ma.Schema, type], *, related_field=None, many=False,
                  **kwargs):
         super().__init__(**kwargs)
+        if not related_field:
+            raise AttributeError('Related field is required')
         self.many = many
         self.related_field = related_field
 

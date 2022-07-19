@@ -1,6 +1,7 @@
 import oarepo_vocabularies.records.system_fields.pid_hierarchy_relation
 import oarepo_vocabularies_basic.records.api
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
+from invenio_records.dumpers.relations import RelationDumperExt
 from invenio_records.systemfields import ConstantField, RelationsField
 from invenio_records_resources.records.api import Record as InvenioBaseRecord
 from invenio_records_resources.records.systemfields import IndexField
@@ -18,7 +19,9 @@ class MockModuleGenRecord(InvenioBaseRecord):
         create=True, provider=RecordIdProviderV2, context_cls=PIDFieldContext
     )
 
-    dumper_extensions = []
+    dumper_extensions = [
+        RelationDumperExt("relations"),
+    ]
     dumper = MockModuleGenDumper(extensions=dumper_extensions)
 
     relations = RelationsField(

@@ -305,8 +305,25 @@ def mock_service(app):
 
 
 @pytest.fixture()
+def mock_gen_service(app):
+    from mock_module_gen.services.service import MockModuleGenService
+    from mock_module_gen.services.config import MockModuleGenServiceConfig
+    return MockModuleGenService(MockModuleGenServiceConfig())
+
+
+@pytest.fixture()
 def mock_resource(mock_service, app):
     resource = RecordResource(MockResourceConfig(), mock_service)
+    blueprint = resource.as_blueprint()
+    app.register_blueprint(blueprint)
+    return resource
+
+
+@pytest.fixture()
+def mock_gen_resource(mock_gen_service, app):
+    from mock_module_gen.resources.resource import MockModuleGenResource
+    from mock_module_gen.resources.config import MockModuleGenResourceConfig
+    resource = MockModuleGenResource(MockModuleGenResourceConfig(), mock_gen_service)
     blueprint = resource.as_blueprint()
     app.register_blueprint(blueprint)
     return resource

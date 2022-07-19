@@ -5,7 +5,7 @@ from invenio_records_resources.services import (
 from invenio_records_resources.services import pagination_links
 from invenio_records_resources.services.records.components import (
     DataComponent,
-    MetadataComponent,
+    RelationsComponent,
 )
 from mock_module_gen.records.api import MockModuleGenRecord
 from mock_module_gen.services.permissions import MockModuleGenPermissionPolicy
@@ -21,7 +21,11 @@ class MockModuleGenServiceConfig(InvenioRecordServiceConfig):
     search = MockModuleGenSearchOptions
     record_cls = MockModuleGenRecord
 
-    components = [*InvenioRecordServiceConfig.components]
+    components = [
+        *InvenioRecordServiceConfig.components,
+        DataComponent,
+        RelationsComponent,
+    ]
 
     model = "mock_module_gen"
 

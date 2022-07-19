@@ -2,6 +2,10 @@ oarepo:use: [ invenio ]
 settings:
   package: 'mock_module_gen'
   schema-server: 'local://'
+  python:
+    record-service-config-components:
+      - invenio_records_resources.services.records.components.DataComponent
+      - invenio_records_resources.services.records.components.RelationsComponent
 
 model:
   properties:

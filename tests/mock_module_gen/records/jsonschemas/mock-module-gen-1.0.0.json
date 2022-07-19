@@ -5,9 +5,6 @@
         },
         "hierarchy": {
             "properties": {
-                "id": {
-                    "type": "string"
-                },
                 "title": {
                     "type": "object",
                     "propertyNames": {
@@ -35,24 +32,18 @@
             "type": "string"
         },
         "hlist": {
-            "type": "array",
-            "items": {
-                "properties": {
-                    "id": {
-                        "type": "string"
+            "properties": {
+                "title": {
+                    "type": "object",
+                    "propertyNames": {
+                        "pattern": "^[a-z]{2}$"
                     },
-                    "title": {
-                        "type": "object",
-                        "propertyNames": {
-                            "pattern": "^[a-z]{2}$"
-                        },
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                    "additionalProperties": {
+                        "type": "string"
                     }
-                },
-                "type": "object"
-            }
+                }
+            },
+            "type": "object"
         }
     },
     "type": "object"

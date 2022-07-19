@@ -36,9 +36,6 @@ class NestedLabeledFacet(Facet):
         return {"buckets": out, "label": str(self._label)}
 
 
-hierarchy_id = TermsFacet(field="hierarchy.id")
-
-
 _id = TermsFacet(field="id")
 
 
@@ -49,9 +46,3 @@ updated = TermsFacet(field="updated")
 
 
 _schema = TermsFacet(field="$schema")
-
-
-hlist_id = TermsFacet(field="hlist.id")
-
-
-hlist = TermsFacet(field="hlist")
