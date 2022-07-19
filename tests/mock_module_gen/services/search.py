@@ -16,6 +16,7 @@ class MockModuleGenSearchOptions(InvenioSearchOptions):
         "created": facets.created,
         "updated": facets.updated,
         "_schema": facets._schema,
+        "hlist": facets.hlist,
     }
     sort_options = {
         **InvenioSearchOptions.sort_options,

@@ -46,3 +46,6 @@ updated = TermsFacet(field="updated")
 
 
 _schema = TermsFacet(field="$schema")
+
+
+hlist = TermsFacet(field="hlist")

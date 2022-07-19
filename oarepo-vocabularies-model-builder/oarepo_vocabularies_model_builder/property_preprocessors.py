@@ -2,6 +2,8 @@ import copy
 
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
+from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
+from oarepo_model_builder.invenio.invenio_record import InvenioRecordBuilder
 
 
 class VocabularyPreprocessor(PropertyPreprocessor):
@@ -44,13 +46,14 @@ class VocabularyPreprocessor(PropertyPreprocessor):
         if not vocabulary_record_class:
             vocabulary_record_class = \
                 vocabulary_settings.get('record-class') or 'oarepo_vocabularies_basic.records.api.OARepoVocabularyBasic'
+        hierarchy_type = 'PIDHierarchyRelation' if not many else 'PIDHierarchyListRelation'
         data['invenio:relation'] = {
             'imports': [
                 'oarepo_vocabularies.records.system_fields.pid_hierarchy_relation',
                 '.'.join(vocabulary_record_class.split('.')[:-1])
             ],
             'name': field_name,
-            'type': 'oarepo_vocabularies.records.system_fields.pid_hierarchy_relation.PIDHierarchyRelation',
+            'type': f'oarepo_vocabularies.records.system_fields.pid_hierarchy_relation.{hierarchy_type}',
             'params': [
                 f'"{field_path}"',
                 'keys=[%s]' % (','.join(f'"{k}"' for k in fields_),),
@@ -102,7 +105,7 @@ class VocabularyPreprocessor(PropertyPreprocessor):
                 if '.' in field:
                     om.setdefault('imported-classes', {})[field] = field_end
 
-    @process(model_builder="*",
+    @process(model_builder=[InvenioRecordSchemaBuilder.TYPE, InvenioRecordBuilder.TYPE],
              path='**/properties/*',
              condition=lambda current, stack: stack.top.schema_element_type == 'property'
                                               and isinstance(stack.top.data, dict)

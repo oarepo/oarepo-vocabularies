@@ -33,7 +33,7 @@ class MockModuleGenRecord(InvenioBaseRecord):
             ),
             cache_key="hierarchy-relation",
         ),
-        hlist=oarepo_vocabularies.records.system_fields.pid_hierarchy_relation.PIDHierarchyRelation(
+        hlist=oarepo_vocabularies.records.system_fields.pid_hierarchy_relation.PIDHierarchyListRelation(
             "hlist",
             keys=["id", "title"],
             pid_field=oarepo_vocabularies_basic.records.api.OARepoVocabularyBasic.pid.with_type_ctx(

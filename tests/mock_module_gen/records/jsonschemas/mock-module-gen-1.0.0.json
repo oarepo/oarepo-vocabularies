@@ -32,18 +32,21 @@
             "type": "string"
         },
         "hlist": {
-            "properties": {
-                "title": {
-                    "type": "object",
-                    "propertyNames": {
-                        "pattern": "^[a-z]{2}$"
-                    },
-                    "additionalProperties": {
-                        "type": "string"
+            "type": "array",
+            "items": {
+                "properties": {
+                    "title": {
+                        "type": "object",
+                        "propertyNames": {
+                            "pattern": "^[a-z]{2}$"
+                        },
+                        "additionalProperties": {
+                            "type": "string"
+                        }
                     }
-                }
-            },
-            "type": "object"
+                },
+                "type": "object"
+            }
         }
     },
     "type": "object"
