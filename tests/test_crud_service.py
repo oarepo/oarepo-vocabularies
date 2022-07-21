@@ -38,7 +38,9 @@ def test_update(lang_type, lang_record, basic_service, identity):
 
 
 def test_delete(lang_type, lang_record, basic_service, identity):
+    OARepoVocabularyBasic.index.refresh()
     basic_service.delete(identity, ("languages", "eng"))
+    OARepoVocabularyBasic.index.refresh()
 
     with pytest.raises(PIDDeletedError):
         basic_service.read(identity, ("languages", "eng"))
