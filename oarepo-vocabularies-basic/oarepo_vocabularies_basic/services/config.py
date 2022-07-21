@@ -3,10 +3,6 @@ from invenio_records_resources.services import (
     RecordServiceConfig as InvenioRecordServiceConfig,
 )
 from invenio_records_resources.services import pagination_links
-from invenio_records_resources.services.records.components import (
-    DataComponent,
-    MetadataComponent,
-)
 from oarepo_vocabularies.services.config import OARepoVocabulariesServiceConfigBase
 from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
 from oarepo_vocabularies_basic.services.permissions import (
@@ -28,6 +24,6 @@ class OARepoVocabulariesBasicServiceConfig(
     search = OARepoVocabulariesBasicSearchOptions
     record_cls = OARepoVocabularyBasic
 
-    components = OARepoVocabulariesServiceConfigBase.components
+    components = [*OARepoVocabulariesServiceConfigBase.components]
 
     model = "oarepo_vocabularies_basic"
