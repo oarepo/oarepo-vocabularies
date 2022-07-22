@@ -1,0 +1,128 @@
+model:
+  oarepo:marshmallow:
+    base-classes: [ "invenio_vocabularies.services.schema.BaseVocabularySchema" ]
+
+  properties:
+    # invenio vocabulary
+    uuid:
+      type: keyword
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+    indexed_at:
+      type: date
+      oarepo:marshmallow:
+        read: false
+        write: false
+
+    created:
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+    updated:
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+    type:
+      properties:
+        pid_type:
+          type: keyword
+        id:
+          type: keyword
+      oarepo:marshmallow: # type is required but is not in invenio base schema, so add here
+        field: ma_fields.Str(required=True, attribute="type.id")
+
+    pid:
+      properties:
+        pk:
+          type: integer
+          oarepo:mapping:
+            type: integer
+        pid_type:
+          type: keyword
+        obj_type:
+          type: keyword
+        status:
+          type: keyword
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+    title_sort:
+      type: keyword
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+    title:
+      type: object
+      propertyNames:
+        pattern: "^[a-z]{2}$"
+      additionalProperties:
+        type: keyword
+      oarepo:mapping:
+        dynamic: true
+        type: object
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+    description:
+      type: object
+      propertyNames:
+        pattern: "^[a-z]{2}$"
+      additionalProperties:
+        type: keyword
+      oarepo:mapping:
+        dynamic: true
+        type: object
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+    icon:
+      type: keyword
+      oarepo:mapping:
+        index: false
+        type: keyword
+      oarepo:marshmallow: # leave invenio-vocabularies default
+        read: false
+        write: false
+
+
+    # hvocabulary
+    hierarchy:
+      type: object
+      oarepo:marshmallow:
+        read: false
+        write: false
+      properties:
+        level:
+          type: integer
+          oarepo:marshmallow:
+            write: false
+            read: false
+
+        path:
+          type: fulltext
+          oarepo:mapping:
+            type: text
+            copy_to: hierarchy_reverse_path
+            analyzer: oarepo_hvocabularies_analyzer
+            search_analyzer: standard
+          oarepo:marshmallow:
+            write: false
+            read: false
+
+        reverse_path:
+          type: fulltext
+          oarepo:mapping:
+            type: text
+            analyzer: oarepo_hvocabularies_reverse_analyzer
+            search_analyzer: standard
+          oarepo:marshmallow:
+            write: false
+            read: false

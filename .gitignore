@@ -10,14 +10,13 @@ __pycache__/
 
 # DS_Store
 .DS_Store/
-.DS_Store
 
 # C extensions
 *.so
 
 # Distribution / packaging
-.venv
 .Python
+.venv*
 env/
 build/
 develop-eggs/
@@ -35,7 +34,6 @@ var/
 *.egg
 Pipfile
 Pipfile.lock
-pyproject.toml
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -71,3 +69,4 @@ target/
 
 # Vim swapfiles
 .*.sw?
+.DS_Store

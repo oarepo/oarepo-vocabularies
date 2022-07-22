@@ -1,0 +1,35 @@
+oarepo:use: [ invenio ]
+
+settings:
+  elasticsearch:
+    templates:
+      v7:
+        settings:
+          analysis:
+            analyzer:
+              oarepo_hvocabularies_analyzer:
+                tokenizer: oarepo_hvocabularies_tokenizer
+              oarepo_hvocabularies_reverse_analyzer:
+                tokenizer: oarepo_hvocabularies_reverse_tokenizer
+
+            tokenizer:
+              oarepo_hvocabularies_tokenizer:
+                type: path_hierarchy
+                delimiter: '/'
+              oarepo_hvocabularies_reverse_tokenizer:
+                type: path_hierarchy
+                reverse: true
+                delimiter: '/'
+  python:
+    record-service-bases: [ "oarepo_vocabularies.services.service.OARepoVocabulariesServiceBase" ]
+    record-service-config-bases: [ "oarepo_vocabularies.services.config.OARepoVocabulariesServiceConfigBase" ]
+    record-search-options-bases: ["oarepo_vocabularies.services.search.OARepoVocabulariesSearchOptionsBase"]
+    record-service-config-generate-links: false
+    generate-record-pid-field: false
+    record-bases: [ "oarepo_vocabularies.records.api.OARepoVocabularyBase" ]
+    record-dumper-bases: [ "oarepo_vocabularies.records.dumper.OARepoVocabularyDumperBase" ]
+    record-metadata-bases: [ "oarepo_vocabularies.records.models.OARepoVocabularyMetadataBase" ]
+    record-dumper-extensions: [ "*OARepoVocabularyBase.dumper_extensions" ]
+    record-resource-config-class-bases: [ "oarepo_vocabularies.resources.config.OARepoVocabulariesResourceConfigBase" ]
+    record-resource-class-bases: [ "oarepo_vocabularies.resources.resource.OARepoVocabulariesResourceBase" ]
+

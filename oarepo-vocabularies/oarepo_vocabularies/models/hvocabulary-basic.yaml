@@ -1,0 +1,33 @@
+oarepo:use: [ "./hvocabulary-basic-model.yaml", "./hvocabulary.yaml" ]
+settings:
+  package: 'oarepo_vocabularies_basic'
+  schema-server: 'local://'
+  collection-url: "/v/"
+  python:
+    record-prefix: 'OARepoVocabulariesBasic'
+    flask-extension-name: 'oarepo-vocabularies-basic'
+    ext-class: 'oarepo_vocabularies_basic.ext.OARepoVocabulariesBasicExt'
+    record-class: 'oarepo_vocabularies_basic.records.api.OARepoVocabularyBasic'
+    create-blueprint-from-app: 'oarepo_vocabularies_basic.views.create_basic_blueprint_from_app'
+
+model:
+  oarepo:marshmallow:
+    class: oarepo_vocabularies_basic.services.schema.OARepoVocabulariesBasicSchema
+
+plugins:
+  builder:
+    disable:
+      - poetry
+      - cookiecutter
+      - invenio_ext_poetry
+      - invenio_sample_app_poetry
+      - invenio_record_metadata_alembic_poetry
+      - invenio_record_metadata_models_poetry
+      - invenio_record_resource_poetry
+      - invenio_record_search_poetry
+      - invenio_record_jsonschemas_poetry
+      - invenio_script_bootstrap
+      - invenio_script_runserver
+      - invenio_script_import_sample_data
+      - script_sample_data
+      - invenio_script_runserver
