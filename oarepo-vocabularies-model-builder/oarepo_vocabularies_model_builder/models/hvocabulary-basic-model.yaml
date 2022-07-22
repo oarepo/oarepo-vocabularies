@@ -7,20 +7,24 @@ model:
     uuid:
       type: keyword
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
     indexed_at:
       type: date
       oarepo:marshmallow:
-        generate: false
+        read: false
+        write: false
 
     created:
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
     updated:
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
     type:
       properties:
@@ -44,12 +48,14 @@ model:
         status:
           type: keyword
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
     title_sort:
       type: keyword
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
     title:
       type: object
@@ -61,7 +67,8 @@ model:
         dynamic: true
         type: object
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
     description:
       type: object
@@ -73,7 +80,8 @@ model:
         dynamic: true
         type: object
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
     icon:
       type: keyword
@@ -81,14 +89,16 @@ model:
         index: false
         type: keyword
       oarepo:marshmallow: # leave invenio-vocabularies default
-        generate: false
+        read: false
+        write: false
 
 
     # hvocabulary
     hierarchy:
       type: object
       oarepo:marshmallow:
-        generate: false        # just in elasticsearch, so no need to have it in marshmallow/API
+        read: false
+        write: false
       properties:
         level:
           type: integer
