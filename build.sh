@@ -7,30 +7,41 @@ cp oarepo-vocabularies/oarepo_vocabularies/version.py oarepo-vocabularies-model-
 
 cp -r oarepo-vocabularies/oarepo_vocabularies/models/*yaml oarepo-vocabularies-model-builder/oarepo_vocabularies_model_builder/models/
 
+test -d dist && rm -rf dist
+
 mkdir dist
 
 # create library distribution
 (
   cd oarepo-vocabularies
+  test -d dist && rm -rf dist
+  cp ../README.rst .
   cat setup.cfg
   python setup.py sdist bdist_wheel
-  cp dist/* ../dist/
+  cp dist/*.tar.gz  ../dist/
+  cp dist/*.whl  ../dist/
 )
 
 # create basic data model entry points and package
 (
   cd oarepo-vocabularies-basic
+  test -d dist && rm -rf dist
+  cp ../README.rst .
   cat setup.cfg
   python setup.py sdist bdist_wheel
-  cp dist/* ../dist/
+  cp dist/*.tar.gz  ../dist/
+  cp dist/*.whl  ../dist/
 )
 
 # create model builder extension package
 (
   cd oarepo-vocabularies-model-builder
+  test -d dist && rm -rf dist
+  cp ../README.rst .
   cat setup.cfg
   python setup.py sdist bdist_wheel
-  cp dist/* ../dist/
+  cp dist/*.tar.gz  ../dist/
+  cp dist/*.whl  ../dist/
 )
 
 # just list created stuff
