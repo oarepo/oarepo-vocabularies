@@ -1,4 +1,16 @@
 {
+  "settings": {
+    "properties": {
+      "oarepo:vocabularies": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string"
+          }
+        }
+      },
+    }
+  },
   "jsonschema-property": {
     "properties": {
       "oarepo:vocabulary": {
