@@ -203,12 +203,19 @@ def lang_record(clean_es, lang_data, lang_type, basic_service, identity):
 
 @pytest.fixture(scope="function")
 def clean_es(app, basic_service, identity):
-    for rec in OARepoVocabularyBasic.index.search().scan():
-        uuid = rec['uuid']
-        OARepoVocabularyBasic.index.connection.delete(
-            OARepoVocabularyBasic.index._name,
-            uuid
-        )
+    try:
+        OARepoVocabularyBasic.index.refresh()
+        for rec in OARepoVocabularyBasic.index.search().scan():
+            uuid = rec['uuid']
+            try:
+                OARepoVocabularyBasic.index.connection.delete(
+                    OARepoVocabularyBasic.index._name,
+                    uuid
+                )
+            except:
+                pass
+    except:
+        pass
 
 
 @pytest.fixture()
