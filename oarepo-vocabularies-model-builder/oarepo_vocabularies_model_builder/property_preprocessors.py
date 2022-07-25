@@ -90,8 +90,8 @@ class VocabularyPreprocessor(PropertyPreprocessor):
         else:
             if '.' in schema_class_name:
                 schema_package, schema_class_name = schema_class_name.rsplit('.', 1)
-                imported_classes[schema_class_name] = \
-                    schema_package + '.' + schema_class_name
+                imported_classes[schema_package + '.' + schema_class_name] = schema_class_name
+
         marshmallow.nested = 'VocabularyRelationField'
         marshmallow.field_args = f'related_field={record}.relations.{field_name}, many={many}'
 
