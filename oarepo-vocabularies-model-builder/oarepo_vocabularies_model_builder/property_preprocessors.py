@@ -26,7 +26,7 @@ class VocabularyPreprocessor(PropertyPreprocessor):
         if not type_:
             raise Exception('Please set type on oarepo:vocabulary element')
         field_path = '.'.join(x.key for x in stack.stack if x.schema_element_type == 'property')
-        field_name = vocabulary_ext.get('name', field_path.split('/')[-1])
+        field_name = vocabulary_ext.get('name', field_path.split('.')[-1])
         # load type_ included model
         schema_name = vocabulary_ext.get('schema') or vocabulary_settings.get('schema', 'hvocabulary-basic')
         included_schema = self.builder.schema.included_schemas[schema_name](self.builder.schema)
