@@ -1,7 +1,7 @@
 from flask import g, abort
 from flask_resources import response_handler, resource_requestctx, route, request_parser, from_conf
 from invenio_records_resources.resources.records.resource import request_view_args, request_data
-from invenio_records_resources.resources.records.utils import es_preference
+from invenio_records_resources.resources.records.utils import search_preference
 from invenio_vocabularies.resources.resource import VocabulariesResource
 from marshmallow import ValidationError
 from flask_babelex import lazy_gettext as _
@@ -61,7 +61,7 @@ class OARepoVocabulariesResourceBase(VocabulariesResource):
             resource_requestctx.view_args["type"],
             resource_requestctx.view_args["pid_value"],
         )
-        item = self.service.ancestors(g.identity, pid_value, with_self=with_self, es_preference=es_preference())
+        item = self.service.ancestors(g.identity, pid_value, with_self=with_self, search_preference=search_preference())
         return item.to_dict(), 200
 
     @request_view_args
@@ -72,7 +72,7 @@ class OARepoVocabulariesResourceBase(VocabulariesResource):
             resource_requestctx.view_args["type"],
             resource_requestctx.view_args["pid_value"],
         )
-        item = self.service.descendants(g.identity, pid_value, with_self=with_self, es_preference=es_preference())
+        item = self.service.descendants(g.identity, pid_value, with_self=with_self, search_preference=search_preference())
         return item.to_dict(), 200
 
     @request_view_args
@@ -83,7 +83,7 @@ class OARepoVocabulariesResourceBase(VocabulariesResource):
             resource_requestctx.view_args["type"],
             resource_requestctx.view_args["pid_value"],
         )
-        item = self.service.children(g.identity, pid_value, with_self=with_self, es_preference=es_preference())
+        item = self.service.children(g.identity, pid_value, with_self=with_self, search_preference=search_preference())
         return item.to_dict(), 200
 
     @request_view_args

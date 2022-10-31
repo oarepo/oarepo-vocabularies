@@ -1,7 +1,7 @@
-from invenio_records.dumpers import ElasticsearchDumper, ElasticsearchDumperExt
+from invenio_records.dumpers import SearchDumper, SearchDumperExt
 
 
-class HierarchyPathExt(ElasticsearchDumperExt):
+class HierarchyPathExt(SearchDumperExt):
     HIERARCHY_ATTR = 'hierarchy'
     HIERARCHY_PATH_ATTR = 'path'
     HIERARCHY_LEVEL_ATTR = 'level'
@@ -20,5 +20,5 @@ class HierarchyPathExt(ElasticsearchDumperExt):
         data.pop(self.HIERARCHY_ATTR, None)
 
 
-class OARepoVocabularyDumperBase(ElasticsearchDumper):
+class OARepoVocabularyDumperBase(SearchDumper):
     pass
