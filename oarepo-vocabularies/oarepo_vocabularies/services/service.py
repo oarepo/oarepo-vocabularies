@@ -26,7 +26,7 @@ class OARepoVocabulariesServiceBase(VocabulariesService):
         else:
             raise NoParentError(id_)
 
-    def ancestors(self, identity, id_=None, with_self=False, es_preference=None, **kwargs):
+    def ancestors(self, identity, id_=None, with_self=False, search_preference=None, **kwargs):
         prev = ''
         type_ = id_[0]
         id_ = id_[1]
@@ -48,7 +48,7 @@ class OARepoVocabulariesServiceBase(VocabulariesService):
         params['id'] = self.record_cls.hierarchy_path.paths_to_id(ancestor_hierarchy_paths)
         params['no_facets'] = True
 
-        return self._hierarchy_search(identity, type_, id_, params, kwargs, es_preference,
+        return self._hierarchy_search(identity, type_, id_, params, kwargs, search_preference,
                                       'self+ancestors' if with_self else 'ancestors')
 
     def _hierarchy_search_no_result(self, identity, type_, id_, params, kwargs, hierarchy_type):
@@ -80,7 +80,7 @@ class OARepoVocabulariesServiceBase(VocabulariesService):
             ),
         )
 
-    def _hierarchy_search(self, identity, type_, id_, params, kwargs, es_preference, hierarchy_type):
+    def _hierarchy_search(self, identity, type_, id_, params, kwargs, search_preference, hierarchy_type):
         self.require_permission(identity, "search")
 
         vocabulary_type = VocabularyType.query.filter_by(id=type_).one()
@@ -89,7 +89,7 @@ class OARepoVocabulariesServiceBase(VocabulariesService):
             "search",
             identity,
             params,
-            es_preference=es_preference,
+            search_preference=search_preference,
             extra_filter=Q("term", type__id=vocabulary_type.id),
             **kwargs
         ).execute()
@@ -113,7 +113,7 @@ class OARepoVocabulariesServiceBase(VocabulariesService):
             ),
         )
 
-    def children(self, identity, id_=None, with_self=False, es_preference=None, **kwargs):
+    def children(self, identity, id_=None, with_self=False, search_preference=None, **kwargs):
         record = self.record_cls.pid.resolve(id_)
         params = {**kwargs}
         if 'sort' not in params:
@@ -127,10 +127,10 @@ class OARepoVocabulariesServiceBase(VocabulariesService):
         }
         params['no_facets'] = True
 
-        return self._hierarchy_search(identity, id_[0], id_[1], params, kwargs, es_preference,
+        return self._hierarchy_search(identity, id_[0], id_[1], params, kwargs, search_preference,
                                       'self+children' if with_self else 'children')
 
-    def descendants(self, identity, id_=None, with_self=False, es_preference=None, **kwargs):
+    def descendants(self, identity, id_=None, with_self=False, search_preference=None, **kwargs):
         params = {**kwargs}
         if 'sort' not in params:
             params['sort'] = 'id'
@@ -141,5 +141,5 @@ class OARepoVocabulariesServiceBase(VocabulariesService):
         }
         params['no_facets'] = True
 
-        return self._hierarchy_search(identity, id_[0], id_[1], params, kwargs, es_preference,
+        return self._hierarchy_search(identity, id_[0], id_[1], params, kwargs, search_preference,
                                       'self+descendants' if with_self else 'descendants')
