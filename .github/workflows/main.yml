@@ -56,7 +56,6 @@ jobs:
 
       - name: Install dependencies from basic-local config
         run: |
-          chmod=+x your_script.sh
           ./local_install.sh
           pip freeze
           docker --version
