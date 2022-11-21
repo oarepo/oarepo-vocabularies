@@ -19,13 +19,9 @@
           "type": {
             "type": "string"
           },
-          "schema": {
-            // schema in which the vocabulary is defined. Defaults to 'hvocabulary-basic'
-            "type": "string"
-          },
-          "keys": {
-            "type": "array",
-            "items": {
+          fields: {
+            type: "array",
+            items: {
               "type": "string"
             }
           }
@@ -34,3 +30,4 @@
     }
   }
 }
+
