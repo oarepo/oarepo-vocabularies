@@ -1,3 +1,5 @@
+
+
 {
   "settings": {
     "properties": {
@@ -19,9 +21,13 @@
           "type": {
             "type": "string"
           },
-          fields: {
-            type: "array",
-            items: {
+          "schema": {
+            // schema in which the vocabulary is defined. Defaults to 'hvocabulary-basic'
+            "type": "string"
+          },
+          "keys": {
+            "type": "array",
+            "items": {
               "type": "string"
             }
           }
@@ -30,4 +36,3 @@
     }
   }
 }
-
