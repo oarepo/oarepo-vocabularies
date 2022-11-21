@@ -87,7 +87,7 @@ class VocabularyPreprocessor(PropertyPreprocessor):
                     schema_class_name = se.key.title()
                     break
             else:
-                schema_class_name = self.stack.top.key.title()
+                schema_class_name = stack.top.key.title()
         else:
             if '.' in schema_class_name:
                 schema_package, schema_class_name = schema_class_name.rsplit('.', 1)
