@@ -1,3 +1,4 @@
+oarepo:use: [ invenio ]
 model:
   oarepo:marshmallow:
     base-classes: [ "invenio_vocabularies.services.schema.BaseVocabularySchema" ]
