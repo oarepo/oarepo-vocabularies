@@ -4,7 +4,9 @@ from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, pr
 from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
 from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.invenio.invenio_record import InvenioRecordBuilder
-
+from oarepo_model_builder.schema import ModelSchema
+import importlib_metadata
+from werkzeug.utils import import_string
 
 class VocabularyPreprocessor(PropertyPreprocessor):
     TYPE = 'vocabulary'
@@ -30,6 +32,16 @@ class VocabularyPreprocessor(PropertyPreprocessor):
         field_name = field_name.replace('-', '_')
         # load type_ included model
         schema_name = vocabulary_ext.get('schema') or vocabulary_settings.get('schema', 'hvocabulary-basic')
+        schema_path = ""
+        for ep in importlib_metadata.entry_points().select(group="oarepo.models"):
+            if ep.name == schema_name:
+                entrypoint = import_string(ep.value)
+                break
+        ModelSchema(file_path="",
+                    content = entrypoint,
+                    loaders=self.schema.loaders,
+                    included_models=self.schema.included_schemas)
+        #
         included_schema = self.builder.schema.included_schemas[schema_name](self.builder.schema)
         included_props = included_schema['model']['properties']
         # insert properties
@@ -62,6 +74,10 @@ class VocabularyPreprocessor(PropertyPreprocessor):
                 'cache_key="' + field_name + '-relation' + '"'
             ]
         }
+        field_type = stack.stack[-2].data.get('type', 'object')
+
+
+
         included_marshmallow = copy.deepcopy(included_schema['model'].get('oarepo:marshmallow'), {})
         # remove base classes as we do not want the schema to inherit from invenio vocabulary schema,
         # because it brings problems when array serialization of ancestors is loaded via load()->clean()
@@ -93,9 +109,14 @@ class VocabularyPreprocessor(PropertyPreprocessor):
                 schema_package, schema_class_name = schema_class_name.rsplit('.', 1)
                 imported_classes[schema_package + '.' + schema_class_name] = schema_class_name
 
-        marshmallow.nested = 'VocabularyRelationField'
-        marshmallow.field_args = f'related_field={record}.relations.{field_name}, many={many}'
+        marshmallow['nested'] = 'VocabularyRelationField'
+        marshmallow['field_args'] = f'related_field={record}.relations.{field_name}, many={many}'
+        if field_type != 'array':
+            try:
 
+                data = {'type': 'array', 'data': data}
+            except ReplaceElement as e:
+                data = e
     def _force_generate_field(self, props, field_name, field=None):
         om = props.get(field_name, {}).get('oarepo:marshmallow', None)
         if om:
