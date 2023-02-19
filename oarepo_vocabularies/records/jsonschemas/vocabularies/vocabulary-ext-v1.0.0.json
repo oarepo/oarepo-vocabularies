@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "local://vocabularies/vocabulary-ext-v1.0.0.json",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "$ref": "local://definitions-v1.0.0.json#/$schema"
+    },
+    "description": {
+      "type": "object",
+      "description": "Description of vocabulary item. Key are locale codes.",
+      "patternProperties": {
+        "^[a-z]{2}$": {
+          "type": "string"
+        }
+      }
+    },
+    "icon": {
+      "$ref": "local://vocabularies/definitions-v1.0.0.json#/icon"
+    },
+    "id": {
+      "$ref": "local://definitions-v1.0.0.json#/identifier"
+    },
+    "pid": {
+      "$ref": "local://definitions-v1.0.0.json#/internal-pid"
+    },
+    "props": {
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "string"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "title": {
+      "$ref": "local://vocabularies/definitions-v1.0.0.json#/title"
+    },
+    "type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "pid_type": {
+          "type": "string"
+        }
+      }
+    },
+    "hierarchy": {
+      "type": "object",
+      "description": "Hierarchy management"
+    },
+    "custom_fields": {
+      "type": "object",
+      "description": "Configured additional metadata"
+    }
+  }
+}
