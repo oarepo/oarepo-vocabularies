@@ -1,4 +1,4 @@
-# OARepo taxonomies
+# OARepo vocabularies
 
 This is an extension of invenio vocabularies that allows:
 
@@ -7,12 +7,16 @@ This is an extension of invenio vocabularies that allows:
 
 ## Installation
 
-Add `oarepo-runtime`, `oarepo-taxonomies` to your virtualenv an set up the following in your `invenio.cfg`:
+Add `oarepo-runtime`, `oarepo-vocabularies` to your virtualenv an set up the following in your `invenio.cfg`:
 
 ```python
-from oarepo_taxonomies.services.config import TaxonomiesConfig
-from oarepo_taxonomies.resources.config import TaxonomiesResourceConfig
+from oarepo_vocabularies.services.config import VocabulariesConfig
+from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
 
-VOCABULARIES_SERVICE_CONFIG = TaxonomiesConfig
-VOCABULARIES_RESOURCE_CONFIG = TaxonomiesResourceConfig
+VOCABULARIES_SERVICE_CONFIG = VocabulariesConfig
+VOCABULARIES_RESOURCE_CONFIG = VocabulariesResourceConfig
 ```
+
+## Documentation
+
+See [NRP documentation](https://narodni-repozitar.github.io/developer-docs/docs/technology/invenio/nrp-toolchain/plugins/vocabularies) for more details.

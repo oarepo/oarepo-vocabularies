@@ -1,0 +1,3 @@
+exclude tests/*
+include oarepo_vocabularies/**/*.yaml
+include oarepo_vocabularies/**/*.json
