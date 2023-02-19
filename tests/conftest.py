@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 National Library of Technology, Prague.
+# Copyright (C) 2020 CERN.
+# Copyright (C) 2021 TU Wien.
 #
-# OARepo-Vocabularies is free software; you can redistribute it and/or
+# Invenio-Vocabularies is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
-#
-# Adopted from invenio-vocabularies
-#
 
 """Pytest configuration.
 
@@ -20,14 +18,6 @@ fixtures are available.
 # 2.1. Flask-Login v0.6.0 (yet to be released at the time of writing) fixes the
 # issue. Once we depend on Flask-Login v0.6.0 as the minimal version in
 # Flask-Security-Invenio/Invenio-Accounts we can remove this patch again.
-from invenio_records_resources.resources import RecordResource
-
-from oarepo_vocabularies_basic.records.api import OARepoVocabularyBasic
-from oarepo_vocabularies.datastreams.excel import ExcelReader
-from oarepo_vocabularies.datastreams.hierarchy import HierarchyTransformer
-from tests.mock_module.resources import MockResourceConfig
-from tests.mock_module.services import MockService, MockServiceConfig
-
 try:
     # Werkzeug <2.1
     from werkzeug import security
@@ -41,6 +31,9 @@ except AttributeError:
 
     security.safe_str_cmp = hmac.compare_digest
 
+
+from collections import namedtuple
+import json
 import pytest
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
@@ -49,10 +42,13 @@ from invenio_access.permissions import ActionUsers, any_user, system_process
 from invenio_access.proxies import current_access
 from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
-from invenio_app.factory import create_api as _create_api
+from invenio_app.factory import create_api as _create_api, create_app as _create_app
 from invenio_cache import current_cache
+
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
+
+from pytest_invenio.fixtures import _search_create_indexes, _search_delete_indexes
 
 pytest_plugins = ("celery.contrib.pytest",)
 
@@ -66,20 +62,7 @@ def h():
 @pytest.fixture(scope="module")
 def extra_entry_points():
     """Extra entry points to load the mock_module features."""
-    return {
-        "invenio_db.models": [
-            "mock_module = tests.mock_module.models",
-            "mock_module_gen = mock_module_gen.records.models",
-        ],
-        "invenio_jsonschemas.schemas": [
-            "mock_module = tests.mock_module.jsonschemas",
-            "mock_module_gen = mock_module_gen.records.jsonschemas",
-        ],
-        "invenio_search.mappings": [
-            "records = tests.mock_module.mappings",
-            "mock_module_gen = mock_module_gen.records.mappings",
-        ],
-    }
+    return {}
 
 
 @pytest.fixture(scope="module")
@@ -87,26 +70,38 @@ def app_config(app_config):
     """Mimic an instance's configuration."""
     app_config["JSONSCHEMAS_HOST"] = "localhost"
     app_config["BABEL_DEFAULT_LOCALE"] = "en"
-    app_config["I18N_LANGUAGES"] = [("cs", "Czech")]
+    app_config["I18N_LANGUAGES"] = [("da", "Danish")]
     app_config[
         "RECORDS_REFRESOLVER_CLS"
     ] = "invenio_records.resolver.InvenioRefResolver"
     app_config[
         "RECORDS_REFRESOLVER_STORE"
     ] = "invenio_jsonschemas.proxies.current_refresolver_store"
-    app_config['VOCABULARIES_DATASTREAM_READERS'] = {
-        "excel": ExcelReader,
-    }
-    app_config['VOCABULARIES_DATASTREAM_TRANSFORMERS'] = {
-        "hierarchy": HierarchyTransformer,
-    }
+
+    # note: This line must always be added to the invenio.cfg file
+    from oarepo_vocabularies.services.config import VocabulariesConfig
+    from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
+
+    app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
+    app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
+
+    from invenio_records_resources.services.custom_fields.text import KeywordCF
+    from tests.customfields import RelatedURICF, NonPreferredLabelsCF, HintCF
+
+    app_config["OAREPO_VOCABULARIES_CUSTOM_CF"] = [
+        KeywordCF("blah"),
+        RelatedURICF("relatedURI"),
+        HintCF("hint"),
+        NonPreferredLabelsCF("nonpreferredLabels"),
+    ]
+
     return app_config
 
 
 @pytest.fixture(scope="module")
 def create_app(instance_path, entry_points):
     """Application factory fixture."""
-    return _create_api
+    return _create_app
 
 
 @pytest.fixture(scope="module")
@@ -129,15 +124,9 @@ def identity():
 
 
 @pytest.fixture(scope="module")
-def basic_service(app):
+def service(app):
     """Vocabularies service object."""
-    return app.extensions["oarepo-vocabularies-basic"].service
-
-
-@pytest.fixture(scope="module")
-def full_service(app):
-    """Vocabularies service object."""
-    return app.extensions["oarepo-vocabularies-full"].service
+    return app.extensions["invenio-vocabularies"].service
 
 
 @pytest.fixture()
@@ -148,74 +137,32 @@ def lang_type(db):
     return v
 
 
-@pytest.fixture()
-def hierarchy_type(db):
-    """Get a language vocabulary type."""
-    v = VocabularyType.create(id="hierarchy", pid_type="hier")
-    db.session.commit()
-    return v
-
-
 @pytest.fixture(scope="function")
 def lang_data():
     """Example data."""
     return {
         "id": "eng",
-        "title": {"en": "English", "cs": "Angličtina"},
-        "description": {"en": "English description", "cs": "Anglický popis"},
+        "title": {"en": "English", "da": "Engelsk"},
+        "description": {"en": "English description", "da": "Engelsk beskrivelse"},
         "icon": "file-o",
+        "props": {
+            "akey": "avalue",
+        },
+        "tags": ["recommended"],
         "type": "languages",
     }
 
 
 @pytest.fixture(scope="function")
-def hierarchy_data():
-    ret = []
-    for i in ['c', 'b', 'a']:
-        for j in [None, 'c', 'b', 'a']:
-            for k in [None, 'c', 'b', 'a']:
-                if j is None and k is not None:
-                    continue
-                ret.append({
-                    'id': '/'.join(x for x in (i, j, k) if x),
-                    'title': {
-                        'en': '-'.join(x for x in (i, j, k) if x)
-                    }
-                })
-    return ret
-
-
-@pytest.fixture(scope="function")
-def hierarchy_records(clean_es, hierarchy_data, basic_service, identity, hierarchy_type):
-    records = {}
-    for d in hierarchy_data:
-        records[d['id']] = basic_service.create(identity, {
-            **d,
-            'type': 'hierarchy'
-        })
-    return records
-
-
-@pytest.fixture(scope="function")
-def lang_record(clean_es, lang_data, lang_type, basic_service, identity):
-    return basic_service.create(identity, lang_data)
-
-
-@pytest.fixture(scope="function")
-def clean_es(app, basic_service, identity):
-    try:
-        OARepoVocabularyBasic.index.refresh()
-        for rec in OARepoVocabularyBasic.index.search().scan():
-            uuid = rec['uuid']
-            try:
-                OARepoVocabularyBasic.index.connection.delete(
-                    OARepoVocabularyBasic.index._name,
-                    uuid
-                )
-            except:
-                pass
-    except:
-        pass
+def lang_data_child():
+    """Example data."""
+    return {
+        "id": "eng.US",
+        "title": {"en": "English (US)", "da": "Engelsk (US)"},
+        "icon": "file-o",
+        "type": "languages",
+        "hierarchy": {"parent": "eng"},
+    }
 
 
 @pytest.fixture()
@@ -245,7 +192,7 @@ def example_record(db, identity, service, example_data):
 
 
 @pytest.fixture(scope="function")
-def lang_data_many(lang_type, lic_type, lang_data, service, identity):
+def lang_data_many(lang_type, lang_data, service, identity):
     """Create many language vocabulary."""
     lang_ids = ["fr", "tr", "gr", "ger", "es"]
     data = dict(lang_data)
@@ -307,30 +254,56 @@ def cache():
 
 
 @pytest.fixture()
-def mock_service(app):
-    return MockService(MockServiceConfig())
+def vocab_cf(app, db, cache):
+    from oarepo_runtime.cf.mappings import prepare_cf_indices
+
+    prepare_cf_indices()
 
 
-@pytest.fixture()
-def mock_gen_service(app):
-    from mock_module_gen.services.service import MockModuleGenService
-    from mock_module_gen.services.config import MockModuleGenServiceConfig
-    return MockModuleGenService(MockModuleGenServiceConfig())
+@pytest.fixture
+def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf):
+    from invenio_vocabularies.proxies import current_service as vocab_service
+    from invenio_access.permissions import system_identity
 
-
-@pytest.fixture()
-def mock_resource(mock_service, app):
-    resource = RecordResource(MockResourceConfig(), mock_service)
-    blueprint = resource.as_blueprint()
-    app.register_blueprint(blueprint)
-    return resource
-
-
-@pytest.fixture()
-def mock_gen_resource(mock_gen_service, app):
-    from mock_module_gen.resources.resource import MockModuleGenResource
-    from mock_module_gen.resources.config import MockModuleGenResourceConfig
-    resource = MockModuleGenResource(MockModuleGenResourceConfig(), mock_gen_service)
-    blueprint = resource.as_blueprint()
-    app.register_blueprint(blueprint)
-    return resource
+    parent = vocab_service.create(system_identity, lang_data)
+    child_1 = vocab_service.create(
+        system_identity,
+        {
+            "id": "eng.US",
+            "title": {"en": "English (US)", "da": "Engelsk (US)"},
+            "icon": "file-o",
+            "type": "languages",
+            "hierarchy": {"parent": "eng"},
+        },
+    )
+    child_2 = vocab_service.create(
+        system_identity,
+        {
+            "id": "eng.UK",
+            "title": {"en": "English (UK)", "da": "Engelsk (UK)"},
+            "icon": "file-o",
+            "type": "languages",
+            "hierarchy": {"parent": "eng"},
+        },
+    )
+    grand_child_2_1 = vocab_service.create(
+        system_identity,
+        {
+            "id": "eng.UK.S",
+            "title": {"en": "English (UK, Scotland)", "da": "Engelsk (UK, Scotland)"},
+            "icon": "file-o",
+            "type": "languages",
+            "hierarchy": {"parent": "eng.UK"},
+        },
+    )
+    Vocabulary.index.refresh()
+    TN = namedtuple("TN", "node,children")
+    return [
+        TN(
+            parent.data,
+            children=[
+                TN(child_1.data, children=[]),
+                TN(child_2.data, children=[TN(grand_child_2_1.data, children=[])]),
+            ],
+        )
+    ]
