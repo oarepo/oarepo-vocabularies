@@ -23,4 +23,4 @@ class OARepoVocabularies(object):
                 app.config.setdefault(k, getattr(config, k))
 
     def init_resource(self, app):
-        print("No special service yet")
+        pass
