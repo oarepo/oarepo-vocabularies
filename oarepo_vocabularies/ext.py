@@ -21,6 +21,10 @@ class OARepoVocabularies(object):
         for k in dir(config):
             if k.startswith("OAREPO_VOCABULARIES_"):
                 app.config.setdefault(k, getattr(config, k))
+            if k.startswith("DEFAULT_DATASTREAMS_"):
+                app.config.setdefault(k, {}).update(getattr(config, k))
+            if k.startswith("DATASTREAMS_CONFIG_GENERATOR_"):
+                app.config.setdefault(k, getattr(config, k))
 
     def init_resource(self, app):
         pass
