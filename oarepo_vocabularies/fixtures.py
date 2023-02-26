@@ -1,7 +1,7 @@
+from invenio_db import db
 from invenio_vocabularies.records.api import VocabularyType
 from oarepo_runtime.datastreams.readers.service import ServiceReader
 from oarepo_runtime.datastreams.writers.service import ServiceWriter, StreamEntry
-from invenio_db import db
 
 
 def vocabularies_generator(service_id):

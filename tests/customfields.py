@@ -1,5 +1,5 @@
-from invenio_records_resources.services.custom_fields import BaseCF
 import marshmallow as ma
+from invenio_records_resources.services.custom_fields import BaseCF
 from invenio_vocabularies.services.schema import i18n_strings
 
 

@@ -1,9 +1,4 @@
 from oarepo_runtime.cli import oarepo
-from flask.cli import with_appcontext
-from oarepo_vocabularies.fixtures.fixtures import PrioritizedVocabulariesFixtures
-import click
-from invenio_access.permissions import system_identity
-from invenio_vocabularies.records.api import Vocabulary
 
 
 @oarepo.group(name="vocabularies", help="Vocabularies tools.")

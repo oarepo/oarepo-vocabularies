@@ -1,5 +1,6 @@
-import openpyxl
 import re
+
+import openpyxl
 from unidecode import unidecode
 
 # nasty

@@ -33,7 +33,7 @@ except AttributeError:
 
 
 from collections import namedtuple
-import json
+
 import pytest
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
@@ -42,13 +42,10 @@ from invenio_access.permissions import ActionUsers, any_user, system_process
 from invenio_access.proxies import current_access
 from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
-from invenio_app.factory import create_api as _create_api, create_app as _create_app
+from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
-
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
-
-from pytest_invenio.fixtures import _search_create_indexes, _search_delete_indexes
 
 pytest_plugins = ("celery.contrib.pytest",)
 
@@ -79,14 +76,15 @@ def app_config(app_config):
     ] = "invenio_jsonschemas.proxies.current_refresolver_store"
 
     # note: This line must always be added to the invenio.cfg file
-    from oarepo_vocabularies.services.config import VocabulariesConfig
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
+    from oarepo_vocabularies.services.config import VocabulariesConfig
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
-    from tests.customfields import RelatedURICF, NonPreferredLabelsCF, HintCF
+
+    from tests.customfields import HintCF, NonPreferredLabelsCF, RelatedURICF
 
     app_config["OAREPO_VOCABULARIES_CUSTOM_CF"] = [
         KeywordCF("blah"),
@@ -262,8 +260,8 @@ def vocab_cf(app, db, cache):
 
 @pytest.fixture
 def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf):
-    from invenio_vocabularies.proxies import current_service as vocab_service
     from invenio_access.permissions import system_identity
+    from invenio_vocabularies.proxies import current_service as vocab_service
 
     parent = vocab_service.create(system_identity, lang_data)
     child_1 = vocab_service.create(

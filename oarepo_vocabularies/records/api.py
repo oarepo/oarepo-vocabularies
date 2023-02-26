@@ -1,8 +1,8 @@
-from invenio_vocabularies.records.api import Vocabulary as InvenioVocabulary
 from invenio_records.dumpers import SearchDumper
 from invenio_records.dumpers.indexedat import IndexedAtDumperExt
+from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.dumpers import CustomFieldsDumperExt
-from invenio_records.systemfields import ConstantField, DictField
+from invenio_vocabularies.records.api import Vocabulary as InvenioVocabulary
 from oarepo_runtime.cf import CustomFields, InlinedCustomFields
 
 

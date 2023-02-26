@@ -1,10 +1,7 @@
 from pathlib import Path
-from invenio_access.permissions import system_identity
-
-from oarepo_runtime.datastreams.fixtures import load_fixtures
 
 from invenio_vocabularies.records.api import Vocabulary
-from invenio_vocabularies.proxies import current_service
+from oarepo_runtime.datastreams.fixtures import load_fixtures
 
 
 def test_complex_import_export(app, db, cache, vocab_cf):

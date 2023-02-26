@@ -1,13 +1,9 @@
+from invenio_records_resources.services import Link
 from invenio_vocabularies.services import VocabulariesServiceConfig
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schemas import VocabularySchema
-from invenio_records_resources.services import (
-    Link,
-    LinksTemplate,
-)
-
 from oarepo_vocabularies.services.search import VocabularySearchOptions
 
 

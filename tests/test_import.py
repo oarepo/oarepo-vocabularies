@@ -1,12 +1,11 @@
-from pathlib import Path
-from invenio_access.permissions import system_identity
-
-from oarepo_runtime.datastreams.fixtures import load_fixtures, dump_fixtures
-
-from invenio_vocabularies.records.api import Vocabulary
-from invenio_vocabularies.proxies import current_service
 import tempfile
+from pathlib import Path
+
 import yaml
+from invenio_access.permissions import system_identity
+from invenio_vocabularies.proxies import current_service
+from invenio_vocabularies.records.api import Vocabulary
+from oarepo_runtime.datastreams.fixtures import dump_fixtures, load_fixtures
 
 
 def read_yaml(fp):

@@ -1,9 +1,10 @@
 from functools import partial
+
+from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from marshmallow_utils.fields import NestedAttribute
-from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
 
 
