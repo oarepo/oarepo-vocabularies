@@ -1,8 +1,9 @@
-- id: en
-  title:
-    en: "English"
-- id: en.US
-  title:
-    en: "English (US)"
-  hierarchy:
-   parent: en
+id: en
+title:
+  en: "English"
+---
+id: en.US
+title:
+  en: "English (US)"
+hierarchy:
+ parent: en

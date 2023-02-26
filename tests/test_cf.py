@@ -1,5 +1,5 @@
-from invenio_vocabularies.proxies import current_service as vocab_service
 from invenio_access.permissions import system_identity
+from invenio_vocabularies.proxies import current_service as vocab_service
 
 
 def test_extra_cf(app, db, cache, lang_type, vocab_cf):

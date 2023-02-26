@@ -1,6 +1,8 @@
 from invenio_vocabularies.resources.resource import (
-    VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
     VocabulariesResourceConfig as InvenioVocabulariesResourceConfig,
+)
+from invenio_vocabularies.resources.resource import (
+    VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
 from marshmallow import fields
 

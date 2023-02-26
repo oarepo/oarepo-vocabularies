@@ -1,9 +1,7 @@
-from invenio_records_resources.services.custom_fields.mappings import Mapping
-from invenio_records_resources.services.custom_fields.text import KeywordCF
-from invenio_records_resources.services.custom_fields.number import IntegerCF
 from invenio_records_resources.services.custom_fields.base import BaseCF
+from invenio_records_resources.services.custom_fields.number import IntegerCF
+from invenio_records_resources.services.custom_fields.text import KeywordCF
 from invenio_vocabularies.services.schema import i18n_strings
-
 from marshmallow import fields as ma_fields
 
 

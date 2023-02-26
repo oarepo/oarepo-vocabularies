@@ -1,4 +1,7 @@
+import re
+
 import openpyxl
+from unidecode import unidecode
 
 # nasty
 rowidx = 0
@@ -57,7 +60,7 @@ try:
                 continue
 
             level = int(row[0])
-            slug = row[1]
+            slug = re.sub(r"\W+", "-", row[2].lower().strip())
             while level <= len(stack):
                 stack.pop()
             if stack:
@@ -86,7 +89,7 @@ try:
                 base = short_id
             else:
                 base = id
-
+            id = unidecode(id.lower())
             assert id not in ids
 
             print(id, str(row[7] or slug))

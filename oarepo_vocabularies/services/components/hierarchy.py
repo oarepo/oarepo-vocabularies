@@ -1,7 +1,8 @@
-from invenio_records_resources.services.records.components import ServiceComponent
 from flask import current_app
-from ..custom_fields.hierarchy import HierarchyCF
+from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service
+
+from ..custom_fields.hierarchy import HierarchyCF
 
 
 class HierarchyComponent(ServiceComponent):
