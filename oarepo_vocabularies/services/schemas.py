@@ -1,9 +1,12 @@
 from functools import partial
 
+import marshmallow as ma
 from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
+from invenio_vocabularies.services.schema import i18n_strings
+from marshmallow import fields as ma_fields
 from marshmallow_utils.fields import NestedAttribute
 from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
 
@@ -16,3 +19,12 @@ class VocabularySchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class HierarchySchema(ma.Schema):
+    """HierarchySchema schema."""
+
+    parent = ma_fields.String()
+    level = ma_fields.Integer()
+    title = ma_fields.List(i18n_strings)
+    ancestors = ma_fields.List(ma_fields.String())
