@@ -24,8 +24,8 @@ def vocabularies_generator(service_id):
 
 
 class VocabularyReader(ServiceReader):
-    def __init__(self, log, *, vocabulary=None, identity=None, **kwargs):
-        super().__init__(log, service="vocabularies", identity=identity, **kwargs)
+    def __init__(self, *, vocabulary=None, identity=None, **kwargs):
+        super().__init__(service="vocabularies", identity=identity, **kwargs)
         self.vocabulary = vocabulary
 
     def __iter__(self):
@@ -41,7 +41,6 @@ class VocabularyReader(ServiceReader):
 class VocabularyWriter(ServiceWriter):
     def __init__(
         self,
-        log,
         *,
         vocabulary=None,
         pid_type=None,
@@ -50,7 +49,7 @@ class VocabularyWriter(ServiceWriter):
         **kwargs,
     ):
         super().__init__(
-            log, service="vocabularies", identity=identity, update=update, **kwargs
+            service="vocabularies", identity=identity, update=update, **kwargs
         )
         self.vocabulary = vocabulary
         self.pid_type = pid_type
