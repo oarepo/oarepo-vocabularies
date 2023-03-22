@@ -1,0 +1,19 @@
+{%- macro render_vocabulary_item(arg) -%}
+<span class='vocabulary'>{{ arg.title }}</span>
+{%- endmacro -%}
+
+{%- macro render_taxonomy_item(arg) -%}
+<span class='taxonomy'>
+{%- for title in arg.hierarchy.titles -%}
+    <span class='vocabulary'>{{ title }}</span>
+    {%- if not loop.last -%}
+      {%- value ui=1 component="taxonomy_separator" -%}
+    {%- endif -%}
+{%- endfor -%}
+</span>
+{%- endmacro -%}
+
+{%- macro render_taxonomy_separator(arg) -%}
+{%- if arg -%}<span class='taxonomy_separator'> &gt; </span>{%- endif -%}
+{%- endmacro -%}
+
