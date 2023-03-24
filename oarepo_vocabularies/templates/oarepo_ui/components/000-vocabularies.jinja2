@@ -4,7 +4,7 @@
 
 {%- macro render_taxonomy_item(arg) -%}
 <span class='taxonomy'>
-{%- for title in arg.hierarchy.titles -%}
+{%- for title in arg.hierarchy.title -%}
     <span class='vocabulary'>{{ title }}</span>
     {%- if not loop.last -%}
       {%- value ui=1 component="taxonomy_separator" -%}
