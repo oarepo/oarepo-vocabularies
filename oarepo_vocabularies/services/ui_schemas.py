@@ -9,7 +9,7 @@ class I18nStrUIField(ma_fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
             return None
-        locale = get_locale()
+        locale = get_locale().language
         if locale in value:
             return value[locale]
         locale = current_app.config["BABEL_DEFAULT_LOCALE"]
