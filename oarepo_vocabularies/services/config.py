@@ -12,8 +12,17 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     schema = VocabularySchema
     search = VocabularySearchOptions
     components = [*VocabulariesServiceConfig.components, HierarchyComponent]
+    url_prefix = "/vocabularies/"
     links_item = {
         **VocabulariesServiceConfig.links_item,
+        "vocabulary": Link(
+            "{+api}/vocabularies/{type}",
+            vars=lambda record, vars: vars.update(
+                {
+                    "type": record.type.id,
+                }
+            ),
+        ),
         "parent": Link(
             "{+api}/vocabularies/{type}/{parent}",
             vars=lambda record, vars: vars.update(

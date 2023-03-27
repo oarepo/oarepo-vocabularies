@@ -1,0 +1,88 @@
+# Czech translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-03-27 15:27+0200\n"
+"PO-Revision-Date: 2023-03-27 15:30+0200\n"
+"Last-Translator: \n"
+"Language-Team: cs <LL@li.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
+"Generated-By: Babel 2.11.0\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:4
+msgid "Export"
+msgstr "Export"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:49
+msgid "Links"
+msgstr "Odkazy"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:64
+msgid "API"
+msgstr "API"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
+msgid "vocabulary.vocabulary"
+msgstr "Slovník"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:3
+msgid "created.label"
+msgstr "Datum vytvoření"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:4
+msgid "updated.label"
+msgstr "Datum poslední změny"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:7
+msgid "links.vocabulary"
+msgstr "Položky slovníku"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:8
+msgid "links.children"
+msgstr "Detailní položky (přímé)"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:9
+msgid "links.descendants"
+msgstr "Detailní položky (všechny)"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:10
+msgid "links.parent"
+msgstr "Nadřazená položka"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:11
+msgid "links.ancestors"
+msgstr "Nadřazené položky"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:12
+msgid "api.self"
+msgstr "Tato položka"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:13
+msgid "api.vocabulary"
+msgstr "Položky slovníku"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:14
+msgid "api.children"
+msgstr "Detailní položky (přímé)"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:15
+msgid "api.descendants"
+msgstr "Detailní položky (všechny)"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:16
+msgid "api.parent"
+msgstr "Nadřazená položka"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
+msgid "api.ancestors"
+msgstr "Nadřazené položky"

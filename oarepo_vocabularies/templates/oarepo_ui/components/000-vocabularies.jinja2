@@ -1,11 +1,11 @@
 {%- macro render_vocabulary_item(arg) -%}
-<a href="/vocabulary/{{arg.type}}/{{arg.id}}"><i class="icon align justify"></i></a> <span class='vocabulary'>{{ arg.title }}</span>
+<a href="/vocabularies/{{arg.type}}/{{arg.id}}"><i class="icon align justify"></i></a> <span class='vocabulary'>{{ arg.title }}</span>
 {%- endmacro -%}
 
 {%- macro render_taxonomy_item(arg) -%}
 <span class='taxonomy'>
 {%- for title in arg.hierarchy.title -%}
-<a href="/vocabulary/{{arg.type}}/{{arg.id}}"><i class="icon align justify"></i></a> <span class='vocabulary'>{{ title }}</span>
+<a href="/vocabularies/{{arg.type}}/{{arg.id}}"><i class="icon align justify"></i></a> <span class='vocabulary'>{{ title }}</span>
     {%- if not loop.last -%}
       {%- value ui=1, component="taxonomy_separator" -%}
     {%- endif -%}
