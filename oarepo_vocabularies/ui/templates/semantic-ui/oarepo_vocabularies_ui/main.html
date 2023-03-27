@@ -1,0 +1,42 @@
+<!-- place your record detail main content in here ... -->
+<h1 style="margin-bottom: 1em">{%- value "title" -%}</h1>
+<dl class="ui very basic table">
+  <dt>{{ _('vocabulary.vocabulary') }}</dt>
+  <dd>
+    <a href="/vocabularies/{{data.type}}">{{ _("vocabulary." + data.type) }}</a>
+  </dd>
+  {% for l in (data.nonpreferredLabels or []) %}
+  {% if l.en %}
+    <dt>{{_("vocabulary.nonpreferredLabels_en")}}</dt>
+    <dd>{{l.en}}</dd>
+  {% endif %}
+  {% endfor %}
+  {% for l in (data.nonpreferredLabels or []) %}
+  {% if l.cs %}
+    <dt>{{_("vocabulary.nonpreferredLabels_cs")}}</dt>
+    <dd>{{l.cs}}</dd>
+  {% endif %}
+  {% endfor %}
+
+  {% for prop, val in (data.props or {}).items() %}
+  <dt>{{_("vocabulary." + prop)}}</dt>
+  <dd>{{val}}</dd>
+  {% endfor %} 
+  {% field "created" %} 
+  {% field "updated" %}
+  {% if 'hint' in data and data.hint.cs %}
+  <dt>{{_("vocabulary.hint_cs")}}</dt>
+  <dd>{{data.hint.cs}}</dd>
+  {% endif %}
+  {% if 'hint' in data and data.hint.en %}
+  <dt>{{_("vocabulary.hint_en")}}</dt>
+  <dd>{{data.hint.en}}</dd>
+  {% endif %}
+  {% if data.relatedURI %}
+  {% for t in data.relatedURI.items() %}
+    <dt>{{_("vocabulary.relatedURI_" + t.0)}}</dt>
+    <dd>{{t.1}}</dd>
+  {% endfor %}
+  {% endif %}
+
+</dl>

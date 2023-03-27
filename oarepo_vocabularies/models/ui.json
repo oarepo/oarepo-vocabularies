@@ -1,0 +1,72 @@
+{
+  "children": {
+    "id": {
+      "marshmallow": {
+        "field-class": "ma_fields.String",
+        "write": false,
+        "read": false
+      },
+      "detail": "keyword",
+      "input": "keyword",
+      "help": "id.help",
+      "label": "id.label",
+      "hint": "id.hint"
+    },
+    "created": {
+      "marshmallow": {
+        "field-class": "l10n.LocalizedDate",
+        "write": false,
+        "read": false
+      },
+      "detail": "date",
+      "input": "date",
+      "help": "created.help",
+      "label": "created.label",
+      "hint": "created.hint"
+    },
+    "updated": {
+      "marshmallow": {
+        "field-class": "l10n.LocalizedDate",
+        "write": false,
+        "read": false
+      },
+      "detail": "date",
+      "input": "date",
+      "help": "updated.help",
+      "label": "updated.label",
+      "hint": "updated.hint"
+    },
+    "$schema": {
+      "marshmallow": {
+        "field-class": "ma_fields.String",
+        "write": false,
+        "read": false
+      },
+      "detail": "keyword",
+      "input": "keyword",
+      "help": "$schema.help",
+      "label": "$schema.label",
+      "hint": "$schema.hint"
+    },
+    "description": {
+      "detail": "html"
+    },
+    "icon": {
+      "detail": "icon"
+    },
+    "props": {
+      "detail": "vocabulary_props"
+    },
+    "tags": {
+      "detail": "array",
+      "children": {
+        "item": {
+          "detail": "string"
+        }
+      }
+    },
+    "title": {
+      "detail": "string"
+    }
+  }
+}

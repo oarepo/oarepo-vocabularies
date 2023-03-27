@@ -1,8 +1,16 @@
 import marshmallow as ma
-from invenio_vocabularies.services.schema import i18n_strings
 from marshmallow import fields as ma_fields
 from flask_babelex import get_locale
 from flask import current_app
+from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
+from invenio_vocabularies.services.schema import (
+    VocabularySchema as InvenioVocabularySchema,
+)
+from marshmallow import fields as ma_fields
+from marshmallow_utils.fields import NestedAttribute
+from functools import partial
+from invenio_records_resources.services.custom_fields import CustomFieldsSchema
+from oarepo_runtime.ui.marshmallow import LocalizedDateTime
 
 
 class I18nStrUIField(ma_fields.Field):
@@ -25,3 +33,19 @@ class HierarchyUISchema(ma.Schema):
     level = ma_fields.Integer()
     title = ma_fields.List(I18nStrUIField())
     ancestors = ma_fields.List(ma_fields.String())
+
+
+class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):
+    CUSTOM_FIELDS_VAR = "OAREPO_VOCABULARIES_CUSTOM_CF"
+    hierarchy = NestedAttribute(
+        partial(CustomFieldsSchema, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    created = LocalizedDateTime(dump_only=True)
+    updated = LocalizedDateTime(dump_only=True)
+    links = ma.fields.Raw(dump_only=True)
+    title = I18nStrUIField()
+    type = ma.fields.Raw(dump_only=True)
