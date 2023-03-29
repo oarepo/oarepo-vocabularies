@@ -7,3 +7,6 @@ recursive-include oarepo_vocabularies *.less
 recursive-include oarepo_vocabularies *.js
 recursive-include oarepo_vocabularies *.overrides
 recursive-include oarepo_vocabularies *.variables
+recursive-include oarepo_vocabularies *.po
+recursive-include oarepo_vocabularies *.mo
+recursive-include oarepo_vocabularies *.pot
