@@ -13,7 +13,7 @@ from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from oarepo_runtime.ui.marshmallow import LocalizedDateTime
 
 
-class I18nStrUIField(ma_fields.Field):
+class VocabularyI18nStrUIField(ma_fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
             return None
@@ -31,7 +31,7 @@ class HierarchyUISchema(ma.Schema):
 
     parent = ma_fields.String()
     level = ma_fields.Integer()
-    title = ma_fields.List(I18nStrUIField())
+    title = ma_fields.List(VocabularyI18nStrUIField())
     ancestors = ma_fields.List(ma_fields.String())
 
 
@@ -47,5 +47,5 @@ class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema
     created = LocalizedDateTime(dump_only=True)
     updated = LocalizedDateTime(dump_only=True)
     links = ma.fields.Raw(dump_only=True)
-    title = I18nStrUIField()
+    title = VocabularyI18nStrUIField()
     type = ma.fields.Raw(dump_only=True)
