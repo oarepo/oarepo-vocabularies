@@ -7,14 +7,12 @@ theme = WebpackThemeBundle(
     themes={
         "semantic-ui": dict(
             entry={
-                "oarepo_vocabularies_ui_components": "./js/oarepo_vocabularies_ui/custom-components.js"
+                "oarepo_vocabularies_search": "./js/oarepo_vocabularies_ui/search/index.js",
+                "oarepo_vocabularies_ui_components": "./js/oarepo_vocabularies_ui/custom-components.js",
             },
-            dependencies={
-            },
-            devDependencies={
-            },
-            aliases={
-            }
+            dependencies={},
+            devDependencies={},
+            aliases={},
         )
     },
 )

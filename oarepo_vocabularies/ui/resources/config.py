@@ -20,7 +20,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
                 "record_sidebar": "oarepo_vocabularies_ui/sidebar.html",
             },
         },
-        "search": {"layout": "oarepo_ui/search.html.jinja2"},
+        "search": {"layout": "oarepo_vocabularies_ui/search.html"},
     }
 
     routes = {
