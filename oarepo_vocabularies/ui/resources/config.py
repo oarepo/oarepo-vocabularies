@@ -24,7 +24,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
 
     routes = {
-        "search": "",
+        "search": "/<vocabulary_type>/",
         "detail": "/<vocabulary_type>/<pid_value>",
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
