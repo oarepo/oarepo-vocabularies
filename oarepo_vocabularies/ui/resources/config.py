@@ -1,5 +1,7 @@
+from flask import request
 from oarepo_ui.resources.config import RecordsUIResourceConfig
 import marshmallow as ma
+from oarepo_vocabularies.ui.resources.components import VocabulariesSearchComponent
 
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
@@ -28,5 +30,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "detail": "/<vocabulary_type>/<pid_value>",
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
+
+    components = [VocabulariesSearchComponent]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
