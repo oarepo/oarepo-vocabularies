@@ -10,16 +10,14 @@ import {
   SearchAppSort
 } from '@js/oarepo_ui/search'
 import {
-  // EmptyResultsElement,
-  // ResultsGridItemWithState,
-  // ResultsListItemWithState
+  VocabularyResultsListItemWithState
 } from './components'
 import { parametrize, overrideStore } from 'react-overridable'
 
 const appName = 'OarepoVocabularies.Search'
 
 const SearchAppSearchbarContainerWithConfig = parametrize(SearchAppSearchbarContainer, { appName: appName })
-// const ResultsListItemWithConfig = parametrize(ResultsListItemWithState, { appName: appName })
+const ResultsListItemWithConfig = parametrize(VocabularyResultsListItemWithState, { appName: appName })
 // const ResultsGridItemWithConfig = parametrize(ResultsGridItemWithState, { appName: appName })
 
 export const defaultComponents = {
@@ -29,7 +27,7 @@ export const defaultComponents = {
   // [`${appName}.EmptyResults.element`]: EmptyResultsElement,
   [`${appName}.Error.element`]: ErrorElement,
   // [`${appName}.ResultsGrid.item`]: ResultsGridItemWithConfig,
-  // [`${appName}.ResultsList.item`]: ResultsListItemWithConfig,
+  [`${appName}.ResultsList.item`]: ResultsListItemWithConfig,
   [`${appName}.SearchApp.facets`]: SearchAppFacets,
   [`${appName}.SearchApp.searchbarContainer`]: SearchAppSearchbarContainerWithConfig,
   [`${appName}.SearchApp.sort`]: SearchAppSort,
