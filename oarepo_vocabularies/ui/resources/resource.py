@@ -27,6 +27,12 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     def export(self):
         return super().export()
 
+    @request_read_args
+    @request_view_args
+    @request_vocabulary_args
+    def search(self):
+        return super().search()
+
     def _get_record(self, resource_requestctx):
         return self._api_service.read(
             g.identity,

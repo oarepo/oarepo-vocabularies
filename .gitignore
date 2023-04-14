@@ -83,3 +83,6 @@ tests/test-sample-site
 
 dist
 .vscode
+
+# node modules
+**/*/node_modules
