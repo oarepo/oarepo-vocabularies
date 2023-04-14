@@ -5,12 +5,27 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-04-06T13:21:54.398Z\n"
-"PO-Revision-Date: 2023-04-06T13:21:54.398Z\n"
+"POT-Creation-Date: 2023-04-14T15:15:59.427Z\n"
+"PO-Revision-Date: 2023-04-14T15:15:59.427Z\n"
 "Language: el\n"
 
-msgid "Uploaded on"
+msgid "coarType"
 msgstr ""
 
-msgid "Published in: "
+msgid "dataCiteType"
+msgstr ""
+
+msgid "alpha3CodeENG"
+msgstr ""
+
+msgid "alpha3CodeNative"
+msgstr ""
+
+msgid "ICO"
+msgstr ""
+
+msgid "acronym"
+msgstr ""
+
+msgid "nameType"
 msgstr ""
