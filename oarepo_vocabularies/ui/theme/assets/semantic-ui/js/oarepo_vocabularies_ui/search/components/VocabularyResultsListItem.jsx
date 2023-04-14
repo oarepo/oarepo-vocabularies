@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 
@@ -6,26 +6,47 @@ import _get from "lodash/get";
 import _join from "lodash/join";
 import _truncate from "lodash/truncate";
 import _upperFirst from "lodash/upperFirst";
+import _toPairs from "lodash/toPairs";
+import _chunk from "lodash/chunk";
 
-import { Item, Label, Icon } from "semantic-ui-react";
+import { Item, Table, Label, Grid } from "semantic-ui-react";
 import { withState, buildUID } from "react-searchkit";
-import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
-export const VocabularyResultsListItemComponent = ({
-  currentQueryState,
-  result,
-  appName,
-}) => {
-  const searchAppConfig = useContext(SearchConfigurationContext);
+const VocabularyItemPropsTable = (props) => {
+  // Split properties into max. 4 tables of max. 2 rows
+  const tables = _chunk(_toPairs(props), 2).slice(0, 4);
 
-  console.log(result);
-  const title = _upperFirst(_get(result, "title_l10n", "No title"));
+  return (
+    <Grid celled="internally" columns={tables.length} className="dense">
+      {tables.map((tableData, index) => (
+        <Grid.Column key={index}>
+          <Table basic="very" collapsing compact>
+            <Table.Body>
+              {tableData.map(([key, value]) => (
+                <Table.Row key={key}>
+                  <Table.Cell>
+                    <b>{i18next.t(key)}</b>
+                  </Table.Cell>
+                  <Table.Cell>{value}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </Grid.Column>
+      ))}
+    </Grid>
+  );
+};
 
+export const VocabularyResultsListItemComponent = ({ result, appName }) => {
+  const { title_l10n: title = "No title", id, props: itemProps } = result;
+
+  // TODO: serialize links->self in UI serializer and use here
   const viewLink = new URL(
-    "",
-    new URL(searchAppConfig.ui_endpoint, window.location.origin)
+    id,
+    new URL(window.location.pathname, window.location.origin)
   );
   return (
     <Overridable
@@ -35,11 +56,20 @@ export const VocabularyResultsListItemComponent = ({
     >
       <Item key={result.id}>
         <Item.Content>
-          <Item.Extra className="labels-actions"></Item.Extra>
           <Item.Header as="h2">
-            <a href={viewLink}>{title}</a>
+            <a href={viewLink}>
+              {_upperFirst(title)}{" "}
+              <Label pointing="left" size="small">
+                <b>ID</b>
+                <Label.Detail>{id}</Label.Detail>
+              </Label>
+            </a>
           </Item.Header>
-          <Item.Description></Item.Description>
+          {itemProps && (
+            <Item.Description>
+              <VocabularyItemPropsTable {...itemProps} />
+            </Item.Description>
+          )}
         </Item.Content>
       </Item>
     </Overridable>
