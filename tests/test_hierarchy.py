@@ -12,6 +12,7 @@ def test_hierarchy_lang(
         "level": 1,
         "title": [{"en": "English", "da": "Engelsk"}],
         "ancestors": [],
+        "ancestors_or_self": ["eng"],
     }
 
     child = vocab_service.create(system_identity, lang_data_child)
@@ -34,6 +35,7 @@ def test_hierarchy_lang(
             {"da": "Engelsk", "en": "English"},
         ],
         "ancestors": ["eng"],
+        "ancestors_or_self": ["eng.US", "eng"],
     }
 
 

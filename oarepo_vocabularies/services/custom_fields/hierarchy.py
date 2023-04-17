@@ -40,3 +40,14 @@ class HierarchyAncestorsCF(HierarchyCF, KeywordCF):
             ]
         else:
             record.hierarchy["ancestors"] = []
+
+
+class HierarchyAncestorsOrSelfCF(HierarchyCF, KeywordCF):
+    def update(self, record, parent):
+        if parent:
+            record.hierarchy["ancestors_or_self"] = [
+                record["id"],
+                *parent["hierarchy"]["ancestors_or_self"],
+            ]
+        else:
+            record.hierarchy["ancestors_or_self"] = [record["id"]]

@@ -11,6 +11,7 @@ OAREPO_VOCABULARIES_HIERARCHY_CF = [
     hierarchy.HierarchyLevelCF("level"),
     hierarchy.HierarchyTitleCF("title"),
     hierarchy.HierarchyAncestorsCF("ancestors", multiple=True),
+    hierarchy.HierarchyAncestorsOrSelfCF("ancestors_or_self", multiple=True),
     KeywordCF("parent"),
 ]
 
