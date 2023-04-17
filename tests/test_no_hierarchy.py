@@ -8,4 +8,5 @@ def test_simple_lang(app, db, cache, lang_type, lang_data, vocab_cf):
         "level": 1,
         "title": [{"en": "English", "da": "Engelsk"}],
         "ancestors": [],
+        "ancestors_or_self": ["eng"],
     }
