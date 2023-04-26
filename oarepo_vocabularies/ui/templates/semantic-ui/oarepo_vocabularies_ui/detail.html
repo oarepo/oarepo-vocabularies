@@ -1,4 +1,6 @@
 {% extends "oarepo_ui/detail.html" %} 
+{%- set title = metadata.title ~ " | " ~ _("NR Document repository") %}
+
 {%- block head_links %} 
     {{ super() }} 
     {{webpack['oarepo_vocabularies_ui_components.js']}} 

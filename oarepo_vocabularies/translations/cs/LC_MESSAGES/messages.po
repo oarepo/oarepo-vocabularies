@@ -7,35 +7,33 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-26 13:50+0200\n"
-"PO-Revision-Date: 2023-04-25 17:06+0200\n"
+"POT-Creation-Date: 2023-04-26 16:25+0200\n"
+"PO-Revision-Date: 2023-04-26 16:26+0200\n"
 "Last-Translator: \n"
-"Language: cs\n"
 "Language-Team: cs <LL@li.org>\n"
-"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
 "Generated-By: Babel 2.12.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
-#, fuzzy
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
 msgid "Vocabulary search"
 msgstr "Položky slovníku"
 
 #: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:4
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:4
 msgid "Export"
 msgstr "Export"
 
 #: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:49
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:49
 msgid "Links"
 msgstr "Odkazy"
 
 #: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:64
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:64
 msgid "API"
 msgstr "API"
 
@@ -109,10 +107,13 @@ msgstr "Nadřazená položka"
 msgid "api.ancestors"
 msgstr "Nadřazené položky"
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/detail.html:2
+msgid "NR Document repository"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
 msgid "Find more records with this vocabulary term"
 msgstr "Najít další záznamy s touto slovníkovou položkou"
 
 #~ msgid "Open definition"
 #~ msgstr "Otevřít definici"
-
