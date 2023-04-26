@@ -1,18 +1,35 @@
 {%- macro render_vocabulary_item(arg) -%}
-<a href="/vocabularies/{{arg.type}}/{{arg.id}}"><i class="icon align justify"></i></a> <span class='vocabulary'>{{ arg.title }}</span>
+  {% value ui="/vocabularies/" ~ arg.type ~ "/" ~ arg.id, component="definition_link" %}
+  {% value ui=({
+      "value": arg.id,
+      "title":  arg.title ~ ": " ~ _("Find more records with this vocabulary term"),
+      "label": arg.title,
+    }),
+    component="search_link",
+    className="vocabulary-item-link"
+  %}
 {%- endmacro -%}
 
 {%- macro render_taxonomy_item(arg) -%}
-<span class='taxonomy'>
-{%- for title in arg.hierarchy.title -%}
-<a href="/vocabularies/{{arg.type}}/{{arg.id}}"><i class="icon align justify"></i></a> <span class='vocabulary'>{{ title }}</span>
+<div class="ui breadcrumb">
+  {%- for title in arg.hierarchy.title -%}
+      {% set id = arg.id if loop.first else arg.hierarchy.ancestors[loop.index-2] %}
+      {% value ui="/vocabularies/" ~ arg.type ~ "/" ~ id, component="definition_link" %}
+      {% value ui=({
+          "value": id,
+          "title": title ~ ": " ~ _("Find more records with this vocabulary term"),
+          "label": title
+        }),
+        component="search_link",
+        className="section" ~ (" active" if loop.first else "")
+      %}
     {%- if not loop.last -%}
-      {%- value ui=1, component="taxonomy_separator" -%}
+      <span class="divider"><i class="left chevron green icon divider"></i></span>
     {%- endif -%}
-{%- endfor -%}
-</span>
+  {%- endfor -%}
+</div>
 {%- endmacro -%}
 
 {%- macro render_taxonomy_separator(arg) -%}
-{%- if arg -%}<span class='taxonomy_separator'> &gt; </span>{%- endif -%}
+  {%- if arg -%}<span class='taxonomy_separator'> &gt; </span>{%- endif -%}
 {%- endmacro -%}
