@@ -1,5 +1,4 @@
 <!-- place your record sidebar content in here ... -->
-<div>
 <section id="export-record" aria-label="Export" class="ui segment exports">
 <h2 class="ui small header">{{_('Export')}}</h2>
 <div id="recordExportDownload">
@@ -47,30 +46,14 @@
 </section>
 <section aria-label="Links" class="ui segment">
     <h2 class="ui small header">{{_('Links')}}</h2>
-        <dl class="ui">
-            {% for l in data.links.items() %}
-                {% if l.0 != 'self' %}
-                    <dt>{{_("links." + l.0)}}</dt>
-                    <dd>
-                        <a href="{{l.1|replace("/api/", "/")}}" target="_blank">{{l.1|replace("/api/", "/")}}</a>
-                    </dd>
-                {% endif %}
-            {% endfor %}
-        </dl>
-    </div>
+    {% set ui_links = {} %}
+    {% for key, value in data.links.items() %}
+        {% set _ = ui_links.update({key: value.replace('/api/', '/')}) %}
+    {% endfor %}
+    {%- value ui=ui_links, component="sidebar_links" -%}
 </section>
 
 <section aria-label="API" class="ui segment">
-<h2 class="ui small header">{{_('API')}}</h2>
-    <dl class="ui">
-        {% for l in data.links.items() %}
-            <dt>{{_("api." + l.0)}}</dt>
-            <dd>
-                <a href="{{l.1}}" target="_blank">{{l.1}}</a>
-            </dd>
-        {% endfor %}
-    </dl>
-</div>
+    <h2 class="ui small header">{{_('API')}} {{_('Links')}}</h2>
+    {%- value ui=data.links, component="sidebar_links" -%}
 </section>
-
-</div>
