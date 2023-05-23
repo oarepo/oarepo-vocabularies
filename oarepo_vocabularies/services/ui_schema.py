@@ -1,15 +1,15 @@
+from functools import partial
+
 import marshmallow as ma
-from marshmallow import fields as ma_fields
-from flask_babelex import get_locale
 from flask import current_app
-from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
+from flask_babelex import get_locale
+from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from marshmallow import fields as ma_fields
 from marshmallow_utils.fields import NestedAttribute
-from functools import partial
-from invenio_records_resources.services.custom_fields import CustomFieldsSchema
+from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
 from oarepo_runtime.ui.marshmallow import LocalizedDateTime
 
 
@@ -33,6 +33,7 @@ class HierarchyUISchema(ma.Schema):
     level = ma_fields.Integer()
     title = ma_fields.List(VocabularyI18nStrUIField())
     ancestors = ma_fields.List(ma_fields.String())
+    ancestors_or_self = ma_fields.List(ma_fields.String())
 
 
 class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):

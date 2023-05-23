@@ -3,9 +3,11 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from oarepo_vocabularies.ui import config as config
-from invenio_base.utils import obj_or_import_string
 import re
+
+from invenio_base.utils import obj_or_import_string
+
+from oarepo_vocabularies.ui import config as config
 
 
 class InvenioVocabulariesAppExtension:

@@ -1,13 +1,10 @@
-from oarepo_ui.resources.resource import RecordsUIResource
-from flask_resources import (
-    from_conf,
-    request_parser,
-)
+from flask import g
+from flask_resources import from_conf, request_parser
 from invenio_records_resources.resources.records.resource import (
     request_read_args,
     request_view_args,
 )
-from flask import g
+from oarepo_ui.resources.resource import RecordsUIResource
 
 request_vocabulary_args = request_parser(
     from_conf("request_vocabulary_type_args"), location="view_args"

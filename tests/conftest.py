@@ -93,6 +93,10 @@ def app_config(app_config):
         NonPreferredLabelsCF("nonpreferredLabels"),
     ]
 
+    # disable redis cache
+    app_config["CACHE_TYPE"] = "SimpleCache"  # Flask-Caching related configs
+    app_config["CACHE_DEFAULT_TIMEOUT"] = 300
+
     return app_config
 
 

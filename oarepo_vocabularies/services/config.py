@@ -3,7 +3,7 @@ from invenio_vocabularies.services import VocabulariesServiceConfig
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
-from oarepo_vocabularies.services.schemas import VocabularySchema
+from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
 
 
