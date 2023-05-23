@@ -1,6 +1,6 @@
-from flask import request
-from oarepo_ui.resources.config import RecordsUIResourceConfig
 import marshmallow as ma
+from oarepo_ui.resources.config import RecordsUIResourceConfig
+
 from oarepo_vocabularies.ui.resources.components import VocabulariesSearchComponent
 
 

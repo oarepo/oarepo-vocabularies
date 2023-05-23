@@ -28,3 +28,4 @@ class HierarchySchema(ma.Schema):
     level = ma_fields.Integer()
     title = ma_fields.List(i18n_strings)
     ancestors = ma_fields.List(ma_fields.String())
+    ancestors_or_self = ma_fields.List(ma_fields.String())

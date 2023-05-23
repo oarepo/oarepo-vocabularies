@@ -1,7 +1,7 @@
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
 
-from oarepo_vocabularies.services.ui_schemas import VocabularyUISchema
+from oarepo_vocabularies.services.ui_schema import VocabularyUISchema
 
 
 class VocabularyUIJSONSerializer(MarshmallowSerializer):
