@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-27 15:27+0200\n"
-"PO-Revision-Date: 2023-03-27 15:30+0200\n"
+"POT-Creation-Date: 2023-04-26 16:25+0200\n"
+"PO-Revision-Date: 2023-04-26 16:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: cs <LL@li.org>\n"
 "Language: cs\n"
@@ -16,73 +16,104 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:4
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
+msgid "Vocabulary search"
+msgstr "Položky slovníku"
+
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:4
 msgid "Export"
 msgstr "Export"
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:49
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:49
 msgid "Links"
 msgstr "Odkazy"
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:64
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:64
 msgid "API"
 msgstr "API"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
 msgid "vocabulary.vocabulary"
 msgstr "Slovník"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:3
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:3
 msgid "created.label"
 msgstr "Datum vytvoření"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:4
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:4
 msgid "updated.label"
 msgstr "Datum poslední změny"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:7
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:7
 msgid "links.vocabulary"
 msgstr "Položky slovníku"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:8
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:8
 msgid "links.children"
 msgstr "Detailní položky (přímé)"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:9
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:9
 msgid "links.descendants"
 msgstr "Detailní položky (všechny)"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:10
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:10
 msgid "links.parent"
 msgstr "Nadřazená položka"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:11
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:11
 msgid "links.ancestors"
 msgstr "Nadřazené položky"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:12
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:12
 msgid "api.self"
 msgstr "Tato položka"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:13
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:13
 msgid "api.vocabulary"
 msgstr "Položky slovníku"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:14
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:14
 msgid "api.children"
 msgstr "Detailní položky (přímé)"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:15
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:15
 msgid "api.descendants"
 msgstr "Detailní položky (všechny)"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:16
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:16
 msgid "api.parent"
 msgstr "Nadřazená položka"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
 msgid "api.ancestors"
 msgstr "Nadřazené položky"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/detail.html:2
+msgid "NR Document repository"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
+msgid "Find more records with this vocabulary term"
+msgstr "Najít další záznamy s touto slovníkovou položkou"
+
+#~ msgid "Open definition"
+#~ msgstr "Otevřít definici"
