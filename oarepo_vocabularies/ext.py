@@ -25,6 +25,8 @@ class OARepoVocabularies(object):
                 app.config.setdefault(k, {}).update(getattr(config, k))
             if k.startswith("DATASTREAMS_CONFIG_GENERATOR_"):
                 app.config.setdefault(k, getattr(config, k))
+        app.config.setdefault('VOCABULARIES_FACET_CACHE_SIZE', config.VOCABULARIES_FACET_CACHE_SIZE)
+        app.config.setdefault('VOCABULARIES_FACET_CACHE_TTL', config.VOCABULARIES_FACET_CACHE_TTL)
 
     def init_resource(self, app):
         pass
