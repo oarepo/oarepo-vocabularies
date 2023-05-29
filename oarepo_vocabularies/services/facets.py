@@ -30,7 +30,7 @@ class HierarchyVocabularyFacet(TermsFacet):
 
 
 class CachedVocabularyLabels(VocabularyLabels):
-    _cache = None
+    _internal_vocabulary_terms_cache = None
 
     def __call__(self, ids):
         if not ids:
@@ -39,7 +39,7 @@ class CachedVocabularyLabels(VocabularyLabels):
         ret = {}
         to_fetch = []
         for _id in ids:
-            cached = self.cache.get((self.vocabulary, _id), None)
+            cached = self.vocabulary_terms_cache.get((self.vocabulary, _id), None)
             if cached:
                 ret[_id] = cached
             else:
@@ -47,27 +47,23 @@ class CachedVocabularyLabels(VocabularyLabels):
         if to_fetch:
             fetched = super().__call__(ids)
             for _id, v in fetched.items():
-                self.cache[(self.vocabulary, _id)] = v
+                self.vocabulary_terms_cache[(self.vocabulary, _id)] = v
             ret.update(fetched)
         return ret
 
     @property
-    def cache(self):
+    def vocabulary_terms_cache(self):
         # there might be a race condition resulting in cache created twice,
         # but no need to handle - just the first request will be inefficient
-        if type(self)._cache:
-            return self._cache
+        if type(self)._internal_vocabulary_terms_cache:
+            return self._internal_vocabulary_terms_cache
         vocabulary_cache_size = current_app.config.get(
             "VOCABULARIES_FACET_CACHE_SIZE", 2048
         )
         vocabulary_cache_ttl = current_app.config.get(
             "VOCABULARIES_FACET_CACHE_TTL", 60 * 24 * 24
         )
-        cache = type(self)._cache = cachetools.TTLCache(
+        cache = type(self)._internal_vocabulary_terms_cache = cachetools.TTLCache(
             maxsize=vocabulary_cache_size, ttl=vocabulary_cache_ttl
         )
         return cache
-
-    @cache.setter
-    def cache(self, value):
-        "Intentionally does not say the cache true/false, as this class is always caching"
