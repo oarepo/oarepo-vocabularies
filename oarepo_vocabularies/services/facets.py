@@ -67,3 +67,7 @@ class CachedVocabularyLabels(VocabularyLabels):
             maxsize=vocabulary_cache_size, ttl=vocabulary_cache_ttl
         )
         return cache
+
+    @cache.setter
+    def cache(self, value):
+        "Intentionally does not say the cache true/false, as this class is always caching"
