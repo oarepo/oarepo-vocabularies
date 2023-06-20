@@ -17,6 +17,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
   const tables = _chunk(_toPairs(props), 2).slice(0, 4);
+  console.log(tables);
 
   return (
     <Grid celled="internally" columns={tables.length} className="dense">

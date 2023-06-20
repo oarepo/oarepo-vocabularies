@@ -20,6 +20,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
             "blocks": {
                 "record_main_content": "oarepo_vocabularies_ui/main.html",
                 "record_sidebar": "oarepo_vocabularies_ui/sidebar.html",
+                "record_descendants": "oarepo_vocabularies_ui/descendants.html"
             },
         },
         "search": {"layout": "oarepo_vocabularies_ui/search.html"},
