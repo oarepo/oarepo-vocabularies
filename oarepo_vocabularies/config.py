@@ -9,6 +9,19 @@ from oarepo_vocabularies.services.config import VocabulariesConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabulariesService
 
+INVENIO_VOCABULARY_TYPE_METADATA = {
+    "<vocabulary_type.id>": {
+        "name": {
+            "cs": ...,
+            "en": ...,
+        },
+        "description": {
+            "cs": ...,
+            "en": ...,
+        }
+    }
+}
+
 OAREPO_VOCABULARIES_HIERARCHY_CF = [
     hierarchy.HierarchyLevelCF("level"),
     hierarchy.HierarchyTitleCF("title"),
