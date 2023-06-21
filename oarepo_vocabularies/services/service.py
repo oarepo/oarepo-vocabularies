@@ -11,7 +11,7 @@ class VocabulariesService(Service):
         self, identity, params=None, search_preference=None, **kwargs
     ):
         """Search for vocabulary entries."""
-        self.require_permission(identity, "list_vocabularies")
+        self.require_permission(identity, "can_list_vocabularies")
         
         # Prepare and execute the search.
         params = params or {}
