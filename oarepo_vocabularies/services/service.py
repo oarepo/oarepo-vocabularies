@@ -3,34 +3,22 @@ from invenio_records_resources.services import (
     pagination_links   
 )
 from invenio_records_resources.services.base import Service
+from invenio_vocabularies.records.api import VocabularyType
 
 class VocabulariesService(Service):
     """Vocabulary service."""
     
-    def search(
-        self, identity, params=None, search_preference=None, **kwargs
-    ):
+    def search(self, identity):
         """Search for vocabulary entries."""
         self.require_permission(identity, "can_list_vocabularies")
         
-        # Prepare and execute the search.
-        params = params or {}
-        search_result = self._search(
-            "search",
-            identity,
-            params,
-            search_preference,
-            **kwargs
-        ).execute()
+        vocabulary_types = VocabularyType.query.all()
+        
+        # Enrich vocab types with config values.
         
         return self.result_list(
             self,
             identity,
-            search_result,
-            params,
-            links_tpl=LinksTemplate(
-                pagination_links("{+api}/vocabularies{?args*}"),    # NOTE: only because of coherence
-                context={ "args": params }
-            ),
+            links_tpl=LinksTemplate(pagination_links("{+api}/vocabularies")),
             links_item_tpl=self.config.vocabularies_listing_item
         )
