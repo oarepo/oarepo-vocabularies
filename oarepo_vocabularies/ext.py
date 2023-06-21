@@ -29,4 +29,7 @@ class OARepoVocabularies(object):
         app.config.setdefault('VOCABULARIES_FACET_CACHE_TTL', config.VOCABULARIES_FACET_CACHE_TTL)
 
     def init_resource(self, app):
-        pass
+        """Initialize vocabulary resources."""
+        self.service = app.config["OAREPO_VOCABULARIES_SERVICE_CLASS_OAREPO_VOCABULARIES"](
+            config=app.config["OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES"](),
+        )
