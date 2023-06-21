@@ -52,3 +52,15 @@ class VocabulariesConfig(VocabulariesServiceConfig):
             ),
         ),
     }
+    
+    vocabularies_listing_item = {
+        "self": Link(
+            "{+api}/vocabularies/{type}",
+            vars=lambda record, vars: vars.update(
+                {
+                    "id": record.pid.pid_value,
+                    "type": record.type.id,
+                }
+            ),
+        ),
+    }
