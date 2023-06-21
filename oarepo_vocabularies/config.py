@@ -5,7 +5,9 @@ from oarepo_vocabularies.fixtures import (
     VocabularyWriter,
     vocabularies_generator,
 )
+from oarepo_vocabularies.services.config import VocabulariesConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
+from oarepo_vocabularies.services.service import VocabulariesService
 
 OAREPO_VOCABULARIES_HIERARCHY_CF = [
     hierarchy.HierarchyLevelCF("level"),
@@ -17,6 +19,9 @@ OAREPO_VOCABULARIES_HIERARCHY_CF = [
 
 
 OAREPO_VOCABULARIES_CUSTOM_CF = []
+
+OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES = VocabulariesConfig
+OAREPO_VOCABULARIES_SERVICE_CLASS_OAREPO_VOCABULARIES = VocabulariesService
 
 DATASTREAMS_CONFIG_GENERATOR_VOCABULARIES = vocabularies_generator
 
