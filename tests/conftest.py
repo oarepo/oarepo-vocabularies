@@ -79,7 +79,7 @@ def app_config(app_config):
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
     from oarepo_vocabularies.services.config import VocabulariesConfig
 
-    app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
+    app_config["OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
