@@ -35,3 +35,7 @@ class InvenioVocabulariesAppExtension:
         for identifier in dir(config):
             if re.match("^[A-Z_]*$", identifier) and not identifier.startswith("_"):
                 app.config.setdefault(identifier, getattr(config, identifier))
+
+        app.config.setdefault('OAREPO_UI_LESS_COMPONENTS', []).extend(
+            config.OAREPO_UI_LESS_COMPONENTS
+        )
