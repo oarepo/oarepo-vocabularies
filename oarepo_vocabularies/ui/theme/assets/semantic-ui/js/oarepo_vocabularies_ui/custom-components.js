@@ -13,28 +13,28 @@ import "./sample-component.js"
 
 // This file will import the css templates for your custom components
 import "../../less/oarepo_vocabularies_ui/custom-components.less";
-import React from "react";
-import ReactDOM from "react-dom";
-import { createSearchAppInit } from "@js/invenio_search_ui";
+// import React from "react";
+// import ReactDOM from "react-dom";
+// import { createSearchAppInit } from "@js/invenio_search_ui";
 
-const defaultComponents = {};
+// const defaultComponents = {};
 
-const reactApp = createSearchAppInit(
-  defaultComponents,
-  false,
-  "invenio-search-config",
-  true
-);
+// const reactApp = createSearchAppInit(
+//   defaultComponents,
+//   false,
+//   "invenio-search-config",
+//   true
+// );
 
-const MyReactApp = () => <div>This is my react app</div>;
+// const MyReactApp = () => <div>This is my react app</div>;
 
-document.addEventListener("DOMContentLoaded", function () {
-  const rootElement = document.getElementById("root");
-  const searchAppElements = document.querySelectorAll(
-    `[data-invenio-search-config]`
-  );
-  console.log(searchAppElements);
-  document.getElementById("test").addEventListener("click", () => {
-    reactApp(searchAppElements[0]);
-  });
-});
+// document.addEventListener("DOMContentLoaded", function () {
+//   const rootElement = document.getElementById("root");
+//   const searchAppElements = document.querySelectorAll(
+//     `[data-invenio-search-config]`
+//   );
+//   console.log(searchAppElements);
+//   document.getElementById("test").addEventListener("click", () => {
+//     reactApp(searchAppElements[0]);
+//   });
+// });

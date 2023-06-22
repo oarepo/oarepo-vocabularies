@@ -10,6 +10,7 @@ import {
   SearchAppResultOptions,
   SearchAppResults,
   SearchAppLayout,
+  EmptyResultsElement,
 } from "@js/oarepo_ui/search";
 import { VocabularyResultsListItemWithState } from "./components";
 import { parametrize, overrideStore } from "react-overridable";
@@ -29,7 +30,7 @@ export const defaultComponents = {
   [`${appName}.BucketAggregation.element`]: BucketAggregationElement,
   [`${appName}.BucketAggregationValues.element`]:
     BucketAggregationValuesElement,
-  // [`${appName}.EmptyResults.element`]: EmptyResultsElement,
+  [`${appName}.EmptyResults.element`]: EmptyResultsElement,
   [`${appName}.Error.element`]: ErrorElement,
   // [`${appName}.ResultsGrid.item`]: ResultsGridItemWithConfig,
   [`${appName}.ResultsList.item`]: ResultsListItemWithConfig,

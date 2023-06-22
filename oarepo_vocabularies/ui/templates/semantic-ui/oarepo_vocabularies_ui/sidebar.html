@@ -44,14 +44,6 @@
     </div>
   </div>
 </section>
-<section aria-label="Links" class="ui segment">
-  <h2 class="ui small header">{{_('Links')}}</h2>
-  {% set ui_links = {} %} {% for key, value in data.links.items() %} {% if key
-  == "children" or key == "descendants" %} {% set _ = ui_links.update({key:
-  value.replace('/api/', '/').split("?",1)[0] ~ "?f=h-parent:" ~ data['id']}) %}
-  {% else %} {% set _ = ui_links.update({key: value.replace('/api/', '/')}) %}
-  {% endif %} {% endfor %} {%- value ui=ui_links, component="sidebar_links" -%}
-</section>
 
 <section aria-label="API" class="ui segment">
   <h2 class="ui small header">{{_('API')}} {{_('Links')}}</h2>
