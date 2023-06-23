@@ -9,17 +9,28 @@ from oarepo_vocabularies.services.config import VocabulariesConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabulariesService
 
+# NOTE: Example.
 INVENIO_VOCABULARY_TYPE_METADATA = {
-    "<vocabulary_type.id>": {
+    "languages": {
         "name": {
-            "cs": ...,
-            "en": ...,
+            "cs": "jazyky",
+            "en": "languages",
         },
         "description": {
-            "cs": ...,
-            "en": ...,
-        }
-    }
+            "cs": "slovnikovy typ ceskeho jazyka.",
+            "en": "czech language vocabulary type.",
+        },
+    },
+    "licences": {
+        "name": {
+            "cs": "licence",
+            "en": "licences",
+        },
+        "description": {
+            "cs": "slovnikovy typ licencii.",
+            "en": "lincenses vocabulary type.",
+        },
+    },
 }
 
 OAREPO_VOCABULARIES_HIERARCHY_CF = [
