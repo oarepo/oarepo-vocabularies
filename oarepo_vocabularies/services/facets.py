@@ -1,4 +1,3 @@
-
 import cachetools
 from flask import current_app
 from invenio_records_resources.services.records.facets import TermsFacet
