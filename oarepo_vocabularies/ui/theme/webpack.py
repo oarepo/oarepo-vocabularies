@@ -9,6 +9,8 @@ theme = WebpackThemeBundle(
             entry={
                 "oarepo_vocabularies_search": "./js/oarepo_vocabularies_ui/search/index.js",
                 "oarepo_vocabularies_ui_components": "./js/oarepo_vocabularies_ui/custom-components.js",
+                "oarepo_vocabularies_detail": "./js/oarepo_vocabularies_ui/detail/index.js"
+
             },
             dependencies={},
             devDependencies={},

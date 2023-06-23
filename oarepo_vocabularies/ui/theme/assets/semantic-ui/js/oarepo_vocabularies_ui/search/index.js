@@ -1,44 +1,54 @@
-import { createSearchAppInit } from '@js/invenio_search_ui'
+import { createSearchAppInit } from "@js/invenio_search_ui";
 import {
   BucketAggregationElement,
   BucketAggregationValuesElement,
-  CountElement,
   ErrorElement,
   SearchAppFacets,
   SearchAppSearchbarContainer,
   SearchFiltersToggleElement,
-  SearchAppSort
-} from '@js/oarepo_ui/search'
-import {
-  VocabularyResultsListItemWithState
-} from './components'
-import { parametrize, overrideStore } from 'react-overridable'
+  SearchAppSort,
+  SearchAppResultOptions,
+  SearchAppResults,
+  SearchAppLayout,
+  EmptyResultsElement,
+} from "@js/oarepo_ui/search";
+import { VocabularyResultsListItemWithState } from "./components";
+import { parametrize, overrideStore } from "react-overridable";
+import React from "react";
+const appName = "OarepoVocabularies.Search";
+const SearchAppSearchbarContainerWithConfig = parametrize(
+  SearchAppSearchbarContainer,
+  { appName: appName }
+);
+const ResultsListItemWithConfig = parametrize(
+  VocabularyResultsListItemWithState,
+  { appName: appName }
+);
 
-const appName = 'OarepoVocabularies.Search'
-
-const SearchAppSearchbarContainerWithConfig = parametrize(SearchAppSearchbarContainer, { appName: appName })
-const ResultsListItemWithConfig = parametrize(VocabularyResultsListItemWithState, { appName: appName })
 // const ResultsGridItemWithConfig = parametrize(ResultsGridItemWithState, { appName: appName })
-
 export const defaultComponents = {
   [`${appName}.BucketAggregation.element`]: BucketAggregationElement,
-  [`${appName}.BucketAggregationValues.element`]: BucketAggregationValuesElement,
-  [`${appName}.Count.element`]: CountElement,
-  // [`${appName}.EmptyResults.element`]: EmptyResultsElement,
+  [`${appName}.BucketAggregationValues.element`]:
+    BucketAggregationValuesElement,
+  [`${appName}.EmptyResults.element`]: EmptyResultsElement,
   [`${appName}.Error.element`]: ErrorElement,
   // [`${appName}.ResultsGrid.item`]: ResultsGridItemWithConfig,
   [`${appName}.ResultsList.item`]: ResultsListItemWithConfig,
   [`${appName}.SearchApp.facets`]: SearchAppFacets,
-  [`${appName}.SearchApp.searchbarContainer`]: SearchAppSearchbarContainerWithConfig,
+  [`${appName}.SearchApp.searchbarContainer`]:
+    SearchAppSearchbarContainerWithConfig,
   [`${appName}.SearchApp.sort`]: SearchAppSort,
   [`${appName}.SearchFilters.Toggle.element`]: SearchFiltersToggleElement,
-}
 
-const overriddenComponents = overrideStore.getAll()
+  [`${appName}.SearchApp.resultOptions`]: SearchAppResultOptions,
+  [`${appName}.SearchApp.results`]: SearchAppResults,
+  [`${appName}.SearchApp.layout`]: SearchAppLayout,
+};
+const overriddenComponents = overrideStore.getAll();
 
 createSearchAppInit(
   { ...defaultComponents, ...overriddenComponents },
   true,
-  'invenio-search-config',
-  true,
-)
+  "invenio-search-config",
+  true
+);
