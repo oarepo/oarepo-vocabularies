@@ -1,23 +1,71 @@
+import marshmallow as ma
 from invenio_records_resources.services import Link
+from invenio_records_resources.services.base import ServiceListResult
 from invenio_vocabularies.services import VocabulariesServiceConfig
-
 from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
-from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
+
+
+class VocabularyMetadataSchema(ma.Schema):
+    class Meta:
+        unknown = ma.INCLUDE
+
+
+class VocabularyMetadataList(ServiceListResult):
+    def __init__(
+        self,
+        service,
+        identity,
+        results,
+        links_tpl=None,
+        links_item_tpl=None,
+    ):
+        """Constructor.
+
+        :params service: a service instance
+        :params identity: an identity that performed the service request
+        :params results: the search results
+        """
+        self._identity = identity
+        self._results = results
+        self._service = service
+        self._links_tpl = links_tpl
+        self._links_item_tpl = links_item_tpl
+
+    def to_dict(self):
+        hits = list(self._results)
+
+        for hit in hits:
+            if self._links_item_tpl:
+                hit["links"] = self._links_item_tpl.expand(self._identity, hit)
+
+        res = {
+            "hits": {
+                "hits": hits,
+                "total": len(hits),
+            }
+        }
+
+        if self._links_tpl:
+            res["links"] = self._links_tpl.expand(self._identity, None)
+
+        return res
 
 
 class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfig):
     record_cls = Vocabulary
-    schema = VocabularySchema
+    schema = VocabularyMetadataSchema
     search = VocabularySearchOptions
     components = [*VocabulariesServiceConfig.components, HierarchyComponent]
     url_prefix = "/vocabularies/"
-    
+
+    result_list_cls = VocabularyMetadataList
+
     PERMISSIONS_PRESETS = ["vocabularies"]
-    
+
     links_item = {
         **VocabulariesServiceConfig.links_item,
         "vocabulary": Link(
@@ -57,15 +105,10 @@ class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfi
             ),
         ),
     }
-    
+
     vocabularies_listing_item = {
         "self": Link(
-            "{+api}/vocabularies/{type}",
-            vars=lambda record, vars: vars.update(
-                {
-                    "id": record.pid.pid_value,
-                    "type": record.type.id,
-                }
-            ),
+            "{+api}/vocabularies/{id}",
+            vars=lambda vocab_type, vars: vars.update({"id": vocab_type["id"]}),
         ),
     }
