@@ -79,7 +79,9 @@ def app_config(app_config):
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
     from oarepo_vocabularies.services.config import VocabulariesConfig
 
-    app_config["OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES"] = VocabulariesConfig
+    app_config[
+        "OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES"
+    ] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
@@ -96,6 +98,29 @@ def app_config(app_config):
     # disable redis cache
     app_config["CACHE_TYPE"] = "SimpleCache"  # Flask-Caching related configs
     app_config["CACHE_DEFAULT_TIMEOUT"] = 300
+
+    app_config["INVENIO_VOCABULARY_TYPE_METADATA"] = {
+        "languages": {
+            "name": {
+                "cs": "jazyky",
+                "en": "languages",
+            },
+            "description": {
+                "cs": "slovnikovy typ ceskeho jazyka.",
+                "en": "czech language vocabulary type.",
+            },
+        },
+        "licences": {
+            "name": {
+                "cs": "licence",
+                "en": "licences",
+            },
+            "description": {
+                "cs": "slovnikovy typ licencii.",
+                "en": "lincenses vocabulary type.",
+            },
+        },
+    }
 
     return app_config
 
@@ -309,3 +334,21 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             ],
         )
     ]
+
+
+@pytest.fixture
+def sample_vocabulary_types(app, db):
+    """
+    Pass a list of tuples of the following form - ("id", "pid_type"), to be inserted into database as samples.
+    Returns inserted vocabulary types.
+    """
+
+    def _upload_to_db(input_data):
+        vocabulary_types = []
+        for id, pid_type in input_data:
+            vocabulary_type = VocabularyType.create(id=id, pid_type=pid_type)
+            vocabulary_types.append(vocabulary_type)
+
+        return vocabulary_types
+
+    return _upload_to_db
