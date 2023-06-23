@@ -1,18 +1,23 @@
 from invenio_records_resources.services import Link
 from invenio_vocabularies.services import VocabulariesServiceConfig
 
+from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
+
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
 
 
-class VocabulariesConfig(VocabulariesServiceConfig):
+class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfig):
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
     components = [*VocabulariesServiceConfig.components, HierarchyComponent]
     url_prefix = "/vocabularies/"
+    
+    PERMISSIONS_PRESETS = ["vocabularies"]
+    
     links_item = {
         **VocabulariesServiceConfig.links_item,
         "vocabulary": Link(

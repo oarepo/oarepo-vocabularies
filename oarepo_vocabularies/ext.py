@@ -16,7 +16,7 @@ class OARepoVocabularies(object):
 
     def init_config(self, app):
         """Initialize configuration."""
-        from . import config
+        from . import ext_config, config
 
         for k in dir(config):
             if k.startswith("OAREPO_VOCABULARIES_"):
@@ -27,6 +27,13 @@ class OARepoVocabularies(object):
                 app.config.setdefault(k, getattr(config, k))
         app.config.setdefault('VOCABULARIES_FACET_CACHE_SIZE', config.VOCABULARIES_FACET_CACHE_SIZE)
         app.config.setdefault('VOCABULARIES_FACET_CACHE_TTL', config.VOCABULARIES_FACET_CACHE_TTL)
+
+        if "OAREPO_PERMISSIONS_PRESETS" not in app.config:
+            app.config["OAREPO_PERMISSIONS_PRESETS"] = {}
+
+        for k in ext_config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS:
+            if k not in app.config["OAREPO_PERMISSIONS_PRESETS"]:
+                app.config["OAREPO_PERMISSIONS_PRESETS"][k] = ext_config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
