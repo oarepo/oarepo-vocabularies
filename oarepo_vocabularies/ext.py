@@ -43,10 +43,6 @@ class OARepoVocabularies(object):
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        self.service = app.config[
-            "OAREPO_VOCABULARIES_SERVICE_CLASS_OAREPO_VOCABULARIES"
-        ](
-            config=app.config[
-                "OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES"
-            ](),
+        self.service = app.config["VOCABULARY_TYPE_SERVICE"](
+            config=app.config["VOCABULARY_TYPE_SERVICE_CONFIG"](),
         )

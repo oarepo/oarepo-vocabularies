@@ -6,8 +6,8 @@ from invenio_vocabularies.records.models import VocabularyType
 from invenio_vocabularies.proxies import current_service
 from invenio_search import current_search_client
 
-class VocabulariesService(Service):
-    """Vocabulary service."""
+class VocabularyTypeService(Service):
+    """Vocabulary types service."""
 
     @property
     def schema(self):
@@ -22,7 +22,7 @@ class VocabulariesService(Service):
         )
 
     def search(self, identity):
-        """Search for vocabulary entries."""
+        """Search for vocabulary types entries."""
         self.require_permission(identity, "list_vocabularies")
 
         vocabulary_types = VocabularyType.query.all()

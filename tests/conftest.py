@@ -77,12 +77,14 @@ def app_config(app_config):
 
     # note: This line must always be added to the invenio.cfg file
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
-    from oarepo_vocabularies.services.config import VocabulariesConfig
+    from oarepo_vocabularies.services.service import VocabularyTypeService
+    from oarepo_vocabularies.services.config import VocabulariesConfig, VocabularyTypeServiceConfig
 
-    app_config[
-        "OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES"
-    ] = VocabulariesConfig
+    app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
+
+    app_config["VOCABULARY_TYPE_SERVICE"] = VocabularyTypeService
+    app_config["VOCABULARY_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -334,21 +336,3 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             ],
         )
     ]
-
-
-@pytest.fixture
-def sample_vocabulary_types(app, db):
-    """
-    Pass a list of tuples of the following form - ("id", "pid_type"), to be inserted into database as samples.
-    Returns inserted vocabulary types.
-    """
-
-    def _upload_to_db(input_data):
-        vocabulary_types = []
-        for id, pid_type in input_data:
-            vocabulary_type = VocabularyType.create(id=id, pid_type=pid_type)
-            vocabulary_types.append(vocabulary_type)
-
-        return vocabulary_types
-
-    return _upload_to_db

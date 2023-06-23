@@ -6,6 +6,7 @@ from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
+from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
 
 
@@ -54,17 +55,27 @@ class VocabularyMetadataList(ServiceListResult):
 
         return res
 
-
-class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfig):
-    record_cls = Vocabulary
+class VocabularyTypeServiceConfig(PermissionsPresetsConfigMixin):
     schema = VocabularyMetadataSchema
+    result_list_cls = VocabularyMetadataList
+
+    PERMISSIONS_PRESETS = ["vocabularies"]
+       
+
+    vocabularies_listing_item = {
+        "self": Link(
+            "{+api}/vocabularies/{id}",
+            vars=lambda vocab_type, vars: vars.update({"id": vocab_type["id"]}),
+        ),
+    }
+
+class VocabulariesConfig(VocabulariesServiceConfig):
+    record_cls = Vocabulary
+    schema = VocabularySchema
     search = VocabularySearchOptions
     components = [*VocabulariesServiceConfig.components, HierarchyComponent]
     url_prefix = "/vocabularies/"
 
-    result_list_cls = VocabularyMetadataList
-
-    PERMISSIONS_PRESETS = ["vocabularies"]
 
     links_item = {
         **VocabulariesServiceConfig.links_item,
@@ -103,12 +114,5 @@ class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfi
                     "id": record.pid.pid_value,
                 }
             ),
-        ),
-    }
-
-    vocabularies_listing_item = {
-        "self": Link(
-            "{+api}/vocabularies/{id}",
-            vars=lambda vocab_type, vars: vars.update({"id": vocab_type["id"]}),
         ),
     }

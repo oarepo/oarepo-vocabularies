@@ -5,9 +5,9 @@ from oarepo_vocabularies.fixtures import (
     VocabularyWriter,
     vocabularies_generator,
 )
-from oarepo_vocabularies.services.config import VocabulariesConfig
+from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
-from oarepo_vocabularies.services.service import VocabulariesService
+from oarepo_vocabularies.services.service import VocabularyTypeService
 
 # NOTE: Example.
 INVENIO_VOCABULARY_TYPE_METADATA = {
@@ -44,8 +44,8 @@ OAREPO_VOCABULARIES_HIERARCHY_CF = [
 
 OAREPO_VOCABULARIES_CUSTOM_CF = []
 
-OAREPO_VOCABULARIES_SERVICE_CONFIG_OAREPO_VOCABULARIES = VocabulariesConfig
-OAREPO_VOCABULARIES_SERVICE_CLASS_OAREPO_VOCABULARIES = VocabulariesService
+VOCABULARY_TYPE_SERVICE = VocabularyTypeService
+VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
 
 DATASTREAMS_CONFIG_GENERATOR_VOCABULARIES = vocabularies_generator
 
