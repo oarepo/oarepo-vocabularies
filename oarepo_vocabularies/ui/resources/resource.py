@@ -29,6 +29,16 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     @request_vocabulary_args
     def search(self):
         return super().search()
+    
+    # TODO: !IMPORTANT!: needs to be enabled before production deployment
+    # @login_required
+    def create():
+        pass
+
+    # TODO: !IMPORTANT!: needs to be enabled before production deployment
+    # @login_required
+    def edit(pid_value, vocabulary_term=None):
+        pass
 
     def _get_record(self, resource_requestctx):
         return self._api_service.read(
