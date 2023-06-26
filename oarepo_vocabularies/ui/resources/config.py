@@ -24,9 +24,13 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
             },
         },
         "search": {"layout": "oarepo_vocabularies_ui/search.html"},
+        "create": {"layout": "oarepo_vocabularies_ui/forms.html"},
+        "edit": {"layout": "oarepo_vocabularies_ui/forms.html"}
     }
 
     routes = {
+        "create": "/<vocabulary_type>/_new",
+        "edit": "/<vocabulary_type>/<pid_value>/edit",
         "search": "/<vocabulary_type>/",
         "detail": "/<vocabulary_type>/<pid_value>",
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
