@@ -15,9 +15,11 @@
 {%- block record_main_content %}
   {%- if forms_config.updateUrl %}
   <h1>{{ record.title }}</h1>
-  <input id="vocabulary-record" type="hidden" name="vocabulary-record" value='{{record | tojson }}'></input>
   {%- elif forms_config.createUrl -%}
   <h1>{{ _("New item") }}</h1>
+  {%- endif %}
+  {%- if record %}
+  <input id="vocabulary-record" type="hidden" name="vocabulary-record" value='{{record | tojson }}'></input>
   {%- endif %}
   {%- if forms_config %}
   <input type="hidden" name="form-config" value='{{forms_config | tojson }}'></input>
