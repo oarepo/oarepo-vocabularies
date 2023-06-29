@@ -14,12 +14,12 @@
 
 {%- block record_main_content %}
   {%- if forms_config.updateUrl %}
-  <h1>{{ record.title }}</h1>
+  <h1 style="text-transform: capitalize">{{ record.title }}</h1>
   {%- elif forms_config.createUrl -%}
   <h1>{{ _("New item") }}</h1>
   {%- endif %}
   {%- if record %}
-  <input id="vocabulary-record" type="hidden" name="vocabulary-record" value='{{record | tojson }}'></input>
+  <input id="vocabulary-record" type="hidden" name="vocabulary-record" value='{{data | tojson }}'></input>
   {%- endif %}
   {%- if forms_config %}
   <input type="hidden" name="form-config" value='{{forms_config | tojson }}'></input>

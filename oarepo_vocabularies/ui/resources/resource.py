@@ -161,7 +161,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ui_resource=self,
             forms_config=self.get_form_config(
                 vocabulary_type,
-                # TODO: define create link in vocabulary service config links
+                # TODO: define create link in vocabulary service links
                 createUrl=f"/api{self._api_service.config.url_prefix}{vocabulary_type}"
             ),
             layout=layout,
@@ -190,7 +190,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return render_template(
             template,
             record=serialized_record,
-            data=serialized_record,
+            data=record.to_dict(),
             ui=serialized_record.get("ui", serialized_record),
             ui_config=self.config,
             ui_resource=self,
