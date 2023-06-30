@@ -1,4 +1,5 @@
 import marshmallow as ma
+from flask import current_app
 from oarepo_ui.resources.config import RecordsUIResourceConfig
 
 from oarepo_vocabularies.ui.resources.components import VocabulariesSearchComponent
@@ -20,12 +21,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
             "blocks": {
                 "record_main_content": "oarepo_vocabularies_ui/main.html",
                 "record_sidebar": "oarepo_vocabularies_ui/sidebar.html",
-                "record_descendants": "oarepo_vocabularies_ui/descendants.html"
+                "vocabulary_descendants": "oarepo_vocabularies_ui/descendants.html",
             },
         },
         "search": {"layout": "oarepo_vocabularies_ui/search.html"},
-        "create": {"layout": "oarepo_vocabularies_ui/forms.html"},
-        "edit": {"layout": "oarepo_vocabularies_ui/form.html"}
+        "create": {"layout": "oarepo_vocabularies_ui/form.html"},
+        "edit": {"layout": "oarepo_vocabularies_ui/form.html"},
     }
 
     routes = {
@@ -39,3 +40,8 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     components = [VocabulariesSearchComponent]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
+
+    def form_props_config(self, vocabulary_type):
+        return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
+            vocabulary_type, {}
+        )

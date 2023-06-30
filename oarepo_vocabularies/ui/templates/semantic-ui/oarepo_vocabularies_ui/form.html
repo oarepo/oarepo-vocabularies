@@ -1,37 +1,6 @@
-{#
-  Copyright (C) 2020 CERN.
-  Copyright (C) 2020 Northwestern University.
-
-  Invenio App RDM is free software; you can redistribute it and/or modify it
-  under the terms of the MIT License; see LICENSE file for more details.
-#}
-{%- if forms_config.createUrl %}
-  {%- set title = _("New item") %}
-{% elif record.title %}
-  {%- set title = _("Edit item ") + record.title %}
-{%- endif %}
-{%- extends "oarepo_ui/detail.html" %}
-
-{%- block record_main_content %}
-  {%- if forms_config.updateUrl %}
-  <h1 style="text-transform: capitalize">{{ record.title }}</h1>
-  {%- elif forms_config.createUrl -%}
-  <h1>{{ _("New item") }}</h1>
-  {%- endif %}
-  {%- if record %}
-  <input id="vocabulary-record" type="hidden" name="vocabulary-record" value='{{data | tojson }}'></input>
-  {%- endif %}
-  {%- if forms_config %}
-  <input type="hidden" name="form-config" value='{{forms_config | tojson }}'></input>
-  {%- endif %}
-  <!-- TODO: this needs to be implemented before production -->
-  <!-- {%- if permissions %}
-  <input id="deposits-record-permissions" type="hidden" name="deposits-record-permissions" value='{{permissions | tojson }}'></input>
-  {%- endif %} -->
-  <div id="vocabulary-form"></div>
-{%- endblock record_main_content %}
+{% extends "oarepo_ui/form.html" %}
 
 {%- block javascript %}
     {{ super() }}
-    {{ webpack['oarepo_vocabularies_form.js'] }}
+    {{ webpack['oarepo_vocabularies_forms.js'] }}
 {%- endblock %}
