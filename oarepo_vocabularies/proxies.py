@@ -8,5 +8,5 @@ def _ext_proxy(attr):
     )
 
 
-current_service = _ext_proxy("service")
-"""Proxy to the instantiated vocabulary service."""
+current_type_service = _ext_proxy("type_service")
+"""Proxy to the instantiated vocabulary type service."""
