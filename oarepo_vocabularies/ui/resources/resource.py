@@ -39,66 +39,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         #        gets resolved.
         return current_app.config.get(
             "INVENIO_VOCABULARY_TYPE_METADATA",
-            {
-                "languages": {
-                    "alpha3CodeENG": {
-                        "description": _("ISO 639-2 standard 3-letter language code"),
-                        "icon": None,
-                        "label": _("Alpha3 code (English)"),
-                        "multiple": False,
-                        "options": [
-                            # {
-                            #     "id": "concept",
-                            #     "title": "Concept"
-                            # },
-                            # ...
-                        ],
-                        "placeholder": "eng, cze...",
-                        "search": False,
-                    },
-                    "alpha3CodeNative": {
-                        "description": _("ISO 639-2 standard 3-letter language code"),
-                        "icon": None,
-                        "label": _("Alpha3 code (native)"),
-                        "multiple": False,
-                        "options": [],
-                        "placeholder": "eng, ces...",
-                        "search": False,
-                    },
-                },
-                "licenses": {},
-                "contributor-types": {
-                    "marcCode": {
-                        "label": _("MARC code"),
-                    },
-                    "dataCiteCode": {"label": _("DataCite code")},
-                },
-                "countries": {
-                    "alpha3Code": {
-                        "label": _("Alpha3 code (English)"),
-                        "placeholder": "USA, CZE...",
-                    }
-                },
-                "funders": {"acronym": {"label": _("Acronym")}},
-                "institutions": {
-                    "acronym": {"label": _("Acronym")},
-                    "contexts": {"label": _("Contexts")},
-                    "RID": {
-                        "label": _("RID"),
-                        "description": _(
-                            "A Registered Application Provider Identifier"
-                        ),
-                    },
-                    "ICO": {"label": _("ICO")},
-                    "nameType": {"label": _("Name type"), "default": "organizational"},
-                },
-                "item-relation-types": {"pair": {"label": _("Relation")}},
-                "resource-types": {
-                    "coarType": {"label": _("COAR type")},
-                    "dataCiteCode": {"label": _("DataCite code")},
-                },
-                "subject-categories": {},
-            },
+            {},
         ).get(vocabulary_type, {})
 
     def get_form_config(self, vocabulary_type, **kwargs):
@@ -162,7 +103,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             forms_config=self.get_form_config(
                 vocabulary_type,
                 # TODO: define create link in vocabulary service links
-                createUrl=f"/api{self._api_service.config.url_prefix}{vocabulary_type}"
+                createUrl=f"/api{self._api_service.config.url_prefix}{vocabulary_type}",
             ),
             layout=layout,
             component_key="edit",
