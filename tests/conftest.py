@@ -336,3 +336,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             ],
         )
     ]
+    
+@pytest.fixture
+def empty_licences(db):
+    v = VocabularyType.create(id="licences", pid_type="lic")
+    db.session.add(v)
+    db.session.commit()
+    
+    return v
