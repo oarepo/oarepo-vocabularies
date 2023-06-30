@@ -34,7 +34,7 @@ class VocabularyTypeService(Service):
         # Extend database data with configuration & aggregation data.
         results = []
         for db_vocab_type in vocabulary_types:
-            result = {"id": db_vocab_type.id, "pid_type": db_vocab_type.pid_type, "count": count_terms_agg[db_vocab_type.id]}
+            result = {"id": db_vocab_type.id, "pid_type": db_vocab_type.pid_type, "count": count_terms_agg.get(db_vocab_type.id, 0)}
 
             if db_vocab_type.id in config_vocab_types:
                 for k, v in config_vocab_types[db_vocab_type.id].items():
