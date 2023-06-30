@@ -77,10 +77,17 @@ def app_config(app_config):
 
     # note: This line must always be added to the invenio.cfg file
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
-    from oarepo_vocabularies.services.config import VocabulariesConfig
+    from oarepo_vocabularies.services.config import (
+        VocabulariesConfig,
+        VocabularyTypeServiceConfig,
+    )
+    from oarepo_vocabularies.services.service import VocabularyTypeService
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
+
+    app_config["VOCABULARY_TYPE_SERVICE"] = VocabularyTypeService
+    app_config["VOCABULARY_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -96,6 +103,29 @@ def app_config(app_config):
     # disable redis cache
     app_config["CACHE_TYPE"] = "SimpleCache"  # Flask-Caching related configs
     app_config["CACHE_DEFAULT_TIMEOUT"] = 300
+
+    app_config["INVENIO_VOCABULARY_TYPE_METADATA"] = {
+        "languages": {
+            "name": {
+                "cs": "jazyky",
+                "en": "languages",
+            },
+            "description": {
+                "cs": "slovnikovy typ ceskeho jazyka.",
+                "en": "czech language vocabulary type.",
+            },
+        },
+        "licences": {
+            "name": {
+                "cs": "licence",
+                "en": "licences",
+            },
+            "description": {
+                "cs": "slovnikovy typ licencii.",
+                "en": "lincenses vocabulary type.",
+            },
+        },
+    }
 
     return app_config
 
@@ -309,3 +339,12 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             ],
         )
     ]
+
+
+@pytest.fixture
+def empty_licences(db):
+    v = VocabularyType.create(id="licences", pid_type="lic")
+    db.session.add(v)
+    db.session.commit()
+
+    return v
