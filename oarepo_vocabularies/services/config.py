@@ -55,12 +55,12 @@ class VocabularyMetadataList(ServiceListResult):
 
         return res
 
+
 class VocabularyTypeServiceConfig(PermissionsPresetsConfigMixin):
     schema = VocabularyMetadataSchema
     result_list_cls = VocabularyMetadataList
 
     PERMISSIONS_PRESETS = ["vocabularies"]
-       
 
     vocabularies_listing_item = {
         "self": Link(
@@ -69,13 +69,13 @@ class VocabularyTypeServiceConfig(PermissionsPresetsConfigMixin):
         ),
     }
 
+
 class VocabulariesConfig(VocabulariesServiceConfig):
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
     components = [*VocabulariesServiceConfig.components, HierarchyComponent]
     url_prefix = "/vocabularies/"
-
 
     links_item = {
         **VocabulariesServiceConfig.links_item,
