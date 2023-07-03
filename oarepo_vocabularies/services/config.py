@@ -5,13 +5,15 @@ from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
-
+from .permissions import PermissionPolicy
 
 class VocabulariesConfig(VocabulariesServiceConfig):
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
     components = [*VocabulariesServiceConfig.components, HierarchyComponent]
+    permission_policy_cls = PermissionPolicy
+
     url_prefix = "/vocabularies/"
     links_item = {
         **VocabulariesServiceConfig.links_item,
