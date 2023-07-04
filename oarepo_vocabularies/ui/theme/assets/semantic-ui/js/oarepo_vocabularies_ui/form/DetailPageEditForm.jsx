@@ -1,15 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
-import { Container, Button } from "semantic-ui-react";
-import _ from "lodash";
+import { Container } from "semantic-ui-react";
 import { BaseForm, TextField, http } from "react-invenio-forms";
 import { PublishButton } from "./PublishButton";
 import { useFormikContext } from "formik";
 import { FieldWithLanguageOption } from "./FieldWithLanguageOption";
 import { PropFieldsComponent } from "./PropFieldsComponent";
-import { extractVariablePart, transformArrayToObject } from "../util";
-import { redirect, useLocation } from "react-router-dom";
+import {
+  extractVariablePart,
+  transformArrayToObject,
+  checkDuplicateLanguage,
+} from "../util";
+import { useLocation } from "react-router-dom";
 
 const FormikStateLogger = () => {
   const state = useFormikContext();
@@ -17,14 +20,33 @@ const FormikStateLogger = () => {
 };
 
 const MyFormSchema = Yup.object().shape({
-  title: Yup.array().of(
-    Yup.object().shape({
-      language: Yup.string().required("required"), // these constraints take precedence
-      title: Yup.string().required("required"), // these constraints take precedence
-    })
-  ),
+  title: Yup.array()
+    .of(
+      Yup.object().shape({
+        language: Yup.string().required("required"), // these constraints take precedence
+        title: Yup.string().required("required"), // these constraints take precedence
+      })
+    )
+    .test(
+      "same language",
+      (value) => {
+        console.log(value.value);
+        return [
+          value.value.map((item) => ({
+            language: "You must not have two same languages",
+          })),
+        ];
+      },
+      (value, context) => {
+        console.log(value, context);
+        console.log(checkDuplicateLanguage(value));
+        return checkDuplicateLanguage(value);
+      }
+    ),
+
   ICO: Yup.string().length(8, "musi byt presne 8"),
   RID: Yup.string().length(5),
+  id: Yup.string().required("required"),
 });
 
 export const DetailPageEditForm = ({
@@ -37,8 +59,8 @@ export const DetailPageEditForm = ({
 }) => {
   const currentPath = useLocation().pathname;
   const vocabularyType = extractVariablePart(currentPath);
-  console.log(currentPath.replace("/edit", ""));
-  const onSubmit = (values) => {
+  const onSubmit = (values, formik) => {
+    console.log(formik);
     const preparedValues = {
       ...values,
       title: transformArrayToObject(values.title),
@@ -49,10 +71,9 @@ export const DetailPageEditForm = ({
         .put(apiCallUrl, preparedValues)
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
-            redirect(currentPath.replace("/edit", ""));
+            formik.setSubmitting(false);
+            window.location.href = currentPath.replace("/edit", "");
           }
-          // Handle the response
-          console.log(response);
         })
         .catch((error) => {
           // Handle the error
@@ -62,8 +83,10 @@ export const DetailPageEditForm = ({
       http
         .post(apiCallUrl, preparedValues)
         .then((response) => {
-          // Handle the response
-          console.log(response);
+          if (response.status >= 200 && response.status < 300) {
+            formik.setSubmitting(false);
+            window.location.href = currentPath.replace("_new", values.id);
+          }
         })
         .catch((error) => {
           // Handle the error
@@ -71,7 +94,6 @@ export const DetailPageEditForm = ({
         });
     }
   };
-  console.log(extractVariablePart(currentPath));
   return (
     <Container>
       <BaseForm
@@ -88,7 +110,7 @@ export const DetailPageEditForm = ({
         {hasPropFields && (
           <PropFieldsComponent vocabularyProps={vocabulary_props} />
         )}
-        <TextField fieldPath="id" label={"ID"} width={9} required />
+        <TextField fieldPath="id" label={"ID"} width={11} required />
         <FormikStateLogger />
         <PublishButton />
       </BaseForm>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   TextField,
@@ -7,7 +7,7 @@ import {
   FieldLabel,
   SelectField,
 } from "react-invenio-forms";
-import { Button, Form, Icon, Container } from "semantic-ui-react";
+import { Button, Form, Icon } from "semantic-ui-react";
 
 const emptyRelatedWork = {
   language: "",

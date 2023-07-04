@@ -50,3 +50,13 @@ export const clearObjectValues = (obj) => {
 
   return result;
 };
+
+// check if two same languages are selected in multi language field
+export const checkDuplicateLanguage = (array) => {
+  const languageSet = new Set();
+  for (let item of array) {
+    const { language } = item;
+    languageSet.add(language);
+  }
+  return languageSet.size === array.length;
+};

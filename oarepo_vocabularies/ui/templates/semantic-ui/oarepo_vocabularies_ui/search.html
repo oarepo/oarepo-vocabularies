@@ -2,6 +2,11 @@
 {%- block javascript %} {{ super() }} {{
 webpack['oarepo_vocabularies_search.js'] }} {%- endblock %} {%- block page_body
 %}
+<div class="ui center aligned segment mt-20">
+  <a href="/vocabularies/institutions/_new"
+    ><button class="ui button blue center">New entry</button></a
+  >
+</div>
 <div class="ui container">
   <div
     data-invenio-search-config='{{ search_app_config(app_id="OarepoVocabularies.Search") | tojson }}'

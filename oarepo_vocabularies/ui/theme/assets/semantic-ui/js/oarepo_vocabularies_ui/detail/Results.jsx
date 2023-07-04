@@ -24,6 +24,7 @@ export const Results = ({
   const { data } = currentResultsState;
   const { total } = data;
   const [[facet, vocabularyItem]] = [...currentFacet];
+  console.log(total);
   return total ? (
     <React.Fragment>
       <Grid relaxed verticalAlign="middle">
