@@ -82,7 +82,7 @@ def app_config(app_config):
         VocabularyTypeServiceConfig,
     )
     from oarepo_vocabularies.services.service import VocabularyTypeService
-    from oarepo_vocabularies.resources.vocabulary_types import (
+    from oarepo_vocabularies.resources.vocabulary_type import (
         VocabularyTypeResource,
         VocabularyTypeResourceConfig
     )

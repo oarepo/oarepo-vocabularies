@@ -8,6 +8,7 @@ import re
 from invenio_base.utils import obj_or_import_string
 
 from oarepo_vocabularies.ui import config as config
+from oarepo_vocabularies.proxies import current_type_service
 
 
 class InvenioVocabulariesAppExtension:
@@ -28,6 +29,15 @@ class InvenioVocabulariesAppExtension:
             config=obj_or_import_string(
                 app.config["OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG"]
             )(),
+        )
+
+        self.type_resource = obj_or_import_string(
+            app.config["VOCABULARY_TYPE_UI_RESOURCE"]
+        )(
+            config=obj_or_import_string(
+                app.config["VOCABULARY_TYPE_UI_RESOURCE_CONFIG"]
+            )(),
+            service=current_type_service
         )
 
     def init_config(self, app):
