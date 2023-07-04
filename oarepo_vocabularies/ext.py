@@ -3,7 +3,7 @@ class OARepoVocabularies(object):
 
     def __init__(self, app=None):
         """Extension initialization."""
-        self.resource = None
+        self.type_resource = None
         self.type_service = None
         if app:
             self.init_app(app)
@@ -51,5 +51,6 @@ class OARepoVocabularies(object):
     def init_resource(self, app):
         """Initialize resources."""
         self.type_resource = app.config["VOCABULARY_TYPE_RESOURCE"](
-            config=app.config["VOCABULARY_TYPE_RESOURCE_CONFIG"]
+            config=app.config["VOCABULARY_TYPE_RESOURCE_CONFIG"](),
+            service=self.type_service,
         )
