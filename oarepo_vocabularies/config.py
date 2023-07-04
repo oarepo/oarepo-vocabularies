@@ -5,13 +5,13 @@ from oarepo_vocabularies.fixtures import (
     VocabularyWriter,
     vocabularies_generator,
 )
+from oarepo_vocabularies.resources.vocabulary_type import (
+    VocabularyTypeResource,
+    VocabularyTypeResourceConfig,
+)
 from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabularyTypeService
-from oarepo_vocabularies.resources.vocabulary_types import (
-    VocabularyTypeResource,
-    VocabularyTypeResourceConfig
-)
 
 # NOTE: Example.
 INVENIO_VOCABULARY_TYPE_METADATA = {
