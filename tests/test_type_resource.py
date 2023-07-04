@@ -1,6 +1,3 @@
-import json
-
-
 def test_resource_get(
     app,
     app_config,
@@ -14,7 +11,7 @@ def test_resource_get(
 ):
     resp = client.get("/api/vocabularies/").json
 
-    results = json.loads(resp)
+    results = resp
     assert results["hits"]["total"] == 2
     hits = results["hits"]["hits"]
 
@@ -41,4 +38,5 @@ def test_accept_header(
         "/api/vocabularies/", headers={"accept": invenio_json_header}
     ).json
 
+    # TODO.
     print(resp)
