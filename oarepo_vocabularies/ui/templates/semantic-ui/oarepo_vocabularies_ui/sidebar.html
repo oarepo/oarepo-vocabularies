@@ -1,59 +1,51 @@
 <!-- place your record sidebar content in here ... -->
 <section id="export-record" aria-label="Export" class="ui segment exports">
-<h2 class="ui small header">{{_('Export')}}</h2>
-<div id="recordExportDownload">
+  <h2 class="ui small header">{{_('Export')}}</h2>
+  <div id="recordExportDownload">
     <div class="ui grid">
-    <div class="eleven wide column">
+      <div class="eleven wide column">
         <div
-        role="listbox"
-        aria-expanded="false"
-        class="ui fluid selection dropdown"
-        tabindex="0"
+          role="listbox"
+          aria-expanded="false"
+          class="ui fluid selection dropdown"
+          tabindex="0"
         >
-        <div
+          <div
             aria-atomic="true"
             aria-live="polite"
             role="alert"
             class="divider text"
-        >
+          >
             JSON
-        </div>
-        <i aria-hidden="true" class="dropdown icon"></i>
-        <div class="menu transition">
+          </div>
+          <i aria-hidden="true" class="dropdown icon"></i>
+          <div class="menu transition">
             <div
-            style="pointer-events: all"
-            role="option"
-            aria-checked="true"
-            aria-selected="true"
-            class="active selected item"
+              style="pointer-events: all"
+              role="option"
+              aria-checked="true"
+              aria-selected="true"
+              class="active selected item"
             >
-            <span class="text">JSON</span>
+              <span class="text">JSON</span>
             </div>
+          </div>
         </div>
-        </div>
-    </div>
-    <div class="five wide column pl-0">
+      </div>
+      <div class="five wide column pl-0">
         <a
-        href="{{export_path}}/json"
-        title="Download file"
-        class="ui fluid button"
-        role="button"
-        >Export</a
+          href="{{export_path}}/json"
+          title="Download file"
+          class="ui fluid button"
+          role="button"
+          >Export</a
         >
+      </div>
     </div>
-    </div>
-</div>
-</section>
-<section aria-label="Links" class="ui segment">
-    <h2 class="ui small header">{{_('Links')}}</h2>
-    {% set ui_links = {} %}
-    {% for key, value in data.links.items() %}
-        {% set _ = ui_links.update({key: value.replace('/api/', '/')}) %}
-    {% endfor %}
-    {%- value ui=ui_links, component="sidebar_links" -%}
+  </div>
 </section>
 
 <section aria-label="API" class="ui segment">
-    <h2 class="ui small header">{{_('API')}} {{_('Links')}}</h2>
-    {%- value ui=data.links, component="sidebar_links" -%}
+  <h2 class="ui small header">{{_('API')}} {{_('Links')}}</h2>
+  {%- value ui=data.links, component="sidebar_links" -%}
 </section>

@@ -1,10 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
-
-import _get from "lodash/get";
-import _join from "lodash/join";
-import _truncate from "lodash/truncate";
 import _upperFirst from "lodash/upperFirst";
 import _toPairs from "lodash/toPairs";
 import _chunk from "lodash/chunk";
@@ -42,7 +38,6 @@ const VocabularyItemPropsTable = (props) => {
 
 export const VocabularyResultsListItemComponent = ({ result, appName }) => {
   const { title_l10n: title = "No title", id, props: itemProps } = result;
-
   // TODO: serialize links->self in UI serializer and use here
   const viewLink = new URL(
     id,

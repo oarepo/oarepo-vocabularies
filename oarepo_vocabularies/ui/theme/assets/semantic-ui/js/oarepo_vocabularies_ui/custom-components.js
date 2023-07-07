@@ -12,4 +12,4 @@ import "./sample-component.js"
 */
 
 // This file will import the css templates for your custom components
-import "../../less/oarepo_vocabularies_ui/custom-components.less"
+import "../../less/oarepo_vocabularies_ui/custom-components.less";
