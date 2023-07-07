@@ -3,6 +3,41 @@
 
 {%- block page_body %}
 <div class="ui container">
-  <h1>Hello, world!</h1>
+  <table style="text-align: center">
+    <thead>
+      <tr>
+        <th>
+          Id
+        </th>
+        <th>
+          PID type
+        </th>
+        <th>
+          Count
+        </th>
+        <th>
+          Link
+        </th>
+        <th>
+          Name
+        </th>
+        <th>
+          Description
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in list_data['hits']['hits'] %}
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.pid_type }}</td>
+          <td>{{ item.count }}</td>
+          <td><a href={{ item.links['self'] }}>{{ item.id }}</a></td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {%- endblock page_body %}
