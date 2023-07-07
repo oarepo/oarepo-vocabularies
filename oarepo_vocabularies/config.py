@@ -25,10 +25,10 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
             "en": "czech language vocabulary type.",
         },
     },
-    "licences": {
+    "licenses": {
         "name": {
-            "cs": "licence",
-            "en": "licences",
+            "cs": "license",
+            "en": "licenses",
         },
         "description": {
             "cs": "slovnikovy typ licencii.",

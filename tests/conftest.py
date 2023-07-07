@@ -122,10 +122,10 @@ def app_config(app_config):
                 "en": "czech language vocabulary type.",
             },
         },
-        "licences": {
+        "licenses": {
             "name": {
-                "cs": "licence",
-                "en": "licences",
+                "cs": "license",
+                "en": "licenses",
             },
             "description": {
                 "cs": "slovnikovy typ licencii.",
