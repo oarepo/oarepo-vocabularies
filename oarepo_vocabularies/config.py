@@ -5,6 +5,10 @@ from oarepo_vocabularies.fixtures import (
     VocabularyWriter,
     vocabularies_generator,
 )
+from oarepo_vocabularies.resources.vocabulary_type import (
+    VocabularyTypeResource,
+    VocabularyTypeResourceConfig,
+)
 from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabularyTypeService
@@ -21,10 +25,10 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
             "en": "czech language vocabulary type.",
         },
     },
-    "licences": {
+    "licenses": {
         "name": {
-            "cs": "licence",
-            "en": "licences",
+            "cs": "license",
+            "en": "licenses",
         },
         "description": {
             "cs": "slovnikovy typ licencii.",
@@ -46,6 +50,9 @@ OAREPO_VOCABULARIES_CUSTOM_CF = []
 
 VOCABULARY_TYPE_SERVICE = VocabularyTypeService
 VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
+
+VOCABULARY_TYPE_RESOURCE = VocabularyTypeResource
+VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
 
 DATASTREAMS_CONFIG_GENERATOR_VOCABULARIES = vocabularies_generator
 

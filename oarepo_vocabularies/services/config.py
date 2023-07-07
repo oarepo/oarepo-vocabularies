@@ -57,6 +57,7 @@ class VocabularyMetadataList(ServiceListResult):
 
 
 class VocabularyTypeServiceConfig(PermissionsPresetsConfigMixin):
+    service_id = "vocabulary_type"
     schema = VocabularyMetadataSchema
     result_list_cls = VocabularyMetadataList
 
