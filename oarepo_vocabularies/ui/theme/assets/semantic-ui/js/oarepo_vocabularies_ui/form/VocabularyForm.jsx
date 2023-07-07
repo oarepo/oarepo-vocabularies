@@ -14,6 +14,7 @@ const options = {
   languages: [
     { text: "cs", value: "cs" },
     { text: "en", value: "en" },
+    { text: "de", value: "de" },
   ],
 };
 
@@ -28,9 +29,10 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
 
   const editModeAndProps = editMode
     ? vocabularyRecord.props
-    : clearObjectValues(vocabulary_props);
+    : clearObjectValues({ ...vocabulary_props.props });
 
   const propFieldsWithValues = hasPropFields ? editModeAndProps : {};
+
   const initialValues = editMode
     ? {
         title: translateObjectToArray(vocabularyRecord.title),

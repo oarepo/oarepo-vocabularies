@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
-import { Container } from "semantic-ui-react";
+import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
 import { BaseForm, TextField, http } from "react-invenio-forms";
 import { PublishButton } from "./PublishButton";
 import { useFormikContext } from "formik";
@@ -13,6 +13,8 @@ import {
   checkDuplicateLanguage,
 } from "../util";
 import { useLocation } from "react-router-dom";
+import { ErrorComponent } from "./Error";
+import { ResetButton } from "./ResetButton";
 
 const FormikStateLogger = () => {
   const state = useFormikContext();
@@ -23,8 +25,8 @@ const MyFormSchema = Yup.object().shape({
   title: Yup.array()
     .of(
       Yup.object().shape({
-        language: Yup.string().required("required"), // these constraints take precedence
-        title: Yup.string().required("required"), // these constraints take precedence
+        language: Yup.string().required("required"),
+        title: Yup.string().required("required"),
       })
     )
     .test(
@@ -38,14 +40,14 @@ const MyFormSchema = Yup.object().shape({
         ];
       },
       (value, context) => {
-        console.log(value, context);
-        console.log(checkDuplicateLanguage(value));
         return checkDuplicateLanguage(value);
       }
     ),
 
-  ICO: Yup.string().length(8, "musi byt presne 8"),
-  RID: Yup.string().length(5),
+  props: Yup.object().shape({
+    ICO: Yup.string().length(8, "musi byt presne 8"),
+    RID: Yup.string().length(5),
+  }),
   id: Yup.string().required("required"),
 });
 
@@ -57,10 +59,12 @@ export const DetailPageEditForm = ({
   apiCallUrl,
   editMode,
 }) => {
+  // to display errors that are consequence of API calls
+  const sidebarRef = useRef(null);
+  const [error, setError] = useState("");
   const currentPath = useLocation().pathname;
   const vocabularyType = extractVariablePart(currentPath);
   const onSubmit = (values, formik) => {
-    console.log(formik);
     const preparedValues = {
       ...values,
       title: transformArrayToObject(values.title),
@@ -70,27 +74,30 @@ export const DetailPageEditForm = ({
       http
         .put(apiCallUrl, preparedValues)
         .then((response) => {
+          setError("");
+          console.log("then block");
           if (response.status >= 200 && response.status < 300) {
             formik.setSubmitting(false);
             window.location.href = currentPath.replace("/edit", "");
           }
         })
         .catch((error) => {
-          // Handle the error
-          console.error(error);
+          formik.setSubmitting(false);
+          setError(error.response.data.message);
         });
     } else {
       http
         .post(apiCallUrl, preparedValues)
         .then((response) => {
+          setError("");
           if (response.status >= 200 && response.status < 300) {
             formik.setSubmitting(false);
             window.location.href = currentPath.replace("_new", values.id);
           }
         })
         .catch((error) => {
-          // Handle the error
-          console.error(error);
+          formik.setSubmitting(false);
+          setError(error.response.data.message);
         });
     }
   };
@@ -106,13 +113,25 @@ export const DetailPageEditForm = ({
           validateOnBlur: false,
         }}
       >
-        <FieldWithLanguageOption fieldPath="title" options={options} />
-        {hasPropFields && (
-          <PropFieldsComponent vocabularyProps={vocabulary_props} />
-        )}
-        <TextField fieldPath="id" label={"ID"} width={11} required />
-        <FormikStateLogger />
-        <PublishButton />
+        <Grid>
+          <Grid.Column mobile={16} tablet={16} computer={12}>
+            <FieldWithLanguageOption fieldPath="title" options={options} />
+            {hasPropFields && (
+              <PropFieldsComponent vocabularyProps={vocabulary_props} />
+            )}
+            <TextField fieldPath="id" label={"ID"} width={11} required />
+            <FormikStateLogger />
+            {error && <ErrorComponent message={error} />}
+          </Grid.Column>
+          <Ref innerRef={sidebarRef}>
+            <Grid.Column mobile={16} tablet={16} computer={4}>
+              <Sticky context={sidebarRef} offset={20}>
+                <PublishButton />
+                <ResetButton />
+              </Sticky>
+            </Grid.Column>
+          </Ref>
+        </Grid>
       </BaseForm>
     </Container>
   );

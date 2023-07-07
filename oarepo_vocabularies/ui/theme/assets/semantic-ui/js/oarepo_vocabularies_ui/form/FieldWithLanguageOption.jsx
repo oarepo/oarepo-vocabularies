@@ -27,13 +27,12 @@ export const FieldWithLanguageOption = ({
       addButtonLabel="Add another language"
       defaultNewValue={emptyRelatedWork}
       fieldPath={fieldPath}
-      label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+      label={<FieldLabel htmlFor={fieldPath} icon="" label={label} />}
       required={required}
       showEmptyValue={showEmptyValue}
     >
       {({ arrayHelpers, indexPath }) => {
         const fieldPathPrefix = `${fieldPath}.${indexPath}`;
-
         return (
           <GroupField optimized>
             <SelectField
@@ -54,14 +53,17 @@ export const FieldWithLanguageOption = ({
             />
 
             <Form.Field>
-              <Button
-                aria-label="remove field"
-                className="close-btn"
-                icon
-                onClick={() => arrayHelpers.remove(indexPath)}
-              >
-                <Icon name="close" />
-              </Button>
+              {indexPath > 0 && (
+                <Button
+                  style={{ marginTop: "1.75rem" }}
+                  aria-label="remove field"
+                  className="close-btn"
+                  icon
+                  onClick={() => arrayHelpers.remove(indexPath)}
+                >
+                  <Icon name="close" />
+                </Button>
+              )}
             </Form.Field>
           </GroupField>
         );
