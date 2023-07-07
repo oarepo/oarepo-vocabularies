@@ -1,6 +1,5 @@
 def test_resource_get(
     app,
-    app_config,
     client,
     db,
     identity,
@@ -24,7 +23,6 @@ def test_resource_get(
 
 def test_accept_header(
     app,
-    app_config,
     client,
     db,
     identity,
@@ -38,5 +36,12 @@ def test_accept_header(
         "/api/vocabularies/", headers={"accept": invenio_json_header}
     ).json
 
-    # TODO.
-    print(resp)
+    results = resp
+    assert results["hits"]["total"] == 2
+    hits = results["hits"]["hits"]
+
+    hits_languages = [hit for hit in hits if hit["id"] == "languages"][0]
+    assert hits_languages["count"] == 5
+
+    hits_licences = [hit for hit in hits if hit["id"] == "licences"][0]
+    assert hits_licences["count"] == 0
