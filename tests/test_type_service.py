@@ -3,7 +3,6 @@ from oarepo_vocabularies.proxies import current_type_service as vocabulary_type_
 
 def test_counts(
     app,
-    app_config,
     db,
     identity,
     vocab_cf,

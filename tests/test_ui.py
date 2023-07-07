@@ -1,6 +1,5 @@
 def test_whatever(
     app,
-    app_config,
     client,
     db,
     identity,
