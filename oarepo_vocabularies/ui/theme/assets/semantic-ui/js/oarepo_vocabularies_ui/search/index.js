@@ -11,10 +11,11 @@ import {
   SearchAppResults,
   SearchAppLayout,
   EmptyResultsElement,
-} from "@js/oarepo_ui/search";
+  SearchAppSearchBar,
+} from "./search";
 import { VocabularyResultsListItemWithState } from "./components";
 import { parametrize, overrideStore } from "react-overridable";
-import React from "react";
+
 const appName = "OarepoVocabularies.Search";
 const SearchAppSearchbarContainerWithConfig = parametrize(
   SearchAppSearchbarContainer,
@@ -39,7 +40,7 @@ export const defaultComponents = {
     SearchAppSearchbarContainerWithConfig,
   [`${appName}.SearchApp.sort`]: SearchAppSort,
   [`${appName}.SearchFilters.Toggle.element`]: SearchFiltersToggleElement,
-
+  [`${appName}.SearchApp.searchbar`]: SearchAppSearchBar,
   [`${appName}.SearchApp.resultOptions`]: SearchAppResultOptions,
   [`${appName}.SearchApp.results`]: SearchAppResults,
   [`${appName}.SearchApp.layout`]: SearchAppLayout,
@@ -52,3 +53,4 @@ createSearchAppInit(
   "invenio-search-config",
   true
 );
+// "@js/oarepo_ui/search";

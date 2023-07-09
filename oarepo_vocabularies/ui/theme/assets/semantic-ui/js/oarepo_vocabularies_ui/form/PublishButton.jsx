@@ -1,11 +1,12 @@
 import React from "react";
 import { connect } from "formik";
-import { Button, Container, Icon } from "semantic-ui-react";
+import { Button, Container } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { scrollTop } from "../utils";
 
 const PublishButtonComponent = ({ formik }) => {
-  const { handleSubmit, isSubmitting } = formik;
+  const { handleSubmit, isSubmitting, isValid } = formik;
   return (
     <Container textAlign="center">
       <Button
@@ -13,7 +14,7 @@ const PublishButtonComponent = ({ formik }) => {
         disabled={isSubmitting}
         loading={isSubmitting}
         color="green"
-        onClick={handleSubmit}
+        onClick={isValid ? handleSubmit : () => scrollTop()}
         icon="upload"
         labelPosition="left"
         content={i18next.t("publish")}

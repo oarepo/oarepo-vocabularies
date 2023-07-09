@@ -12,9 +12,10 @@
 {%- endif %}
 {%- extends "oarepo_ui/detail.html" %}
 
-{%- block record_main_content %}
+{%- block page_body %}
+  <div class="ui main container">
   {%- if forms_config.updateUrl %}
-  <h1 style="text-transform: capitalize">{{ record.title }}</h1>
+  <h1 style="text-transform: capitalize ">{{ record.title }}</h1>
   {%- elif forms_config.createUrl -%}
   <h1>{{ _("New item") }}</h1>
   {%- endif %}
@@ -29,7 +30,8 @@
   <input id="deposits-record-permissions" type="hidden" name="deposits-record-permissions" value='{{permissions | tojson }}'></input>
   {%- endif %} -->
   <div id="vocabulary-form"></div>
-{%- endblock record_main_content %}
+  </div>
+{%- endblock page_body %}
 
 {%- block javascript %}
     {{ super() }}

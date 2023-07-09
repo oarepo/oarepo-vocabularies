@@ -4,22 +4,16 @@ import * as Yup from "yup";
 import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
 import { BaseForm, TextField, http } from "react-invenio-forms";
 import { PublishButton } from "./PublishButton";
-import { useFormikContext } from "formik";
 import { FieldWithLanguageOption } from "./FieldWithLanguageOption";
 import { PropFieldsComponent } from "./PropFieldsComponent";
 import {
   extractVariablePart,
   transformArrayToObject,
   checkDuplicateLanguage,
-} from "../util";
+} from "../utils";
 import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./Error";
 import { ResetButton } from "./ResetButton";
-
-const FormikStateLogger = () => {
-  const state = useFormikContext();
-  return <pre>{JSON.stringify(state, null, 2)}</pre>;
-};
 
 const MyFormSchema = Yup.object().shape({
   title: Yup.array()
@@ -45,7 +39,9 @@ const MyFormSchema = Yup.object().shape({
     ),
 
   props: Yup.object().shape({
-    ICO: Yup.string().length(8, "musi byt presne 8"),
+    ICO: Yup.string()
+      .length(8, "Must be exactly 8 characters")
+      .matches(/^\d+$/, "Must contain only numbers"),
     RID: Yup.string().length(5),
   }),
   id: Yup.string().required("required"),
@@ -65,6 +61,7 @@ export const DetailPageEditForm = ({
   const currentPath = useLocation().pathname;
   const vocabularyType = extractVariablePart(currentPath);
   const onSubmit = (values, formik) => {
+    console.log(values);
     const preparedValues = {
       ...values,
       title: transformArrayToObject(values.title),
@@ -120,7 +117,6 @@ export const DetailPageEditForm = ({
               <PropFieldsComponent vocabularyProps={vocabulary_props} />
             )}
             <TextField fieldPath="id" label={"ID"} width={11} required />
-            <FormikStateLogger />
             {error && <ErrorComponent message={error} />}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>

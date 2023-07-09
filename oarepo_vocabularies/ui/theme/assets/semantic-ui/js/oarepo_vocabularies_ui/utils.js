@@ -60,3 +60,11 @@ export const checkDuplicateLanguage = (array) => {
   }
   return languageSet.size === array.length;
 };
+
+export const scrollTop = () => {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
+};
