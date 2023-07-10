@@ -10,6 +10,7 @@ import {
   extractVariablePart,
   transformArrayToObject,
   checkDuplicateLanguage,
+  eliminateEmptyStringProperties,
 } from "../utils";
 import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./Error";
@@ -66,7 +67,9 @@ export const DetailPageEditForm = ({
       ...values,
       title: transformArrayToObject(values.title),
       type: vocabularyType,
+      props: eliminateEmptyStringProperties(values.props),
     };
+    console.log(preparedValues);
     if (editMode) {
       http
         .put(apiCallUrl, preparedValues)

@@ -68,3 +68,13 @@ export const scrollTop = () => {
     behavior: "smooth",
   });
 };
+
+// delete non empty properties from object
+
+export const eliminateEmptyStringProperties = (obj) => {
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key) && obj[key] === "") {
+      delete obj[key];
+    }
+  }
+};
