@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
 import { DetailPageEditForm } from "./DetailPageEditForm";
-import { translateObjectToArray, clearObjectValues } from "../util";
+import { translateObjectToArray, clearObjectValues } from "../utils";
 import _ from "lodash";
 
 const FormikStateLogger = () => {

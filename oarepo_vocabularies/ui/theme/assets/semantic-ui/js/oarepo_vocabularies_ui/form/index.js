@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { getInputFromDOM } from "../util";
+import { getInputFromDOM } from "../utils";
 import { OverridableContext, overrideStore } from "react-overridable";
 import VocabularyForm from "./VocabularyForm";
 import { BrowserRouter as Router } from "react-router-dom";
