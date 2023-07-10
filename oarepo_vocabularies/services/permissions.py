@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020-2021 CERN.
@@ -10,6 +11,7 @@
 
 from invenio_records_permissions import RecordPermissionPolicy
 from invenio_records_permissions.generators import AnyUser, SystemProcess
+from invenio_records_permissions.policies.base import BasePermissionPolicy
 
 
 class PermissionPolicy(RecordPermissionPolicy):
@@ -22,3 +24,11 @@ class PermissionPolicy(RecordPermissionPolicy):
     can_update = [SystemProcess(),AnyUser()]
     can_delete = [SystemProcess(),AnyUser()]
     can_manage = [SystemProcess(),AnyUser()]
+
+
+
+
+class VocabulariesPermissionPolicy(BasePermissionPolicy):
+    # NOTE: probably change to an authenticated user later.
+    can_list_vocabularies = [SystemProcess(), AnyUser()]
+
