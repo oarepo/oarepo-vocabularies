@@ -59,17 +59,27 @@ export const DetailPageEditForm = ({
   // to display errors that are consequence of API calls
   const sidebarRef = useRef(null);
   const [error, setError] = useState("");
-  const currentPath = useLocation().pathname;
+  const location = useLocation();
+  const currentPath = location.pathname;
   const vocabularyType = extractVariablePart(currentPath);
+  const searchParams = new URLSearchParams(location.search);
+  const newChildItem = searchParams.get("parent");
   const onSubmit = (values, formik) => {
-    console.log(values);
-    const preparedValues = {
-      ...values,
-      title: transformArrayToObject(values.title),
-      type: vocabularyType,
-      props: eliminateEmptyStringProperties(values.props),
-    };
-    console.log(preparedValues);
+    const preparedValues = newChildItem
+      ? {
+          ...values,
+          title: transformArrayToObject(values.title),
+          type: vocabularyType,
+          props: eliminateEmptyStringProperties(values.props),
+          hierarchy: { parent: newChildItem },
+        }
+      : {
+          ...values,
+          title: transformArrayToObject(values.title),
+          type: vocabularyType,
+          props: eliminateEmptyStringProperties(values.props),
+        };
+
     if (editMode) {
       http
         .put(apiCallUrl, preparedValues)
@@ -101,6 +111,7 @@ export const DetailPageEditForm = ({
         });
     }
   };
+
   return (
     <Container>
       <BaseForm
