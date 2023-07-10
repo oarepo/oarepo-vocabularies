@@ -82,12 +82,19 @@ def app_config(app_config):
         VocabularyTypeServiceConfig,
     )
     from oarepo_vocabularies.services.service import VocabularyTypeService
+    from oarepo_vocabularies.resources.vocabulary_type import (
+        VocabularyTypeResource,
+        VocabularyTypeResourceConfig
+    )
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
 
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE"] = VocabularyTypeService
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
+
+    app_config["VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
+    app_config["VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -115,10 +122,10 @@ def app_config(app_config):
                 "en": "czech language vocabulary type.",
             },
         },
-        "licences": {
+        "licenses": {
             "name": {
-                "cs": "licence",
-                "en": "licences",
+                "cs": "license",
+                "en": "licenses",
             },
             "description": {
                 "cs": "slovnikovy typ licencii.",

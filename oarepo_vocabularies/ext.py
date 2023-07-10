@@ -3,16 +3,23 @@ class OARepoVocabularies(object):
 
     def __init__(self, app=None):
         """Extension initialization."""
-        self.resource = None
-        self.service = None
+        self.type_resource = None
+        self.type_service = None
         if app:
             self.init_app(app)
 
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
+        self.init_services(app)
         self.init_resource(app)
         app.extensions["oarepo-vocabularies"] = self
+
+    def init_services(self, app):
+        """Initialize services."""
+        self.type_service = app.config["VOCABULARY_TYPE_SERVICE"](
+            config=app.config["VOCABULARY_TYPE_SERVICE_CONFIG"](),
+        )
 
     def init_config(self, app):
         """Initialize configuration."""
@@ -25,11 +32,16 @@ class OARepoVocabularies(object):
                 app.config.setdefault(k, {}).update(getattr(config, k))
             if k.startswith("DATASTREAMS_CONFIG_GENERATOR_"):
                 app.config.setdefault(k, getattr(config, k))
+            if k.startswith("VOCABULARY"):
+                app.config.setdefault(k, getattr(config, k))
         app.config.setdefault(
             "VOCABULARIES_FACET_CACHE_SIZE", config.VOCABULARIES_FACET_CACHE_SIZE
         )
         app.config.setdefault(
             "VOCABULARIES_FACET_CACHE_TTL", config.VOCABULARIES_FACET_CACHE_TTL
+        )
+        app.config.setdefault(
+            "INVENIO_VOCABULARY_TYPE_METADATA", config.INVENIO_VOCABULARY_TYPE_METADATA
         )
 
         if "OAREPO_PERMISSIONS_PRESETS" not in app.config:
@@ -42,7 +54,8 @@ class OARepoVocabularies(object):
                 ] = ext_config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
 
     def init_resource(self, app):
-        """Initialize vocabulary resources."""
-        self.service = app.config["OAREPO_VOCABULARIES_TYPE_SERVICE"](
-            config=app.config["OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG"](),
+        """Initialize resources."""
+        self.type_resource = app.config["VOCABULARY_TYPE_RESOURCE"](
+            config=app.config["VOCABULARY_TYPE_RESOURCE_CONFIG"](),
+            service=self.type_service,
         )
