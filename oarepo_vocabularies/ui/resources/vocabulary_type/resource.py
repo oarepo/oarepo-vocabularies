@@ -30,7 +30,6 @@ class VocabularyTypeUIResource(UIResource):
         for item in list_data['hits']['hits']:
             for id in config_metadata.keys():
                 if item['id'] == id:
-                    print(config_metadata[id])
                     for key, value in config_metadata[id].items():
                         item[key] = value
 
