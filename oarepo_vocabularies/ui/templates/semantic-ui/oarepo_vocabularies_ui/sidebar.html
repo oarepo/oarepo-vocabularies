@@ -2,7 +2,7 @@
 <a href={{data["links"]["self"].replace("/api", "") + "/edit"}}>
   <button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button>
 </a>
-<a href={{ data['links']['vocabulary'].replace('/api', '') ~ '/_new?parent=' ~ data['id'] }}>
+<a href={{ data['links']['vocabulary'].replace('/api', '') ~ '/_new?h-parent=' ~ data['id'] }}>
   <button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>New child item</button>
 </a>
 <section id="export-record" aria-label="Export" class="ui segment exports">

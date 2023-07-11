@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { checkDuplicateLanguage } from "./utils";
+import { checkDuplicateLanguage } from "../utils";
 
 export const MyFormSchema = Yup.object().shape({
   title: Yup.array()
@@ -12,7 +12,6 @@ export const MyFormSchema = Yup.object().shape({
     .test(
       "same language",
       (value) => {
-        console.log(value.value);
         return [
           value.value.map((item) => ({
             language: "You must not have two same languages",
@@ -23,7 +22,6 @@ export const MyFormSchema = Yup.object().shape({
         return checkDuplicateLanguage(value);
       }
     ),
-
   props: Yup.object().shape({
     ICO: Yup.string()
       .length(8, "Must be exactly 8 characters")

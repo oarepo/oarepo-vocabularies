@@ -31,7 +31,8 @@ export const DetailPageEditForm = ({
   const currentPath = location.pathname;
   const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
-  const newChildItem = searchParams.get("parent");
+  const newChildItem = searchParams.get("h-parent");
+
   const onSubmit = (values, formik) => {
     const preparedValues = newChildItem
       ? {
