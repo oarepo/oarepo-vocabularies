@@ -86,6 +86,10 @@ def app_config(app_config):
         VocabularyTypeResource,
         VocabularyTypeResourceConfig
     )
+    from oarepo_vocabularies.authorities.resources import (
+        AuthoritativeVocabulariesResource,
+        AuthoritativeVocabulariesResourceConfig
+    )
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
@@ -95,6 +99,9 @@ def app_config(app_config):
 
     app_config["VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
     app_config["VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
+
+    app_config["VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
+    app_config["VOCABULARIES_AUTHORITIES_CONFIG"] = AuthoritativeVocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -355,3 +362,24 @@ def empty_licences(db):
     db.session.commit()
 
     return v
+
+@pytest.fixture
+def organisms_authority_samples():
+    """
+    NCBI-like samples.
+    """
+    pass
+
+@pytest.fixture
+def affilliations_authority_samples():
+    """
+    ROR-like samples.
+    """
+    pass
+
+@pytest.fixture
+def grants_authority_samples():
+    """
+    Openaire-like samples.
+    """
+    pass
