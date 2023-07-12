@@ -23,9 +23,7 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
   const editMode = _.has(formConfig, "updateUrl");
   const hasPropFields = !_.isEmpty(vocabulary_props);
 
-  const apiCallUrl = editMode
-    ? formConfig.updateUrl.replace("https://0.0.0.0:5000", "")
-    : formConfig.createUrl;
+  const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
 
   const editModeAndProps = editMode
     ? vocabularyRecord.props

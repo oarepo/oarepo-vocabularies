@@ -1,7 +1,15 @@
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
-import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
+import {
+  Container,
+  Grid,
+  Sticky,
+  Ref,
+  Input,
+  Form,
+  Message,
+} from "semantic-ui-react";
 import { BaseForm, TextField, http } from "react-invenio-forms";
 import { PublishButton } from "./PublishButton";
 import { FieldWithLanguageOption } from "./FieldWithLanguageOption";
@@ -32,6 +40,7 @@ export const DetailPageEditForm = ({
   const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
   const newChildItem = searchParams.get("h-parent");
+  const itemTitle = searchParams.get("title");
 
   const onSubmit = (values, formik) => {
     const preparedValues = newChildItem
@@ -95,6 +104,17 @@ export const DetailPageEditForm = ({
       >
         <Grid>
           <Grid.Column mobile={16} tablet={16} computer={12}>
+            {itemTitle && (
+              <Message
+                icon="attention"
+                header="You are currently creating a sub item for item:"
+                content={itemTitle}
+                compact
+                size="tiny"
+                // don't understand how to reasonably set width for such a component in semantic!!
+                style={{ width: "68%" }}
+              />
+            )}
             <FieldWithLanguageOption fieldPath="title" options={options} />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabulary_props} />
