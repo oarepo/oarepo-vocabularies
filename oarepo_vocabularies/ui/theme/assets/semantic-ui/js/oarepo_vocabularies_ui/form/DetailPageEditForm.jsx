@@ -1,28 +1,22 @@
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
-import * as Yup from "yup";
-import {
-  Container,
-  Grid,
-  Sticky,
-  Ref,
-  Input,
-  Form,
-  Message,
-} from "semantic-ui-react";
+import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
 import { BaseForm, TextField, http } from "react-invenio-forms";
-import { PublishButton } from "./PublishButton";
-import { FieldWithLanguageOption } from "./FieldWithLanguageOption";
-import { PropFieldsComponent } from "./PropFieldsComponent";
+import { PublishButton } from "./components/PublishButton";
+import { FieldWithLanguageOption } from "./components/FieldWithLanguageOption";
+import { PropFieldsComponent } from "./components/PropFieldsComponent";
 import {
   extractVariablePart,
   transformArrayToObject,
   eliminateEmptyStringProperties,
 } from "../utils";
 import { useLocation } from "react-router-dom";
-import { ErrorComponent } from "./Error";
-import { ResetButton } from "./ResetButton";
+import { ErrorComponent } from "./components/Error";
+import { ResetButton } from "./components/ResetButton";
 import { MyFormSchema } from "./FormValidation";
+// import { SelectParentItem } from "./SelectParentItem";
+import { FormikStateLogger } from "./components/FormikStateLogger";
+import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
 
 export const DetailPageEditForm = ({
   initialValues,
@@ -31,25 +25,25 @@ export const DetailPageEditForm = ({
   hasPropFields,
   apiCallUrl,
   editMode,
+  vocabularyRecord,
 }) => {
   // to display errors that are consequence of API calls
   const sidebarRef = useRef(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState({});
   const location = useLocation();
   const currentPath = location.pathname;
   const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
-  const newChildItem = searchParams.get("h-parent");
-  const itemTitle = searchParams.get("title");
+  const newChildItemParentId = searchParams.get("h-parent");
 
   const onSubmit = (values, formik) => {
-    const preparedValues = newChildItem
+    const preparedValues = newChildItemParentId
       ? {
           ...values,
           title: transformArrayToObject(values.title),
           type: vocabularyType,
           props: eliminateEmptyStringProperties(values.props),
-          hierarchy: { parent: newChildItem },
+          hierarchy: { parent: newChildItemParentId },
         }
       : {
           ...values,
@@ -63,7 +57,6 @@ export const DetailPageEditForm = ({
         .put(apiCallUrl, preparedValues)
         .then((response) => {
           setError("");
-          console.log("then block");
           if (response.status >= 200 && response.status < 300) {
             formik.setSubmitting(false);
             window.location.href = currentPath.replace("/edit", "");
@@ -71,7 +64,7 @@ export const DetailPageEditForm = ({
         })
         .catch((error) => {
           formik.setSubmitting(false);
-          setError(error.response.data.message);
+          setError(error.response.data);
         });
     } else {
       http
@@ -85,7 +78,7 @@ export const DetailPageEditForm = ({
         })
         .catch((error) => {
           formik.setSubmitting(false);
-          setError(error.response.data.message);
+          setError(error.response.data);
         });
     }
   };
@@ -104,23 +97,19 @@ export const DetailPageEditForm = ({
       >
         <Grid>
           <Grid.Column mobile={16} tablet={16} computer={12}>
-            {itemTitle && (
-              <Message
-                icon="attention"
-                header="You are currently creating a sub item for item:"
-                content={itemTitle}
-                compact
-                size="tiny"
-                // don't understand how to reasonably set width for such a component in semantic!!
-                style={{ width: "68%" }}
-              />
-            )}
+            <CurrentLocationInformation
+              vocabularyRecord={vocabularyRecord}
+              editMode={editMode}
+              newChildItemParentId={newChildItemParentId}
+            />
             <FieldWithLanguageOption fieldPath="title" options={options} />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabulary_props} />
             )}
             <TextField fieldPath="id" label={"ID"} width={11} required />
-            {error && <ErrorComponent message={error} />}
+            {/* <SelectParentItem vocabularyRecord={vocabularyRecord} /> */}
+            <FormikStateLogger />
+            {error.message && <ErrorComponent error={error} />}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>

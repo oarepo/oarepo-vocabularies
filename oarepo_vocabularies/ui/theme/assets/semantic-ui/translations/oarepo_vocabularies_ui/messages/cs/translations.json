@@ -6,5 +6,12 @@
   "ICO": "IČO",
   "acronym": "Zkratka",
   "nameType": "Typ názvu",
-  "publish": "Publikovat"
+  "publish": "Publikovat",
+  "reset": "Obnovit formulář",
+  "editTopLevelItemMessage": "Právě upravujete položku nejvyšší úrovně",
+  "editChildItemMessage": "Aktuálně upravujete podřízenou položku s hierarchií:",
+  "newItemMessage": "Právě vytváříte položku nejvyšší úrovně",
+  "newChildItemMessage": "Právě vytváříte položku podřízenou {{item}}. Nová hierarchie bude:",
+  "newItem": "Nová položka",
+  "contexts": "Kontexty"
 }

@@ -1,14 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useFormikContext } from "formik";
 import { DetailPageEditForm } from "./DetailPageEditForm";
 import { translateObjectToArray, clearObjectValues } from "../utils";
 import _ from "lodash";
-
-const FormikStateLogger = () => {
-  const state = useFormikContext();
-  return <pre>{JSON.stringify(state, null, 2)}</pre>;
-};
 
 const options = {
   languages: [
@@ -22,7 +16,6 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
   const { vocabulary_props } = formConfig;
   const editMode = _.has(formConfig, "updateUrl");
   const hasPropFields = !_.isEmpty(vocabulary_props);
-
   const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
 
   const editModeAndProps = editMode
@@ -36,6 +29,7 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
         title: translateObjectToArray(vocabularyRecord.title),
         props: propFieldsWithValues,
         id: vocabularyRecord.id,
+        // "h-parent": vocabularyRecord.hierarchy.parent ? { key: "amu", value: "amu", text: "amu" } : { key: "amu", value: "amu", text: "amu" },
       }
     : {
         title: [{ language: "cs", title: "" }],
@@ -52,6 +46,7 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
       vocabulary_props={vocabulary_props}
       apiCallUrl={apiCallUrl}
       editMode={editMode}
+      vocabularyRecord={vocabularyRecord}
     />
   );
 };

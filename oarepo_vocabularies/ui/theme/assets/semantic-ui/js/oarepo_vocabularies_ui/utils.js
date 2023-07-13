@@ -78,3 +78,7 @@ export const eliminateEmptyStringProperties = (obj) => {
     }
   }
 };
+
+// turn array into shape suitable for breadcrums options
+export const breadcrumbSerialization = (array) =>
+  array.map((item) => ({ key: item, content: item }));

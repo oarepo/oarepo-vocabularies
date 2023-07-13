@@ -6,5 +6,12 @@
   "ICO": "ICO",
   "acronym": "acronym",
   "nameType": "Name Type",
-  "publish": "Publish"
+  "publish": "Publish",
+  "reset": "Reset Form",
+  "editTopLevelItemMessage": "You are currently editing a top level item",
+  "editChildItemMessage": "You are currently editing a child item with hierarchy:",
+  "newItemMessage": "You are currently creating a top level item",
+  "newChildItemMessage": "You are currently creating a child item of {{item}}. New hierarchy will be:",
+  "newItem": "New item",
+  "contexts": "Contexts"
 }

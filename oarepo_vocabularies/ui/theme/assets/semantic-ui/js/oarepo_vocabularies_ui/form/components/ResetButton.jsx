@@ -12,7 +12,7 @@ const ResetButtonComponent = ({ formik }) => {
         fluid
         color="red"
         onClick={handleReset}
-        content="Reset form"
+        content={i18next.t("reset")}
         icon="times rectangle"
         labelPosition="left"
       />
