@@ -77,6 +77,7 @@ export const eliminateEmptyStringProperties = (obj) => {
       delete obj[key];
     }
   }
+  return obj;
 };
 
 // turn array into shape suitable for breadcrums options

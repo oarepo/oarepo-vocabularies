@@ -13,5 +13,9 @@
   "newItemMessage": "Právě vytváříte položku nejvyšší úrovně",
   "newChildItemMessage": "Právě vytváříte položku podřízenou {{item}}. Nová hierarchie bude:",
   "newItem": "Nová položka",
-  "contexts": "Kontexty"
+  "contexts": "Kontexty",
+  "required": "Požadované",
+  "languageError": "Nesmíte mít dva stejné jazyky",
+  "lengthError": "Musí mít přesně {{length}} znaků",
+  "numbersError": "Musí obsahovat pouze čísla"
 }

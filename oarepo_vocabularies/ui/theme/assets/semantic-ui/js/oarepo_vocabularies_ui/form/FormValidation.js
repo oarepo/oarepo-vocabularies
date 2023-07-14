@@ -1,12 +1,13 @@
 import * as Yup from "yup";
 import { checkDuplicateLanguage } from "../utils";
-
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+console.log("validation");
 export const MyFormSchema = Yup.object().shape({
   title: Yup.array()
     .of(
       Yup.object().shape({
-        language: Yup.string().required("required"),
-        title: Yup.string().required("required"),
+        language: Yup.string().required(i18next.t("required")),
+        title: Yup.string().required(i18next.t("required")),
       })
     )
     .test(
@@ -14,7 +15,7 @@ export const MyFormSchema = Yup.object().shape({
       (value) => {
         return [
           value.value.map((item) => ({
-            language: "You must not have two same languages",
+            language: i18next.t("languageError"),
           })),
         ];
       },
@@ -24,9 +25,11 @@ export const MyFormSchema = Yup.object().shape({
     ),
   props: Yup.object().shape({
     ICO: Yup.string()
-      .length(8, "Must be exactly 8 characters")
-      .matches(/^\d+$/, "Must contain only numbers"),
-    RID: Yup.string().length(5),
+      .length(8, ({ length }) => i18next.t("lengthError", { length: length }))
+      .matches(/^\d+$/, i18next.t("numbersError")),
+    RID: Yup.string().length(5, ({ length }) =>
+      i18next.t("lengthError", { length: length })
+    ),
   }),
-  id: Yup.string().required("required"),
+  id: Yup.string().required(i18next.t("required")),
 });

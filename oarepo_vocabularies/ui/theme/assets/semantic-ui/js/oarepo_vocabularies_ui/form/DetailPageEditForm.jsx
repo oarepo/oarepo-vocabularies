@@ -17,6 +17,7 @@ import { MyFormSchema } from "./FormValidation";
 // import { SelectParentItem } from "./SelectParentItem";
 import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
+import { useAxios } from "./hooks/useAxios";
 
 export const DetailPageEditForm = ({
   initialValues,
@@ -56,7 +57,7 @@ export const DetailPageEditForm = ({
       http
         .put(apiCallUrl, preparedValues)
         .then((response) => {
-          setError("");
+          setError({});
           if (response.status >= 200 && response.status < 300) {
             formik.setSubmitting(false);
             window.location.href = currentPath.replace("/edit", "");
@@ -70,7 +71,7 @@ export const DetailPageEditForm = ({
       http
         .post(apiCallUrl, preparedValues)
         .then((response) => {
-          setError("");
+          setError({});
           if (response.status >= 200 && response.status < 300) {
             formik.setSubmitting(false);
             window.location.href = currentPath.replace("_new", values.id);

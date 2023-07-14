@@ -9,6 +9,7 @@ export const useAxios = ({ url, method = "get", body = null }) => {
   const [loading, setloading] = useState(true);
 
   const fetchData = () => {
+    console.log("axios");
     http[method](url, JSON.parse(body))
       .then((res) => {
         setResponse(res.data);

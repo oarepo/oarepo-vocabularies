@@ -13,5 +13,9 @@
   "newItemMessage": "You are currently creating a top level item",
   "newChildItemMessage": "You are currently creating a child item of {{item}}. New hierarchy will be:",
   "newItem": "New item",
-  "contexts": "Contexts"
+  "contexts": "Contexts",
+  "required": "Required",
+  "languageError": "You must not have two same languages",
+  "lengthError": "Must be exactly {{length}} characters",
+  "numbersError": "Must contain only numbers"
 }
