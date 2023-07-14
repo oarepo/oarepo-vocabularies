@@ -38,6 +38,7 @@ export const DetailPageEditForm = ({
   const newChildItemParentId = searchParams.get("h-parent");
 
   const onSubmit = (values, formik) => {
+    console.log("submit");
     const preparedValues = newChildItemParentId
       ? {
           ...values,

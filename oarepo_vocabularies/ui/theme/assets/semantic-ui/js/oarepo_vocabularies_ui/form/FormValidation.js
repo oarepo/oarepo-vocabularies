@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { checkDuplicateLanguage } from "../utils";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-console.log("validation");
+
 export const MyFormSchema = Yup.object().shape({
   title: Yup.array()
     .of(

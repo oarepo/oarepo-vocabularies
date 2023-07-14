@@ -18,9 +18,11 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
   const hasPropFields = !_.isEmpty(vocabulary_props);
   const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
 
+  const availablePropFields = clearObjectValues(vocabulary_props.props);
+
   const editModeAndProps = editMode
-    ? vocabularyRecord.props
-    : clearObjectValues({ ...vocabulary_props.props });
+    ? { ...availablePropFields, ...vocabularyRecord.props }
+    : availablePropFields;
 
   const propFieldsWithValues = hasPropFields ? editModeAndProps : {};
 
