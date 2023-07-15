@@ -14,10 +14,9 @@ import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./components/Error";
 import { ResetButton } from "./components/ResetButton";
 import { MyFormSchema } from "./FormValidation";
-// import { SelectParentItem } from "./SelectParentItem";
+// import { SelectParentItem } from "./components/SelectParentItem";
 import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
-import { useAxios } from "./hooks/useAxios";
 
 export const DetailPageEditForm = ({
   initialValues,
@@ -37,8 +36,13 @@ export const DetailPageEditForm = ({
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
 
+  // currently we want the app to work in the following ways:
+  // 1. Possibility to add a child, which means I am sending h-parent in the request
+  // 2. Possibility to just add item which means this is a top level item and I am
+  // not sending anything for hierarchy
+  // 3. editing an item, which means I need to send parent if the item
+  // as it and not send a parent if item does not have it
   const onSubmit = (values, formik) => {
-    console.log("submit");
     const preparedValues = newChildItemParentId
       ? {
           ...values,
@@ -47,13 +51,25 @@ export const DetailPageEditForm = ({
           props: eliminateEmptyStringProperties(values.props),
           hierarchy: { parent: newChildItemParentId },
         }
+      : !editMode
+      ? {
+          ...values,
+          title: transformArrayToObject(values.title),
+          type: vocabularyType,
+          props: eliminateEmptyStringProperties(values.props),
+        }
       : {
           ...values,
           title: transformArrayToObject(values.title),
           type: vocabularyType,
           props: eliminateEmptyStringProperties(values.props),
+          hierarchy: vocabularyRecord.hierarchy.parent
+            ? {
+                parent: vocabularyRecord.hierarchy.parent,
+              }
+            : {},
         };
-
+    console.log(preparedValues);
     if (editMode) {
       http
         .put(apiCallUrl, preparedValues)

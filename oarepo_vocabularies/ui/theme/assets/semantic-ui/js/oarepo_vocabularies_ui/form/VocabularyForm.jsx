@@ -31,7 +31,6 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
         title: translateObjectToArray(vocabularyRecord.title),
         props: propFieldsWithValues,
         id: vocabularyRecord.id,
-        // "h-parent": vocabularyRecord.hierarchy.parent ? { key: "amu", value: "amu", text: "amu" } : { key: "amu", value: "amu", text: "amu" },
       }
     : {
         title: [{ language: "cs", title: "" }],

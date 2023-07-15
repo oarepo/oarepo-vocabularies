@@ -3,11 +3,9 @@ import { connect } from "formik";
 import { Button, Container } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-// import { scrollTop } from "../../utils";
 
 const PublishButtonComponent = ({ formik }) => {
-  const { handleSubmit, isSubmitting, isValid } = formik;
-  console.log(formik);
+  const { handleSubmit, isSubmitting } = formik;
   return (
     <Container textAlign="center">
       <Button
