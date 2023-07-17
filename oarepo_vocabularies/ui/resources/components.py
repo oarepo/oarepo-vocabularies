@@ -30,3 +30,14 @@ class VocabulariesSearchComponent(ServiceComponent):
             "search_app_config",
             search_config
         )
+
+    def before_ui_edit(self, *, form_config, resource, record, view_args, **kwargs):
+        vocabulary_type = view_args["vocabulary_type"]
+        form_config.setdefault('vocabularyProps', resource.config.vocabulary_props_config(vocabulary_type))
+        form_config.setdefault('updateUrl', record.links.get("self", None),)
+
+    def before_ui_create(self, *, form_config, resource, view_args, **kwargs):
+        vocabulary_type = view_args["vocabulary_type"]
+        api_service = resource._api_service
+        form_config.setdefault('vocabularyProps', resource.config.vocabulary_props_config(vocabulary_type))
+        form_config.setdefault('createUrl', f"/api{api_service.config.url_prefix}{vocabulary_type}")

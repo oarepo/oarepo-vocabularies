@@ -1,11 +1,25 @@
-{% extends "oarepo_ui/detail.html" %} {%- set title = metadata.title ~ " | " ~
-("Vocabulary Detail") %} {%- block head_links %} {{ super() }}
-{{webpack["oarepo_vocabularies_detail.js"] }}
-{{webpack['oarepo_vocabularies_ui_components.js']}}
-{{webpack['oarepo_vocabularies_ui_components.css']}} {%- endblock %} {% block
-page_body %} {{ super() }}
-<div class="ui center aligned container">
-  {#descendants #} {% block record_descendants %} {% endblock record_descendants
-  %}
+{% extends "oarepo_ui/detail.html" %}
+{%- set title = metadata.title ~ " | " ~ _("Vocabulary Detail") %}
+
+{%- block head_links %}
+{{ super() }}
+{{ webpack['oarepo_vocabularies_ui_components.css'] }}
+{%- endblock %}
+
+{% block record_main_content %}
+    {%- block vocabulary_descendants %}
+    {%- endblock -%}
+{% endblock record_main_content %}
+
+{% block page_body %}
+  {{ super() }}
+  <div class="ui center aligned container">
+    {% block record_descendants %}
+    {% endblock record_descendants %}
 </div>
 {% endblock page_body %}
+
+{%- block javascript %}
+{{webpack["oarepo_vocabularies_detail.js"] }}
+{{webpack['oarepo_vocabularies_ui_components.js']}}
+{%- endblock%}

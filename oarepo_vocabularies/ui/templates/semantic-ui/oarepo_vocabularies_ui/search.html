@@ -1,15 +1,12 @@
-{%- set title = _("Vocabulary search") %} {%- extends config.BASE_TEMPLATE %}
-{%- block javascript %} {{ super() }} {{
-webpack['oarepo_vocabularies_search.js'] }} {%- endblock %} {%- block page_body
-%}
+{% extends "oarepo_ui/search.html" %}
 
-<div class="ui container">
-  <div
-    data-invenio-search-config='{{ search_app_config(app_id="OarepoVocabularies.Search") | tojson }}'
-  ></div>
-</div>
-{%- endblock page_body %} {#
-<!--{%- block javascript %} {{ super() }} {{
-  webpack['oarepo_vocabularies_ui_components.js']}} {{
-  webpack['oarepo_vocabularies_search.js'] }} {%- endblock %} -->
-#}
+{%- set title = _("Vocabulary search") %}
+
+{%- block javascript %}
+{{ super() }}
+{{ webpack['oarepo_vocabularies_search.js'] }}
+{%- endblock %}
+
+{%- block searchapp_root %}
+  <div data-invenio-search-config='{{ search_app_config(app_id="OarepoVocabularies.Search") | tojson }}'></div>
+{%- endblock searchapp_root %}
