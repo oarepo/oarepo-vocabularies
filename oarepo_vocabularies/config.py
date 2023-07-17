@@ -24,6 +24,7 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
     #         "cs": "slovnikovy typ ceskeho jazyka.",
     #         "en": "czech language vocabulary type.",
     #     },
+    #     "hierarchical": False,
     #     "props": {...}
     # },
 }
@@ -39,8 +40,8 @@ OAREPO_VOCABULARIES_HIERARCHY_CF = [
 
 OAREPO_VOCABULARIES_CUSTOM_CF = []
 
-OAREPO_VOCABULARIES_TYPE_SERVICE = VocabularyTypeService
-OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
+VOCABULARY_TYPE_SERVICE = VocabularyTypeService
+VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
 
 VOCABULARY_TYPE_RESOURCE = VocabularyTypeResource
 VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
