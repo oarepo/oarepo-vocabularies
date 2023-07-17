@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-26 16:25+0200\n"
+"POT-Creation-Date: 2023-06-29 12:54+0200\n"
 "PO-Revision-Date: 2023-03-27 15:33+0200\n"
 "Last-Translator: \n"
 "Language: en\n"
@@ -18,24 +18,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/deposit.html:9
+msgid "New version"
+msgstr ""
+
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/deposit.html:11
+msgid "New upload"
+msgstr ""
+
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/deposit.html:13
+msgid "Edit upload"
+msgstr ""
+
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/detail.html:2
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/detail.html:2
+#, fuzzy
+msgid "Vocabulary Detail"
+msgstr "Vocabulary Terms"
+
 #: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
 #, fuzzy
 msgid "Vocabulary search"
 msgstr "Vocabulary Terms"
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:4
-msgid "Export"
-msgstr "Export"
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:49
-msgid "Links"
-msgstr "Links"
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/sidebar.html:64
-msgid "API"
-msgstr "API"
 
 #: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
@@ -107,14 +114,32 @@ msgstr "Parent Term"
 msgid "api.ancestors"
 msgstr "More General Terms"
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/detail.html:2
-msgid "NR Document repository"
-msgstr ""
-
+#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
 msgid "Find more records with this vocabulary term"
 msgstr "Najít další záznamy s touto slovníkovou položkou"
 
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/form.html:9
+msgid "New item"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/form.html:11
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/form.html:16
+msgid "Edit item "
+msgstr ""
+
 #~ msgid "Open definition"
+#~ msgstr ""
+
+#~ msgid "Export"
+#~ msgstr "Export"
+
+#~ msgid "Links"
+#~ msgstr "Links"
+
+#~ msgid "API"
+#~ msgstr "API"
+
+#~ msgid "NR Document repository"
 #~ msgstr ""
 
