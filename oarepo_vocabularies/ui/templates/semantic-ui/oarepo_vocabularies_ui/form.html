@@ -1,9 +1,5 @@
 {% extends "oarepo_ui/form.html" %}
 
-{# Form actions sidebar #}
-{% block form_sidebar %}
-{% endblock form_sidebar %}
-
 {%- block javascript %}
     {{ super() }}
     {{ webpack['oarepo_vocabularies_forms.js'] }}
