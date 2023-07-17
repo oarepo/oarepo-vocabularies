@@ -1,4 +1,4 @@
-
+import React from 'react'
 import { createFormAppInit, useFormConfig } from '@js/oarepo_ui/forms'
 
 // TODO(ducica): Provide your form layout here
@@ -11,10 +11,17 @@ const ExampleVocabularyFormLayout = () => {
     const { record, formConfig, recordPermissions } = useFormConfig()
     return (
       <div>
-        <p>An example vocabulary form here</p>
-        <pre>{JSON.stringify(record)}</pre>
-        <pre>{JSON.stringify(formConfig)}</pre>
-        <pre>{JSON.stringify(recordPermissions)}</pre>
+        <div>
+          <p>Your example vocabulary form here</p>
+        </div>
+        <div>
+          <h2>Record data</h2>
+          <pre>{JSON.stringify(record, null, 4)}</pre>
+          <h2>Form Config</h2>
+          <pre>{JSON.stringify(formConfig, null, 4)}</pre>
+          <h2>Record permissions</h2>
+          <pre>{JSON.stringify(recordPermissions, null, 4)}</pre>
+        </div>
       </div>
     );
 }
