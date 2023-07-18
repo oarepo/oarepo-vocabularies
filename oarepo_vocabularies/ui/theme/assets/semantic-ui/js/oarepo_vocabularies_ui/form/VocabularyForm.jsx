@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { DetailPageEditForm } from "./DetailPageEditForm";
 import { translateObjectToArray, clearObjectValues } from "../utils";
 import _ from "lodash";
@@ -14,13 +13,12 @@ const options = {
 };
 
 const VocabularyForm = () => {
-  const { record, formConfig } = useFormConfig();
+  const { record, formConfig, recordPermissions } = useFormConfig();
+  console.log(record, formConfig, recordPermissions);
   const { vocabularyProps } = formConfig;
   const editMode = _.has(formConfig, "updateUrl");
   const hasPropFields = !_.isEmpty(vocabularyProps);
-  const apiCallUrl = editMode
-    ? formConfig.updateUrl
-    : formConfig.createUrl + "/institutions";
+  const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
   const availablePropFields = clearObjectValues(vocabularyProps.props);
 
   const editModeAndProps = editMode
