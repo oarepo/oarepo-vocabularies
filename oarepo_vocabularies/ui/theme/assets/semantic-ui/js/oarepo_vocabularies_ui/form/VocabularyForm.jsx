@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { DetailPageEditForm } from "./DetailPageEditForm";
 import { translateObjectToArray, clearObjectValues } from "../utils";
 import _ from "lodash";
+import { useFormConfig } from "@js/oarepo_ui/forms";
 
 const options = {
   languages: [
@@ -12,25 +13,26 @@ const options = {
   ],
 };
 
-const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
-  const { vocabulary_props } = formConfig;
+const VocabularyForm = () => {
+  const { record, formConfig } = useFormConfig();
+  const { vocabularyProps } = formConfig;
   const editMode = _.has(formConfig, "updateUrl");
-  const hasPropFields = !_.isEmpty(vocabulary_props);
+  const hasPropFields = !_.isEmpty(vocabularyProps);
   const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
-
-  const availablePropFields = clearObjectValues(vocabulary_props.props);
+  console.log(record);
+  const availablePropFields = clearObjectValues(vocabularyProps.props);
 
   const editModeAndProps = editMode
-    ? { ...availablePropFields, ...vocabularyRecord.props }
+    ? { ...availablePropFields, ...record.props }
     : availablePropFields;
 
   const propFieldsWithValues = hasPropFields ? editModeAndProps : {};
 
   const initialValues = editMode
     ? {
-        title: translateObjectToArray(vocabularyRecord.title),
+        title: translateObjectToArray(record.title),
         props: propFieldsWithValues,
-        id: vocabularyRecord.id,
+        id: record.id,
       }
     : {
         title: [{ language: "cs", title: "" }],
@@ -44,16 +46,16 @@ const VocabularyForm = ({ vocabularyRecord, formConfig }) => {
       formConfig={formConfig}
       options={options}
       hasPropFields={hasPropFields}
-      vocabulary_props={vocabulary_props}
+      vocabularyProps={vocabularyProps}
       apiCallUrl={apiCallUrl}
       editMode={editMode}
-      vocabularyRecord={vocabularyRecord}
+      record={record}
     />
   );
 };
 
 VocabularyForm.propTypes = {
-  vocabularyRecord: PropTypes.object.isRequired,
+  record: PropTypes.object.isRequired,
   formConfig: PropTypes.object.isRequired,
 };
 

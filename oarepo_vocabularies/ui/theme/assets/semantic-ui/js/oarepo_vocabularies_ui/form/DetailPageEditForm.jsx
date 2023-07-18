@@ -17,16 +17,19 @@ import { MyFormSchema } from "./FormValidation";
 // import { SelectParentItem } from "./components/SelectParentItem";
 import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
+import { useFormConfig } from "@js/oarepo_ui/forms";
 
 export const DetailPageEditForm = ({
   initialValues,
-  vocabulary_props,
   options,
   hasPropFields,
   apiCallUrl,
   editMode,
-  vocabularyRecord,
 }) => {
+  const {
+    vocabularyRecord,
+    formConfig: { vocabularyProps },
+  } = useFormConfig();
   // to display errors that are consequence of API calls
   const sidebarRef = useRef(null);
   const [error, setError] = useState({});
@@ -122,7 +125,7 @@ export const DetailPageEditForm = ({
             />
             <FieldWithLanguageOption fieldPath="title" options={options} />
             {hasPropFields && (
-              <PropFieldsComponent vocabularyProps={vocabulary_props} />
+              <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
             <TextField fieldPath="id" label={"ID"} width={11} required />
             {/* <SelectParentItem vocabularyRecord={vocabularyRecord} /> */}
@@ -156,7 +159,7 @@ DetailPageEditForm.propTypes = {
     acronym: PropTypes.string,
     nameType: PropTypes.string,
   }),
-  vocabulary_props: PropTypes.object,
+  vocabularyProps: PropTypes.object,
   hasPropFields: PropTypes.bool,
   options: PropTypes.shape({
     languages: PropTypes.arrayOf(

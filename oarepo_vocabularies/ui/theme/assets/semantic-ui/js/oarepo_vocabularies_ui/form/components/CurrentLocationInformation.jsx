@@ -8,6 +8,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { breadcrumbSerialization } from "../../utils";
 import { ErrorComponent } from "./Error";
 import PropTypes from "prop-types";
+import { useFormConfig } from "@js/oarepo_ui/forms";
 
 const NewTopLevelItemMessage = () => (
   <Message
@@ -54,10 +55,10 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   );
 };
 
-const EditMessage = ({ vocabularyRecord }) => {
+const EditMessage = ({ record }) => {
   const {
     hierarchy: { level, ancestors_or_self },
-  } = vocabularyRecord;
+  } = record;
   if (level === 1)
     return (
       <Message
@@ -88,14 +89,14 @@ const EditMessage = ({ vocabularyRecord }) => {
 export const CurrentLocationInformation = ({
   newChildItemParentId,
   editMode,
-  vocabularyRecord,
 }) => {
+  const { record } = useFormConfig();
   if (!editMode && !newChildItemParentId) {
     return <NewTopLevelItemMessage />;
   } else if (!editMode) {
     return <NewChildItemMessage newChildItemParentId={newChildItemParentId} />;
   } else {
-    return <EditMessage vocabularyRecord={vocabularyRecord} />;
+    return <EditMessage record={record} />;
   }
 };
 
@@ -104,7 +105,7 @@ NewChildItemMessage.propTypes = {
 };
 
 EditMessage.propTypes = {
-  vocabularyRecord: PropTypes.shape({
+  record: PropTypes.shape({
     hierarchy: PropTypes.shape({
       level: PropTypes.number.isRequired,
       ancestors_or_self: PropTypes.arrayOf(PropTypes.string),
@@ -115,7 +116,7 @@ EditMessage.propTypes = {
 CurrentLocationInformation.propTypes = {
   newChildItemParentId: PropTypes.string,
   editMode: PropTypes.bool,
-  vocabularyRecord: PropTypes.shape({
+  record: PropTypes.shape({
     hierarchy: PropTypes.shape({
       level: PropTypes.number.isRequired,
       ancestors_or_self: PropTypes.arrayOf(PropTypes.string),
