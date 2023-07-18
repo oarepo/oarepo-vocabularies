@@ -36,19 +36,20 @@ const DescendantsButton = ({
 }) => (
   <Grid>
     {!!currentResultsState.data.total && (
-      <Grid.Row>
+      <Grid.Row width={6}>
         <Button
+          fluid
+          color="green"
           onClick={() =>
             setSearchAppShown((prevSearchAppShown) => !prevSearchAppShown)
           }
-        >
-          {`${
+          icon={searchAppShown ? "angle double up" : "angle double down"}
+          labelPosition="left"
+          content={`${
             searchAppShown ? i18next.t("hide") : i18next.t("show")
-          } ${i18next.t("descendants")}`}{" "}
-          <Icon
-            name={searchAppShown ? "angle double up" : "angle double down"}
-          />
-        </Button>
+          } ${i18next.t("descendants")}`}
+          type="button"
+        />
       </Grid.Row>
     )}
   </Grid>

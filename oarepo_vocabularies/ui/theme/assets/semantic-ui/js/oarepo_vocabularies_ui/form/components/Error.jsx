@@ -3,7 +3,6 @@ import { Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
 export const ErrorComponent = ({ error }) => {
-  console.log(error);
   const { message } = error;
   return (
     <Message negative>

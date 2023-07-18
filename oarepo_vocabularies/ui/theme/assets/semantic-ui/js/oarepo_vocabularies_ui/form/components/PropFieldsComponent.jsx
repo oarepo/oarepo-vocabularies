@@ -5,7 +5,6 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import PropTypes from "prop-types";
 
 export const PropFieldsComponent = ({ vocabularyProps }) => {
-  console.log(vocabularyProps);
   const { props } = vocabularyProps;
   return Object.keys(props).map((item) => {
     return (

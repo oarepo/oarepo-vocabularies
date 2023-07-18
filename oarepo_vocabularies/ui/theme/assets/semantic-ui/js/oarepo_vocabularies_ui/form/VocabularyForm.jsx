@@ -18,8 +18,9 @@ const VocabularyForm = () => {
   const { vocabularyProps } = formConfig;
   const editMode = _.has(formConfig, "updateUrl");
   const hasPropFields = !_.isEmpty(vocabularyProps);
-  const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
-  console.log(record);
+  const apiCallUrl = editMode
+    ? formConfig.updateUrl
+    : formConfig.createUrl + "/institutions";
   const availablePropFields = clearObjectValues(vocabularyProps.props);
 
   const editModeAndProps = editMode
@@ -52,11 +53,6 @@ const VocabularyForm = () => {
       record={record}
     />
   );
-};
-
-VocabularyForm.propTypes = {
-  record: PropTypes.object.isRequired,
-  formConfig: PropTypes.object.isRequired,
 };
 
 export default VocabularyForm;
