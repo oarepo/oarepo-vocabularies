@@ -6,31 +6,33 @@ import PropTypes from "prop-types";
 
 export const PropFieldsComponent = ({ vocabularyProps }) => {
   const { props } = vocabularyProps;
-  return Object.keys(props).map((item) => {
-    return (
-      <React.Fragment key={item}>
+
+  return (
+    <React.Fragment>
+      {Object.entries(props).map(([propField, propConfig]) => (
         <TextField
-          fieldPath={`props.${item}`}
+          key={propField}
+          fieldPath={`props.${propField}`}
           label={
-            props[item].description ? (
+            propConfig.description ? (
               <Popup
-                content={props[item].description}
+                content={propConfig.description}
                 trigger={
                   <label>
-                    {i18next.t(item)}
+                    {i18next.t(propField)}
                     <Icon name="question circle" color="blue" />
                   </label>
                 }
               />
             ) : (
-              i18next.t(item)
+              i18next.t(propField)
             )
           }
           width={11}
         />
-      </React.Fragment>
-    );
-  });
+      ))}
+    </React.Fragment>
+  );
 };
 
 PropFieldsComponent.propTypes = {
