@@ -35,6 +35,7 @@ except AttributeError:
 from collections import namedtuple
 
 import pytest
+import pytest_mock
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
@@ -355,7 +356,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def empty_licences(db):
     v = VocabularyType.create(id="licences", pid_type="lic")
     db.session.add(v)
@@ -363,23 +364,24 @@ def empty_licences(db):
 
     return v
 
-@pytest.fixture
-def organisms_authority_samples():
-    """
-    NCBI-like samples.
-    """
-    pass
-
-@pytest.fixture
-def affilliations_authority_samples():
+@pytest.fixture()
+def mock_auth_getter_affilliations(mocker):
     """
     ROR-like samples.
     """
-    pass
-
-@pytest.fixture
-def grants_authority_samples():
-    """
-    Openaire-like samples.
-    """
-    pass
+    mock = mocker.patch("oarepo_vocabularies.authorities.ext.OARepoVocabulariesAuthorities.auth_getter")
+    
+    mock.return_value = lambda q, page, size: [
+        {
+            "id": "https://ror.org/03zsq2967",
+            "authoritative_id": "authid1",
+            "name": "Association of Asian Pacific Community Health Organizations",
+        },
+        {
+            "id": "https://ror.org/020bcb226",
+            "authoritative_id": "authid2",
+            "name": "Oakton Community College",
+        }
+    ]
+    
+    yield mock
