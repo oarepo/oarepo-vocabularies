@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { OverridableContext } from "react-overridable";
-import { Container, Grid, Button, Icon, Label } from "semantic-ui-react";
+import { Container, Grid, Button, Label } from "semantic-ui-react";
 import {
   EmptyResults,
   Error,
@@ -30,8 +30,8 @@ const overriddenComponents = {
 };
 
 const DescendantsButton = ({
-  searchAppShown,
-  setSearchAppShown,
+  descendantsShown,
+  setDescendantsShown,
   currentResultsState,
 }) => (
   <Grid>
@@ -41,12 +41,12 @@ const DescendantsButton = ({
           fluid
           color="green"
           onClick={() =>
-            setSearchAppShown((prevSearchAppShown) => !prevSearchAppShown)
+            setDescendantsShown((prevDescendantsShown) => !prevDescendantsShown)
           }
-          icon={searchAppShown ? "angle double up" : "angle double down"}
+          icon={descendantsShown ? "angle double up" : "angle double down"}
           labelPosition="left"
           content={`${
-            searchAppShown ? i18next.t("hide") : i18next.t("show")
+            descendantsShown ? i18next.t("hide") : i18next.t("show")
           } ${i18next.t("descendants")}`}
           type="button"
         />
@@ -57,7 +57,7 @@ const DescendantsButton = ({
 
 const DescendantsButtonWithState = withState(DescendantsButton);
 export const App = ({ appConfig }) => {
-  const [searchAppShown, setSearchAppShown] = useState(false);
+  const [descendantsShown, setDescendantsShown] = useState(false);
   const {
     searchApi,
     initialQueryState,
@@ -83,13 +83,13 @@ export const App = ({ appConfig }) => {
                   style={{ padding: "2em 2.5em" }}
                 >
                   <DescendantsButtonWithState
-                    searchAppShown={searchAppShown}
-                    setSearchAppShown={setSearchAppShown}
+                    descendantsShown={descendantsShown}
+                    setDescendantsShown={setDescendantsShown}
                   />
                 </Grid.Column>
               </Grid.Row>
               <Grid.Row>
-                {searchAppShown && (
+                {descendantsShown && (
                   <Grid.Column width={16}>
                     <ResultsLoader>
                       <EmptyResults />

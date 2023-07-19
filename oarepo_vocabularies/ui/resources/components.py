@@ -40,5 +40,4 @@ class VocabulariesSearchComponent(ServiceComponent):
         vocabulary_type = view_args["vocabulary_type"]
         api_service = resource._api_service
         form_config.setdefault('vocabularyProps', resource.config.vocabulary_props_config(vocabulary_type))
-        # form_config.setdefault('createUrl', f"/api{api_service.config.url_prefix}{vocabulary_type}")
         form_config['createUrl']=  f"/api{api_service.config.url_prefix}{vocabulary_type}"

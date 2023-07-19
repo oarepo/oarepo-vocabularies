@@ -1,7 +1,8 @@
 import React from "react";
 import { DetailPageEditForm } from "./DetailPageEditForm";
 import { translateObjectToArray, clearObjectValues } from "../utils";
-import _ from "lodash";
+import _has from "lodash/has";
+import _isEmpty from "lodash/isEmpty";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 
 const options = {
@@ -16,8 +17,8 @@ const VocabularyForm = () => {
   const { record, formConfig, recordPermissions } = useFormConfig();
   console.log(record, formConfig, recordPermissions);
   const { vocabularyProps } = formConfig;
-  const editMode = _.has(formConfig, "updateUrl");
-  const hasPropFields = !_.isEmpty(vocabularyProps);
+  const editMode = _has(formConfig, "updateUrl");
+  const hasPropFields = !_isEmpty(vocabularyProps);
   const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
   const availablePropFields = clearObjectValues(vocabularyProps.props);
 

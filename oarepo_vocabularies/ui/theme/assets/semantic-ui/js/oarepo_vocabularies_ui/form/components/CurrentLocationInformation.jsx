@@ -3,7 +3,7 @@
 import React from "react";
 import { useAxios } from "../hooks/useAxios";
 import { Message, Breadcrumb } from "semantic-ui-react";
-import _ from "lodash";
+import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { breadcrumbSerialization } from "../../utils";
 import { ErrorComponent } from "./Error";
@@ -77,7 +77,7 @@ const EditMessage = ({ record }) => {
       content={
         <Breadcrumb
           icon="right angle"
-          sections={_.reverse(breadcrumbSerialization(ancestors_or_self))}
+          sections={_reverse(breadcrumbSerialization(ancestors_or_self))}
         />
       }
       // don't understand how to reasonably set width for such a component in semantic!!

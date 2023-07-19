@@ -15,12 +15,6 @@ const resultsPerPageLabel = (cmp) => (
   </React.Fragment>
 );
 
-const lngTestCmp = (cmp) => (
-  <React.Fragment>
-    {cmp} {i18next.t("ducciano")}
-  </React.Fragment>
-);
-
 export const Results = ({
   sortValues,
   resultsPerPageValues,

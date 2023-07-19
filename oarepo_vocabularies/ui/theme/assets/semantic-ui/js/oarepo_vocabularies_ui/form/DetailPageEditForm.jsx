@@ -5,19 +5,19 @@ import { BaseForm, TextField, http } from "react-invenio-forms";
 import { PublishButton } from "./components/PublishButton";
 import { FieldWithLanguageOption } from "./components/FieldWithLanguageOption";
 import { PropFieldsComponent } from "./components/PropFieldsComponent";
-import {
-  extractVariablePart,
-  transformArrayToObject,
-  eliminateEmptyStringProperties,
-} from "../utils";
+import { extractVariablePart, transformArrayToObject } from "../utils";
 import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./components/Error";
 import { ResetButton } from "./components/ResetButton";
 import { MyFormSchema } from "./FormValidation";
-// import { SelectParentItem } from "./components/SelectParentItem";
 import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
 import { useFormConfig } from "@js/oarepo_ui/forms";
+import _omitBy from "lodash/omitBy";
+
+const eliminateEmptyStringProperties = (obj) => {
+  return _omitBy(obj, (value) => value === "");
+};
 
 export const DetailPageEditForm = ({
   initialValues,
@@ -124,11 +124,10 @@ export const DetailPageEditForm = ({
               newChildItemParentId={newChildItemParentId}
             />
             <FieldWithLanguageOption fieldPath="title" options={options} />
+            <TextField fieldPath="id" label={"ID"} width={11} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
-            <TextField fieldPath="id" label={"ID"} width={11} required />
-            {/* <SelectParentItem record={record} /> */}
             <FormikStateLogger />
             {error.message && <ErrorComponent error={error} />}
           </Grid.Column>

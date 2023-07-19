@@ -1,12 +1,3 @@
-// TODO: this utility could be moved to oarepo-ui
-export const getInputFromDOM = (elementName) => {
-  const element = document.getElementsByName(elementName);
-  if (element.length > 0 && element[0].hasAttribute("value")) {
-    return JSON.parse(element[0].value);
-  }
-  return null;
-};
-
 // functiona that temporarily resolves getting vocabulary type from url
 export const extractVariablePart = (url) => {
   const regex = /\/vocabularies\/([^/]+)/;
@@ -59,25 +50,6 @@ export const checkDuplicateLanguage = (array) => {
     languageSet.add(language);
   }
   return languageSet.size === array.length;
-};
-
-export const scrollTop = () => {
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth",
-  });
-};
-
-// delete non empty properties from object
-
-export const eliminateEmptyStringProperties = (obj) => {
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key) && obj[key] === "") {
-      delete obj[key];
-    }
-  }
-  return obj;
 };
 
 // turn array into shape suitable for breadcrums options
