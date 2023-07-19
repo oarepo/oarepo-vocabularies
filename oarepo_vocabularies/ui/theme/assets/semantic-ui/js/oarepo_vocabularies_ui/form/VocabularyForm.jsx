@@ -1,9 +1,9 @@
 import React from "react";
 import { DetailPageEditForm } from "./DetailPageEditForm";
-import { translateObjectToArray } from "../utils";
 import _has from "lodash/has";
 import _isEmpty from "lodash/isEmpty";
 import _mapValues from "lodash/mapValues";
+import _toPairs from "lodash/toPairs";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 
 const options = {
@@ -12,6 +12,10 @@ const options = {
     { text: "en", value: "en" },
     { text: "de", value: "de" },
   ],
+};
+
+const translateObjectToArray = (obj) => {
+  return _toPairs(obj).map(([language, title]) => ({ language, title }));
 };
 
 const VocabularyForm = () => {

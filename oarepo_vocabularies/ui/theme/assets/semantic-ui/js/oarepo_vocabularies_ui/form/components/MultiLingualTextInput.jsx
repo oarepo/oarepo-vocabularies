@@ -14,7 +14,7 @@ const emptyNewInput = {
   title: "",
 };
 
-export const FieldWithLanguageOption = ({
+export const MultiLingualTextInput = ({
   fieldPath,
   label,
   labelIcon,
@@ -22,6 +22,7 @@ export const FieldWithLanguageOption = ({
   options,
   showEmptyValue,
 }) => {
+  console.log("dsadsaddsfds");
   return (
     <ArrayField
       addButtonLabel="Add another language"
@@ -33,6 +34,7 @@ export const FieldWithLanguageOption = ({
     >
       {({ arrayHelpers, indexPath }) => {
         const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+
         return (
           <GroupField optimized>
             <SelectField
@@ -72,7 +74,7 @@ export const FieldWithLanguageOption = ({
   );
 };
 
-FieldWithLanguageOption.propTypes = {
+MultiLingualTextInput.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   labelIcon: PropTypes.string,
@@ -81,7 +83,7 @@ FieldWithLanguageOption.propTypes = {
   showEmptyValue: PropTypes.bool,
 };
 
-FieldWithLanguageOption.defaultProps = {
+MultiLingualTextInput.defaultProps = {
   label: "Title",
   labelIcon: "barcode",
   required: undefined,

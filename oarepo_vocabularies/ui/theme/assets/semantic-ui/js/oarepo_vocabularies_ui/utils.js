@@ -18,28 +18,6 @@ export const transformArrayToObject = (arr) => {
   return result;
 };
 
-// function that creates array suitable for formik arrayfield
-export const translateObjectToArray = (obj) => {
-  const result = [];
-
-  Object.keys(obj).forEach((language) => {
-    const title = obj[language];
-    result.push({ language, title });
-  });
-
-  return result;
-};
-
-// check if two same languages are selected in multi language field
-export const checkDuplicateLanguage = (array) => {
-  const languageSet = new Set();
-  for (let item of array) {
-    const { language } = item;
-    languageSet.add(language);
-  }
-  return languageSet.size === array.length;
-};
-
 // turn array into shape suitable for breadcrums options
 export const breadcrumbSerialization = (array) =>
   array.map((item) => ({ key: item, content: item }));

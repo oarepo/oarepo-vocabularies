@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
 import { BaseForm, TextField, http } from "react-invenio-forms";
 import { PublishButton } from "./components/PublishButton";
-import { FieldWithLanguageOption } from "./components/FieldWithLanguageOption";
+import { MultiLingualTextInput } from "./components/MultiLingualTextInput";
 import { PropFieldsComponent } from "./components/PropFieldsComponent";
 import { extractVariablePart, transformArrayToObject } from "../utils";
 import { useLocation } from "react-router-dom";
@@ -30,6 +30,7 @@ export const DetailPageEditForm = ({
     record,
     formConfig: { vocabularyProps },
   } = useFormConfig();
+  console.log("dsadsada");
   // to display errors that are consequence of API calls
   const sidebarRef = useRef(null);
   const [error, setError] = useState({});
@@ -123,7 +124,7 @@ export const DetailPageEditForm = ({
               editMode={editMode}
               newChildItemParentId={newChildItemParentId}
             />
-            <FieldWithLanguageOption fieldPath="title" options={options} />
+            <MultiLingualTextInput fieldPath="title" options={options} />
             <TextField fieldPath="id" label={"ID"} width={11} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
