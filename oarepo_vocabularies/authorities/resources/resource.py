@@ -7,6 +7,7 @@ from flask_resources import (
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.resources.records.resource import request_search_args
+from sqlalchemy.orm import aliased
 
 from oarepo_vocabularies.authorities.proxies import current_vocabularies_authorities
 
@@ -20,7 +21,7 @@ class AuthoritativeVocabulariesResource(Resource):
         return [route("GET", routes["list"], self.list)]
     
     @request_search_args
-    @response_handler(many=True)
+    @response_handler()
     def list(self, vocabulary_type: str = "affiliations"):
         auth_getter = current_vocabularies_authorities(vocabulary_type)
         if not auth_getter:
@@ -32,43 +33,39 @@ class AuthoritativeVocabulariesResource(Resource):
         results = auth_getter(q, page, size)
     
         # Mark external, resolve uuid.
-        authoritative_ids = [item["authoritative_id"] for item in results]
-        
-        subquery = db.session.query(
+        authoritative_ids = [item["props"]["authoritative_id"] for item in results]
+
+        authvc = db.session.query(
             PersistentIdentifier.pid_value,
             PersistentIdentifier.object_uuid
         ).filter(
             db.and_(
                 PersistentIdentifier.pid_type == "authvc",
-                PersistentIdentifier.pid_value.in_(authoritative_ids)
-            )
-        ).subquery('sub')
+                PersistentIdentifier.pid_value.in_(authoritative_ids),
+            ) 
+        )
         
-        query = db.session.query(
-            subquery.c.pid_value,
-            subquery.c.object_uuid
-        ).select_from(subquery).join(
-            PersistentIdentifier,
-            db.and_(
-                PersistentIdentifier.pid_type == "id",
-                PersistentIdentifier.object_uuid == subquery.c.object_uuid,
-            ),
-            isouter=True
-        ).all()
-        query_results = {row.pid_value:row.object_uuid for row in query}
+        PersistentIdentifierAlias = aliased(PersistentIdentifier)
+        query = authvc.join(
+            PersistentIdentifierAlias,
+            PersistentIdentifier.object_uuid == PersistentIdentifierAlias.object_uuid
+        )
+        
+        query_results = query.all()
+        query_results = {row.pid_value:row.object_uuid for row in query_results}
         
         authority_results = []
         for item in results:
-            auth_id = item["authoritative_id"]
+            auth_id = item["props"]["authoritative_id"]
             
             if auth_id not in query_results:
-                item['external'] = True
+                item["props"]["external"] = True
                 authority_results.append(item)
                 continue
             
             uuid = query_results[auth_id]            
-            item['external'] = uuid is None
-            item['uuid'] = uuid
+            item["props"]["external"] = uuid is None
+            item["props"]["uuid"] = uuid
             authority_results.append(item)           
 
         result = {
