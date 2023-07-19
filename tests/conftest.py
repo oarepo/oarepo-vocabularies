@@ -374,13 +374,18 @@ def mock_auth_getter_affilliations(mocker):
     mock.return_value = lambda q, page, size: [
         {
             "id": "https://ror.org/03zsq2967",
-            "authoritative_id": "authid1",
-            "name": "Association of Asian Pacific Community Health Organizations",
+            "props": {
+                "authoritative_id": "authid1",
+                "name": "Association of Asian Pacific Community Health Organizations",
+            },
         },
         {
             "id": "https://ror.org/020bcb226",
-            "authoritative_id": "authid2",
-            "name": "Oakton Community College",
+            "props": {
+                "authoritative_id": "authid2",
+                "name": "Oakton Community College",
+            }
+            
         }
     ]
     
