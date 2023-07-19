@@ -2,15 +2,17 @@
 
 import React from "react";
 import { useAxios } from "../hooks/useAxios";
-import { Breadcrumb } from "semantic-ui-react";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { breadcrumbSerialization } from "../../utils";
 import { ErrorComponent } from "./Error";
 import PropTypes from "prop-types";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { useFormikContext } from "formik";
+import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
+
+const breadcrumbSerialization = (array) =>
+  array.map((item) => ({ key: item, content: item }));
 
 const NewTopLevelItemMessage = () => (
   <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
@@ -31,8 +33,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
             item: response?.title?.cs,
           })}
           content={
-            <Breadcrumb
-              icon="right angle"
+            <VocabularyBreadcrumb
               sections={[
                 ..._reverse(
                   breadcrumbSerialization(
@@ -68,8 +69,7 @@ const EditMessage = ({ record }) => {
     <VocabularyBreadcrumbMessage
       header={i18next.t("editChildItemMessage")}
       content={
-        <Breadcrumb
-          icon="right angle"
+        <VocabularyBreadcrumb
           sections={_reverse(breadcrumbSerialization(ancestors_or_self))}
         />
       }
