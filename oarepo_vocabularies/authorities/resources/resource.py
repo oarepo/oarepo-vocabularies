@@ -6,7 +6,10 @@ from flask_resources import (
 )
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records_resources.resources.records.resource import request_search_args
+from invenio_records_resources.resources.records.resource import (
+    request_search_args,
+    request_view_args
+)
 from sqlalchemy.orm import aliased
 
 from oarepo_vocabularies.authorities.proxies import current_vocabularies_authorities
@@ -21,9 +24,10 @@ class AuthoritativeVocabulariesResource(Resource):
         return [route("GET", routes["list"], self.list)]
     
     @request_search_args
+    @request_view_args
     @response_handler()
-    def list(self, vocabulary_type: str = "affiliations"):
-        auth_getter = current_vocabularies_authorities(vocabulary_type)
+    def list(self):
+        auth_getter = current_vocabularies_authorities(resource_requestctx.view_args["type"])
         if not auth_getter:
             return "No authority getter.", 404
         
