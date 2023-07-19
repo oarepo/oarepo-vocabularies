@@ -1,5 +1,6 @@
 from flask_resources import ResourceConfig
 from invenio_records_resources.resources import SearchRequestArgsSchema
+import marshmallow as ma
 
 class AuthoritativeVocabulariesResourceConfig(ResourceConfig):
     blueprint_name = "authorities"
@@ -7,6 +8,10 @@ class AuthoritativeVocabulariesResourceConfig(ResourceConfig):
     
     routes = {
         "list": ""
+    }
+    
+    request_view_args = {
+        "type": ma.fields.Str(required=True),
     }
     
     request_search_args = SearchRequestArgsSchema
