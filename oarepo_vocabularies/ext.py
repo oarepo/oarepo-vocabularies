@@ -34,6 +34,8 @@ class OARepoVocabularies(object):
                 app.config.setdefault(k, getattr(config, k))
             if k.startswith("VOCABULARY"):
                 app.config.setdefault(k, getattr(config, k))
+            if k.startswith("VOCABULARIES"):
+                app.config.setdefault(k, getattr(config, k))
         app.config.setdefault(
             "VOCABULARIES_FACET_CACHE_SIZE", config.VOCABULARIES_FACET_CACHE_SIZE
         )

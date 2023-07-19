@@ -46,6 +46,7 @@ from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
+from invenio_pidstore.models import PersistentIdentifier
 
 pytest_plugins = ("celery.contrib.pytest",)
 
@@ -86,6 +87,10 @@ def app_config(app_config):
         VocabularyTypeResource,
         VocabularyTypeResourceConfig
     )
+    from oarepo_vocabularies.authorities.resources import (
+        AuthoritativeVocabulariesResource,
+        AuthoritativeVocabulariesResourceConfig
+    )
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
@@ -95,6 +100,9 @@ def app_config(app_config):
 
     app_config["VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
     app_config["VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
+
+    app_config["VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
+    app_config["VOCABULARIES_AUTHORITIES_CONFIG"] = AuthoritativeVocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -348,10 +356,61 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def empty_licences(db):
     v = VocabularyType.create(id="licences", pid_type="lic")
     db.session.add(v)
     db.session.commit()
 
     return v
+
+@pytest.fixture()
+def affiliations_pids(db):
+    def _upload(uuid):
+        # One of the samples already exists and the other one is a completely new one.
+        invenio_pid = PersistentIdentifier.create(
+            pid_type="id",
+            pid_value="invenioid1",
+            object_type="object",
+            object_uuid=uuid
+        )
+
+        authvc_pid = PersistentIdentifier.create(
+            pid_type="authvc",
+            pid_value="authid1",
+            object_type="object",
+            object_uuid=uuid
+        )
+
+        db.session.add(invenio_pid)
+        db.session.add(authvc_pid)
+        db.session.commit()
+        
+    return _upload
+
+@pytest.fixture()
+def mock_auth_getter_affilliations(mocker):
+    """
+    ROR-like samples.
+    """
+    mock = mocker.patch("oarepo_vocabularies.authorities.ext.OARepoVocabulariesAuthorities.auth_getter")
+    
+    mock.return_value = lambda q, page, size: [
+        {
+            "id": "https://ror.org/03zsq2967",
+            "props": {
+                "authoritative_id": "authid1",
+                "name": "Association of Asian Pacific Community Health Organizations",
+            },
+        },
+        {
+            "id": "https://ror.org/020bcb226",
+            "props": {
+                "authoritative_id": "authid2",
+                "name": "Oakton Community College",
+            }
+            
+        }
+    ]
+    
+    yield mock

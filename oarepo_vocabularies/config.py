@@ -1,5 +1,9 @@
 from invenio_records_resources.services.custom_fields.text import KeywordCF
 
+from oarepo_vocabularies.authorities.resources import (
+    AuthoritativeVocabulariesResource,
+    AuthoritativeVocabulariesResourceConfig
+)
 from oarepo_vocabularies.fixtures import (
     VocabularyReader,
     VocabularyWriter,
@@ -14,7 +18,21 @@ from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabularyTypeService
 
 INVENIO_VOCABULARY_TYPE_METADATA = {
-    # e.g.:
+    # etc.
+    # "affilliations": {
+    #    "authority": {
+    #        "name": "ROR",
+    #        "url": "https://api.ror.org/organizations",
+    #        "getter": lambda q, page, size: True
+    #    }
+    # },
+    # "grants": {
+    #    "authority": {
+    #        "name": "Openaire",
+    #        "url": "https://api.openaire.eu/search/projects",
+    #        "getter": lambda q, page, size: True
+    #    }
+    # },
     # "languages": {
     #     "name": {
     #         "cs": "jazyky",
@@ -27,6 +45,13 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
     #     "hierarchical": False,
     #     "props": {...}
     # },
+    # "organisms": {
+    #    "authority": {
+    #        "name": "NCBI",
+    #        "url": "https://ncbi.nlm.nih.gov/",
+    #        "getter": lambda q, page, size: True
+    #    }
+    # }
 }
 
 OAREPO_VOCABULARIES_HIERARCHY_CF = [
@@ -54,3 +79,6 @@ DEFAULT_DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
 
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
+
+VOCABULARIES_AUTHORITIES = AuthoritativeVocabulariesResource
+VOCABULARIES_AUTHORITIES_CONFIG = AuthoritativeVocabulariesResourceConfig
