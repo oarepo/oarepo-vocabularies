@@ -35,7 +35,6 @@ except AttributeError:
 from collections import namedtuple
 
 import pytest
-import pytest_mock
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
@@ -47,6 +46,7 @@ from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
+from invenio_pidstore.models import PersistentIdentifier
 
 pytest_plugins = ("celery.contrib.pytest",)
 
@@ -363,6 +363,30 @@ def empty_licences(db):
     db.session.commit()
 
     return v
+
+@pytest.fixture()
+def affiliations_pids(db):
+    def _upload(uuid):
+        # One of the samples already exists and the other one is a completely new one.
+        invenio_pid = PersistentIdentifier.create(
+            pid_type="id",
+            pid_value="invenioid1",
+            object_type="object",
+            object_uuid=uuid
+        )
+
+        authvc_pid = PersistentIdentifier.create(
+            pid_type="authvc",
+            pid_value="authid1",
+            object_type="object",
+            object_uuid=uuid
+        )
+
+        db.session.add(invenio_pid)
+        db.session.add(authvc_pid)
+        db.session.commit()
+        
+    return _upload
 
 @pytest.fixture()
 def mock_auth_getter_affilliations(mocker):
