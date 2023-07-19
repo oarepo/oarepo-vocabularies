@@ -7,7 +7,6 @@ from flask_resources import (
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.resources.records.resource import request_search_args
-from sqlalchemy import select
 
 from oarepo_vocabularies.authorities.proxies import current_vocabularies_authorities
 
@@ -32,19 +31,43 @@ class AuthoritativeVocabulariesResource(Resource):
         q, page, size = params.q, params.page, params.size
         results = auth_getter(q, page, size)
     
-        # Filter authority results if such PID already exists in our database.
-        authority_unique_results = []
-        for item in results:
-            id = item.props.authoritative_id
-            stmt = select(PersistentIdentifier).where(PersistentIdentifier.pid_value == id)
-            result = db.session.execute(stmt).first()
-            
-            if not result:
-                authority_unique_results.append(item)
+        # Mark external, resolve uuid.
+        authoritative_ids = [item.properties["authoritative_id"] for item in results]
         
+        subquery = db.session.query(
+            PersistentIdentifier.pid_value,
+            PersistentIdentifier.object_uuid
+        ).filter(
+            db.and_(
+                PersistentIdentifier.pid_type == "authvc",
+                PersistentIdentifier.pid_value.in_(authoritative_ids)
+            )
+        ).subquery('sub')
+        
+        query = db.session.query(
+            subquery.c.pid_value,
+            subquery.c.object_uuid
+        ).join(
+            subquery,
+            db.and_(
+                PersistentIdentifier.pid_type == "id",
+                PersistentIdentifier.object_uuid == subquery.c.object_uuid,
+            ),
+            isouter=True
+        ).all()
+        query_results = {row.pid_value:row.object_uuid for row in query}
+        
+        authority_results = []
+        for item in results:
+            auth_id = item.properties["authoritative_id"]
+            uuid = query_results[auth_id]
+            
+            item['external'] = uuid is None
+            item['id'] = uuid
+
         result = {
             "hits": {
-                "hits": authority_unique_results
+                "hits": authority_results
             }
         }
         return result, 200
