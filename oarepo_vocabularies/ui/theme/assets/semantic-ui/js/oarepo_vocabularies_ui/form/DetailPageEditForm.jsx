@@ -9,7 +9,7 @@ import { extractVariablePart, transformArrayToObject } from "../utils";
 import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./components/Error";
 import { ResetButton } from "./components/ResetButton";
-import { VocabularyFormSchema } from "./FormValidation";
+import { VocabularyFormSchema } from "./VocabularyFormSchema";
 import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
 import { useFormConfig } from "@js/oarepo_ui/forms";
