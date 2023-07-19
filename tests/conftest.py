@@ -95,8 +95,8 @@ def app_config(app_config):
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
 
-    app_config["VOCABULARY_TYPE_SERVICE"] = VocabularyTypeService
-    app_config["VOCABULARY_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
+    app_config["OAREPO_VOCABULARIES_TYPE_SERVICE"] = VocabularyTypeService
+    app_config["OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
 
     app_config["VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
     app_config["VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig

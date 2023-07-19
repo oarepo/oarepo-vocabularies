@@ -1,4 +1,6 @@
 from flask import g
+from flask_babelex import lazy_gettext as _
+
 from flask_resources import from_conf, request_parser
 from invenio_records_resources.resources.records.resource import (
     request_read_args,
@@ -29,6 +31,22 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     @request_vocabulary_args
     def search(self):
         return super().search()
+
+    # TODO: !IMPORTANT!: needs to be enabled before production deployment
+    # @login_required
+    @request_read_args
+    @request_view_args
+    @request_vocabulary_args
+    def create(self):
+        return super().create()
+
+    # TODO: !IMPORTANT!: needs to be enabled before production deployment
+    # @login_required
+    @request_read_args
+    @request_view_args
+    @request_vocabulary_args
+    def edit(self):
+        return super().edit()
 
     def _get_record(self, resource_requestctx):
         return self._api_service.read(

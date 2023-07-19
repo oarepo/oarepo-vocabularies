@@ -1,0 +1,6 @@
+{% extends "oarepo_ui/form.html" %}
+
+{%- block javascript %}
+    {{ super() }}
+    {{ webpack['oarepo_vocabularies_forms.js'] }}
+{%- endblock %}
