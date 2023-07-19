@@ -9,7 +9,7 @@ import {
 } from "react-invenio-forms";
 import { Button, Form, Icon } from "semantic-ui-react";
 
-const emptyRelatedWork = {
+const emptyNewInput = {
   language: "",
   title: "",
 };
@@ -25,7 +25,7 @@ export const FieldWithLanguageOption = ({
   return (
     <ArrayField
       addButtonLabel="Add another language"
-      defaultNewValue={emptyRelatedWork}
+      defaultNewValue={emptyNewInput}
       fieldPath={fieldPath}
       label={<FieldLabel htmlFor={fieldPath} icon="" label={label} />}
       required={required}

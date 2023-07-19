@@ -30,18 +30,6 @@ export const translateObjectToArray = (obj) => {
   return result;
 };
 
-//   function to clear all values in an object
-
-export const clearObjectValues = (obj) => {
-  const result = {};
-
-  for (let key in obj) {
-    result[key] = "";
-  }
-
-  return result;
-};
-
 // check if two same languages are selected in multi language field
 export const checkDuplicateLanguage = (array) => {
   const languageSet = new Set();

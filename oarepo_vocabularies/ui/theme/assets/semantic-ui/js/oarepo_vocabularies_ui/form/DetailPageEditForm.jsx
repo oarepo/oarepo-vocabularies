@@ -9,7 +9,7 @@ import { extractVariablePart, transformArrayToObject } from "../utils";
 import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./components/Error";
 import { ResetButton } from "./components/ResetButton";
-import { MyFormSchema } from "./FormValidation";
+import { VocabularyFormSchema } from "./FormValidation";
 import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
 import { useFormConfig } from "@js/oarepo_ui/forms";
@@ -111,7 +111,7 @@ export const DetailPageEditForm = ({
         // onError={this.onError}
         formik={{
           initialValues: initialValues,
-          validationSchema: MyFormSchema,
+          validationSchema: VocabularyFormSchema,
           validateOnChange: false,
           validateOnBlur: false,
         }}
