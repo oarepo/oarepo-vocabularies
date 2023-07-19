@@ -2,52 +2,51 @@
 
 import React from "react";
 import { useAxios } from "../hooks/useAxios";
-import { Message, Breadcrumb } from "semantic-ui-react";
+import { Breadcrumb } from "semantic-ui-react";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { breadcrumbSerialization } from "../../utils";
 import { ErrorComponent } from "./Error";
 import PropTypes from "prop-types";
 import { useFormConfig } from "@js/oarepo_ui/forms";
+import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
+import { useFormikContext } from "formik";
 
 const NewTopLevelItemMessage = () => (
-  <Message
-    icon="attention"
-    header={i18next.t("newItemMessage")}
-    size="tiny"
-    // don't understand how to reasonably set width for such a component in semantic!!
-    style={{ width: "68%" }}
-  />
+  <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
 );
 
 const NewChildItemMessage = ({ newChildItemParentId }) => {
+  const {
+    values: { id },
+  } = useFormikContext();
   const { response, loading, error } = useAxios({
     url: `/api/vocabularies/institutions/${newChildItemParentId}`,
   });
   return (
     <React.Fragment>
       {!loading && !error.message && (
-        <Message
-          icon="attention"
+        <VocabularyBreadcrumbMessage
           header={i18next.t("newChildItemMessage", {
             item: response?.title?.cs,
           })}
-          size="tiny"
           content={
             <Breadcrumb
               icon="right angle"
               sections={[
-                ..._.reverse(
+                ..._reverse(
                   breadcrumbSerialization(
                     response?.hierarchy?.ancestors_or_self
                   )
                 ),
-                { key: "new", content: i18next.t("newItem"), active: true },
+                {
+                  key: "new",
+                  content: id ? id : i18next.t("newItem"),
+                  active: true,
+                },
               ]}
             />
           }
-          // don't understand how to reasonably set width for such a component in semantic!!
-          style={{ width: "68%" }}
         />
       )}
       {error.message && <ErrorComponent error={error} />}
@@ -61,27 +60,19 @@ const EditMessage = ({ record }) => {
   } = record;
   if (level === 1)
     return (
-      <Message
-        icon="attention"
+      <VocabularyBreadcrumbMessage
         header={i18next.t("editTopLevelItemMessage")}
-        size="tiny"
-        // don't understand how to reasonably set width for such a component in semantic!!
-        style={{ width: "68%" }}
       />
     );
   return (
-    <Message
-      icon="attention"
+    <VocabularyBreadcrumbMessage
       header={i18next.t("editChildItemMessage")}
-      size="tiny"
       content={
         <Breadcrumb
           icon="right angle"
           sections={_reverse(breadcrumbSerialization(ancestors_or_self))}
         />
       }
-      // don't understand how to reasonably set width for such a component in semantic!!
-      style={{ width: "68%" }}
     />
   );
 };

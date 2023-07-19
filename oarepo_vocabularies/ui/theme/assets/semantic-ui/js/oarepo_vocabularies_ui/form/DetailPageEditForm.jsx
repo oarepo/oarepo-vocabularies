@@ -118,12 +118,17 @@ export const DetailPageEditForm = ({
         }}
       >
         <Grid>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <CurrentLocationInformation
+                record={record}
+                editMode={editMode}
+                newChildItemParentId={newChildItemParentId}
+              />
+            </Grid.Column>
+          </Grid.Row>
+
           <Grid.Column mobile={16} tablet={16} computer={12}>
-            <CurrentLocationInformation
-              record={record}
-              editMode={editMode}
-              newChildItemParentId={newChildItemParentId}
-            />
             <MultiLingualTextInput fieldPath="title" options={options} />
             <TextField fieldPath="id" label={"ID"} width={11} required />
             {hasPropFields && (
