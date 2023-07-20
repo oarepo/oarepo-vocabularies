@@ -14,6 +14,7 @@ import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import _omitBy from "lodash/omitBy";
+import Overridable from "react-overridable";
 
 const eliminateEmptyStringProperties = (obj) => {
   return _omitBy(obj, (value) => value === "");
@@ -140,8 +141,13 @@ export const DetailPageEditForm = ({
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>
               <Sticky context={sidebarRef} offset={20}>
-                <PublishButton />
-                <ResetButton />
+                {/* need to fix bug it expects only one child */}
+                <Overridable id="FormApp.buttons">
+                  <React.Fragment>
+                    <PublishButton />
+                    <ResetButton />
+                  </React.Fragment>
+                </Overridable>
               </Sticky>
             </Grid.Column>
           </Ref>
@@ -158,7 +164,7 @@ const TitlePropType = PropTypes.shape({
 
 DetailPageEditForm.propTypes = {
   initialValues: PropTypes.shape({
-    title: PropTypes.arrayOf(TitlePropType).isRequired,
+    title: PropTypes.arrayOf(TitlePropType),
     ICO: PropTypes.string,
     RID: PropTypes.string,
     acronym: PropTypes.string,

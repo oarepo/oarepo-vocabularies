@@ -20,7 +20,6 @@ export const MultiLingualTextInput = ({
   labelIcon,
   required,
   options,
-  showEmptyValue,
 }) => {
   console.log("dsadsaddsfds");
   return (
@@ -30,7 +29,6 @@ export const MultiLingualTextInput = ({
       fieldPath={fieldPath}
       label={<FieldLabel htmlFor={fieldPath} icon="" label={label} />}
       required={required}
-      showEmptyValue={showEmptyValue}
     >
       {({ arrayHelpers, indexPath }) => {
         const fieldPathPrefix = `${fieldPath}.${indexPath}`;
@@ -80,12 +78,10 @@ MultiLingualTextInput.propTypes = {
   labelIcon: PropTypes.string,
   required: PropTypes.bool,
   options: PropTypes.object.isRequired,
-  showEmptyValue: PropTypes.bool,
 };
 
 MultiLingualTextInput.defaultProps = {
   label: "Title",
   labelIcon: "barcode",
   required: undefined,
-  showEmptyValue: false,
 };

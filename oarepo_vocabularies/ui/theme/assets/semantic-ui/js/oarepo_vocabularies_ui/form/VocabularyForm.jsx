@@ -33,17 +33,18 @@ const VocabularyForm = () => {
 
   const propFieldsWithValues = hasPropFields ? editModeAndProps : {};
 
-  const initialValues = editMode
-    ? {
-        title: translateObjectToArray(record.title),
-        props: propFieldsWithValues,
-        id: record.id,
-      }
-    : {
-        title: [{ language: "cs", title: "" }],
-        props: propFieldsWithValues,
-        id: "",
-      };
+  const initialValues = record;
+
+  // const initialValues = editMode
+  //   ? {
+  //       title: translateObjectToArray(record.title),
+  //       props: propFieldsWithValues,
+  //       id: record.id,
+  //     }
+  //   : {
+  //       props: propFieldsWithValues,
+  //       id: "",
+  //     };
 
   return (
     <DetailPageEditForm
