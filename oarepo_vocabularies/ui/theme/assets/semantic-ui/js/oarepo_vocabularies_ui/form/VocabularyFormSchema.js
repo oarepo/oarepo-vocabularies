@@ -11,11 +11,11 @@ const checkDuplicateLanguage = (array) => {
 };
 
 export const VocabularyFormSchema = Yup.object().shape({
-  title: Yup.array()
+  _title: Yup.array()
     .of(
       Yup.object().shape({
         language: Yup.string().required(i18next.t("required")),
-        title: Yup.string().required(i18next.t("required")),
+        name: Yup.string().required(i18next.t("required")),
       })
     )
     .test(
@@ -31,13 +31,15 @@ export const VocabularyFormSchema = Yup.object().shape({
         return checkDuplicateLanguage(value);
       }
     ),
-  props: Yup.object().shape({
-    ICO: Yup.string()
-      .length(8, ({ length }) => i18next.t("lengthError", { length: length }))
-      .matches(/^\d+$/, i18next.t("numbersError")),
-    RID: Yup.string().length(5, ({ length }) =>
-      i18next.t("lengthError", { length: length })
-    ),
-  }),
+  props: Yup.object()
+    .shape({
+      ICO: Yup.string()
+        .length(8, ({ length }) => i18next.t("lengthError", { length: length }))
+        .matches(/^\d+$/, i18next.t("numbersError")),
+      RID: Yup.string().length(5, ({ length }) =>
+        i18next.t("lengthError", { length: length })
+      ),
+    })
+    .nullable(),
   id: Yup.string().required(i18next.t("required")),
 });

@@ -15,7 +15,7 @@ const options = {
 };
 
 const translateObjectToArray = (obj) => {
-  return _toPairs(obj).map(([language, title]) => ({ language, title }));
+  return _toPairs(obj).map(([language, title]) => ({ language, name: title }));
 };
 
 const VocabularyForm = () => {
@@ -33,16 +33,19 @@ const VocabularyForm = () => {
 
   const propFieldsWithValues = hasPropFields ? editModeAndProps : {};
 
-  const initialValues = editMode
-    ? {
-        title: translateObjectToArray(record.title),
-        props: propFieldsWithValues,
-        id: record.id,
-      }
-    : {
-        props: propFieldsWithValues,
-        id: "",
-      };
+  const initialValues = record;
+
+  // const initialValues = editMode
+  //   ? {
+  //       title: translateObjectToArray(record.title),
+  //       props: propFieldsWithValues,
+  //       id: record.id,
+  //     }
+  //   : {
+  //       title: [{ language: "cs", name: "" }],
+  //       props: propFieldsWithValues,
+  //       id: "",
+  //     };
 
   return (
     <DetailPageEditForm

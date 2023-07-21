@@ -20,6 +20,20 @@ const eliminateEmptyStringProperties = (obj) => {
   return _omitBy(obj, (value) => value === "");
 };
 
+function removeNullAndUnderscoreProperties(obj) {
+  return _omitBy(obj, (value, key) => {
+    if (value === null) {
+      return true;
+    }
+
+    if (Array.isArray(value) && value.every((item) => item === null)) {
+      return true;
+    }
+
+    return key.startsWith("_");
+  });
+}
+
 export const DetailPageEditForm = ({
   initialValues,
   options,
@@ -47,37 +61,38 @@ export const DetailPageEditForm = ({
   // 3. editing an item, which means I need to send parent if the item
   // as it and not send a parent if item does not have it
   const onSubmit = (values, formik) => {
-    let preparedValues;
+    console.log(removeNullAndUnderscoreProperties(values));
+    // let preparedValues;
 
-    if (newChildItemParentId) {
-      preparedValues = {
-        ...values,
-        title: transformArrayToObject(values.title),
-        type: vocabularyType,
-        props: eliminateEmptyStringProperties(values.props),
-        hierarchy: { parent: newChildItemParentId },
-      };
-    } else if (!editMode) {
-      preparedValues = {
-        ...values,
-        title: transformArrayToObject(values.title),
-        type: vocabularyType,
-        props: eliminateEmptyStringProperties(values.props),
-      };
-    } else {
-      preparedValues = {
-        ...values,
-        title: transformArrayToObject(values.title),
-        type: vocabularyType,
-        props: eliminateEmptyStringProperties(values.props),
-        hierarchy: record.hierarchy.parent
-          ? { parent: record.hierarchy.parent }
-          : {},
-      };
-    }
+    // if (newChildItemParentId) {
+    //   preparedValues = {
+    //     ...values,
+    //     title: transformArrayToObject(values.title),
+    //     type: vocabularyType,
+    //     props: eliminateEmptyStringProperties(values.props),
+    //     hierarchy: { parent: newChildItemParentId },
+    //   };
+    // } else if (!editMode) {
+    //   preparedValues = {
+    //     ...values,
+    //     title: transformArrayToObject(values.title),
+    //     type: vocabularyType,
+    //     props: eliminateEmptyStringProperties(values.props),
+    //   };
+    // } else {
+    //   preparedValues = {
+    //     ...values,
+    //     title: transformArrayToObject(values.title),
+    //     type: vocabularyType,
+    //     props: eliminateEmptyStringProperties(values.props),
+    //     hierarchy: record.hierarchy.parent
+    //       ? { parent: record.hierarchy.parent }
+    //       : {},
+    //   };
+    // }
     if (editMode) {
       http
-        .put(apiCallUrl, preparedValues)
+        .put(apiCallUrl, removeNullAndUnderscoreProperties(values))
         .then((response) => {
           setError({});
           if (response.status >= 200 && response.status < 300) {
@@ -91,7 +106,7 @@ export const DetailPageEditForm = ({
         });
     } else {
       http
-        .post(apiCallUrl, preparedValues)
+        .post(apiCallUrl, removeNullAndUnderscoreProperties(values))
         .then((response) => {
           setError({});
           if (response.status >= 200 && response.status < 300) {
@@ -116,6 +131,7 @@ export const DetailPageEditForm = ({
           validationSchema: VocabularyFormSchema,
           validateOnChange: false,
           validateOnBlur: false,
+          enableReinitialize: true,
         }}
       >
         <Grid>
@@ -141,7 +157,6 @@ export const DetailPageEditForm = ({
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>
               <Sticky context={sidebarRef} offset={20}>
-                {/* need to fix bug it expects only one child */}
                 <Overridable id="FormApp.buttons">
                   <React.Fragment>
                     <PublishButton />
@@ -159,12 +174,12 @@ export const DetailPageEditForm = ({
 
 const TitlePropType = PropTypes.shape({
   language: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
 });
 
 DetailPageEditForm.propTypes = {
   initialValues: PropTypes.shape({
-    title: PropTypes.arrayOf(TitlePropType),
+    title: PropTypes.object,
     ICO: PropTypes.string,
     RID: PropTypes.string,
     acronym: PropTypes.string,
