@@ -1,9 +1,5 @@
 from invenio_records_resources.services.custom_fields.text import KeywordCF
 
-from oarepo_vocabularies.authorities.resources import (
-    AuthoritativeVocabulariesResource,
-    AuthoritativeVocabulariesResourceConfig
-)
 from oarepo_vocabularies.fixtures import (
     VocabularyReader,
     VocabularyWriter,
@@ -79,6 +75,3 @@ DEFAULT_DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
 
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
-
-OAREPO_VOCABULARIES_AUTHORITIES = AuthoritativeVocabulariesResource
-OAREPO_VOCABULARIES_AUTHORITIES_CONFIG = AuthoritativeVocabulariesResourceConfig
