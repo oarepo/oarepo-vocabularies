@@ -10,4 +10,6 @@ VOCABULARY_TYPE_UI_RESOURCE = (
 )
 
 VOCABULARY_TYPE_UI_RESOURCE_CONFIG = "oarepo_vocabularies.ui.resources.vocabulary_type.config:VocabularyTypeUIResourceConfig"
-OAREPO_UI_LESS_COMPONENTS = ['dl_table', ]
+OAREPO_UI_LESS_COMPONENTS = [
+    "dl_table",
+]

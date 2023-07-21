@@ -1,6 +1,6 @@
 from oarepo_vocabularies.authorities.resources import (
     AuthoritativeVocabulariesResource,
-    AuthoritativeVocabulariesResourceConfig
+    AuthoritativeVocabulariesResourceConfig,
 )
 
 OAREPO_VOCABULARIES_AUTHORITIES = AuthoritativeVocabulariesResource

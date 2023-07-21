@@ -7,8 +7,8 @@ import re
 
 from invenio_base.utils import obj_or_import_string
 
-from oarepo_vocabularies.ui import config as config
 from oarepo_vocabularies.proxies import current_type_service
+from oarepo_vocabularies.ui import config as config
 
 
 class InvenioVocabulariesAppExtension:
@@ -37,7 +37,7 @@ class InvenioVocabulariesAppExtension:
             config=obj_or_import_string(
                 app.config["VOCABULARY_TYPE_UI_RESOURCE_CONFIG"]
             )(),
-            service=current_type_service
+            service=current_type_service,
         )
 
     def init_config(self, app):
@@ -46,6 +46,6 @@ class InvenioVocabulariesAppExtension:
             if re.match("^[A-Z_]*$", identifier) and not identifier.startswith("_"):
                 app.config.setdefault(identifier, getattr(config, identifier))
 
-        app.config.setdefault('OAREPO_UI_LESS_COMPONENTS', []).extend(
+        app.config.setdefault("OAREPO_UI_LESS_COMPONENTS", []).extend(
             config.OAREPO_UI_LESS_COMPONENTS
         )

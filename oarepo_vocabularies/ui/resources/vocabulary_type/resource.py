@@ -8,7 +8,7 @@ class VocabularyTypeUIResource(UIResource):
     def __init__(self, config, service):
         super().__init__(config)
         self.service = service
-    
+
     def create_url_rules(self):
         """Create the URL rules for the record resource."""
         routes = self.config.routes
@@ -27,16 +27,14 @@ class VocabularyTypeUIResource(UIResource):
         list_data = self.service.search(g.identity).to_dict()
 
         config_metadata = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
-        for item in list_data['hits']['hits']:
+        for item in list_data["hits"]["hits"]:
             for id in config_metadata.keys():
-                if item['id'] == id:
+                if item["id"] == id:
                     for key, value in config_metadata[id].items():
                         item[key] = value
 
         # TODO: handle permissions UI way - better response than generic error
-        serialized_list_data = self.config.ui_serializer.dump_list(
-            list_data
-        )
+        serialized_list_data = self.config.ui_serializer.dump_list(list_data)
 
         # make links absolute
         # if "links" in serialized_list_data:
