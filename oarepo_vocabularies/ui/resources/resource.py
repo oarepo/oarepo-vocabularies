@@ -1,6 +1,4 @@
 from flask import g
-from flask_babelex import lazy_gettext as _
-
 from flask_resources import from_conf, request_parser
 from invenio_records_resources.resources.records.resource import (
     request_read_args,
@@ -56,3 +54,8 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
                 resource_requestctx.view_args["pid_value"],
             ),
         )
+
+    def empty_record(self, resource_requestctx, **kwargs):
+        record = super().empty_record(resource_requestctx=resource_requestctx)
+        record["type"] = resource_requestctx.view_args["vocabulary_type"]
+        return record

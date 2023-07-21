@@ -44,9 +44,9 @@ from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
-from invenio_pidstore.models import PersistentIdentifier
 
 pytest_plugins = ("celery.contrib.pytest",)
 
@@ -77,20 +77,20 @@ def app_config(app_config):
     ] = "invenio_jsonschemas.proxies.current_refresolver_store"
 
     # note: This line must always be added to the invenio.cfg file
+    from oarepo_vocabularies.authorities.resources import (
+        AuthoritativeVocabulariesResource,
+        AuthoritativeVocabulariesResourceConfig,
+    )
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
+    from oarepo_vocabularies.resources.vocabulary_type import (
+        VocabularyTypeResource,
+        VocabularyTypeResourceConfig,
+    )
     from oarepo_vocabularies.services.config import (
         VocabulariesConfig,
         VocabularyTypeServiceConfig,
     )
     from oarepo_vocabularies.services.service import VocabularyTypeService
-    from oarepo_vocabularies.resources.vocabulary_type import (
-        VocabularyTypeResource,
-        VocabularyTypeResourceConfig
-    )
-    from oarepo_vocabularies.authorities.resources import (
-        AuthoritativeVocabulariesResource,
-        AuthoritativeVocabulariesResourceConfig
-    )
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
@@ -102,7 +102,9 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
 
     app_config["OAREPO_VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
-    app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = AuthoritativeVocabulariesResourceConfig
+    app_config[
+        "OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"
+    ] = AuthoritativeVocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -364,6 +366,7 @@ def empty_licences(db):
 
     return v
 
+
 @pytest.fixture()
 def affiliations_pids(db):
     def _upload(uuid):
@@ -372,29 +375,32 @@ def affiliations_pids(db):
             pid_type="id",
             pid_value="invenioid1",
             object_type="object",
-            object_uuid=uuid
+            object_uuid=uuid,
         )
 
         authvc_pid = PersistentIdentifier.create(
             pid_type="authvc",
             pid_value="authid1",
             object_type="object",
-            object_uuid=uuid
+            object_uuid=uuid,
         )
 
         db.session.add(invenio_pid)
         db.session.add(authvc_pid)
         db.session.commit()
-        
+
     return _upload
+
 
 @pytest.fixture()
 def mock_auth_getter_affilliations(mocker):
     """
     ROR-like samples.
     """
-    mock = mocker.patch("oarepo_vocabularies.authorities.ext.OARepoVocabulariesAuthorities.auth_getter")
-    
+    mock = mocker.patch(
+        "oarepo_vocabularies.authorities.ext.OARepoVocabulariesAuthorities.auth_getter"
+    )
+
     mock.return_value = lambda q, page, size: [
         {
             "id": "https://ror.org/03zsq2967",
@@ -408,9 +414,8 @@ def mock_auth_getter_affilliations(mocker):
             "props": {
                 "authoritative_id": "authid2",
                 "name": "Oakton Community College",
-            }
-            
-        }
+            },
+        },
     ]
-    
+
     yield mock
