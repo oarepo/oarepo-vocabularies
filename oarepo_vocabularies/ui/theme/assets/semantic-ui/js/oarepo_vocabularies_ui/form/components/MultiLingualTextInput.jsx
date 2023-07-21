@@ -37,17 +37,7 @@ export const MultiLingualTextInput = ({
 }) => {
   const placeholderFieldPath = `_${fieldPath}`;
   console.log(useFormikContext());
-  const { setFieldValue, values, resetForm, initialStatus } =
-    useFormikContext();
-
-  // useEffect(() => {
-  //   setFieldValue(
-  //     placeholderFieldPath,
-  //     getIn(values, fieldPath)
-  //       ? translateObjectToArray(getIn(values, fieldPath, ""))
-  //       : translateObjectToArray({ cs: "" })
-  //   );
-  // }, []);
+  const { setFieldValue, values } = useFormikContext();
 
   useEffect(() => {
     if (!getIn(values, placeholderFieldPath)) {

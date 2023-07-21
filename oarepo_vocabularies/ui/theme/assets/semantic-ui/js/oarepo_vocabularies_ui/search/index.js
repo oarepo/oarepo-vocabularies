@@ -11,7 +11,6 @@ import {
   SearchAppResults,
   SearchAppLayout,
   EmptyResultsElement,
-  SearchAppSearchBar,
 } from "@js/oarepo_ui/search";
 import {
   VocabularyResultsListItemWithState,
