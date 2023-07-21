@@ -17,8 +17,8 @@ class OARepoVocabularies(object):
 
     def init_services(self, app):
         """Initialize services."""
-        self.type_service = app.config["VOCABULARY_TYPE_SERVICE"](
-            config=app.config["VOCABULARY_TYPE_SERVICE_CONFIG"](),
+        self.type_service = app.config["OAREPO_VOCABULARY_TYPE_SERVICE"](
+            config=app.config["OAREPO_VOCABULARY_TYPE_SERVICE_CONFIG"](),
         )
 
     def init_config(self, app):
@@ -28,11 +28,11 @@ class OARepoVocabularies(object):
         for k in dir(config):
             if k.startswith("OAREPO_VOCABULARIES_"):
                 app.config.setdefault(k, getattr(config, k))
+            if k.startswith("OAREPO_VOCABULARY_"):
+                app.config.setdefault(k, getattr(config, k))
             if k.startswith("DEFAULT_DATASTREAMS_"):
                 app.config.setdefault(k, {}).update(getattr(config, k))
             if k.startswith("DATASTREAMS_CONFIG_GENERATOR_"):
-                app.config.setdefault(k, getattr(config, k))
-            if k.startswith("VOCABULARY"):
                 app.config.setdefault(k, getattr(config, k))
             if k.startswith("VOCABULARIES"):
                 app.config.setdefault(k, getattr(config, k))
@@ -57,7 +57,7 @@ class OARepoVocabularies(object):
 
     def init_resource(self, app):
         """Initialize resources."""
-        self.type_resource = app.config["VOCABULARY_TYPE_RESOURCE"](
-            config=app.config["VOCABULARY_TYPE_RESOURCE_CONFIG"](),
+        self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
+            config=app.config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"](),
             service=self.type_service,
         )

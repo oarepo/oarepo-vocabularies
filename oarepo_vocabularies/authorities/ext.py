@@ -24,6 +24,6 @@ class OARepoVocabulariesAuthorities(object):
         
     def init_resource(self, app):
         """Initialize resources."""
-        self.resource = obj_or_import_string(app.config["VOCABULARIES_AUTHORITIES"])(
-            config=app.config["VOCABULARIES_AUTHORITIES_CONFIG"]()
+        self.resource = obj_or_import_string(app.config["OAREPO_VOCABULARIES_AUTHORITIES"])(
+            config=app.config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"]()
         )

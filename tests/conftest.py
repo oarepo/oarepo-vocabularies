@@ -98,11 +98,11 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE"] = VocabularyTypeService
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
 
-    app_config["VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
-    app_config["VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
+    app_config["OAREPO_VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
+    app_config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
 
-    app_config["VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
-    app_config["VOCABULARIES_AUTHORITIES_CONFIG"] = AuthoritativeVocabulariesResourceConfig
+    app_config["OAREPO_VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
+    app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = AuthoritativeVocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
