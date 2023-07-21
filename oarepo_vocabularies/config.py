@@ -80,5 +80,5 @@ DEFAULT_DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
 
-VOCABULARIES_AUTHORITIES = AuthoritativeVocabulariesResource
-VOCABULARIES_AUTHORITIES_CONFIG = AuthoritativeVocabulariesResourceConfig
+OAREPO_VOCABULARIES_AUTHORITIES = AuthoritativeVocabulariesResource
+OAREPO_VOCABULARIES_AUTHORITIES_CONFIG = AuthoritativeVocabulariesResourceConfig
