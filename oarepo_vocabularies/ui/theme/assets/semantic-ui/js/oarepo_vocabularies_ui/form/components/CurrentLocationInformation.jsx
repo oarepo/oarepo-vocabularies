@@ -1,7 +1,7 @@
 // component to show the user where they currently are
 
-import React from "react";
-import { useAxios } from "../hooks/useAxios";
+import React, { useEffect } from "react";
+import { useAsync } from "../hooks/useAsync";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ErrorComponent } from "./Error";
@@ -10,6 +10,10 @@ import { useFormConfig } from "@js/oarepo_ui/forms";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
+import axios from "axios";
+import { VocabulariesApiClient } from "../api/DepositApiClient";
+console.log(VocabulariesApiClient);
+console.log(VocabulariesApiClient.bla);
 
 const breadcrumbSerialization = (array) =>
   array.map((item) => ({ key: item, content: item }));
@@ -17,28 +21,41 @@ const breadcrumbSerialization = (array) =>
 const NewTopLevelItemMessage = () => (
   <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
 );
+// const fetchData = async (url) => {
+//   const response = await axios.get(url);
+//   return response.data;
+// };
 
+const VocabulariesApiClientInstance = new VocabulariesApiClient();
 const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     values: { id },
   } = useFormikContext();
-  const { response, loading, error } = useAxios({
-    url: `/api/vocabularies/institutions/${newChildItemParentId}`,
-  });
+  const { data, error, run, isLoading, isError, isSuccess, status } =
+    useAsync();
+  console.log({ data, error, run, isLoading, isError, isSuccess, status });
+  useEffect(() => {
+    console.log("effect ran");
+
+    run(
+      VocabulariesApiClientInstance.readDraft(
+        `/api/vocabularies/institutions/${newChildItemParentId}`
+      )
+    );
+  }, []);
+
   return (
     <React.Fragment>
-      {!loading && !error.message && (
+      {data && !error && (
         <VocabularyBreadcrumbMessage
           header={i18next.t("newChildItemMessage", {
-            item: response?.title?.cs,
+            item: data?.title?.cs,
           })}
           content={
             <VocabularyBreadcrumb
               sections={[
                 ..._reverse(
-                  breadcrumbSerialization(
-                    response?.hierarchy?.ancestors_or_self
-                  )
+                  breadcrumbSerialization(data?.hierarchy?.ancestors_or_self)
                 ),
                 {
                   key: "new",
@@ -50,7 +67,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
           }
         />
       )}
-      {error.message && <ErrorComponent error={error} />}
+      {/* {error.message && <ErrorComponent error={error} />} */}
     </React.Fragment>
   );
 };

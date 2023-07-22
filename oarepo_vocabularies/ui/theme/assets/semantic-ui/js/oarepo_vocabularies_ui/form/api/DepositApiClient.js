@@ -87,26 +87,41 @@ export class DepositApiClient {
 /**
  * API Client for deposits.
  */
-export class RDMDepositApiClient extends DepositApiClient {
-  constructor(additionalApiConfig, createDraftURL, recordSerializer) {
+export class VocabulariesApiClient extends DepositApiClient {
+  constructor(additionalApiConfig) {
     super(additionalApiConfig);
-    this.createDraftURL = createDraftURL;
-    this.recordSerializer = recordSerializer;
   }
 
   async _createResponse(axiosRequest) {
     try {
+      console.log("try block");
+
       const response = await axiosRequest();
-      const data = this.recordSerializer.deserialize(response.data || {});
-      const errors = this.recordSerializer.deserializeErrors(
-        response.data.errors || []
-      );
+      const data = response.data || {};
+      const errors = response.data.errors || [];
+      console.log(new DepositApiClientResponse(data, errors));
       return new DepositApiClientResponse(data, errors);
     } catch (error) {
+      console.log("catch block");
+      console.log(error);
       const errorData = error.response.data;
       throw new DepositApiClientResponse({}, errorData);
     }
   }
+
+  // async _createResponse(axiosRequest) {
+  //   try {
+  //     const response = await axiosRequest();
+  //     console.log(response);
+  //     const data = response || {};
+  //     console.log("try block");
+  //     return data;
+  //   } catch (error) {
+  //     console.log("api client catch");
+  //     const errorData = error.response.data;
+  //     throw new DepositApiClientResponse({}, errorData);
+  //   }
+  // }
 
   /**
    * Calls the API to create a new draft.
@@ -129,12 +144,7 @@ export class RDMDepositApiClient extends DepositApiClient {
    * @param {object} draftLinks - the draft links object
    */
   async readDraft(draftLinks) {
-    return this._createResponse(() =>
-      this.axiosWithConfig.get(draftLinks.self, {
-        headers: this.apiHeaders["vnd+json"],
-        params: { expand: 1 },
-      })
-    );
+    return this._createResponse(() => this.axiosWithConfig.get(draftLinks));
   }
 
   /**

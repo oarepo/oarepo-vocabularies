@@ -14,6 +14,8 @@ theme = WebpackThemeBundle(
             },
             dependencies={
                 "react-invenio-forms": "^2.4.0",
+                "@tanstack/react-query": "^4",
+
             },
             devDependencies={},
             aliases={
