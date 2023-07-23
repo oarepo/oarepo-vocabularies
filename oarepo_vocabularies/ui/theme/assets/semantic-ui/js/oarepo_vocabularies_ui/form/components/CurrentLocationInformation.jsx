@@ -11,9 +11,7 @@ import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
 import axios from "axios";
-import { VocabulariesApiClient } from "../api/DepositApiClient";
-console.log(VocabulariesApiClient);
-console.log(VocabulariesApiClient.bla);
+import { VocabulariesApiClientInitialized } from "../api/DepositApiClient";
 
 const breadcrumbSerialization = (array) =>
   array.map((item) => ({ key: item, content: item }));
@@ -21,12 +19,7 @@ const breadcrumbSerialization = (array) =>
 const NewTopLevelItemMessage = () => (
   <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
 );
-// const fetchData = async (url) => {
-//   const response = await axios.get(url);
-//   return response.data;
-// };
 
-const VocabulariesApiClientInstance = new VocabulariesApiClient();
 const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     values: { id },
@@ -38,10 +31,10 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
     console.log("effect ran");
 
     run(
-      VocabulariesApiClientInstance.readDraft(
+      VocabulariesApiClientInitialized.readDraft(
         `/api/vocabularies/institutions/${newChildItemParentId}`
       )
-    );
+    ).catch((err) => err);
   }, []);
 
   return (
@@ -67,7 +60,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
           }
         />
       )}
-      {/* {error.message && <ErrorComponent error={error} />} */}
+      {error?.message && <ErrorComponent error={error} />}
     </React.Fragment>
   );
 };

@@ -94,48 +94,23 @@ export class VocabulariesApiClient extends DepositApiClient {
 
   async _createResponse(axiosRequest) {
     try {
-      console.log("try block");
-
       const response = await axiosRequest();
       const data = response.data || {};
       const errors = response.data.errors || [];
-      console.log(new DepositApiClientResponse(data, errors));
       return new DepositApiClientResponse(data, errors);
     } catch (error) {
-      console.log("catch block");
-      console.log(error);
       const errorData = error.response.data;
       throw new DepositApiClientResponse({}, errorData);
     }
   }
-
-  // async _createResponse(axiosRequest) {
-  //   try {
-  //     const response = await axiosRequest();
-  //     console.log(response);
-  //     const data = response || {};
-  //     console.log("try block");
-  //     return data;
-  //   } catch (error) {
-  //     console.log("api client catch");
-  //     const errorData = error.response.data;
-  //     throw new DepositApiClientResponse({}, errorData);
-  //   }
-  // }
 
   /**
    * Calls the API to create a new draft.
    *
    * @param {object} draft - Serialized draft
    */
-  async createDraft(draft) {
-    const payload = this.recordSerializer.serialize(draft);
-    return this._createResponse(() =>
-      this.axiosWithConfig.post(this.createDraftURL, payload, {
-        headers: this.apiHeaders["vnd+json"],
-        params: { expand: 1 },
-      })
-    );
+  async createDraft(url, payload) {
+    return this._createResponse(() => this.axiosWithConfig.post(url, payload));
   }
 
   /**
@@ -152,219 +127,9 @@ export class VocabulariesApiClient extends DepositApiClient {
    *
    * @param {object} draft - the draft payload
    */
-  async saveDraft(draft, draftLinks) {
-    const payload = this.recordSerializer.serialize(draft);
-    return this._createResponse(() =>
-      this.axiosWithConfig.put(draftLinks.self, payload, {
-        headers: this.apiHeaders["vnd+json"],
-        params: { expand: 1 },
-      })
-    );
-  }
-
-  /**
-   * Publishes the draft by calling its publish link.
-   *
-   * @param {string} draftLinks - the URL to publish the draft
-   */
-  async publishDraft(draftLinks) {
-    return this._createResponse(() =>
-      this.axiosWithConfig.post(
-        draftLinks.publish,
-        {},
-        { params: { expand: 1 } }
-      )
-    );
-  }
-
-  /**
-   * Deletes the draft by calling DELETE on its self link.
-   *
-   * @param {string} draftLinks - the URL to delete the draft
-   */
-  async deleteDraft(draftLinks) {
-    return this._createResponse(() =>
-      this.axiosWithConfig.delete(draftLinks.self, {})
-    );
-  }
-
-  /**
-   * Calls the API to reserve a PID.
-   *
-   */
-  async reservePID(draftLinks, pidType) {
-    return this._createResponse(() => {
-      const linkName = `reserve_${pidType}`;
-      const link = draftLinks[linkName];
-      return this.axiosWithConfig.post(
-        link,
-        {},
-        {
-          params: { expand: 1 },
-        }
-      );
-    });
-  }
-
-  /**
-   * Calls the API to discard a previously reserved PID.
-   *
-   */
-  async discardPID(draftLinks, pidType) {
-    return this._createResponse(() => {
-      const linkName = `reserve_${pidType}`;
-      const link = draftLinks[linkName];
-      return this.axiosWithConfig.delete(link, {
-        params: { expand: 1 },
-      });
-    });
-  }
-
-  /**
-   * Creates a review request in initial state for draft by calling its
-   * review link.
-   *
-   * @param {object} draftLinks - the draft links object
-   */
-  async createOrUpdateReview(draftLinks, communityId) {
-    return this._createResponse(() =>
-      this.axiosWithConfig.put(draftLinks.review, {
-        receiver: {
-          community: communityId,
-        },
-        type: "community-submission",
-      })
-    );
-  }
-
-  /**
-   * Deletes a review request associated with the draft using its review link.
-   *
-   * @param {object} draftLinks - the draft links object
-   */
-  async deleteReview(draftLinks) {
-    return this._createResponse(() =>
-      this.axiosWithConfig.delete(draftLinks.review, {})
-    );
-  }
-
-  /**
-   * Submits the draft for review by calling its submit-review link.
-   *
-   * @param {object} draftLinks - the draft links object
-   */
-  async submitReview(draftLinks, reviewComment) {
-    return this._createResponse(() => {
-      const payload = reviewComment
-        ? {
-            payload: {
-              content: reviewComment,
-              format: "html",
-            },
-          }
-        : {};
-      return this.axiosWithConfig.post(draftLinks["submit-review"], payload);
-    });
-  }
-
-  /**
-   * Cancels the review for the draft by calling its cancel link.
-   *
-   * @param reviewLinks
-   * @param reviewComment
-   */
-  async cancelReview(reviewLinks, reviewComment) {
-    return this.axiosWithConfig.post(
-      reviewLinks.actions.cancel,
-      reviewComment
-        ? {
-            payload: {
-              content: reviewComment,
-              format: "html",
-            },
-          }
-        : {}
-    );
+  async saveDraft(url, payload) {
+    return this._createResponse(() => this.axiosWithConfig.put(url, payload));
   }
 }
 
-/**
- * Abstract class for File API Client.
- * @constructor
- * @abstract
- */
-export class DepositFileApiClient {
-  constructor(additionalApiConfig) {
-    if (this.constructor === DepositFileApiClient) {
-      throw new Error("Abstract");
-    }
-    const additionalHeaders = _get(additionalApiConfig, "headers", {});
-    this.apiHeaders = Object.assign({}, BASE_HEADERS, additionalHeaders);
-
-    const apiConfig = {
-      withCredentials: true,
-      xsrfCookieName: "csrftoken",
-      xsrfHeaderName: "X-CSRFToken",
-      headers: this.apiHeaders.json,
-    };
-    this.axiosWithConfig = axios.create(apiConfig);
-  }
-
-  isCancelled(error) {
-    return axios.isCancel(error);
-  }
-
-  initializeFileUpload(initializeUploadUrl, filename) {
-    throw new Error("Not implemented.");
-  }
-
-  uploadFile(uploadUrl, file, onUploadProgress, cancel) {
-    throw new Error("Not implemented.");
-  }
-
-  finalizeFileUpload(finalizeUploadUrl) {
-    throw new Error("Not implemented.");
-  }
-
-  deleteFile(fileLinks) {
-    throw new Error("Not implemented.");
-  }
-}
-
-/**
- * Default File API Client for deposits.
- */
-export class RDMDepositFileApiClient extends DepositFileApiClient {
-  initializeFileUpload(initializeUploadUrl, filename) {
-    const payload = [
-      {
-        key: filename,
-      },
-    ];
-    return this.axiosWithConfig.post(initializeUploadUrl, payload, {});
-  }
-
-  uploadFile(uploadUrl, file, onUploadProgressFn, cancelFn) {
-    return this.axiosWithConfig.put(uploadUrl, file, {
-      headers: this.apiHeaders["octet-stream"],
-      onUploadProgress: (event) => {
-        const percent = Math.floor((event.loaded / event.total) * 100);
-        onUploadProgressFn && onUploadProgressFn(percent);
-      },
-      cancelToken: new axios.CancelToken(cancelFn),
-    });
-  }
-
-  finalizeFileUpload(finalizeUploadUrl) {
-    return this.axiosWithConfig.post(finalizeUploadUrl, {});
-  }
-
-  importParentRecordFiles(draftLinks) {
-    const link = `${draftLinks.self}/actions/files-import`;
-    return this.axiosWithConfig.post(link, {});
-  }
-
-  deleteFile(fileLinks) {
-    return this.axiosWithConfig.delete(fileLinks.self);
-  }
-}
+export const VocabulariesApiClientInitialized = new VocabulariesApiClient();

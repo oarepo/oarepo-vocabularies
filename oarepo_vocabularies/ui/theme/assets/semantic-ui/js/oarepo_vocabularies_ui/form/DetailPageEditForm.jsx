@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
-import { BaseForm, TextField, http } from "react-invenio-forms";
+import { BaseForm, TextField } from "react-invenio-forms";
 import { PublishButton } from "./components/PublishButton";
 import { MultiLingualTextInput } from "./components/MultiLingualTextInput";
 import { PropFieldsComponent } from "./components/PropFieldsComponent";
-import { extractVariablePart, transformArrayToObject } from "../utils";
+import { extractVariablePart } from "../utils";
 import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./components/Error";
 import { ResetButton } from "./components/ResetButton";
@@ -15,24 +15,20 @@ import { CurrentLocationInformation } from "./components/CurrentLocationInformat
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
+import { VocabulariesApiClientInitialized } from "./api/DepositApiClient";
+import { useAsync } from "./hooks/useAsync";
 
-const eliminateEmptyStringProperties = (obj) => {
-  return _omitBy(obj, (value) => value === "");
+const removeNullAndUnderscoreProperties = (obj) => {
+  return _omitBy(
+    obj,
+    (value, key) =>
+      value === null ||
+      (Array.isArray(value) && value.every((item) => item === null)) ||
+      key.startsWith("_") ||
+      key === "pids" ||
+      key === "files"
+  );
 };
-
-function removeNullAndUnderscoreProperties(obj) {
-  return _omitBy(obj, (value, key) => {
-    if (value === null) {
-      return true;
-    }
-
-    if (Array.isArray(value) && value.every((item) => item === null)) {
-      return true;
-    }
-
-    return key.startsWith("_");
-  });
-}
 
 export const DetailPageEditForm = ({
   initialValues,
@@ -45,78 +41,50 @@ export const DetailPageEditForm = ({
     record,
     formConfig: { vocabularyProps },
   } = useFormConfig();
-  console.log("dsadsada");
-  // to display errors that are consequence of API calls
   const sidebarRef = useRef(null);
-  const [error, setError] = useState({});
   const location = useLocation();
   const currentPath = location.pathname;
   const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-  // currently we want the app to work in the following ways:
-  // 1. Possibility to add a child, which means I am sending h-parent in the request
-  // 2. Possibility to just add item which means this is a top level item and I am
-  // not sending anything for hierarchy
-  // 3. editing an item, which means I need to send parent if the item
-  // as it and not send a parent if item does not have it
+  const { data, error, run, isLoading, isError, isSuccess, status } =
+    useAsync();
+  console.log({ data, error, run, isLoading, isError, isSuccess, status });
+
   const onSubmit = (values, formik) => {
     console.log(removeNullAndUnderscoreProperties(values));
-    // let preparedValues;
+    let preparedValues = values;
+    if (!editMode) preparedValues.type = vocabularyType;
+    if (newChildItemParentId)
+      preparedValues.hierarchy = { parent: newChildItemParentId };
 
-    // if (newChildItemParentId) {
-    //   preparedValues = {
-    //     ...values,
-    //     title: transformArrayToObject(values.title),
-    //     type: vocabularyType,
-    //     props: eliminateEmptyStringProperties(values.props),
-    //     hierarchy: { parent: newChildItemParentId },
-    //   };
-    // } else if (!editMode) {
-    //   preparedValues = {
-    //     ...values,
-    //     title: transformArrayToObject(values.title),
-    //     type: vocabularyType,
-    //     props: eliminateEmptyStringProperties(values.props),
-    //   };
-    // } else {
-    //   preparedValues = {
-    //     ...values,
-    //     title: transformArrayToObject(values.title),
-    //     type: vocabularyType,
-    //     props: eliminateEmptyStringProperties(values.props),
-    //     hierarchy: record.hierarchy.parent
-    //       ? { parent: record.hierarchy.parent }
-    //       : {},
-    //   };
-    // }
     if (editMode) {
-      http
-        .put(apiCallUrl, removeNullAndUnderscoreProperties(values))
+      run(
+        VocabulariesApiClientInitialized.saveDraft(
+          apiCallUrl,
+          removeNullAndUnderscoreProperties(preparedValues)
+        )
+      )
         .then((response) => {
-          setError({});
-          if (response.status >= 200 && response.status < 300) {
-            formik.setSubmitting(false);
-            window.location.href = currentPath.replace("/edit", "");
-          }
+          formik.setSubmitting(false);
+          window.location.href = currentPath.replace("/edit", "");
         })
         .catch((error) => {
           formik.setSubmitting(false);
-          setError(error.response.data);
         });
     } else {
-      http
-        .post(apiCallUrl, removeNullAndUnderscoreProperties(values))
+      run(
+        VocabulariesApiClientInitialized.createDraft(
+          apiCallUrl,
+          removeNullAndUnderscoreProperties(preparedValues)
+        )
+      )
         .then((response) => {
-          setError({});
-          if (response.status >= 200 && response.status < 300) {
-            formik.setSubmitting(false);
-            window.location.href = currentPath.replace("_new", values.id);
-          }
+          formik.setSubmitting(false);
+          window.location.href = currentPath.replace("_new", values.id);
         })
         .catch((error) => {
           formik.setSubmitting(false);
-          setError(error.response.data);
         });
     }
   };
@@ -152,7 +120,7 @@ export const DetailPageEditForm = ({
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
             <FormikStateLogger />
-            {error.message && <ErrorComponent error={error} />}
+            {error?.message && <ErrorComponent error={error} />}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>

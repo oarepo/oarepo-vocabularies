@@ -45,7 +45,7 @@ function useAsync(initialState) {
 
   const run = React.useCallback(
     (promise) => {
-      if (!promise || !promise.then) {
+      if (!promise?.then) {
         throw new Error(
           `The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?`
         );
@@ -53,7 +53,6 @@ function useAsync(initialState) {
       safeSetState({ status: "pending" });
       return promise.then(
         (data) => {
-          console.log(data);
           setData(data.data);
           if (data.error) {
             setError(data.error);
@@ -61,8 +60,7 @@ function useAsync(initialState) {
           return data;
         },
         (error) => {
-          console.log("rejected");
-          setError(error.errorData);
+          setError(error.errors);
           return Promise.reject(error);
         }
       );
