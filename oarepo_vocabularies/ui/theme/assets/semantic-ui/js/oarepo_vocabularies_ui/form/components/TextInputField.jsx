@@ -26,7 +26,7 @@ export const TextInputField = ({
       fieldPath={fieldPath}
       label={label}
       width={width}
-      required
+      required={required}
     />
   );
 };

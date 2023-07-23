@@ -11,6 +11,7 @@ export const PropFieldsComponent = ({ vocabularyProps }) => {
     <React.Fragment>
       {Object.entries(props).map(([propField, propConfig]) => (
         <TextInputField
+          required={false}
           key={propField}
           fieldPath={`props.${propField}`}
           label={
