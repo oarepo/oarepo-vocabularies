@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
-import { BaseForm, TextField } from "react-invenio-forms";
+import { BaseForm } from "react-invenio-forms";
 import { PublishButton } from "./components/PublishButton";
 import { MultiLingualTextInput } from "./components/MultiLingualTextInput";
 import { PropFieldsComponent } from "./components/PropFieldsComponent";
