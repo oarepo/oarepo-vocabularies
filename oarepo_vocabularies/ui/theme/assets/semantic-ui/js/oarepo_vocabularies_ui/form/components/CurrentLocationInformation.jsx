@@ -11,6 +11,7 @@ import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
 import { VocabulariesApiClientInitialized } from "../api/DepositApiClient";
+import { useQuery } from "@tanstack/react-query";
 
 const breadcrumbSerialization = (array) =>
   array.map((item) => ({ key: item, content: item }));
@@ -23,7 +24,15 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     values: { id },
   } = useFormikContext();
-  const { data, error, run } = useAsync();
+  const { data, error, run, isLoading } = useAsync();
+  const getItem = useQuery({
+    queryKey: ["item", newChildItemParentId],
+    queryFn: () =>
+      VocabulariesApiClientInitialized.readDraft(
+        `/api/vocabularies/institutions/${newChildItemParentId}`
+      ),
+  });
+  console.log(getItem.data);
 
   useEffect(() => {
     run(
@@ -35,7 +44,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
 
   return (
     <React.Fragment>
-      {data && !error && (
+      {!isLoading && data && (
         <VocabularyBreadcrumbMessage
           header={i18next.t("newChildItemMessage", {
             item: data?.title?.cs,

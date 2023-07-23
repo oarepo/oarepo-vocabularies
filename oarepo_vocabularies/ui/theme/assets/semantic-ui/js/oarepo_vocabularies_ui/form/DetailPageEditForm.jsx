@@ -18,6 +18,8 @@ import Overridable from "react-overridable";
 import { VocabulariesApiClientInitialized } from "./api/DepositApiClient";
 import { useAsync } from "./hooks/useAsync";
 import { TextInputField } from "./components/TextInputField";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const removeNullAndUnderscoreProperties = (obj) => {
   return _omitBy(
@@ -48,36 +50,39 @@ export const DetailPageEditForm = ({
   const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-  const { error, run } = useAsync();
+
+  const { error: saveError, mutateAsync: saveMutateAsync } = useMutation({
+    mutationFn: async ({ apiCallUrl, editedItem }) =>
+      VocabulariesApiClientInitialized.saveDraft(apiCallUrl, editedItem),
+  });
+  const { error: createError, mutateAsync: createMutateAsync } = useMutation({
+    mutationFn: async (apiCallUrl, newItem) =>
+      VocabulariesApiClientInitialized.createDraft(apiCallUrl, newItem),
+  });
 
   const onSubmit = (values, formik) => {
-    console.log(removeNullAndUnderscoreProperties(values));
     let preparedValues = values;
     if (!editMode) preparedValues.type = vocabularyType;
     if (newChildItemParentId)
       preparedValues.hierarchy = { parent: newChildItemParentId };
 
     if (editMode) {
-      run(
-        VocabulariesApiClientInitialized.saveDraft(
-          apiCallUrl,
-          removeNullAndUnderscoreProperties(preparedValues)
-        )
-      )
-        .then((response) => {
+      saveMutateAsync({
+        apiCallUrl,
+        editedItem: removeNullAndUnderscoreProperties(preparedValues),
+      })
+        .then(() => {
           formik.setSubmitting(false);
-          window.location.href = currentPath.replace("/edit", "");
+          window.location.href = currentPath.replace("_new", values.id);
         })
         .catch((error) => {
           formik.setSubmitting(false);
         });
     } else {
-      run(
-        VocabulariesApiClientInitialized.createDraft(
-          apiCallUrl,
-          removeNullAndUnderscoreProperties(preparedValues)
-        )
-      )
+      createMutateAsync({
+        apiCallUrl,
+        newItem: removeNullAndUnderscoreProperties(preparedValues),
+      })
         .then((response) => {
           formik.setSubmitting(false);
           window.location.href = currentPath.replace("_new", values.id);
@@ -119,7 +124,9 @@ export const DetailPageEditForm = ({
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
             <FormikStateLogger />
-            {error?.message && <ErrorComponent error={error} />}
+            {(saveError?.message || createError?.message) && (
+              <ErrorComponent error={saveError || createError} />
+            )}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>
