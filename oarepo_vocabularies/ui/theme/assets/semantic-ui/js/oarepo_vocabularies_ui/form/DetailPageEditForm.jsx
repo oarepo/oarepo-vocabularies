@@ -17,6 +17,7 @@ import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
 import { VocabulariesApiClientInitialized } from "./api/DepositApiClient";
 import { useAsync } from "./hooks/useAsync";
+import { TextInputField } from "./components/TextInputField";
 
 const removeNullAndUnderscoreProperties = (obj) => {
   return _omitBy(
@@ -113,7 +114,7 @@ export const DetailPageEditForm = ({
 
           <Grid.Column mobile={16} tablet={16} computer={12}>
             <MultiLingualTextInput fieldPath="title" options={options} />
-            <TextField fieldPath="id" label={"ID"} width={11} required />
+            <TextInputField fieldPath="id" label={"ID"} width={11} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}

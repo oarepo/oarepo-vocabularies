@@ -1,8 +1,8 @@
 import React from "react";
-import { TextField } from "react-invenio-forms";
 import { Popup, Icon } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import PropTypes from "prop-types";
+import { TextInputField } from "./TextInputField";
 
 export const PropFieldsComponent = ({ vocabularyProps }) => {
   const { props } = vocabularyProps;
@@ -10,7 +10,7 @@ export const PropFieldsComponent = ({ vocabularyProps }) => {
   return (
     <React.Fragment>
       {Object.entries(props).map(([propField, propConfig]) => (
-        <TextField
+        <TextInputField
           key={propField}
           fieldPath={`props.${propField}`}
           label={
