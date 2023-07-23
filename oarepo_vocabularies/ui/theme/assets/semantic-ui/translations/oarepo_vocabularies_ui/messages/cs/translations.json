@@ -15,7 +15,7 @@
   "newItem": "Nová položka",
   "contexts": "Kontexty",
   "required": "Požadované",
-  "languageError": "Nesmíte mít dva stejné jazyky",
-  "lengthError": "Musí mít přesně {{length}} znaků",
-  "numbersError": "Musí obsahovat pouze čísla"
+  "multipleSameLanguagesError": "Nesmíte mít dva stejné jazyky",
+  "invalidLengthError": "Musí mít přesně {{length}} znaků",
+  "notANumberError": "Musí obsahovat pouze čísla"
 }

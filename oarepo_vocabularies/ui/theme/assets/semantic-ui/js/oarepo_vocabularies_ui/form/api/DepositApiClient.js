@@ -100,7 +100,7 @@ export class VocabulariesApiClient extends DepositApiClient {
       return new DepositApiClientResponse(data, errors);
     } catch (error) {
       const errorData = error.response.data;
-      throw new DepositApiClientResponse({}, errorData);
+      return new DepositApiClientResponse({}, errorData);
     }
   }
 

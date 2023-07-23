@@ -10,7 +10,6 @@ import { useFormConfig } from "@js/oarepo_ui/forms";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
-import axios from "axios";
 import { VocabulariesApiClientInitialized } from "../api/DepositApiClient";
 
 const breadcrumbSerialization = (array) =>
@@ -24,18 +23,15 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     values: { id },
   } = useFormikContext();
-  const { data, error, run, isLoading, isError, isSuccess, status } =
-    useAsync();
-  console.log({ data, error, run, isLoading, isError, isSuccess, status });
-  useEffect(() => {
-    console.log("effect ran");
+  const { data, error, run } = useAsync();
 
+  useEffect(() => {
     run(
       VocabulariesApiClientInitialized.readDraft(
         `/api/vocabularies/institutions/${newChildItemParentId}`
       )
     ).catch((err) => err);
-  }, []);
+  }, [run]);
 
   return (
     <React.Fragment>

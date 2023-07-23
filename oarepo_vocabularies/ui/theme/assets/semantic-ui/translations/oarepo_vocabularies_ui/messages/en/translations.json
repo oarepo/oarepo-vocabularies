@@ -15,7 +15,7 @@
   "newItem": "New item",
   "contexts": "Contexts",
   "required": "Required",
-  "languageError": "You must not have two same languages",
-  "lengthError": "Must be exactly {{length}} characters",
-  "numbersError": "Must contain only numbers"
+  "multipleSameLanguagesError": "You must not have two same languages",
+  "invalidLengthError": "Must be exactly {{length}} characters",
+  "notANumberError": "Must contain only numbers"
 }

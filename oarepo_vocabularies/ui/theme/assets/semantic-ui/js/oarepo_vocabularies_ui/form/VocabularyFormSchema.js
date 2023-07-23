@@ -23,7 +23,7 @@ export const VocabularyFormSchema = Yup.object().shape({
       (value) => {
         return [
           value.value.map((item) => ({
-            language: i18next.t("languageError"),
+            language: i18next.t("multipleSameLanguagesError"),
           })),
         ];
       },
@@ -34,10 +34,12 @@ export const VocabularyFormSchema = Yup.object().shape({
   props: Yup.object()
     .shape({
       ICO: Yup.string()
-        .length(8, ({ length }) => i18next.t("lengthError", { length: length }))
-        .matches(/^\d+$/, i18next.t("numbersError")),
+        .length(8, ({ length }) =>
+          i18next.t("invalidLengthError", { length: length })
+        )
+        .matches(/^\d+$/, i18next.t("notANumberError")),
       RID: Yup.string().length(5, ({ length }) =>
-        i18next.t("lengthError", { length: length })
+        i18next.t("invalidLengthError", { length: length })
       ),
     })
     .nullable(),
