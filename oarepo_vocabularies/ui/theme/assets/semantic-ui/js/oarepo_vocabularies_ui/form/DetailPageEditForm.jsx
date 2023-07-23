@@ -50,13 +50,13 @@ export const DetailPageEditForm = ({
   const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-
+  console.log(apiCallUrl);
   const { error: saveError, mutateAsync: saveMutateAsync } = useMutation({
     mutationFn: async ({ apiCallUrl, editedItem }) =>
       VocabulariesApiClientInitialized.saveDraft(apiCallUrl, editedItem),
   });
   const { error: createError, mutateAsync: createMutateAsync } = useMutation({
-    mutationFn: async (apiCallUrl, newItem) =>
+    mutationFn: async ({ apiCallUrl, newItem }) =>
       VocabulariesApiClientInitialized.createDraft(apiCallUrl, newItem),
   });
 
