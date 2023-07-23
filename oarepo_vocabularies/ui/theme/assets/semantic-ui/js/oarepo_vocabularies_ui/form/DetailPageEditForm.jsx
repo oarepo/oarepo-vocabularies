@@ -73,7 +73,7 @@ export const DetailPageEditForm = ({
       })
         .then(() => {
           formik.setSubmitting(false);
-          window.location.href = currentPath.replace("_new", values.id);
+          window.location.href = currentPath.replace("/edit", "");
         })
         .catch((error) => {
           formik.setSubmitting(false);
