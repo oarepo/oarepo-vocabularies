@@ -47,9 +47,7 @@ export const DetailPageEditForm = ({
   const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-  const { data, error, run, isLoading, isError, isSuccess, status } =
-    useAsync();
-  console.log({ data, error, run, isLoading, isError, isSuccess, status });
+  const { error, run } = useAsync();
 
   const onSubmit = (values, formik) => {
     console.log(removeNullAndUnderscoreProperties(values));

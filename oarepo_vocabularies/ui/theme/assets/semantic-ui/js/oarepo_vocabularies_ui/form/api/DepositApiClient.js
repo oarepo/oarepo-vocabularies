@@ -91,7 +91,6 @@ export class VocabulariesApiClient extends DepositApiClient {
   constructor(additionalApiConfig) {
     super(additionalApiConfig);
   }
-
   async _createResponse(axiosRequest) {
     try {
       const response = await axiosRequest();
@@ -100,7 +99,7 @@ export class VocabulariesApiClient extends DepositApiClient {
       return new DepositApiClientResponse(data, errors);
     } catch (error) {
       const errorData = error.response.data;
-      return new DepositApiClientResponse({}, errorData);
+      throw new DepositApiClientResponse({}, errorData);
     }
   }
 
