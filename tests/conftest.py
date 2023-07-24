@@ -12,6 +12,9 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+import shutil
+import sys
+from pathlib import Path
 
 # Monkey patch Werkzeug 2.1, needed to import flask_security.login_user
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
@@ -144,6 +147,10 @@ def app_config(app_config):
         },
     }
 
+    app_config["APP_THEME"] = ["semantic-ui"]
+    app_config[
+        "THEME_HEADER_TEMPLATE"
+    ] = "oarepo_vocabularies_ui/test_header_template.html"
     return app_config
 
 
@@ -419,3 +426,14 @@ def mock_auth_getter_affilliations(mocker):
     ]
 
     yield mock
+
+
+@pytest.fixture()
+def fake_manifest(app):
+    python_path = Path(sys.executable)
+    invenio_instance_path = python_path.parent.parent / "var" / "instance"
+    manifest_path = invenio_instance_path / "static" / "dist"
+    manifest_path.mkdir(parents=True, exist_ok=True)
+    shutil.copy(
+        Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
+    )

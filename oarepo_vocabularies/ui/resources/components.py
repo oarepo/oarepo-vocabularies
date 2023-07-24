@@ -6,7 +6,7 @@ from invenio_records_resources.services.records.components import ServiceCompone
 class VocabulariesSearchComponent(ServiceComponent):
     def before_ui_search(self, *, resource, search_options, view_args, **kwargs):
         vocabulary_type = view_args["vocabulary_type"]
-        api_service = resource._api_service
+        api_service = resource.api_service
         search_options.setdefault(
             "endpoint",
             api_service.config.links_search["self"].expand(
@@ -18,7 +18,7 @@ class VocabulariesSearchComponent(ServiceComponent):
         self, *, extra_context, resource, identity, view_args, record, **kwargs
     ):
         vocabulary_type = view_args["vocabulary_type"]
-        api_service = resource._api_service
+        api_service = resource.api_service
         search_options = dict(
             api_config=api_service.config,
             identity=identity,
@@ -42,7 +42,7 @@ class VocabulariesSearchComponent(ServiceComponent):
 
     def before_ui_create(self, *, form_config, resource, view_args, **kwargs):
         vocabulary_type = view_args["vocabulary_type"]
-        api_service = resource._api_service
+        api_service = resource.api_service
         form_config.setdefault(
             "vocabularyProps", resource.config.vocabulary_props_config(vocabulary_type)
         )

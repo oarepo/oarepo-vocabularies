@@ -42,7 +42,7 @@ class VocabularyTypeUIResource(UIResource):
         #         if not isinstance(v, str):
         #             continue
         #         if not v.startswith("/") and not v.startswith("https://"):
-        #             v = f"/api{self._api_service.config.url_prefix}{v}"
+        #             v = f"/api{self.api_service.config.url_prefix}{v}"
         #             serialized_record["links"][k] = v
 
         extra_context = dict()
