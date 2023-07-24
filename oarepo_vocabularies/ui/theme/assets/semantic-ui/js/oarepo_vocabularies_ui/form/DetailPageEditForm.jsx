@@ -16,10 +16,8 @@ import { useFormConfig } from "@js/oarepo_ui/forms";
 import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
 import { VocabulariesApiClientInitialized } from "./api/DepositApiClient";
-import { useAsync } from "./hooks/useAsync";
 import { TextInputField } from "./components/TextInputField";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 
 const removeNullAndUnderscoreProperties = (obj) => {
   return _omitBy(
@@ -110,7 +108,6 @@ export const DetailPageEditForm = ({
           <Grid.Row>
             <Grid.Column width={16}>
               <CurrentLocationInformation
-                record={record}
                 editMode={editMode}
                 newChildItemParentId={newChildItemParentId}
               />

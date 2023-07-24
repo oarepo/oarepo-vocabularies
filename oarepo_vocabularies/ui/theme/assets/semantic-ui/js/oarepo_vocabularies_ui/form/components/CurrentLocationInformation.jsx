@@ -1,7 +1,6 @@
 // component to show the user where they currently are
 
-import React, { useEffect } from "react";
-import { useAsync } from "../hooks/useAsync";
+import React from "react";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ErrorComponent } from "./Error";
@@ -12,6 +11,7 @@ import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
 import { VocabulariesApiClientInitialized } from "../api/DepositApiClient";
 import { useQuery } from "@tanstack/react-query";
+import { Dimmer, Loader, Image, Segment } from "semantic-ui-react";
 
 const breadcrumbSerialization = (array) =>
   array.map((item) => ({ key: item, content: item }));
@@ -31,6 +31,14 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
         `/api/vocabularies/institutions/${newChildItemParentId}`
       ),
   });
+  console.log({ data, isLoading, error });
+
+  if (isLoading)
+    return (
+      <Dimmer active inverted>
+        <Loader inverted>Loading</Loader>
+      </Dimmer>
+    );
 
   return (
     <React.Fragment>
