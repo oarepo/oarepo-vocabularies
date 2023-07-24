@@ -6,7 +6,6 @@ import { PublishButton } from "./components/PublishButton";
 import { MultiLingualTextInput } from "./components/MultiLingualTextInput";
 import { PropFieldsComponent } from "./components/PropFieldsComponent";
 import { useLocation } from "react-router-dom";
-import { ErrorComponent } from "./components/Error";
 import { ResetButton } from "./components/ResetButton";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
 import { FormikStateLogger } from "./components/FormikStateLogger";
@@ -15,7 +14,7 @@ import { useFormConfig } from "@js/oarepo_ui/forms";
 import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
 import { ApiClientInitialized } from "@js/oarepo_ui/api";
-
+import { ErrorElement } from "@js/oarepo_ui/search";
 import { useMutation } from "@tanstack/react-query";
 
 const removeNullAndUnderscoreProperties = (obj) => {
@@ -24,9 +23,7 @@ const removeNullAndUnderscoreProperties = (obj) => {
     (value, key) =>
       value === null ||
       (Array.isArray(value) && value.every((item) => item === null)) ||
-      key.startsWith("_") ||
-      key === "pids" ||
-      key === "files"
+      key.startsWith("_")
   );
 };
 
@@ -46,7 +43,6 @@ export const DetailPageEditForm = ({
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
 
-  console.log(apiCallUrl);
   const { error: saveError, mutateAsync: saveMutateAsync } = useMutation({
     mutationFn: async ({ apiCallUrl, editedItem }) =>
       ApiClientInitialized.saveDraft(apiCallUrl, editedItem),
@@ -80,6 +76,7 @@ export const DetailPageEditForm = ({
       })
         .then((response) => {
           formik.setSubmitting(false);
+          console.log("then block");
           window.location.href = currentPath.replace("_new", values.id);
         })
         .catch((error) => {
@@ -92,7 +89,6 @@ export const DetailPageEditForm = ({
     <Container>
       <BaseForm
         onSubmit={onSubmit}
-        // onError={this.onError}
         formik={{
           initialValues: initialValues,
           validationSchema: VocabularyFormSchema,
@@ -119,7 +115,7 @@ export const DetailPageEditForm = ({
             )}
             <FormikStateLogger />
             {(saveError?.message || createError?.message) && (
-              <ErrorComponent error={saveError || createError} />
+              <ErrorElement error={saveError || createError} />
             )}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
@@ -153,7 +149,6 @@ DetailPageEditForm.propTypes = {
     acronym: PropTypes.string,
     nameType: PropTypes.string,
   }),
-  vocabularyProps: PropTypes.object,
   hasPropFields: PropTypes.bool,
   options: PropTypes.shape({
     languages: PropTypes.arrayOf(

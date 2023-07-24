@@ -13,8 +13,7 @@ const options = {
 };
 
 const VocabularyForm = () => {
-  const { record, formConfig, recordPermissions } = useFormConfig();
-  console.log(record, formConfig, recordPermissions);
+  const { record, formConfig } = useFormConfig();
   const { vocabularyProps } = formConfig;
   const editMode = _has(formConfig, "updateUrl");
   const hasPropFields = !_isEmpty(vocabularyProps);
@@ -23,10 +22,8 @@ const VocabularyForm = () => {
   return (
     <DetailPageEditForm
       initialValues={record}
-      formConfig={formConfig}
       options={options}
       hasPropFields={hasPropFields}
-      vocabularyProps={vocabularyProps}
       apiCallUrl={apiCallUrl}
       editMode={editMode}
     />

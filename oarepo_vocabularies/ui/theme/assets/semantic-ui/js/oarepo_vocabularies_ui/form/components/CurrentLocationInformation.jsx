@@ -3,7 +3,7 @@
 import React from "react";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { ErrorComponent } from "./Error";
+import { ErrorElement } from "@js/oarepo_ui/search";
 import PropTypes from "prop-types";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
@@ -19,7 +19,6 @@ const breadcrumbSerialization = (array) =>
 const NewTopLevelItemMessage = () => (
   <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
 );
-
 const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     record: { type },
@@ -34,7 +33,6 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
         `/api/vocabularies/${type}/${newChildItemParentId}`
       ),
   });
-  console.log({ data, isLoading, error });
 
   if (isLoading)
     return (
@@ -66,7 +64,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
           }
         />
       )}
-      {error?.message && <ErrorComponent error={error} />}
+      {error?.message && <ErrorElement error={error} />}
     </React.Fragment>
   );
 };
