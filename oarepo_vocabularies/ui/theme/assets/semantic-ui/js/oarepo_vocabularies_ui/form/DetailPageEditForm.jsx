@@ -8,7 +8,6 @@ import { PropFieldsComponent } from "./components/PropFieldsComponent";
 import { useLocation } from "react-router-dom";
 import { ResetButton } from "./components/ResetButton";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
-import { FormikStateLogger } from "./components/FormikStateLogger";
 import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import _omitBy from "lodash/omitBy";
@@ -113,7 +112,6 @@ export const DetailPageEditForm = ({
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
-            <FormikStateLogger />
             {(saveError?.message || createError?.message) && (
               <ErrorElement error={saveError || createError} />
             )}
