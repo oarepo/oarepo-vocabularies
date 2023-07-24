@@ -13,7 +13,6 @@ theme = WebpackThemeBundle(
                 "oarepo_vocabularies_forms": "./js/oarepo_vocabularies_ui/form/index.js",
             },
             dependencies={
-                "react-invenio-forms": "^2.4.0",
                 "@tanstack/react-query": "^4",
             },
             devDependencies={},

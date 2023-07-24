@@ -47,10 +47,15 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return super().edit()
 
     def _get_record(self, resource_requestctx):
-        return self._api_service.read(
+        return self.api_service.read(
             g.identity,
             (
                 resource_requestctx.view_args["vocabulary_type"],
                 resource_requestctx.view_args["pid_value"],
             ),
         )
+
+    def empty_record(self, resource_requestctx, **kwargs):
+        record = super().empty_record(resource_requestctx=resource_requestctx)
+        record["type"] = resource_requestctx.view_args["vocabulary_type"]
+        return record

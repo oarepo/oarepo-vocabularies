@@ -14,7 +14,21 @@ from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabularyTypeService
 
 INVENIO_VOCABULARY_TYPE_METADATA = {
-    # e.g.:
+    # etc.
+    # "affilliations": {
+    #    "authority": {
+    #        "name": "ROR",
+    #        "url": "https://api.ror.org/organizations",
+    #        "getter": lambda q, page, size: True
+    #    }
+    # },
+    # "grants": {
+    #    "authority": {
+    #        "name": "Openaire",
+    #        "url": "https://api.openaire.eu/search/projects",
+    #        "getter": lambda q, page, size: True
+    #    }
+    # },
     # "languages": {
     #     "name": {
     #         "cs": "jazyky",
@@ -27,6 +41,13 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
     #     "hierarchical": False,
     #     "props": {...}
     # },
+    # "organisms": {
+    #    "authority": {
+    #        "name": "NCBI",
+    #        "url": "https://ncbi.nlm.nih.gov/",
+    #        "getter": lambda q, page, size: True
+    #    }
+    # }
 }
 
 OAREPO_VOCABULARIES_HIERARCHY_CF = [
@@ -40,11 +61,11 @@ OAREPO_VOCABULARIES_HIERARCHY_CF = [
 
 OAREPO_VOCABULARIES_CUSTOM_CF = []
 
-VOCABULARY_TYPE_SERVICE = VocabularyTypeService
-VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
+OAREPO_VOCABULARY_TYPE_SERVICE = VocabularyTypeService
+OAREPO_VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
 
-VOCABULARY_TYPE_RESOURCE = VocabularyTypeResource
-VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
+OAREPO_VOCABULARY_TYPE_RESOURCE = VocabularyTypeResource
+OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
 
 DATASTREAMS_CONFIG_GENERATOR_VOCABULARIES = vocabularies_generator
 

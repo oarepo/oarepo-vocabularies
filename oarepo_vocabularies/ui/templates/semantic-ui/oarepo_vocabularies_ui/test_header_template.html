@@ -1,0 +1,13 @@
+<!-- this is a file intended to be used only in tests - it is not placed in tests as we would have to have another
+     python package registered during tests containing only this file - way overkill
+
+     also, this file exists to overcome invneio bug in recursive import of header_login.html:
+
+../.venv/lib/python3.9/site-packages/invenio_administration/templates/semantic-ui/invenio_theme/header_login.html:10: in top-level template code
+    { % - extends "invenio_theme/header_login.html"  % }
+../.venv/lib/python3.9/site-packages/invenio_administration/templates/semantic-ui/invenio_theme/header_login.html:10: in top-level template code
+    { % - extends "invenio_theme/header_login.html"  % }
+
+    When invenio fixes that, this file could be removed
+
+-->
