@@ -12,6 +12,7 @@ import { useFormikContext, getIn } from "formik";
 import _toPairs from "lodash/toPairs";
 import _filter from "lodash/filter";
 import { useFormConfig } from "@js/oarepo_ui/forms";
+import { SelectInputField } from "./SelectInputField";
 
 const translateObjectToArray = (obj) => {
   return _toPairs(obj).map(([language, title]) => ({ language, name: title }));
@@ -42,7 +43,7 @@ export const MultiLingualTextInput = ({
   // } = useFormConfig();
   const placeholderFieldPath = `_${fieldPath}`;
   const { setFieldValue, values } = useFormikContext();
-  // const currentlySelectedLanguages = getIn(values, fieldPath, {})
+  const currentlySelectedLanguages = getIn(values, placeholderFieldPath, []);
   //   ? Object.keys(getIn(values, fieldPath, {}))
   //   : [];
   // console.log(currentlySelectedLanguages);
@@ -81,7 +82,7 @@ export const MultiLingualTextInput = ({
 
         return (
           <GroupField optimized>
-            <SelectField
+            <SelectInputField
               clearable
               fieldPath={`${fieldPathPrefix}.language`}
               label="Language"
@@ -89,6 +90,7 @@ export const MultiLingualTextInput = ({
               options={options.languages}
               required
               width={2}
+              currentlySelectedLanguages={currentlySelectedLanguages}
             />
 
             <TextField
