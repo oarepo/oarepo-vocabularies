@@ -1,6 +1,4 @@
 from flask import g
-from flask_babelex import lazy_gettext as _
-
 from flask_resources import from_conf, request_parser
 from invenio_records_resources.resources.records.resource import (
     request_read_args,

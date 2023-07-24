@@ -10,6 +10,7 @@ import {
 import { Button, Form, Icon } from "semantic-ui-react";
 import { useFormikContext, getIn } from "formik";
 import _toPairs from "lodash/toPairs";
+import _filter from "lodash/filter";
 
 const translateObjectToArray = (obj) => {
   return _toPairs(obj).map(([language, title]) => ({ language, name: title }));
@@ -35,8 +36,18 @@ export const MultiLingualTextInput = ({
   emptyNewInput,
   newItemInitialValue,
 }) => {
+  console.log(options.languages);
   const placeholderFieldPath = `_${fieldPath}`;
   const { setFieldValue, values } = useFormikContext();
+  const currentlySelectedLanguages = getIn(values, fieldPath, {})
+    ? Object.keys(getIn(values, fieldPath, {}))
+    : [];
+  console.log(currentlySelectedLanguages);
+  const filteredOptions = _filter(
+    options.languages,
+    (obj) => !currentlySelectedLanguages.includes(obj.value)
+  );
+  console.log(filteredOptions);
 
   useEffect(() => {
     if (!getIn(values, placeholderFieldPath)) {
@@ -72,7 +83,7 @@ export const MultiLingualTextInput = ({
               fieldPath={`${fieldPathPrefix}.language`}
               label="Language"
               optimized
-              options={options.languages}
+              options={filteredOptions}
               required
               width={2}
             />

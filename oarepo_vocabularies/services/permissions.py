@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020-2021 CERN.
@@ -20,15 +19,12 @@ class PermissionPolicy(RecordPermissionPolicy):
     can_search = [SystemProcess(), AnyUser()]
     can_read = [SystemProcess(), AnyUser()]
 
-    can_create = [SystemProcess(),AnyUser()]
-    can_update = [SystemProcess(),AnyUser()]
-    can_delete = [SystemProcess(),AnyUser()]
-    can_manage = [SystemProcess(),AnyUser()]
-
-
+    can_create = [SystemProcess(), AnyUser()]
+    can_update = [SystemProcess(), AnyUser()]
+    can_delete = [SystemProcess(), AnyUser()]
+    can_manage = [SystemProcess(), AnyUser()]
 
 
 class VocabulariesPermissionPolicy(BasePermissionPolicy):
     # NOTE: probably change to an authenticated user later.
     can_list_vocabularies = [SystemProcess(), AnyUser()]
-

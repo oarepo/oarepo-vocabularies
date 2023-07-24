@@ -77,15 +77,15 @@ def app_config(app_config):
 
     # note: This line must always be added to the invenio.cfg file
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
+    from oarepo_vocabularies.resources.vocabulary_type import (
+        VocabularyTypeResource,
+        VocabularyTypeResourceConfig,
+    )
     from oarepo_vocabularies.services.config import (
         VocabulariesConfig,
         VocabularyTypeServiceConfig,
     )
     from oarepo_vocabularies.services.service import VocabularyTypeService
-    from oarepo_vocabularies.resources.vocabulary_type import (
-        VocabularyTypeResource,
-        VocabularyTypeResourceConfig
-    )
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig

@@ -8,7 +8,9 @@ from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
+
 from .permissions import PermissionPolicy
+
 
 class VocabularyMetadataSchema(ma.Schema):
     class Meta:
