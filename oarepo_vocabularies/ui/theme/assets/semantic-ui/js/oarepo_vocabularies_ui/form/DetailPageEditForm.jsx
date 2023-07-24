@@ -5,7 +5,6 @@ import { BaseForm } from "react-invenio-forms";
 import { PublishButton } from "./components/PublishButton";
 import { MultiLingualTextInput } from "./components/MultiLingualTextInput";
 import { PropFieldsComponent } from "./components/PropFieldsComponent";
-import { extractVariablePart } from "../utils";
 import { useLocation } from "react-router-dom";
 import { ErrorComponent } from "./components/Error";
 import { ResetButton } from "./components/ResetButton";
@@ -46,6 +45,7 @@ export const DetailPageEditForm = ({
   const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
+
   console.log(apiCallUrl);
   const { error: saveError, mutateAsync: saveMutateAsync } = useMutation({
     mutationFn: async ({ apiCallUrl, editedItem }) =>
