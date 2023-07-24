@@ -12,6 +12,9 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+import shutil
+import sys
+from pathlib import Path
 
 # Monkey patch Werkzeug 2.1, needed to import flask_security.login_user
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
@@ -44,6 +47,7 @@ from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
 
@@ -76,16 +80,20 @@ def app_config(app_config):
     ] = "invenio_jsonschemas.proxies.current_refresolver_store"
 
     # note: This line must always be added to the invenio.cfg file
+    from oarepo_vocabularies.authorities.resources import (
+        AuthoritativeVocabulariesResource,
+        AuthoritativeVocabulariesResourceConfig,
+    )
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
+    from oarepo_vocabularies.resources.vocabulary_type import (
+        VocabularyTypeResource,
+        VocabularyTypeResourceConfig,
+    )
     from oarepo_vocabularies.services.config import (
         VocabulariesConfig,
         VocabularyTypeServiceConfig,
     )
     from oarepo_vocabularies.services.service import VocabularyTypeService
-    from oarepo_vocabularies.resources.vocabulary_type import (
-        VocabularyTypeResource,
-        VocabularyTypeResourceConfig
-    )
 
     app_config["VOCABULARIES_SERVICE_CONFIG"] = VocabulariesConfig
     app_config["VOCABULARIES_RESOURCE_CONFIG"] = VocabulariesResourceConfig
@@ -93,8 +101,13 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE"] = VocabularyTypeService
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
 
-    app_config["VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
-    app_config["VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
+    app_config["OAREPO_VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
+    app_config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
+
+    app_config["OAREPO_VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
+    app_config[
+        "OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"
+    ] = AuthoritativeVocabulariesResourceConfig
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -134,6 +147,10 @@ def app_config(app_config):
         },
     }
 
+    app_config["APP_THEME"] = ["semantic-ui"]
+    app_config[
+        "THEME_HEADER_TEMPLATE"
+    ] = "oarepo_vocabularies_ui/test_header_template.html"
     return app_config
 
 
@@ -348,10 +365,75 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def empty_licences(db):
     v = VocabularyType.create(id="licences", pid_type="lic")
     db.session.add(v)
     db.session.commit()
 
     return v
+
+
+@pytest.fixture()
+def affiliations_pids(db):
+    def _upload(uuid):
+        # One of the samples already exists and the other one is a completely new one.
+        invenio_pid = PersistentIdentifier.create(
+            pid_type="id",
+            pid_value="invenioid1",
+            object_type="object",
+            object_uuid=uuid,
+        )
+
+        authvc_pid = PersistentIdentifier.create(
+            pid_type="authvc",
+            pid_value="authid1",
+            object_type="object",
+            object_uuid=uuid,
+        )
+
+        db.session.add(invenio_pid)
+        db.session.add(authvc_pid)
+        db.session.commit()
+
+    return _upload
+
+
+@pytest.fixture()
+def mock_auth_getter_affilliations(mocker):
+    """
+    ROR-like samples.
+    """
+    mock = mocker.patch(
+        "oarepo_vocabularies.authorities.ext.OARepoVocabulariesAuthorities.auth_getter"
+    )
+
+    mock.return_value = lambda q, page, size: [
+        {
+            "id": "https://ror.org/03zsq2967",
+            "props": {
+                "authoritative_id": "authid1",
+                "name": "Association of Asian Pacific Community Health Organizations",
+            },
+        },
+        {
+            "id": "https://ror.org/020bcb226",
+            "props": {
+                "authoritative_id": "authid2",
+                "name": "Oakton Community College",
+            },
+        },
+    ]
+
+    yield mock
+
+
+@pytest.fixture()
+def fake_manifest(app):
+    python_path = Path(sys.executable)
+    invenio_instance_path = python_path.parent.parent / "var" / "instance"
+    manifest_path = invenio_instance_path / "static" / "dist"
+    manifest_path.mkdir(parents=True, exist_ok=True)
+    shutil.copy(
+        Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
+    )

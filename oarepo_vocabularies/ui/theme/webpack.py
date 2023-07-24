@@ -12,9 +12,7 @@ theme = WebpackThemeBundle(
                 "oarepo_vocabularies_detail": "./js/oarepo_vocabularies_ui/detail/index.js",
                 "oarepo_vocabularies_forms": "./js/oarepo_vocabularies_ui/form/index.js"
             },
-            dependencies={
-                "react-invenio-forms": "^2.4.0",
-            },
+            dependencies={},
             devDependencies={},
             aliases={
                 "@translations/oarepo_vocabularies_ui": "./translations/oarepo_vocabularies_ui",
