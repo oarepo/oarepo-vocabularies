@@ -24,23 +24,13 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     values: { id },
   } = useFormikContext();
-  const { data, error, run, isLoading } = useAsync();
-  const getItem = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
     queryFn: () =>
       VocabulariesApiClientInitialized.readDraft(
         `/api/vocabularies/institutions/${newChildItemParentId}`
       ),
   });
-  console.log(getItem.data);
-
-  useEffect(() => {
-    run(
-      VocabulariesApiClientInitialized.readDraft(
-        `/api/vocabularies/institutions/${newChildItemParentId}`
-      )
-    ).catch((err) => err);
-  }, [run]);
 
   return (
     <React.Fragment>

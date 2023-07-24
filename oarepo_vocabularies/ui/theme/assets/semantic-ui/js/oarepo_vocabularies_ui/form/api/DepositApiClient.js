@@ -95,7 +95,6 @@ export class VocabulariesApiClient extends DepositApiClient {
     try {
       const response = await axiosRequest();
       const data = response.data || {};
-      console.log(response);
       return data;
     } catch (error) {
       const errorData = error.response.data;
