@@ -10,9 +10,6 @@ import {
 import { Button, Form, Icon } from "semantic-ui-react";
 import { useFormikContext, getIn } from "formik";
 import _toPairs from "lodash/toPairs";
-import _filter from "lodash/filter";
-import { useFormConfig } from "@js/oarepo_ui/forms";
-import { SelectInputField } from "./SelectInputField";
 
 const translateObjectToArray = (obj) => {
   return _toPairs(obj).map(([language, title]) => ({ language, name: title }));
@@ -34,24 +31,13 @@ export const MultiLingualTextInput = ({
   label,
   labelIcon,
   required,
+  options,
   emptyNewInput,
   newItemInitialValue,
-  options,
 }) => {
-  // const {
-  //   formConfig: { locales },
-  // } = useFormConfig();
   const placeholderFieldPath = `_${fieldPath}`;
+  console.log(useFormikContext());
   const { setFieldValue, values } = useFormikContext();
-  const currentlySelectedLanguages = getIn(values, placeholderFieldPath, []);
-  //   ? Object.keys(getIn(values, fieldPath, {}))
-  //   : [];
-  // console.log(currentlySelectedLanguages);
-  // const filteredOptions = _filter(
-  //   options.languages,
-  //   (obj) => !currentlySelectedLanguages.includes(obj.value)
-  // );
-  // console.log(filteredOptions);
 
   useEffect(() => {
     if (!getIn(values, placeholderFieldPath)) {
@@ -78,11 +64,11 @@ export const MultiLingualTextInput = ({
       required={required}
     >
       {({ arrayHelpers, indexPath }) => {
-        const fieldPathPrefix = `${placeholderFieldPath}.${indexPath}`;
+        const fieldPathPrefix = `_${fieldPath}.${indexPath}`;
 
         return (
           <GroupField optimized>
-            <SelectInputField
+            <SelectField
               clearable
               fieldPath={`${fieldPathPrefix}.language`}
               label="Language"
@@ -90,7 +76,6 @@ export const MultiLingualTextInput = ({
               options={options.languages}
               required
               width={2}
-              currentlySelectedLanguages={currentlySelectedLanguages}
             />
 
             <TextField

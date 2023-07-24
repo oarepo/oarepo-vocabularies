@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
-import { BaseForm } from "react-invenio-forms";
+import { BaseForm, TextField } from "react-invenio-forms";
 import { PublishButton } from "./components/PublishButton";
 import { MultiLingualTextInput } from "./components/MultiLingualTextInput";
 import { PropFieldsComponent } from "./components/PropFieldsComponent";
@@ -14,8 +14,8 @@ import { CurrentLocationInformation } from "./components/CurrentLocationInformat
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
-import { VocabulariesApiClientInitialized } from "./api/DepositApiClient";
-import { TextInputField } from "./components/TextInputField";
+import { ApiClientInitialized } from "@js/oarepo_ui/api";
+
 import { useMutation } from "@tanstack/react-query";
 
 const removeNullAndUnderscoreProperties = (obj) => {
@@ -49,11 +49,11 @@ export const DetailPageEditForm = ({
   console.log(apiCallUrl);
   const { error: saveError, mutateAsync: saveMutateAsync } = useMutation({
     mutationFn: async ({ apiCallUrl, editedItem }) =>
-      VocabulariesApiClientInitialized.saveDraft(apiCallUrl, editedItem),
+      ApiClientInitialized.saveDraft(apiCallUrl, editedItem),
   });
   const { error: createError, mutateAsync: createMutateAsync } = useMutation({
     mutationFn: async ({ apiCallUrl, newItem }) =>
-      VocabulariesApiClientInitialized.createDraft(apiCallUrl, newItem),
+      ApiClientInitialized.createDraft(apiCallUrl, newItem),
   });
 
   const onSubmit = (values, formik) => {
@@ -113,7 +113,7 @@ export const DetailPageEditForm = ({
 
           <Grid.Column mobile={16} tablet={16} computer={12}>
             <MultiLingualTextInput fieldPath="title" options={options} />
-            <TextInputField fieldPath="id" label={"ID"} width={11} required />
+            <TextField fieldPath="id" label={"ID"} width={11} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}

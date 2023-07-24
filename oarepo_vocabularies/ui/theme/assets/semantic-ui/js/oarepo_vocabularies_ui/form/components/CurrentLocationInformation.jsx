@@ -9,7 +9,7 @@ import { useFormConfig } from "@js/oarepo_ui/forms";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
-import { VocabulariesApiClientInitialized } from "../api/DepositApiClient";
+import { ApiClientInitialized } from "@js/oarepo_ui/api";
 import { useQuery } from "@tanstack/react-query";
 import { Dimmer, Loader } from "semantic-ui-react";
 
@@ -30,7 +30,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
     queryFn: () =>
-      VocabulariesApiClientInitialized.readDraft(
+      ApiClientInitialized.readDraft(
         `/api/vocabularies/${type}/${newChildItemParentId}`
       ),
   });

@@ -87,7 +87,7 @@ export class DepositApiClient {
 /**
  * API Client for deposits.
  */
-export class VocabulariesApiClient extends DepositApiClient {
+export class ApiClient extends DepositApiClient {
   constructor(additionalApiConfig) {
     super(additionalApiConfig);
   }
@@ -130,4 +130,4 @@ export class VocabulariesApiClient extends DepositApiClient {
   }
 }
 
-export const VocabulariesApiClientInitialized = new VocabulariesApiClient();
+export const ApiClientInitialized = new ApiClient();
