@@ -28,7 +28,10 @@ class VocabulariesSearchComponent(ServiceComponent):
             initial_filters=[["h-parent", record["id"]]],
         )
         search_config = partial(resource.config.search_app_config, **search_options)
-        extra_context.setdefault("search_app_config", search_config)
+        extra_context.setdefault(
+            "search_app_config",
+            search_config
+        )
         extra_context['vocabularyProps'] = resource.config.vocabulary_props_config(vocabulary_type)
 
     def before_ui_edit(self, *, form_config, resource, record, view_args, **kwargs):
@@ -47,6 +50,4 @@ class VocabulariesSearchComponent(ServiceComponent):
         form_config.setdefault(
             "vocabularyProps", resource.config.vocabulary_props_config(vocabulary_type)
         )
-        form_config[
-            "createUrl"
-        ] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
+        form_config["createUrl"] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
