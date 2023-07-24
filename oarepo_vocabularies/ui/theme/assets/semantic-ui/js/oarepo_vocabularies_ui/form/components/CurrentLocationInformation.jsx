@@ -11,7 +11,7 @@ import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
 import { VocabulariesApiClientInitialized } from "../api/DepositApiClient";
 import { useQuery } from "@tanstack/react-query";
-import { Dimmer, Loader, Image, Segment } from "semantic-ui-react";
+import { Dimmer, Loader } from "semantic-ui-react";
 
 const breadcrumbSerialization = (array) =>
   array.map((item) => ({ key: item, content: item }));
@@ -22,13 +22,16 @@ const NewTopLevelItemMessage = () => (
 
 const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
+    record: { type },
+  } = useFormConfig();
+  const {
     values: { id },
   } = useFormikContext();
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
     queryFn: () =>
       VocabulariesApiClientInitialized.readDraft(
-        `/api/vocabularies/institutions/${newChildItemParentId}`
+        `/api/vocabularies/${type}/${newChildItemParentId}`
       ),
   });
   console.log({ data, isLoading, error });

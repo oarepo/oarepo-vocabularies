@@ -39,13 +39,11 @@ export const DetailPageEditForm = ({
   apiCallUrl,
 }) => {
   const {
-    record,
     formConfig: { vocabularyProps },
   } = useFormConfig();
   const sidebarRef = useRef(null);
   const location = useLocation();
   const currentPath = location.pathname;
-  const vocabularyType = extractVariablePart(currentPath);
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
   console.log(apiCallUrl);
@@ -60,7 +58,6 @@ export const DetailPageEditForm = ({
 
   const onSubmit = (values, formik) => {
     let preparedValues = values;
-    if (!editMode) preparedValues.type = vocabularyType;
     if (newChildItemParentId)
       preparedValues.hierarchy = { parent: newChildItemParentId };
 
