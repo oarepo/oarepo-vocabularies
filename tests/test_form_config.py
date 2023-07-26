@@ -2,7 +2,7 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
 
-def test_languages(
+def test_form_config(
     app, db, cache, lang_type, lang_data_many, vocabularies_ui_resource, identity
 ):
     assert vocabularies_ui_resource.config.form_config(identity) == dict(
