@@ -16,6 +16,9 @@ import shutil
 import sys
 from pathlib import Path
 
+from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
+from oarepo_vocabularies.ui.resources.resource import InvenioVocabulariesUIResource
+
 # Monkey patch Werkzeug 2.1, needed to import flask_security.login_user
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
 # 2.1. Flask-Login v0.6.0 (yet to be released at the time of writing) fixes the
@@ -147,6 +150,9 @@ def app_config(app_config):
         },
     }
 
+    app_config["MULTILINGUAL_COMMON_LANGUAGES"] = ["en", "cs"]
+    app_config["MULTILINGUAL_DISABLED"] = False
+    
     app_config["APP_THEME"] = ["semantic-ui"]
     app_config[
         "THEME_HEADER_TEMPLATE"
@@ -437,3 +443,17 @@ def fake_manifest(app):
     shutil.copy(
         Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
     )
+
+
+
+@pytest.fixture
+def vocabularies_ui_resource_config(app):
+    class Cfg(InvenioVocabulariesUIResourceConfig):
+        api_service = "vocabularies"  # must be something included in oarepo, as oarepo is used in tests
+
+    return Cfg()
+
+
+@pytest.fixture
+def vocabularies_ui_resource(app, vocabularies_ui_resource_config):
+    return InvenioVocabulariesUIResource(vocabularies_ui_resource_config)
