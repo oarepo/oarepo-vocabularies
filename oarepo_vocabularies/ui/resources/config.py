@@ -45,31 +45,27 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
 
     def languages_config(self, identity):
-        if current_app.config.get('MULTILINGUAL_DISABLED'): return
-        
+        if current_app.config.get("MULTILINGUAL_DISABLED"):
+            return
+
         ret = super().languages_config(identity)
         common_config = current_app.config.get("MULTILINGUAL_COMMON_LANGUAGES", ["en"])
 
         languages = vocabulary_service.read_all(
-            identity, fields=["id", "title"], type='languages',
-            max_records=500
+            identity, fields=["id", "title"], type="languages", max_records=500
         )
 
         for hit in languages.to_dict()["hits"]["hits"]:
             code = hit["id"]
-            label = gettext_from_dict(
-                        hit["title"],
-                        current_i18n.locale,
-                        current_app.config.get("BABEL_DEFAULT_LOCALE", "en"))
-            option = dict(text=label, value=code)
-            
-            if code in common_config:
-                ret['common'].append(option)
-            
-            ret['all'].append(option)
-        
-        return ret
+            label = gettext_from_dict(hit["title"], code)
+            option = dict(text=label or code, value=code)
 
+            if code in common_config:
+                ret["common"].append(option)
+
+            ret["all"].append(option)
+
+        return ret
 
     def form_props_config(self, vocabulary_type):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(

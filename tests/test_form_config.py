@@ -7,17 +7,19 @@ def test_form_config(
     lang_data_many,
     vocabularies_ui_resource,
     identity,
-    search_clear
+    search_clear,
 ):
     assert vocabularies_ui_resource.config.form_config(identity=identity) == dict(
         current_locale="en",
         locales=[
-            # TODO: not sure why current_i18.get_locales() puts English twice here
-            {"value": "en", "text": "English"},
-            {"value": "en", "text": "English"},
-            {"value": "cs", "text": "čeština"},
+            {
+                "value": "en",
+                "text": "English",
+            },
+            {"value": "da", "text": "dansk"},
         ],
         default_locale="en",
+        identity=identity,
         languages={
             "all": [
                 {"value": "en", "text": "English"},
