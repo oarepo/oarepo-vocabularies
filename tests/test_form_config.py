@@ -19,7 +19,6 @@ def test_form_config(
             {"value": "da", "text": "dansk"},
         ],
         default_locale="en",
-        identity=identity,
         languages={
             "all": [
                 # NOTE: "English" is fallback title, 
