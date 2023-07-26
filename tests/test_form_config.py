@@ -9,7 +9,7 @@ def test_form_config(
     identity,
     search_clear
 ):
-    assert vocabularies_ui_resource.config.form_config(identity) == dict(
+    assert vocabularies_ui_resource.config.form_config(identity=identity) == dict(
         current_locale="en",
         locales=[
             # TODO: not sure why current_i18.get_locales() puts English twice here
