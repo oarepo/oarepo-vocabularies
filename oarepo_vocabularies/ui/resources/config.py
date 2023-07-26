@@ -57,7 +57,11 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
         for hit in languages.to_dict()["hits"]["hits"]:
             code = hit["id"]
-            label = gettext_from_dict(hit["title"], code, code)
+            label = gettext_from_dict(
+                hit["title"],
+                current_i18n.locale,
+                current_app.config.get("BABEL_DEFAULT_LOCALE", "en"),
+            )
             option = dict(text=label or code, value=code)
 
             if code in common_config:

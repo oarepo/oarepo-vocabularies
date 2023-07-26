@@ -22,12 +22,16 @@ def test_form_config(
         identity=identity,
         languages={
             "all": [
-                {"value": "en", "text": "English"},
-                {"value": "cs", "text": "čeština"},
+                # NOTE: "English" is fallback title, 
+                # as we don't set lang title in test fixture
+                {"value": "fr", "text": "English"},
+                {"value": "tr", "text": "English"},
+                {"value": "gr", "text": "English"},
+                {"value": "ger", "text": "English"},
+                {"value": "es", "text": "English"},
             ],
             "common": [
-                {"value": "en", "text": "English"},
-                {"value": "cs", "text": "čeština"},
+                {"value": "es", "text": "English"},
             ],
         },
         links=dict(),

@@ -150,7 +150,7 @@ def app_config(app_config):
         },
     }
 
-    app_config["MULTILINGUAL_COMMON_LANGUAGES"] = ["en", "cs"]
+    app_config["MULTILINGUAL_COMMON_LANGUAGES"] = ["es"]
     app_config["MULTILINGUAL_DISABLED"] = False
     
     app_config["APP_THEME"] = ["semantic-ui"]
