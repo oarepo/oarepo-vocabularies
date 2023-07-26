@@ -1,9 +1,13 @@
-from invenio_access.permissions import system_identity
-from invenio_vocabularies.proxies import current_service as vocab_service
-
-
 def test_form_config(
-    app, db, cache, lang_type, lang_data_many, vocabularies_ui_resource, identity
+    app,
+    db,
+    cache,
+    vocab_cf,
+    lang_type,
+    lang_data_many,
+    vocabularies_ui_resource,
+    identity,
+    search_clear
 ):
     assert vocabularies_ui_resource.config.form_config(identity) == dict(
         current_locale="en",
