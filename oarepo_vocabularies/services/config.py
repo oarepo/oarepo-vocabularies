@@ -9,6 +9,8 @@ from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
 
+from .permissions import PermissionPolicy
+
 
 class VocabularyMetadataSchema(ma.Schema):
     class Meta:
@@ -76,6 +78,8 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     schema = VocabularySchema
     search = VocabularySearchOptions
     components = [*VocabulariesServiceConfig.components, HierarchyComponent]
+    permission_policy_cls = PermissionPolicy
+
     url_prefix = "/vocabularies/"
 
     links_item = {

@@ -12,9 +12,12 @@ import {
   SearchAppLayout,
   EmptyResultsElement,
 } from "@js/oarepo_ui/search";
-import { VocabularyResultsListItemWithState } from "./components";
+import {
+  VocabularyResultsListItemWithState,
+  VocabularyButtonSidebar,
+} from "./components";
 import { parametrize, overrideStore } from "react-overridable";
-import React from "react";
+
 const appName = "OarepoVocabularies.Search";
 const SearchAppSearchbarContainerWithConfig = parametrize(
   SearchAppSearchbarContainer,
@@ -24,6 +27,10 @@ const ResultsListItemWithConfig = parametrize(
   VocabularyResultsListItemWithState,
   { appName: appName }
 );
+
+const SearchAppLayoutWithConfig = parametrize(SearchAppLayout, {
+  hasButtonSidebar: true,
+});
 
 // const ResultsGridItemWithConfig = parametrize(ResultsGridItemWithState, { appName: appName })
 export const defaultComponents = {
@@ -39,13 +46,13 @@ export const defaultComponents = {
     SearchAppSearchbarContainerWithConfig,
   [`${appName}.SearchApp.sort`]: SearchAppSort,
   [`${appName}.SearchFilters.Toggle.element`]: SearchFiltersToggleElement,
-
+  // [`${appName}.SearchApp.searchbar`]: SearchAppSearchBar,
   [`${appName}.SearchApp.resultOptions`]: SearchAppResultOptions,
   [`${appName}.SearchApp.results`]: SearchAppResults,
-  [`${appName}.SearchApp.layout`]: SearchAppLayout,
+  [`${appName}.SearchApp.layout`]: SearchAppLayoutWithConfig,
+  [`${appName}.SearchApp.buttonSidebarContainer`]: VocabularyButtonSidebar,
 };
 const overriddenComponents = overrideStore.getAll();
-
 createSearchAppInit(
   { ...defaultComponents, ...overriddenComponents },
   true,

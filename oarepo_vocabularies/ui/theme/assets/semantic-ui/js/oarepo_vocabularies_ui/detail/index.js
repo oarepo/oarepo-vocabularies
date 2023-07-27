@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import _ from "lodash";
+import _camelCase from "lodash/camelCase";
 import { App } from "./DetailSearchApp";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   )[0];
 
   const initialAppConfig = JSON.parse(
-    searchAppElement.dataset[_.camelCase("invenio-search-config")]
+    searchAppElement.dataset[_camelCase("invenio-search-config")]
   );
 
   ReactDOM.render(<App appConfig={initialAppConfig} />, searchAppElement);

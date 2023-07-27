@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-04-14T15:15:59.601Z\n"
-"PO-Revision-Date: 2023-04-14T15:15:59.601Z\n"
+"POT-Creation-Date: 2023-07-27T08:01:16.149Z\n"
+"PO-Revision-Date: 2023-07-27T08:01:16.149Z\n"
 "Language: de\n"
 
 msgid "coarType"
@@ -28,4 +28,57 @@ msgid "acronym"
 msgstr ""
 
 msgid "nameType"
+msgstr ""
+
+msgid "totalDescendants"
+msgid_plural "totalDescendants"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "hide"
+msgstr ""
+
+msgid "show"
+msgstr ""
+
+msgid "descendants"
+msgstr ""
+
+msgid "resultsPerPage"
+msgstr ""
+
+msgid "search"
+msgstr ""
+
+msgid "newItemMessage"
+msgstr ""
+
+msgid "newChildItemMessage"
+msgstr ""
+
+msgid "newItem"
+msgstr ""
+
+msgid "editTopLevelItemMessage"
+msgstr ""
+
+msgid "editChildItemMessage"
+msgstr ""
+
+msgid "publish"
+msgstr ""
+
+msgid "reset"
+msgstr ""
+
+msgid "required"
+msgstr ""
+
+msgid "multipleSameLanguagesError"
+msgstr ""
+
+msgid "invalidLengthError"
+msgstr ""
+
+msgid "notANumberError"
 msgstr ""

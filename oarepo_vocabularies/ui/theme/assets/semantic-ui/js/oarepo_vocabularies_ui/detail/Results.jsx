@@ -39,9 +39,13 @@ export const Results = ({
           >
             <Button
               primary
+              fluid
               as="a"
               href={`/vocabularies/institutions?q=&sort=title&page=1&size=10&f=${facet}:${vocabularyItem}`}
+              icon="search"
+              labelPosition="left"
               content={i18next.t("search")}
+              type="button"
             />
           </Grid.Column>
         </Grid.Row>

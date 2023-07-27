@@ -71,7 +71,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
         return ret
 
-    def form_props_config(self, vocabulary_type):
+    def vocabulary_props_config(self, vocabulary_type):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
             vocabulary_type, {}
         )

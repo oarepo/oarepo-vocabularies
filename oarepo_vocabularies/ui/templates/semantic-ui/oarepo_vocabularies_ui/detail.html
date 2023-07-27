@@ -7,10 +7,17 @@
 {%- endblock %}
 
 {% block record_main_content %}
-    {%- block vocabulary_descendants %}
-    {%- endblock -%}
 {% endblock record_main_content %}
 
+{% block page_body %}
+  {{ super() }}
+  <div class="ui center aligned container">
+    {% block vocabulary_descendants %}
+    {% endblock vocabulary_descendants %}
+  </div>
+{% endblock page_body %}
+
 {%- block javascript %}
-{{ webpack['oarepo_vocabularies_ui_components.js'] }}
+{{webpack["oarepo_vocabularies_detail.js"] }}
+{{webpack['oarepo_vocabularies_ui_components.js']}}
 {%- endblock%}
