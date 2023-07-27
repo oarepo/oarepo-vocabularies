@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-04-14T15:15:59.253Z\n"
-"PO-Revision-Date: 2023-04-14T15:15:59.253Z\n"
+"POT-Creation-Date: 2023-07-27T08:01:15.540Z\n"
+"PO-Revision-Date: 2023-07-27T08:01:15.540Z\n"
 "Language: en\n"
 
 msgid "coarType"
@@ -28,4 +28,57 @@ msgid "acronym"
 msgstr "acronym"
 
 msgid "nameType"
-msgstr "nameType"
+msgstr "Name Type"
+
+msgid "publish"
+msgstr "Publish"
+
+msgid "reset"
+msgstr "Reset Form"
+
+msgid "editTopLevelItemMessage"
+msgstr "You are currently editing a top level item"
+
+msgid "editChildItemMessage"
+msgstr "You are currently editing a child item with hierarchy:"
+
+msgid "newItemMessage"
+msgstr "You are currently creating a top level item"
+
+msgid "newChildItemMessage"
+msgstr "You are currently creating a child item of {{item}}. New hierarchy will be:"
+
+msgid "newItem"
+msgstr "New item"
+
+msgid "required"
+msgstr "Required"
+
+msgid "multipleSameLanguagesError"
+msgstr "You must not have two same languages"
+
+msgid "invalidLengthError"
+msgstr "Must be exactly {{length}} characters"
+
+msgid "notANumberError"
+msgstr "Must contain only numbers"
+
+msgid "totalDescendants"
+msgid_plural "totalDescendants"
+msgstr[0] "totalDescendants"
+msgstr[1] "totalDescendants"
+
+msgid "hide"
+msgstr "hide"
+
+msgid "show"
+msgstr "show"
+
+msgid "descendants"
+msgstr "descendants"
+
+msgid "resultsPerPage"
+msgstr "resultsPerPage"
+
+msgid "search"
+msgstr "search"

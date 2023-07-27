@@ -13,9 +13,15 @@
   "newItemMessage": "You are currently creating a top level item",
   "newChildItemMessage": "You are currently creating a child item of {{item}}. New hierarchy will be:",
   "newItem": "New item",
-  "contexts": "Contexts",
   "required": "Required",
   "multipleSameLanguagesError": "You must not have two same languages",
   "invalidLengthError": "Must be exactly {{length}} characters",
-  "notANumberError": "Must contain only numbers"
+  "notANumberError": "Must contain only numbers",
+  "totalDescendants": "totalDescendants",
+  "totalDescendants_plural": "totalDescendants",
+  "hide": "hide",
+  "show": "show",
+  "descendants": "descendants",
+  "resultsPerPage": "resultsPerPage",
+  "search": "search"
 }

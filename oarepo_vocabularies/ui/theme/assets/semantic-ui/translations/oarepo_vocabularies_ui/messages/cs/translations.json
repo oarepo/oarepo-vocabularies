@@ -13,9 +13,16 @@
   "newItemMessage": "Právě vytváříte položku nejvyšší úrovně",
   "newChildItemMessage": "Právě vytváříte položku podřízenou {{item}}. Nová hierarchie bude:",
   "newItem": "Nová položka",
-  "contexts": "Kontexty",
   "required": "Požadované",
   "multipleSameLanguagesError": "Nesmíte mít dva stejné jazyky",
   "invalidLengthError": "Musí mít přesně {{length}} znaků",
-  "notANumberError": "Musí obsahovat pouze čísla"
+  "notANumberError": "Musí obsahovat pouze čísla",
+  "totalDescendants_0": "",
+  "totalDescendants_1": "",
+  "totalDescendants_2": "",
+  "hide": "",
+  "show": "",
+  "descendants": "",
+  "resultsPerPage": "",
+  "search": ""
 }
