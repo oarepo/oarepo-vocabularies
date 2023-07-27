@@ -1,7 +1,10 @@
 import marshmallow as ma
 from flask import current_app
-from oarepo_ui.resources.config import RecordsUIResourceConfig
 
+from invenio_i18n.ext import current_i18n
+from oarepo_ui.resources.config import RecordsUIResourceConfig
+from invenio_vocabularies.proxies import current_service as vocabulary_service
+from marshmallow_utils.fields.babel import gettext_from_dict
 from oarepo_vocabularies.ui.resources.components import VocabulariesSearchComponent
 
 
@@ -40,6 +43,33 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     components = [VocabulariesSearchComponent]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
+
+    def languages_config(self, identity):
+        if current_app.config.get("MULTILINGUAL_DISABLED"):
+            return
+
+        ret = super().languages_config(identity)
+        common_config = current_app.config.get("MULTILINGUAL_COMMON_LANGUAGES", ["en"])
+
+        languages = vocabulary_service.read_all(
+            identity, fields=["id", "title"], type="languages", max_records=500
+        )
+
+        for hit in languages.to_dict()["hits"]["hits"]:
+            code = hit["id"]
+            label = gettext_from_dict(
+                hit["title"],
+                current_i18n.locale,
+                current_app.config.get("BABEL_DEFAULT_LOCALE", "en"),
+            )
+            option = dict(text=label or code, value=code)
+
+            if code in common_config:
+                ret["common"].append(option)
+
+            ret["all"].append(option)
+
+        return ret
 
     def vocabulary_props_config(self, vocabulary_type):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
