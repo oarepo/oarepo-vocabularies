@@ -4,7 +4,7 @@ from oarepo_runtime.datastreams.readers.service import ServiceReader
 from oarepo_runtime.datastreams.writers.service import ServiceWriter, StreamEntry
 
 
-def vocabularies_generator(service_id):
+def vocabularies_generator(service_id, **kwargs):
     vocabularies = VocabularyType.query.all()
     for vocab_type in vocabularies:
         loader = [
