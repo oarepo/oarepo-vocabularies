@@ -12,7 +12,7 @@ import {
 } from "react-searchkit";
 import { Results } from "./Results";
 import { VocabularyResultsListItemWithState } from "../search/components";
-import { i18next } from "@translations/oarepo_ui/i18next";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 const OnResults = withState(Results);
 

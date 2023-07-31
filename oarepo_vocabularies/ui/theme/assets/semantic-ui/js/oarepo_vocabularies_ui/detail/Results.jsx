@@ -6,7 +6,7 @@ import {
   ResultsMultiLayout,
   ResultsPerPage,
 } from "react-searchkit";
-import { i18next } from "@translations/oarepo_ui/i18next";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ResultCountWithState } from "@js/oarepo_ui/search";
 
 const resultsPerPageLabel = (cmp) => (

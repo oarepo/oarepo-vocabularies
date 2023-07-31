@@ -17,12 +17,12 @@
   "multipleSameLanguagesError": "Nesmíte mít dva stejné jazyky",
   "invalidLengthError": "Musí mít přesně {{length}} znaků",
   "notANumberError": "Musí obsahovat pouze čísla",
-  "totalDescendants_0": "",
-  "totalDescendants_1": "",
-  "totalDescendants_2": "",
-  "hide": "",
-  "show": "",
-  "descendants": "",
-  "resultsPerPage": "",
-  "search": ""
+  "totalDescendants_0": "1 podřízená položka",
+  "totalDescendants_1": "{{count}} podřízené položky",
+  "totalDescendants_2": "{{count}} podřízených položek",
+  "hide": "Skrýt",
+  "show": "Zobrazit",
+  "descendants": "Podřízené položky",
+  "resultsPerPage": "Výsledky na stránku",
+  "search": "Hledat"
 }
