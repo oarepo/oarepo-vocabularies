@@ -1,7 +1,7 @@
 <!-- place your record sidebar content in here ... -->
 
 <div style=" margin-top: 2em">
-<a href={{data["links"]["self"].replace("/api", "") + "/edit"}}><button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button></a> 
+<a href={{ ui_links["edit"] }}><button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button></a> 
 {%if vocabularyProps["hierarchical"] == True%}
   <a href={{ data['links']['vocabulary'].replace('/api', '') ~ '/_new?h-parent=' ~ data['id'] }}>
     <button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>New child item</button>

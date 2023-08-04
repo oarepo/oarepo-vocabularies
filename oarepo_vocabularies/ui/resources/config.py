@@ -46,15 +46,15 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
 
     ui_links_item = {
-        "self": UIRecordLink("{+ui}{+url_prefix}/{vocabulary_type}/{id}"),
-        "edit": UIRecordLink("{+ui}{+url_prefix}/{vocabulary_type}/{id}/edit"),
+        "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
+        "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
     }
 
     @property
     def ui_links_search(self):
         return {
-            **pagination_links("{+ui}{+url_prefix}/{vocabulary_type}/{?args*}"),
-            "create": Link("{+ui}{+url_prefix}/{vocabulary_type}/_new"),
+            **pagination_links("{+ui}{+url_prefix}{vocabulary_type}/{?args*}"),
+            "create": Link("{+ui}{+url_prefix}{vocabulary_type}/_new"),
         }
 
 
