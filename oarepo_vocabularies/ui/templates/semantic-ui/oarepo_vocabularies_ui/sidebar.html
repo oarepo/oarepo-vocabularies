@@ -3,6 +3,7 @@
 <div style=" margin-top: 2em">
 <a href={{ ui_links["edit"] }}><button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button></a> 
 {%if vocabularyProps["hierarchical"] == True%}
+  <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
   <a href={{ data['links']['vocabulary'].replace('/api', '') ~ '/_new?h-parent=' ~ data['id'] }}>
     <button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>New child item</button>
   </a>
