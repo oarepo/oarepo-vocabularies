@@ -12,7 +12,6 @@ def test_form_config(
     fc = vocabularies_ui_resource.config.form_config(identity=identity)
 
     assert fc == dict(
-        links=dict(),
         custom_fields={"ui": {}},
     )
 
@@ -41,6 +40,5 @@ def test_form_config(
                 {"value": "es", "text": "English"},
             ]
         ),
-        links=dict(),
         custom_fields={"ui": {}},
     )
