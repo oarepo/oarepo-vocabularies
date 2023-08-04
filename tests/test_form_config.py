@@ -25,7 +25,7 @@ def test_form_config(
         data={},
         args={},
         view_args={},
-        identity=None,
+        identity=identity,
         extra_context={},
     )
 
