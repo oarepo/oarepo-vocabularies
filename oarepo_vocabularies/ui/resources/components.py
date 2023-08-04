@@ -8,7 +8,37 @@ from marshmallow_utils.fields.babel import gettext_from_dict
 from oarepo_ui.proxies import current_oarepo_ui
 
 
-class VocabulariesSearchComponent(ServiceComponent):
+class DepositVocabularyOptionsComponent(ServiceComponent):
+    def form_config(self, *, form_config, resource, record, view_args, identity, **kwargs):
+        form_config.setdefault("vocabularies", {})
+
+        if current_app.config.get("VOCABULARIES_LANGUAGES_DISABLED"):
+            return
+
+        languages = vocabulary_service.read_all(
+            identity, fields=["id", "title"], type="languages", max_records=500
+        )
+
+        form_languages = {"all": [], "featured": []}
+
+        for hit in languages.to_dict()["hits"]["hits"]:
+            code = hit["id"]
+            label = gettext_from_dict(
+                hit["title"],
+                current_i18n.locale,
+                current_app.config.get("BABEL_DEFAULT_LOCALE", "en"),
+            )
+            option = dict(text=label or code, value=code)
+
+            if code in current_oarepo_ui.common_languages:
+                form_languages["featured"].append(option)
+
+            form_languages["all"].append(option)
+
+        form_config["vocabularies"]["languages"] = form_languages
+
+
+class VocabularyRecordsComponent(ServiceComponent):
     def before_ui_search(self, *, resource, search_options, view_args, **kwargs):
         vocabulary_type = view_args["vocabulary_type"]
         api_service = resource.api_service
@@ -59,29 +89,3 @@ class VocabulariesSearchComponent(ServiceComponent):
         ] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
 
 
-class VocabulariesFormConfigComponent(ServiceComponent):
-    def form_config(self, *, form_config, resource, record, view_args, identity, **kwargs):
-        if current_app.config.get("VOCABULARIES_LANGUAGES_DISABLED"):
-            return
-
-        languages = vocabulary_service.read_all(
-            identity, fields=["id", "title"], type="languages", max_records=500
-        )
-
-        form_languages = {"all": [], "common": []}
-
-        for hit in languages.to_dict()["hits"]["hits"]:
-            code = hit["id"]
-            label = gettext_from_dict(
-                hit["title"],
-                current_i18n.locale,
-                current_app.config.get("BABEL_DEFAULT_LOCALE", "en"),
-            )
-            option = dict(text=label or code, value=code)
-
-            if code in current_oarepo_ui.common_languages:
-                form_languages["common"].append(option)
-
-            form_languages["all"].append(option)
-
-        form_config["languages"] = form_languages
