@@ -75,9 +75,3 @@ DEFAULT_DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
 
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
-
-# List of commonly used language vocabulary ids (for multilingual select inputs)
-# MULTILINGUAL_COMMON_LANGUAGES = ["en", "cs", "sk", "de", "fr"]
-
-# Completely disables usage of languages vocabulary in forms
-# MULTILINGUAL_DISABLED = False

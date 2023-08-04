@@ -18,6 +18,7 @@ from pathlib import Path
 
 from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
 from oarepo_vocabularies.ui.resources.resource import InvenioVocabulariesUIResource
+from oarepo_vocabularies.ui.resources.components import DepositVocabularyOptionsComponent
 
 # Monkey patch Werkzeug 2.1, needed to import flask_security.login_user
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
@@ -150,9 +151,6 @@ def app_config(app_config):
         },
     }
 
-    app_config["MULTILINGUAL_COMMON_LANGUAGES"] = ["es"]
-    app_config["MULTILINGUAL_DISABLED"] = False
-    
     app_config["APP_THEME"] = ["semantic-ui"]
     app_config[
         "THEME_HEADER_TEMPLATE"
@@ -450,6 +448,7 @@ def fake_manifest(app):
 def vocabularies_ui_resource_config(app):
     class Cfg(InvenioVocabulariesUIResourceConfig):
         api_service = "vocabularies"  # must be something included in oarepo, as oarepo is used in tests
+        components = [DepositVocabularyOptionsComponent]
 
     return Cfg()
 

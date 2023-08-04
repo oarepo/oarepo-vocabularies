@@ -9,30 +9,38 @@ def test_form_config(
     identity,
     search_clear,
 ):
-    assert vocabularies_ui_resource.config.form_config(identity=identity) == dict(
-        current_locale="en",
-        locales=[
-            {
-                "value": "en",
-                "text": "English",
-            },
-            {"value": "da", "text": "dansk"},
-        ],
-        default_locale="en",
-        languages={
-            "all": [
-                # NOTE: "English" is fallback title, 
+    fc = vocabularies_ui_resource.config.form_config(identity=identity)
+
+    assert fc == dict(
+        links=dict(),
+        custom_fields={"ui": {}},
+    )
+
+    vocabularies_ui_resource.run_components(
+        "form_config",
+        form_config=fc,
+        layout="",
+        resource=vocabularies_ui_resource,
+        record={},
+        data={},
+        args={},
+        view_args={},
+        identity=identity,
+        extra_context={},
+    )
+
+    assert fc == dict(
+        vocabularies=dict(
+            languages=[
+                # NOTE: "English" is a fallback title,
                 # as we don't set lang title in test fixture
                 {"value": "fr", "text": "English"},
                 {"value": "tr", "text": "English"},
                 {"value": "gr", "text": "English"},
                 {"value": "ger", "text": "English"},
                 {"value": "es", "text": "English"},
-            ],
-            "common": [
-                {"value": "es", "text": "English"},
-            ],
-        },
+            ]
+        ),
         links=dict(),
         custom_fields={"ui": {}},
     )
