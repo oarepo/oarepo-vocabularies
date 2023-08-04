@@ -4,12 +4,11 @@ import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const NewItemButton = () => {
-  const config = useContext(SearchConfigurationContext);
-  const newEntryUrl = config.searchApi.axios.url.replace("/api", "") + "/_new";
+  const {ui_links} = useContext(SearchConfigurationContext);
   return (
     <Button
       as="a"
-      href={newEntryUrl}
+      href={ui_links.create}
       fluid
       color="green"
       icon="plus"
