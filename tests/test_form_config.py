@@ -30,15 +30,17 @@ def test_form_config(
     )
 
     assert fc == dict(
-        languages=[
-            # NOTE: "English" is a fallback title,
-            # as we don't set lang title in test fixture
-            {"value": "fr", "text": "English"},
-            {"value": "tr", "text": "English"},
-            {"value": "gr", "text": "English"},
-            {"value": "ger", "text": "English"},
-            {"value": "es", "text": "English"},
-        ],
+        vocabularies=dict(
+            languages=[
+                # NOTE: "English" is a fallback title,
+                # as we don't set lang title in test fixture
+                {"value": "fr", "text": "English"},
+                {"value": "tr", "text": "English"},
+                {"value": "gr", "text": "English"},
+                {"value": "ger", "text": "English"},
+                {"value": "es", "text": "English"},
+            ]
+        ),
         links=dict(),
         custom_fields={"ui": {}},
     )
