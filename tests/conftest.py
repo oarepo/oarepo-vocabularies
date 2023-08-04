@@ -151,9 +151,6 @@ def app_config(app_config):
         },
     }
 
-    app_config["OAREPO_UI_COMMON_LANGUAGES"] = ["es"]
-    app_config["VOCABULARIES_LANGUAGES_DISABLED"] = False
-    
     app_config["APP_THEME"] = ["semantic-ui"]
     app_config[
         "THEME_HEADER_TEMPLATE"
