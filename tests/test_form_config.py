@@ -10,7 +10,7 @@ def test_form_config(
     search_clear,
 ):
     fc = vocabularies_ui_resource.config.form_config(identity=identity)
-    
+
     assert fc == dict(
         links=dict(),
         custom_fields={"ui": {}},
@@ -30,20 +30,15 @@ def test_form_config(
     )
 
     assert fc == dict(
-        languages={
-            "all": [
-                # NOTE: "English" is a fallback title, 
-                # as we don't set lang title in test fixture
-                {"value": "fr", "text": "English"},
-                {"value": "tr", "text": "English"},
-                {"value": "gr", "text": "English"},
-                {"value": "ger", "text": "English"},
-                {"value": "es", "text": "English"},
-            ],
-            "common": [
-                {"value": "es", "text": "English"},
-            ],
-        },
+        languages=[
+            # NOTE: "English" is a fallback title,
+            # as we don't set lang title in test fixture
+            {"value": "fr", "text": "English"},
+            {"value": "tr", "text": "English"},
+            {"value": "gr", "text": "English"},
+            {"value": "ger", "text": "English"},
+            {"value": "es", "text": "English"},
+        ],
         links=dict(),
         custom_fields={"ui": {}},
     )

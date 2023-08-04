@@ -19,7 +19,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
             identity, fields=["id", "title"], type="languages", max_records=500
         )
 
-        form_languages = {"all": [], "featured": []}
+        language_options = []
 
         for hit in languages.to_dict()["hits"]["hits"]:
             code = hit["id"]
@@ -30,12 +30,9 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
             )
             option = dict(text=label or code, value=code)
 
-            if code in current_oarepo_ui.common_languages:
-                form_languages["featured"].append(option)
+            language_options.append(option)
 
-            form_languages["all"].append(option)
-
-        form_config["vocabularies"]["languages"] = form_languages
+        form_config["vocabularies"]["languages"] = language_options
 
 
 class VocabularyRecordsComponent(ServiceComponent):
