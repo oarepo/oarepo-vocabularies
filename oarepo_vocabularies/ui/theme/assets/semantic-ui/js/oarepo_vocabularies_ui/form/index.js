@@ -6,4 +6,8 @@ export const overriddenComponents = {
   "FormApp.layout": VocabularyForm,
 };
 
+export * from './components'
+export * from './VocabularyForm'
+export * from './VocabularyFormSchema'
+
 createFormAppInit(overriddenComponents);
