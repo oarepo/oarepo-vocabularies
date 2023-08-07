@@ -1,12 +1,13 @@
 import marshmallow as ma
 from flask import current_app
 
-from invenio_i18n.ext import current_i18n
+from oarepo_ui.resources.links import UIRecordLink
 from oarepo_ui.resources.config import RecordsUIResourceConfig
-from invenio_vocabularies.proxies import current_service as vocabulary_service
-from marshmallow_utils.fields.babel import gettext_from_dict
-from oarepo_vocabularies.ui.resources.components import VocabulariesSearchComponent
-
+from oarepo_vocabularies.ui.resources.components import (
+    VocabularyRecordsComponent,
+    DepositVocabularyOptionsComponent,
+)
+from invenio_records_resources.services import pagination_links, Link
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     template_folder = "../templates"
@@ -40,36 +41,22 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
 
-    components = [VocabulariesSearchComponent]
+    components = [VocabularyRecordsComponent, DepositVocabularyOptionsComponent]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
 
-    def languages_config(self, identity):
-        if current_app.config.get("MULTILINGUAL_DISABLED"):
-            return
+    ui_links_item = {
+        "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
+        "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
+    }
 
-        ret = super().languages_config(identity)
-        common_config = current_app.config.get("MULTILINGUAL_COMMON_LANGUAGES", ["en"])
+    @property
+    def ui_links_search(self):
+        return {
+            **pagination_links("{+ui}{+url_prefix}{vocabulary_type}/{?args*}"),
+            "create": Link("{+ui}{+url_prefix}{vocabulary_type}/_new"),
+        }
 
-        languages = vocabulary_service.read_all(
-            identity, fields=["id", "title"], type="languages", max_records=500
-        )
-
-        for hit in languages.to_dict()["hits"]["hits"]:
-            code = hit["id"]
-            label = gettext_from_dict(
-                hit["title"],
-                current_i18n.locale,
-                current_app.config.get("BABEL_DEFAULT_LOCALE", "en"),
-            )
-            option = dict(text=label or code, value=code)
-
-            if code in common_config:
-                ret["common"].append(option)
-
-            ret["all"].append(option)
-
-        return ret
 
     def vocabulary_props_config(self, vocabulary_type):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(

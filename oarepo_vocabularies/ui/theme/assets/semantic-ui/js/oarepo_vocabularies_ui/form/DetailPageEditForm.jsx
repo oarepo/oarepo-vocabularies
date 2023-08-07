@@ -2,28 +2,40 @@ import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
 import { BaseForm, TextField } from "react-invenio-forms";
-import { PublishButton } from "./components/PublishButton";
-import { MultiLingualTextInput } from "./components/MultiLingualTextInput";
-import { PropFieldsComponent } from "./components/PropFieldsComponent";
+import {
+  PublishButton,
+  MultiLingualTextInput,
+  PropFieldsComponent,
+  ResetButton,
+  CurrentLocationInformation,
+} from "./components";
 import { useLocation } from "react-router-dom";
-import { ResetButton } from "./components/ResetButton";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
-import { CurrentLocationInformation } from "./components/CurrentLocationInformation";
-import { useFormConfig } from "@js/oarepo_ui/forms";
 import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
-import { ApiClientInitialized } from "@js/oarepo_ui/api";
-import { ErrorElement } from "@js/oarepo_ui/search";
-import { useMutation } from "@tanstack/react-query";
+import {
+  useOnSubmit,
+  useFormConfig,
+  ErrorElement,
+  RelatedSelectField,
+  submitContextType,
+} from "@js/oarepo_ui";
 
-const removeNullAndUnderscoreProperties = (obj) => {
+const removeNullAndUnderscoreProperties = (values, formik) => {
   return _omitBy(
-    obj,
+    values,
     (value, key) =>
       value === null ||
       (Array.isArray(value) && value.every((item) => item === null)) ||
       key.startsWith("_")
   );
+};
+
+const setVocabularyHierarchy = (parentId) => {
+  return (values, formik) => {
+    if (parentId) values.hierarchy = { parent: parentId };
+    return values
+  };
 };
 
 export const DetailPageEditForm = ({
@@ -36,53 +48,27 @@ export const DetailPageEditForm = ({
   const {
     formConfig: { vocabularyProps },
   } = useFormConfig();
-  const sidebarRef = useRef(null);
+
   const location = useLocation();
-  const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
+  const currentPath = location.pathname;
 
-  const { error: saveError, mutateAsync: saveMutateAsync } = useMutation({
-    mutationFn: async ({ apiCallUrl, editedItem }) =>
-      ApiClientInitialized.saveDraft(apiCallUrl, editedItem),
-  });
-  const { error: createError, mutateAsync: createMutateAsync } = useMutation({
-    mutationFn: async ({ apiCallUrl, newItem }) =>
-      ApiClientInitialized.createDraft(apiCallUrl, newItem),
-  });
-
-  const onSubmit = (values, formik) => {
-    let preparedValues = values;
-    if (newChildItemParentId)
-      preparedValues.hierarchy = { parent: newChildItemParentId };
-
-    if (editMode) {
-      saveMutateAsync({
-        apiCallUrl,
-        editedItem: removeNullAndUnderscoreProperties(preparedValues),
-      })
-        .then(() => {
-          formik.setSubmitting(false);
-          window.location.href = currentPath.replace("/edit", "");
-        })
-        .catch((error) => {
-          formik.setSubmitting(false);
-        });
-    } else {
-      createMutateAsync({
-        apiCallUrl,
-        newItem: removeNullAndUnderscoreProperties(preparedValues),
-      })
-        .then((response) => {
-          formik.setSubmitting(false);
-          console.log("then block");
-          window.location.href = currentPath.replace("_new", values.id);
-        })
-        .catch((error) => {
-          formik.setSubmitting(false);
-        });
+  const { onSubmit, submitError } = useOnSubmit({
+    apiUrl: apiCallUrl,
+    context: editMode ? submitContextType.update : submitContextType.create,
+    onBeforeSubmit: [
+      setVocabularyHierarchy(newChildItemParentId),
+      removeNullAndUnderscoreProperties,
+    ],
+    onSubmitSuccess: (result) => {
+      window.location.href = editMode
+        ? currentPath.replace("/edit", "")
+        : currentPath.replace("_new", result.id)
     }
-  };
+  });
+
+  const sidebarRef = useRef(null);
 
   return (
     <Container>
@@ -112,8 +98,8 @@ export const DetailPageEditForm = ({
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
-            {(saveError?.message || createError?.message) && (
-              <ErrorElement error={saveError || createError} />
+            {(submitError?.message) && (
+              <ErrorElement error={submitError} />
             )}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
