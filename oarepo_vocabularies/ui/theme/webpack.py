@@ -18,6 +18,7 @@ theme = WebpackThemeBundle(
             devDependencies={},
             aliases={
                 "@translations/oarepo_vocabularies_ui": "./translations/oarepo_vocabularies_ui",
+                "@js/oarepo_vocabularies": "js/oarepo_vocabularies_ui",
             },
         )
     },
