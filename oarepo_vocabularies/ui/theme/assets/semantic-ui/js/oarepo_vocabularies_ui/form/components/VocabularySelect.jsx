@@ -1,14 +1,14 @@
 import React from "react";
-import { RelatedSelectField } from "@js/oarepo_ui/forms";
 import { Label, Icon } from "semantic-ui-react";
-import { languageFallback } from "@js/oarepo_ui";
+import { MultilingualString, RelatedSelectField } from "@js/oarepo_ui";
 import _reverse from "lodash/reverse";
+import PropTypes from 'prop-types'
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => ({
     text:
       item.hierarchy.ancestors.length === 0 ? (
-        languageFallback(item.title)
+        <MultilingualString value={item.title} />
       ) : (
         <span>
           <Label>
@@ -20,7 +20,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
             ))}
           </Label>
           <Label color="green" className="ml-3">
-            {languageFallback(item.title)}
+            <MultilingualString value={item.title} />
           </Label>
         </span>
       ),
@@ -29,7 +29,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
   }));
 
 export const VocabularySelect = ({
-  vocabularyType,
+  type,
   fieldPath,
   externalSuggestionApi,
   multiple,
@@ -38,7 +38,7 @@ export const VocabularySelect = ({
   return (
     <RelatedSelectField
       fieldPath={fieldPath}
-      suggestionAPIUrl={`/api/vocabularies/${vocabularyType}`}
+      suggestionAPIUrl={`/api/vocabularies/${type}`}
       externalSuggestionApi={externalSuggestionApi}
       selectOnBlur={false}
       serializeSuggestions={serializeVocabularySuggestions}
@@ -49,7 +49,7 @@ export const VocabularySelect = ({
 };
 
 VocabularySelect.propTypes = {
-  vocabularyType: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
   externalSuggestionApi: PropTypes.string,
   multiple: PropTypes.bool,
