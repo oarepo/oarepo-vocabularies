@@ -4,7 +4,6 @@ import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
 import { BaseForm, TextField } from "react-invenio-forms";
 import {
   PublishButton,
-  MultiLingualTextInput,
   PropFieldsComponent,
   ResetButton,
   CurrentLocationInformation,
@@ -17,7 +16,7 @@ import {
   useOnSubmit,
   useFormConfig,
   ErrorElement,
-  RelatedSelectField,
+  MultiLingualTextInput,
   submitContextType,
 } from "@js/oarepo_ui";
 
@@ -34,7 +33,7 @@ const removeNullAndUnderscoreProperties = (values, formik) => {
 const setVocabularyHierarchy = (parentId) => {
   return (values, formik) => {
     if (parentId) values.hierarchy = { parent: parentId };
-    return values
+    return values;
   };
 };
 
@@ -64,8 +63,8 @@ export const DetailPageEditForm = ({
     onSubmitSuccess: (result) => {
       window.location.href = editMode
         ? currentPath.replace("/edit", "")
-        : currentPath.replace("_new", result.id)
-    }
+        : currentPath.replace("_new", result.id);
+    },
   });
 
   const sidebarRef = useRef(null);
@@ -98,9 +97,7 @@ export const DetailPageEditForm = ({
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
-            {(submitError?.message) && (
-              <ErrorElement error={submitError} />
-            )}
+            {submitError?.message && <ErrorElement error={submitError} />}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>
