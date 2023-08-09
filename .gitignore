@@ -87,5 +87,8 @@ dist
 
 # node modules
 **/*/node_modules
+yarn.lock
+package-lock.json
+
 
 oarepo_vocabularies/ui/theme/assets/semantic-ui/translations/oarepo_vocabularies_ui/yarn.lock
