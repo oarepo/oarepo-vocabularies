@@ -39,7 +39,6 @@ const setVocabularyHierarchy = (parentId) => {
 
 export const DetailPageEditForm = ({
   initialValues,
-  options,
   hasPropFields,
   editMode,
   apiCallUrl,
@@ -92,7 +91,7 @@ export const DetailPageEditForm = ({
           </Grid.Row>
 
           <Grid.Column mobile={16} tablet={16} computer={12}>
-            <MultiLingualTextInput fieldPath="title" options={options} />
+            <MultiLingualTextInput fieldPath="title" />
             <TextField fieldPath="id" label={"ID"} width={11} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
@@ -131,12 +130,4 @@ DetailPageEditForm.propTypes = {
     nameType: PropTypes.string,
   }),
   hasPropFields: PropTypes.bool,
-  options: PropTypes.shape({
-    languages: PropTypes.arrayOf(
-      PropTypes.shape({
-        text: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired,
-      })
-    ),
-  }),
 };
