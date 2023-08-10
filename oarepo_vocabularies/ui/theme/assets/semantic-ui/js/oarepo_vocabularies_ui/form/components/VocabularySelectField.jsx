@@ -17,7 +17,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
       })),
     ];
     return {
-      text: <Breadcrumb key="key" icon="right angle" sections={_reverse(sections)} />,
+      text: <Breadcrumb key={key} icon="right angle" sections={_reverse(sections)} />,
       value: item.id,
       key: key,
     };
