@@ -1,5 +1,5 @@
 import React from "react";
-import { Label, Icon, Breadcrumb } from "semantic-ui-react";
+import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
 import _reverse from "lodash/reverse";
 import _join from "lodash/join";
