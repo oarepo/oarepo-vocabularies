@@ -10,10 +10,10 @@ export const serializeVocabularySuggestions = (suggestions) =>
     const hierarchy = item.hierarchy.ancestors_or_self;
     const key = _join(hierarchy, ".");
     const sections = [
-      ...hierarchy.map((id, index) => ({
+      ...hierarchy.map((id, index, {length}) => ({
         key: id,
         content: <I18nString value={item.hierarchy.title[index]} />,
-        active: index === 0,
+        active: index === 0 && length !== 1,
       })),
     ];
     return {
