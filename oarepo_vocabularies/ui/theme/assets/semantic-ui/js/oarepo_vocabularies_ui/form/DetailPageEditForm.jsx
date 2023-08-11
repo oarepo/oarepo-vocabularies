@@ -7,6 +7,7 @@ import {
   PropFieldsComponent,
   ResetButton,
   CurrentLocationInformation,
+  VocabularyMultilingualInput,
 } from "./components";
 import { useLocation } from "react-router-dom";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
@@ -16,7 +17,6 @@ import {
   useOnSubmit,
   useFormConfig,
   ErrorElement,
-  MultiLingualTextInput,
   submitContextType,
 } from "@js/oarepo_ui";
 
@@ -92,7 +92,7 @@ export const DetailPageEditForm = ({
           </Grid.Row>
 
           <Grid.Column mobile={16} tablet={16} computer={12}>
-            <MultiLingualTextInput fieldPath="title" options={options} />
+            <VocabularyMultilingualInput fieldPath="title" />
             <TextField fieldPath="id" label={"ID"} width={11} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />

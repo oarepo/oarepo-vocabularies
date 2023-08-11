@@ -6,3 +6,4 @@ export * from "./ResetButton";
 export * from "./VocabularyBreadcrumb";
 export * from "./VocabularyBreadcrumbMessage";
 export * from "./VocabularySelect";
+export * from "./VocabularyMultilingualInput";
