@@ -11,7 +11,7 @@ import {
 import { Button, Form, Icon, Popup } from "semantic-ui-react";
 import { useFormikContext, getIn } from "formik";
 import { useFormConfig, array2object, object2array } from "@js/oarepo_ui";
-import { i18next } from "@translations/oarepo_ui/i18next";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 const eliminateUsedLanguages = (excludeIndex, languageOptions, fieldArray) => {
   const currentlySelectedLanguage = fieldArray[excludeIndex].language;
@@ -34,7 +34,7 @@ const PopupComponent = ({ content, trigger }) => (
     trigger={trigger}
   />
 );
-export const MultilingualTextInput = ({
+export const VocabularyMultilingualInput = ({
   fieldPath,
   label,
   labelIcon,
@@ -169,7 +169,7 @@ export const MultilingualTextInput = ({
   );
 };
 
-MultilingualTextInput.propTypes = {
+VocabularyMultilingualInput.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   labelIcon: PropTypes.string,
@@ -181,8 +181,8 @@ MultilingualTextInput.propTypes = {
   richFieldLabel: PropTypes.string,
 };
 
-MultilingualTextInput.defaultProps = {
-  label: "Title",
+VocabularyMultilingualInput.defaultProps = {
+  label: i18next.t("Title"),
   required: undefined,
   emptyNewInput: {
     language: "",
