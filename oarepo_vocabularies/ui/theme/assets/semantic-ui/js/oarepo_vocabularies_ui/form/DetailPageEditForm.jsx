@@ -39,7 +39,6 @@ const setVocabularyHierarchy = (parentId) => {
 
 export const DetailPageEditForm = ({
   initialValues,
-  options,
   hasPropFields,
   editMode,
   apiCallUrl,
@@ -131,12 +130,4 @@ DetailPageEditForm.propTypes = {
     nameType: PropTypes.string,
   }),
   hasPropFields: PropTypes.bool,
-  options: PropTypes.shape({
-    languages: PropTypes.arrayOf(
-      PropTypes.shape({
-        text: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired,
-      })
-    ),
-  }),
 };

@@ -4,14 +4,6 @@ import _has from "lodash/has";
 import _isEmpty from "lodash/isEmpty";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 
-const options = {
-  languages: [
-    { text: "cs", value: "cs" },
-    { text: "en", value: "en" },
-    { text: "de", value: "de" },
-  ],
-};
-
 const VocabularyForm = () => {
   const { record, formConfig } = useFormConfig();
   const { vocabularyProps } = formConfig;
@@ -22,7 +14,6 @@ const VocabularyForm = () => {
   return (
     <DetailPageEditForm
       initialValues={record}
-      options={options}
       hasPropFields={hasPropFields}
       apiCallUrl={apiCallUrl}
       editMode={editMode}
