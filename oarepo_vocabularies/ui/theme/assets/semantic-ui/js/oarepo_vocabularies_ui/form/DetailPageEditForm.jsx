@@ -92,7 +92,7 @@ export const DetailPageEditForm = ({
 
           <Grid.Column mobile={16} tablet={16} computer={12}>
             <VocabularyMultilingualInput fieldPath="title" />
-            <TextField fieldPath="id" label={"ID"} width={11} required />
+            <TextField fieldPath="id" label={"ID"} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}

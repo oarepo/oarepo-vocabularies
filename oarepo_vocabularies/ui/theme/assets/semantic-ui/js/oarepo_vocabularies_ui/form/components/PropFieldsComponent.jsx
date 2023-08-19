@@ -29,7 +29,6 @@ export const PropFieldsComponent = ({ vocabularyProps }) => {
               i18next.t(propField)
             )
           }
-          width={11}
         />
       ))}
     </React.Fragment>

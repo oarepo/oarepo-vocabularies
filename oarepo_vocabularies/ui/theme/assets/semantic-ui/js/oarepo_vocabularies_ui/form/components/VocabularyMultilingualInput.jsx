@@ -6,34 +6,17 @@ import {
   ArrayField,
   FieldLabel,
   SelectField,
-  RichInputField,
 } from "react-invenio-forms";
-import { Button, Form, Icon, Popup } from "semantic-ui-react";
+import { Button, Form, Icon } from "semantic-ui-react";
 import { useFormikContext, getIn } from "formik";
-import { useFormConfig, array2object, object2array } from "@js/oarepo_ui";
+import {
+  array2object,
+  object2array,
+  eliminateUsedLanguages,
+  useVocabularyOptions,
+} from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
-const eliminateUsedLanguages = (excludeIndex, languageOptions, fieldArray) => {
-  const currentlySelectedLanguage = fieldArray[excludeIndex].language;
-  const excludedLanguages = fieldArray.filter(
-    (item) => item.language !== currentlySelectedLanguage && item.language
-  );
-  const remainingLanguages = languageOptions.filter(
-    (option) =>
-      !excludedLanguages.map((item) => item.language).includes(option.value)
-  );
-  return remainingLanguages;
-};
-
-const PopupComponent = ({ content, trigger }) => (
-  <Popup
-    basic
-    inverted
-    position="bottom center"
-    content={content}
-    trigger={trigger}
-  />
-);
 export const VocabularyMultilingualInput = ({
   fieldPath,
   label,
@@ -41,18 +24,10 @@ export const VocabularyMultilingualInput = ({
   required,
   emptyNewInput,
   newItemInitialValue,
-  hasRichInput,
-  editorConfig,
   textFieldLabel,
-  richFieldLabel,
 }) => {
-  const {
-    formConfig: {
-      vocabularies: { languages },
-    },
-  } = useFormConfig();
+  const { options: languages } = useVocabularyOptions("languages");
 
-  // to have only property with _ for internal multilignaul field i.e. if used inside another component in previous implementation, it would start to set the main object property instead of the internal _ representation
   const placeholderFieldPath = useMemo(() => {
     return fieldPath
       .split(".")
@@ -61,6 +36,7 @@ export const VocabularyMultilingualInput = ({
       )
       .join(".");
   }, [fieldPath]);
+
   const { setFieldValue, values } = useFormikContext();
   useEffect(() => {
     if (!getIn(values, placeholderFieldPath)) {
@@ -80,7 +56,7 @@ export const VocabularyMultilingualInput = ({
 
   return (
     <ArrayField
-      addButtonLabel="Add another language"
+      addButtonLabel={i18next.t("Add another language")}
       defaultNewValue={emptyNewInput}
       fieldPath={placeholderFieldPath}
       label={
@@ -101,66 +77,33 @@ export const VocabularyMultilingualInput = ({
           <GroupField optimized>
             <Form.Field width={3}>
               <SelectField
-                // necessary because otherwise other inputs are not rerendered and keep the previous state i.e. I could potentially choose two same languages in some scenarios
-                key={availableOptions}
+                key={availableOptions.length}
                 clearable
                 fieldPath={`${fieldPathPrefix}.language`}
-                label="Language"
+                label={i18next.t("Language")}
                 optimized
                 options={availableOptions}
                 required={required}
                 selectOnBlur={false}
               />
-              {indexPath > 0 && hasRichInput && (
-                <PopupComponent
-                  content={i18next.t("Remove description")}
-                  trigger={
-                    <Button
-                      aria-label="remove field"
-                      className="rel-mt-1"
-                      icon
-                      onClick={() => arrayHelpers.remove(indexPath)}
-                      fluid
-                    >
-                      <Icon name="close" />
-                    </Button>
-                  }
-                />
-              )}
             </Form.Field>
-
-            {hasRichInput ? (
-              <Form.Field width={13}>
-                <RichInputField
-                  fieldPath={`${fieldPathPrefix}.name`}
-                  label={richFieldLabel}
-                  editorConfig={editorConfig}
-                  optimized
-                  required={required}
-                />
+            <TextField
+              fieldPath={`${fieldPathPrefix}.name`}
+              label={textFieldLabel}
+              required={required}
+              width={13}
+            />
+            {indexPath > 0 && (
+              <Form.Field style={{ marginTop: "1.75rem" }}>
+                <Button
+                  aria-label={i18next.t("Remove field")}
+                  className="close-btn"
+                  icon
+                  onClick={() => arrayHelpers.remove(indexPath)}
+                >
+                  <Icon name="close" />
+                </Button>
               </Form.Field>
-            ) : (
-              <TextField
-                fieldPath={`${fieldPathPrefix}.name`}
-                label={textFieldLabel}
-                required={required}
-                width={13}
-                icon={
-                  indexPath > 0 ? (
-                    <PopupComponent
-                      content={i18next.t("Remove field")}
-                      trigger={
-                        <Button
-                          className="rel-ml-1"
-                          onClick={() => arrayHelpers.remove(indexPath)}
-                        >
-                          <Icon fitted name="close" />
-                        </Button>
-                      }
-                    />
-                  ) : null
-                }
-              />
             )}
           </GroupField>
         );
@@ -175,10 +118,7 @@ VocabularyMultilingualInput.propTypes = {
   labelIcon: PropTypes.string,
   required: PropTypes.bool,
   newItemInitialValue: PropTypes.object,
-  hasRichInput: PropTypes.bool,
-  editorConfig: PropTypes.object,
   textFieldLabel: PropTypes.string,
-  richFieldLabel: PropTypes.string,
 };
 
 VocabularyMultilingualInput.defaultProps = {
@@ -189,21 +129,5 @@ VocabularyMultilingualInput.defaultProps = {
     name: "",
   },
   newItemInitialValue: { cs: "" },
-  hasRichInput: false,
-  editorConfig: {
-    removePlugins: [
-      "Image",
-      "ImageCaption",
-      "ImageStyle",
-      "ImageToolbar",
-      "ImageUpload",
-      "MediaEmbed",
-      "Table",
-      "TableToolbar",
-      "TableProperties",
-      "TableCellProperties",
-    ],
-  },
   textFieldLabel: i18next.t("Name"),
-  richFieldLabel: i18next.t("Description"),
 };
