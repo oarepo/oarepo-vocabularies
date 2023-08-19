@@ -1,14 +1,14 @@
 import React from "react";
 import { Label, Icon } from "semantic-ui-react";
-import { MultilingualString, RelatedSelectField } from "@js/oarepo_ui";
+import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
 import _reverse from "lodash/reverse";
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => ({
     text:
       item.hierarchy.ancestors.length === 0 ? (
-        <MultilingualString value={item.title} />
+        <I18nString value={item.title} />
       ) : (
         <span>
           <Label>
