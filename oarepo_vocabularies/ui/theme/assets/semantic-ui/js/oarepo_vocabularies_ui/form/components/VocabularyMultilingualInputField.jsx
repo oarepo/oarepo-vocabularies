@@ -43,14 +43,14 @@ export const VocabularyMultilingualInputField = ({
       setFieldValue(
         placeholderFieldPath,
         getIn(values, fieldPath)
-          ? object2array(getIn(values, fieldPath, ""), "language", "name")
-          : object2array(newItemInitialValue, "language", "name")
+          ? object2array(getIn(values, fieldPath, ""), "lang", "name")
+          : object2array(newItemInitialValue, "lang", "name")
       );
       return;
     }
     setFieldValue(
       fieldPath,
-      array2object(getIn(values, placeholderFieldPath), "language", "name")
+      array2object(getIn(values, placeholderFieldPath), "lang", "name")
     );
   }, [values[placeholderFieldPath]]);
 
@@ -76,8 +76,8 @@ export const VocabularyMultilingualInputField = ({
         return (
           <GroupField optimized>
             <LanguageSelectField
-              key={`${availableOptions.length}`}
-              fieldPath={`${fieldPathPrefix}.language`}
+              key={availableOptions.length}
+              fieldPath={`${fieldPathPrefix}.lang`}
               placeholder=""
               required
               optimized
