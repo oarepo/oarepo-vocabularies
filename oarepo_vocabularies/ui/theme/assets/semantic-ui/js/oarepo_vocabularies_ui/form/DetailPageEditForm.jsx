@@ -7,7 +7,7 @@ import {
   PropFieldsComponent,
   ResetButton,
   CurrentLocationInformation,
-  VocabularyMultilingualInput,
+  VocabularyMultilingualInputField,
 } from "./components";
 import { useLocation } from "react-router-dom";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
@@ -91,7 +91,7 @@ export const DetailPageEditForm = ({
           </Grid.Row>
 
           <Grid.Column mobile={16} tablet={16} computer={12}>
-            <VocabularyMultilingualInput fieldPath="title" />
+            <VocabularyMultilingualInputField fieldPath="title" />
             <TextField fieldPath="id" label={"ID"} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />

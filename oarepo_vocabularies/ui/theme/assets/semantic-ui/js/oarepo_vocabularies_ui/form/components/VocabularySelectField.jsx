@@ -1,34 +1,30 @@
 import React from "react";
-import { Label, Icon } from "semantic-ui-react";
+import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
 import _reverse from "lodash/reverse";
+import _join from "lodash/join";
 import PropTypes from "prop-types";
 
 export const serializeVocabularySuggestions = (suggestions) =>
-  suggestions.map((item) => ({
-    text:
-      item.hierarchy.ancestors.length === 0 ? (
-        <I18nString value={item.title} />
-      ) : (
-        <span>
-          <Label>
-            {_reverse(item.hierarchy.ancestors).map((ancestor) => (
-              <React.Fragment key={ancestor}>
-                {ancestor}{" "}
-                <Icon size="small" name="arrow right" className="ml-3" />
-              </React.Fragment>
-            ))}
-          </Label>
-          <Label color="green" className="ml-3">
-            <MultilingualString value={item.title} />
-          </Label>
-        </span>
-      ),
-    value: item.id,
-    key: item.id,
-  }));
+  suggestions.map((item) => {
+    const hierarchy = item.hierarchy.ancestors_or_self;
+    const key = _join(hierarchy, ".");
+    const sections = [
+      ...hierarchy.map((id, index, {length}) => ({
+        key: id,
+        content: <I18nString value={item.hierarchy.title[index]} />,
+        active: index === 0 && length !== 1,
+      })),
+    ];
+    return {
+      text: <Breadcrumb key={key} icon="right angle" sections={_reverse(sections)} />,
+      value: item.id,
+      key: key,
+    };
+  });
 
-export const VocabularySelect = ({
+
+export const VocabularySelectField = ({
   type,
   fieldPath,
   externalSuggestionApi,
@@ -48,13 +44,17 @@ export const VocabularySelect = ({
   );
 };
 
-VocabularySelect.propTypes = {
+VocabularySelectField.propTypes = {
   type: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
   externalSuggestionApi: PropTypes.string,
   multiple: PropTypes.bool,
 };
 
-VocabularySelect.defaultProps = {
+VocabularySelectField.defaultProps = {
   multiple: false,
+  suggestionAPIHeaders: {
+    // TODO: remove after #BE-96 gets resolved
+    Accept: "application/json",
+  },
 };
