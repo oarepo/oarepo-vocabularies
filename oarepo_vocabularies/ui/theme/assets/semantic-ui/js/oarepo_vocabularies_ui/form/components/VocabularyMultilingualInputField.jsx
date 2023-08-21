@@ -5,7 +5,6 @@ import {
   GroupField,
   ArrayField,
   FieldLabel,
-  SelectField,
 } from "react-invenio-forms";
 import { Button, Form, Icon } from "semantic-ui-react";
 import { useFormikContext, getIn } from "formik";
@@ -14,10 +13,11 @@ import {
   object2array,
   eliminateUsedLanguages,
   useVocabularyOptions,
+  LanguageSelectField,
 } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
-export const VocabularyMultilingualInput = ({
+export const VocabularyMultilingualInputField = ({
   fieldPath,
   label,
   labelIcon,
@@ -26,7 +26,7 @@ export const VocabularyMultilingualInput = ({
   newItemInitialValue,
   textFieldLabel,
 }) => {
-  const { options: languages } = useVocabularyOptions("languages");
+  const { options: allLanguages } = useVocabularyOptions("languages");
 
   const placeholderFieldPath = useMemo(() => {
     return fieldPath
@@ -69,24 +69,22 @@ export const VocabularyMultilingualInput = ({
 
         const availableOptions = eliminateUsedLanguages(
           indexPath,
-          languages,
+          allLanguages,
           array
         );
 
         return (
           <GroupField optimized>
-            <Form.Field width={3}>
-              <SelectField
-                key={availableOptions.length}
-                clearable
-                fieldPath={`${fieldPathPrefix}.language`}
-                label={i18next.t("Language")}
-                optimized
-                options={availableOptions}
-                required={required}
-                selectOnBlur={false}
-              />
-            </Form.Field>
+            <LanguageSelectField
+              key={`${availableOptions.length}`}
+              fieldPath={`${fieldPathPrefix}.language`}
+              placeholder=""
+              required
+              optimized
+              clearable
+              options={availableOptions}
+              width={3}
+            />
             <TextField
               fieldPath={`${fieldPathPrefix}.name`}
               label={textFieldLabel}
@@ -112,7 +110,7 @@ export const VocabularyMultilingualInput = ({
   );
 };
 
-VocabularyMultilingualInput.propTypes = {
+VocabularyMultilingualInputField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   labelIcon: PropTypes.string,
@@ -121,7 +119,7 @@ VocabularyMultilingualInput.propTypes = {
   textFieldLabel: PropTypes.string,
 };
 
-VocabularyMultilingualInput.defaultProps = {
+VocabularyMultilingualInputField.defaultProps = {
   label: i18next.t("Title"),
   required: undefined,
   emptyNewInput: {

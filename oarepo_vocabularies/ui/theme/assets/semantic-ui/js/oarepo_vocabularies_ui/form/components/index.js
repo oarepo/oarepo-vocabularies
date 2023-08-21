@@ -1,6 +1,5 @@
 export * from './CurrentLocationInformation'
 export * from './FormikStateLogger'
-export * from './MultiLingualTextInput'
 export * from './PropFieldsComponent'
 export * from './PublishButton'
 export * from './ResetButton'
