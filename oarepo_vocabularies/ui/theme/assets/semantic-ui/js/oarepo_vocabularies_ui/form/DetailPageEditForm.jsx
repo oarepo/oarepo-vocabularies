@@ -4,10 +4,10 @@ import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
 import { BaseForm, TextField } from "react-invenio-forms";
 import {
   PublishButton,
-  MultiLingualTextInput,
   PropFieldsComponent,
   ResetButton,
   CurrentLocationInformation,
+  VocabularyMultilingualInputField,
 } from "./components";
 import { useLocation } from "react-router-dom";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
@@ -17,7 +17,6 @@ import {
   useOnSubmit,
   useFormConfig,
   ErrorElement,
-  RelatedSelectField,
   submitContextType,
 } from "@js/oarepo_ui";
 
@@ -34,13 +33,12 @@ const removeNullAndUnderscoreProperties = (values, formik) => {
 const setVocabularyHierarchy = (parentId) => {
   return (values, formik) => {
     if (parentId) values.hierarchy = { parent: parentId };
-    return values
+    return values;
   };
 };
 
 export const DetailPageEditForm = ({
   initialValues,
-  options,
   hasPropFields,
   editMode,
   apiCallUrl,
@@ -64,8 +62,8 @@ export const DetailPageEditForm = ({
     onSubmitSuccess: (result) => {
       window.location.href = editMode
         ? currentPath.replace("/edit", "")
-        : currentPath.replace("_new", result.id)
-    }
+        : currentPath.replace("_new", result.id);
+    },
   });
 
   const sidebarRef = useRef(null);
@@ -93,14 +91,12 @@ export const DetailPageEditForm = ({
           </Grid.Row>
 
           <Grid.Column mobile={16} tablet={16} computer={12}>
-            <MultiLingualTextInput fieldPath="title" options={options} />
-            <TextField fieldPath="id" label={"ID"} width={11} required />
+            <VocabularyMultilingualInputField fieldPath="title" />
+            <TextField fieldPath="id" label={"ID"} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
-            {(submitError?.message) && (
-              <ErrorElement error={submitError} />
-            )}
+            {submitError?.message && <ErrorElement error={submitError} />}
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>
@@ -134,12 +130,4 @@ DetailPageEditForm.propTypes = {
     nameType: PropTypes.string,
   }),
   hasPropFields: PropTypes.bool,
-  options: PropTypes.shape({
-    languages: PropTypes.arrayOf(
-      PropTypes.shape({
-        text: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired,
-      })
-    ),
-  }),
 };
