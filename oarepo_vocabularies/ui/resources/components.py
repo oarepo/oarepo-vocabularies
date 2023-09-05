@@ -60,10 +60,11 @@ class VocabularyRecordsComponent(ServiceComponent):
             initial_filters=[["h-parent", record["id"]]],
         )
         search_config = partial(resource.config.search_app_config, **search_options)
-        extra_context.setdefault("search_app_config", search_config)
-        extra_context["vocabularyProps"] = resource.config.vocabulary_props_config(
-            vocabulary_type
+        extra_context.setdefault(
+            "search_app_config",
+            search_config
         )
+        extra_context['vocabularyProps'] = resource.config.vocabulary_props_config(vocabulary_type)
 
     def before_ui_edit(self, *, form_config, resource, record, view_args, **kwargs):
         vocabulary_type = view_args["vocabulary_type"]

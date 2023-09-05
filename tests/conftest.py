@@ -443,7 +443,6 @@ def fake_manifest(app):
     )
 
 
-
 @pytest.fixture
 def vocabularies_ui_resource_config(app):
     class Cfg(InvenioVocabulariesUIResourceConfig):

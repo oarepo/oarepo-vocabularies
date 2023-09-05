@@ -48,7 +48,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     def edit(self):
         return super().edit()
 
-    def _get_record(self, resource_requestctx):
+    def _get_record(self, resource_requestctx, allow_draft=False):
         return self.api_service.read(
             g.identity,
             (
