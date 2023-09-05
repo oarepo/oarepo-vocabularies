@@ -4,9 +4,8 @@ from invenio_records_resources.resources.records.resource import (
     request_read_args,
     request_view_args,
 )
-from oarepo_ui.resources.resource import RecordsUIResource
 from invenio_records_resources.services import LinksTemplate
-
+from oarepo_ui.resources.resource import RecordsUIResource
 
 request_vocabulary_args = request_parser(
     from_conf("request_vocabulary_type_args"), location="view_args"
