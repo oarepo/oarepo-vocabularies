@@ -1,15 +1,16 @@
 from functools import partial
+
 from flask import current_app
 from invenio_i18n.ext import current_i18n
-
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow_utils.fields.babel import gettext_from_dict
-from oarepo_ui.proxies import current_oarepo_ui
 
 
 class DepositVocabularyOptionsComponent(ServiceComponent):
-    def form_config(self, *, form_config, resource, record, view_args, identity, **kwargs):
+    def form_config(
+        self, *, form_config, resource, record, view_args, identity, **kwargs
+    ):
         form_config.setdefault("vocabularies", {})
 
         if current_app.config.get("VOCABULARIES_LANGUAGES_DISABLED"):
@@ -84,5 +85,3 @@ class VocabularyRecordsComponent(ServiceComponent):
         form_config[
             "createUrl"
         ] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
-
-

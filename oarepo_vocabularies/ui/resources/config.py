@@ -1,13 +1,14 @@
 import marshmallow as ma
 from flask import current_app
-
-from oarepo_ui.resources.links import UIRecordLink
+from invenio_records_resources.services import Link, pagination_links
 from oarepo_ui.resources.config import RecordsUIResourceConfig
+from oarepo_ui.resources.links import UIRecordLink
+
 from oarepo_vocabularies.ui.resources.components import (
-    VocabularyRecordsComponent,
     DepositVocabularyOptionsComponent,
+    VocabularyRecordsComponent,
 )
-from invenio_records_resources.services import pagination_links, Link
+
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     template_folder = "../templates"
@@ -56,7 +57,6 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
             **pagination_links("{+ui}{+url_prefix}{vocabulary_type}/{?args*}"),
             "create": Link("{+ui}{+url_prefix}{vocabulary_type}/_new"),
         }
-
 
     def vocabulary_props_config(self, vocabulary_type):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(

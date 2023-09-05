@@ -16,9 +16,11 @@ import shutil
 import sys
 from pathlib import Path
 
+from oarepo_vocabularies.ui.resources.components import (
+    DepositVocabularyOptionsComponent,
+)
 from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
 from oarepo_vocabularies.ui.resources.resource import InvenioVocabulariesUIResource
-from oarepo_vocabularies.ui.resources.components import DepositVocabularyOptionsComponent
 
 # Monkey patch Werkzeug 2.1, needed to import flask_security.login_user
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
@@ -441,7 +443,6 @@ def fake_manifest(app):
     shutil.copy(
         Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
     )
-
 
 
 @pytest.fixture

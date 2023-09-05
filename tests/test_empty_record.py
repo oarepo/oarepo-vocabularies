@@ -1,8 +1,5 @@
 from flask_resources.context import ResourceRequestCtx
 
-from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
-from oarepo_vocabularies.ui.resources.resource import InvenioVocabulariesUIResource
-
 
 def test_empty_record(app, vocabularies_ui_resource, vocabularies_ui_resource_config):
     ctx = ResourceRequestCtx(vocabularies_ui_resource_config)
