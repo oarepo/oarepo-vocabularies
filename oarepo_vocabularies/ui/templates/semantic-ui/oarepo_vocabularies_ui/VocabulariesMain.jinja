@@ -1,0 +1,38 @@
+{#def metadata, ui, layout, url_prefix, record #}
+
+<h1 style="margin-bottom: 1em; margin-top: 1em">{{metadata.title}}</h1>
+<dl class="ui very basic table">
+  <dt>{{ _('vocabulary.vocabulary') }}</dt>
+  <dd>
+    <a href="/vocabularies/{{metadata.type}}">{{ _("vocabulary." + metadata.type) }}</a>
+  </dd>
+  {% for l in (metadata.nonpreferredLabels or []) %} {% if l.en %}
+  <dt>{{_("vocabulary.nonpreferredLabels_en")}}</dt>
+  <dd>{{l.en}}</dd>
+  {% endif %} {% endfor %} {% for l in (metadata.nonpreferredLabels or []) %} {% if
+  l.cs %}
+  <dt>{{_("vocabulary.nonpreferredLabels_cs")}}</dt>
+  <dd>{{l.cs}}</dd>
+  {% endif %} {% endfor %} {% for prop, val in (metadata.props or {}).items() %}
+  <dt>{{_("vocabulary." + prop)}}</dt>
+  <dd>{{val}}</dd>
+  {% endfor %}
+  <Field label={_('Created')}>{{metadata.created}}</Field>
+  <Field label={_('Updated')}>{{metadata.updated}}</Field>
+  {% if 'hint' in metadata
+  and metadata.hint.cs %}
+  <dt>{{_("vocabulary.hint_cs")}}</dt>
+  <dd>{{metadata.hint.cs}}</dd>
+  {% endif %} {% if 'hint' in metadata and metadata.hint.en %}
+  <dt>{{_("vocabulary.hint_en")}}</dt>
+  <dd>{{metadata.hint.en}}</dd>
+  {% endif %} {% if metadata.relatedURI %} {% for t in metadata.relatedURI.items() %}
+  <dt>{{_("vocabulary.relatedURI_" + t.0)}}</dt>
+  <dd>{{t.1}}</dd>
+  {% endfor %} {% endif %}
+</dl>
+<div class="ui center aligned container">
+  {#descendants #} {% block record_descendants %}
+
+  {% endblock record_descendants%}
+</div>

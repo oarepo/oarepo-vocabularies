@@ -1,0 +1,27 @@
+
+{#def metadata, ui, layout, url_prefix, record, extra_context #}
+{% extends "oarepo_ui/detail.html" %}
+{%- set title = metadata.title ~ " | " ~ _("Vocabulary Detail") %}
+
+{%- block head_links %}
+{{ super() }}
+{{ webpack['oarepo_vocabularies_ui_components.css'] }}
+{%- endblock %}
+
+{% block record_main_content %}
+<VocabulariesMain metadata={metadata} ui={ui} layout={layout} url_prefix={url_prefix} record={record}></VocabulariesMain>
+{% endblock record_main_content %}
+
+{% block page_body %}
+  {{ super() }}
+  <div class="ui center aligned container">
+ {% block vocabulary_descendants %}
+
+    {% endblock vocabulary_descendants %}
+  </div>
+{% endblock page_body %}
+
+{%- block javascript %}
+{{webpack["oarepo_vocabularies_detail.js"] }}
+{{webpack['oarepo_vocabularies_ui_components.js']}}
+{%- endblock%}

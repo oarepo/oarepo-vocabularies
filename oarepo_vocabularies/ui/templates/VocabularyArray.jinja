@@ -1,0 +1,6 @@
+{#def vocabulary, url_prefix, searchFacet, vocabulary_type #}
+{% for voc in vocabulary %}
+
+<VocabularyItem vocabulary={voc} url_prefix={url_prefix} searchFacet={searchFacet} vocabulary_type={vocabulary_type}></VocabularyItem>
+
+{% endfor %}
