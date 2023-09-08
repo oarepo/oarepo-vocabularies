@@ -2,6 +2,7 @@ exclude tests/*
 recursive-include oarepo_vocabularies *.yaml
 recursive-include oarepo_vocabularies *.json
 recursive-include oarepo_vocabularies *.html
+recursive-include oarepo_vocabularies *.jinja
 recursive-include oarepo_vocabularies *.jinja2
 recursive-include oarepo_vocabularies *.less
 recursive-include oarepo_vocabularies *.js

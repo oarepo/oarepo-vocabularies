@@ -1,0 +1,15 @@
+{#def vocabulary, url_prefix, searchFacet, vocabulary_type #}
+{% set vocabulary_dict = vocabulary | to_dict %}
+
+{% set definitionLink = "/vocabularies/" ~ vocabulary_type ~ "/" ~ vocabulary_dict.id %}
+{% set title = vocabulary_dict.title ~ ": " ~ _("Find more records with this vocabulary term") %}
+<DefinitionLink  href={definitionLink}> </DefinitionLink>
+
+{% set data = {
+    "value": vocabulary_dict.id,
+    "title": title,
+    "label": vocabulary_dict.title
+} %}
+<SearchLink url_prefix={url_prefix} className="search link" searchFacet={searchFacet} data = {data}>
+</SearchLink>
+

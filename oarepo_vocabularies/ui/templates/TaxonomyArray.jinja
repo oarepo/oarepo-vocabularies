@@ -1,0 +1,5 @@
+{#def taxonomy, url_prefix, searchFacet #}
+{% for tax in taxonomy %}
+<TaxonomyItem taxonomy={tax} url_prefix={url_prefix} searchFacet={searchFacet}></TaxonomyItem>
+
+{% endfor %}

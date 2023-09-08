@@ -22,11 +22,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
     templates = {
         "detail": {
-            "layout": "oarepo_vocabularies_ui/detail.html",
+            "layout": "oarepo_vocabularies_ui/VocabulariesDetail.jinja",
             "blocks": {
-                "record_main_content": "oarepo_vocabularies_ui/main.html",
-                "record_sidebar": "oarepo_vocabularies_ui/sidebar.html",
-                "vocabulary_descendants": "oarepo_vocabularies_ui/descendants.html",
+                "record_sidebar": "VocabulariesSidebar",
             },
         },
         "search": {"layout": "oarepo_vocabularies_ui/search.html"},

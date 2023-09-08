@@ -1,0 +1,23 @@
+{#def taxonomy, url_prefix, searchFacet #}
+{% set taxonomy_dict = taxonomy | to_dict %}
+
+<div class="ui breadcrumb">
+  {%- for title in taxonomy_dict.hierarchy.title -%}
+      {% set id = taxonomy_dict.id if loop.first else taxonomy_dict.hierarchy.ancestors[loop.index-2] %}
+      {% set definitionLink = "/vocabularies/" ~ taxonomy_dict.type ~ "/" ~ id %}
+      <DefinitionLink  href={definitionLink}> </DefinitionLink>
+      {% set _title = title ~ ": " ~ _("Find more records with this vocabulary term") %}
+      {% set data = {
+        "value": id,
+        "title": _title,
+        "label": title
+        } %}
+        <SearchLink url_prefix={url_prefix} className="search_link" searchFacet={searchFacet} data = {data}>
+        </SearchLink>
+    {%- if not loop.last -%}
+      <span class="divider"><i class="left chevron green icon divider"></i></span>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+
