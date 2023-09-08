@@ -1,7 +1,7 @@
 {#def record, extra_context #}
 
 <div style=" margin-top: 2em">
-<a href={{ record.links.ui_links["edit"] }}><button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button></a>
+<a href={{ record.extra_links.ui_links["edit"] }}><button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button></a>
 {%if extra_context.vocabularyProps["hierarchical"] == True%}
   <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
   <a href={{ record['links']['api_links']['vocabulary'].replace('/api', '') ~ '/_new?h-parent=' ~ record['id'] }}>
@@ -57,5 +57,5 @@
 
 <section aria-label="API" class="ui segment">
   <h2 class="ui small header">{{_('API')}} {{_('Links')}}</h2>
-  <SidebarLinks links={record.links.api_links}></SidebarLinks>
+  <SidebarLinks links={record.links}></SidebarLinks>
 </section>
