@@ -1,4 +1,4 @@
-{#def taxonomy, url_prefix, searchFacet #}
+{#def taxonomy, search_link, searchFacet #}
 {% set taxonomy_dict = taxonomy | to_dict %}
 
 <div class="ui breadcrumb">
@@ -12,7 +12,7 @@
         "title": _title,
         "label": title
         } %}
-        <SearchLink url_prefix={url_prefix} className="search_link" searchFacet={searchFacet} data = {data}>
+        <SearchLink search_link={search_link} className="search_link" searchFacet={searchFacet} data = {data}>
         </SearchLink>
     {%- if not loop.last -%}
       <span class="divider"><i class="left chevron green icon divider"></i></span>
