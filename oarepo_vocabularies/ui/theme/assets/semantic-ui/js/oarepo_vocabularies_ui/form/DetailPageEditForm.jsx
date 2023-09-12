@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
-import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
-import { BaseForm, TextField } from "react-invenio-forms";
+import { Container, Grid, Sticky, Ref, Card } from "semantic-ui-react";
+import { TextField } from "react-invenio-forms";
 import {
   PublishButton,
   PropFieldsComponent,
@@ -12,7 +12,7 @@ import {
 import { useLocation } from "react-router-dom";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
 import Overridable from "react-overridable";
-import { useFormConfig, FormFeedback, FormikStateLogger } from "@js/oarepo_ui";
+import { useFormConfig, FormFeedback, BaseForm } from "@js/oarepo_ui";
 
 export const DetailPageEditForm = ({
   initialValues,
@@ -32,7 +32,7 @@ export const DetailPageEditForm = ({
   return (
     <Container>
       <BaseForm
-        // onSubmit={onSubmit}
+        onSubmit={() => {}}
         formik={{
           initialValues: initialValues,
           validationSchema: VocabularyFormSchema,
@@ -51,25 +51,32 @@ export const DetailPageEditForm = ({
             </Grid.Column>
           </Grid.Row>
 
-          <Grid.Column mobile={16} tablet={16} computer={12}>
+          <Grid.Column mobile={16} tablet={16} computer={11}>
             <VocabularyMultilingualInputField fieldPath="title" />
             <TextField fieldPath="id" label={"ID"} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
             <FormFeedback />
-            <FormikStateLogger />
           </Grid.Column>
-          <Ref innerRef={sidebarRef}>
-            <Grid.Column mobile={16} tablet={16} computer={4}>
+          <Ref innerRef={sidebarRef} className="rel-mt-3">
+            <Grid.Column mobile={16} tablet={16} computer={5}>
               <Sticky context={sidebarRef} offset={20}>
                 <Overridable id="FormApp.buttons">
-                  <React.Fragment>
-                    <PublishButton
-                      newChildItemParentId={newChildItemParentId}
-                    />
-                    <ResetButton />
-                  </React.Fragment>
+                  <Card fluid>
+                    <Card.Content>
+                      <Grid>
+                        <Grid.Column width={16}>
+                          <PublishButton
+                            newChildItemParentId={newChildItemParentId}
+                          />
+                        </Grid.Column>
+                        <Grid.Column width={16}>
+                          <ResetButton />
+                        </Grid.Column>
+                      </Grid>
+                    </Card.Content>
+                  </Card>
                 </Overridable>
               </Sticky>
             </Grid.Column>
