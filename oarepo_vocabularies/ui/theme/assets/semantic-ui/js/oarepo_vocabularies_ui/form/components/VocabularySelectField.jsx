@@ -10,19 +10,24 @@ export const serializeVocabularySuggestions = (suggestions) =>
     const hierarchy = item.hierarchy.ancestors_or_self;
     const key = _join(hierarchy, ".");
     const sections = [
-      ...hierarchy.map((id, index, {length}) => ({
+      ...hierarchy.map((id, index, { length }) => ({
         key: id,
         content: <I18nString value={item.hierarchy.title[index]} />,
         active: index === 0 && length !== 1,
       })),
     ];
     return {
-      text: <Breadcrumb key={key} icon="right angle" sections={_reverse(sections)} />,
+      text: (
+        <Breadcrumb
+          key={key}
+          icon="right angle"
+          sections={_reverse(sections)}
+        />
+      ),
       value: item.id,
       key: key,
     };
   });
-
 
 export const VocabularySelectField = ({
   type,

@@ -9,13 +9,11 @@ const VocabularyForm = () => {
   const { vocabularyProps } = formConfig;
   const editMode = _has(formConfig, "updateUrl");
   const hasPropFields = !_isEmpty(vocabularyProps);
-  const apiCallUrl = editMode ? formConfig.updateUrl : formConfig.createUrl;
 
   return (
     <DetailPageEditForm
       initialValues={record}
       hasPropFields={hasPropFields}
-      apiCallUrl={apiCallUrl}
       editMode={editMode}
     />
   );

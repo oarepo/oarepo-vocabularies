@@ -11,37 +11,13 @@ import {
 } from "./components";
 import { useLocation } from "react-router-dom";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
-import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
-import {
-  useOnSubmit,
-  useFormConfig,
-  ErrorElement,
-  submitContextType,
-} from "@js/oarepo_ui";
-
-const removeNullAndUnderscoreProperties = (values, formik) => {
-  return _omitBy(
-    values,
-    (value, key) =>
-      value === null ||
-      (Array.isArray(value) && value.every((item) => item === null)) ||
-      key.startsWith("_")
-  );
-};
-
-const setVocabularyHierarchy = (parentId) => {
-  return (values, formik) => {
-    if (parentId) values.hierarchy = { parent: parentId };
-    return values;
-  };
-};
+import { useFormConfig, FormFeedback, FormikStateLogger } from "@js/oarepo_ui";
 
 export const DetailPageEditForm = ({
   initialValues,
   hasPropFields,
   editMode,
-  apiCallUrl,
 }) => {
   const {
     formConfig: { vocabularyProps },
@@ -50,28 +26,13 @@ export const DetailPageEditForm = ({
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-  const currentPath = location.pathname;
-
-  const { onSubmit, submitError } = useOnSubmit({
-    apiUrl: apiCallUrl,
-    context: editMode ? submitContextType.update : submitContextType.create,
-    onBeforeSubmit: [
-      setVocabularyHierarchy(newChildItemParentId),
-      removeNullAndUnderscoreProperties,
-    ],
-    onSubmitSuccess: (result) => {
-      window.location.href = editMode
-        ? currentPath.replace("/edit", "")
-        : currentPath.replace("_new", result.id);
-    },
-  });
 
   const sidebarRef = useRef(null);
 
   return (
     <Container>
       <BaseForm
-        onSubmit={onSubmit}
+        // onSubmit={onSubmit}
         formik={{
           initialValues: initialValues,
           validationSchema: VocabularyFormSchema,
@@ -96,14 +57,17 @@ export const DetailPageEditForm = ({
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
-            {submitError?.message && <ErrorElement error={submitError} />}
+            <FormFeedback />
+            <FormikStateLogger />
           </Grid.Column>
           <Ref innerRef={sidebarRef}>
             <Grid.Column mobile={16} tablet={16} computer={4}>
               <Sticky context={sidebarRef} offset={20}>
                 <Overridable id="FormApp.buttons">
                   <React.Fragment>
-                    <PublishButton />
+                    <PublishButton
+                      newChildItemParentId={newChildItemParentId}
+                    />
                     <ResetButton />
                   </React.Fragment>
                 </Overridable>
@@ -115,11 +79,6 @@ export const DetailPageEditForm = ({
     </Container>
   );
 };
-
-const TitlePropType = PropTypes.shape({
-  language: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-});
 
 DetailPageEditForm.propTypes = {
   initialValues: PropTypes.shape({
