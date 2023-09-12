@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { useVocabularyApiClient } from "../hooks";
+import { useVocabularyApiClient } from "@js/oarepo_vocabularies";
 
 export const PublishButton = ({ newChildItemParentId }) => {
   const { isSubmitting, createOrUpdate } =

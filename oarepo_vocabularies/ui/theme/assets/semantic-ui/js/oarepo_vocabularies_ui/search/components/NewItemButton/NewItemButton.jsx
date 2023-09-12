@@ -4,7 +4,7 @@ import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const NewItemButton = () => {
-  const {ui_links} = useContext(SearchConfigurationContext);
+  const { ui_links } = useContext(SearchConfigurationContext);
   return (
     <Button
       as="a"
