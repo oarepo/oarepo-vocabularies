@@ -17,12 +17,16 @@
   "multipleSameLanguagesError": "Nesmíte mít dva stejné jazyky",
   "invalidLengthError": "Musí mít přesně {{length}} znaků",
   "notANumberError": "Musí obsahovat pouze čísla",
-  "totalDescendants_one": "1 podřízená položka",
-  "totalDescendants_few": "{{count}} podřízené položky",
-  "totalDescendants_other": "{{count}} podřízených položek",
   "hide": "Skrýt",
   "show": "Zobrazit",
   "descendants": "Podřízené položky",
   "resultsPerPage": "Výsledky na stránku",
-  "search": "Hledat"
+  "search": "Hledat",
+  "totalDescendants_0": "{{count}} podřízených položek",
+  "totalDescendants_1": "{{count}} podřízená položka",
+  "totalDescendants_2": "{{count}} podřízené položky",
+  "Add another language": "Přidat další jazyk",
+  "Remove field": "Odebrat pole",
+  "Title": "Název",
+  "Name": "Jméno"
 }

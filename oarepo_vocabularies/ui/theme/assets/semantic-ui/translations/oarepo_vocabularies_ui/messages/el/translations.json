@@ -23,5 +23,9 @@
   "required": "",
   "multipleSameLanguagesError": "",
   "invalidLengthError": "",
-  "notANumberError": ""
+  "notANumberError": "",
+  "Add another language": "",
+  "Remove field": "",
+  "Title": "",
+  "Name": ""
 }

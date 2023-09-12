@@ -17,11 +17,15 @@
   "multipleSameLanguagesError": "You must not have two same languages",
   "invalidLengthError": "Must be exactly {{length}} characters",
   "notANumberError": "Must contain only numbers",
-  "totalDescendants_one": "{{count}} child item",
-  "totalDescendants_other": "{{count}} children items",
   "hide": "Hide",
   "show": "Show",
   "descendants": "Descendants",
   "resultsPerPage": "Results per page",
-  "search": "Search"
+  "search": "Search",
+  "totalDescendants": "totalDescendants",
+  "totalDescendants_plural": "totalDescendants",
+  "Add another language": "Add another language",
+  "Remove field": "Remove field",
+  "Title": "Title",
+  "Name": "Name"
 }
