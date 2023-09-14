@@ -11,6 +11,7 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     setSubmitting,
     setFieldError,
     setFieldValue,
+    read
   } = formik;
 
   async function createOrUpdate () {
@@ -60,5 +61,5 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     }
   }
 
-  return { values, isSubmitting, createOrUpdate };
+  return { values, isSubmitting, createOrUpdate, formik, read };
 };
