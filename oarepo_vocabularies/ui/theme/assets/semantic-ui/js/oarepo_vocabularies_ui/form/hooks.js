@@ -3,11 +3,7 @@ import { useFormikContext } from "formik";
 import _isEmpty from "lodash/isEmpty";
 
 export const useVocabularyApiClient = (newChildItemParentId) => {
-  const { apiClient, createUrl } = useDepositApiClient();
-  // TODO: maybe - as useDepositApiClient is already calling formik, it could makse sense for it to pass
-  // entire formik object down to any users, however, this might be a bit tricky,
-  // because I destructure some properties in the useDepositApiClient, so I would have to return
-  // those explicitly from the useDepositApiClient which would become a bit cluttered
+  const { apiClient, createUrl, formik } = useDepositApiClient();
   const {
     isSubmitting,
     values,
@@ -15,9 +11,10 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     setSubmitting,
     setFieldError,
     setFieldValue,
-  } = useFormikContext();
+    read
+  } = formik;
 
-  async function createOrUpdate() {
+  async function createOrUpdate () {
     const validationErrors = await validateForm();
     if (!_isEmpty(validationErrors)) return;
     setSubmitting(true);
@@ -64,5 +61,5 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     }
   }
 
-  return { values, isSubmitting, createOrUpdate };
+  return { values, isSubmitting, createOrUpdate, formik, read };
 };

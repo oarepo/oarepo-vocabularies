@@ -5,9 +5,8 @@ import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ErrorElement } from "@js/oarepo_ui/search";
 import PropTypes from "prop-types";
-import { useFormConfig, useDepositApiClient, I18nString } from "@js/oarepo_ui";
+import { useFormConfig, useDepositApiClient } from "@js/oarepo_ui";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
-import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
 import { useQuery } from "@tanstack/react-query";
 import { Dimmer, Loader } from "semantic-ui-react";
@@ -22,18 +21,17 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     record: { type },
   } = useFormConfig();
-  const {
-    values: { id },
-  } = useFormikContext();
 
-  const { read } = useDepositApiClient();
+  const {
+    read,
+    values: { id },
+  } = useDepositApiClient();
   // not possible to use apiClient because I am working just with a information
   // from a query string and not actually working with any type of record (that contains links inside)
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
     queryFn: () => read(`/api/vocabularies/${type}/${newChildItemParentId}`),
   });
-  console.log(data);
   if (isLoading)
     return (
       <Dimmer active inverted>

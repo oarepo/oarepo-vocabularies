@@ -1,11 +1,11 @@
 import React from "react";
-import { connect } from "formik";
+import { useFormikContext, connect } from "formik";
 import { Button, Container } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
-const ResetButtonComponent = ({ formik }) => {
-  const { handleReset } = formik;
+const ResetButtonComponent = () => {
+  const { handleReset } = useFormikContext();
   return (
     <Container className="mt-5" textAlign="center">
       <Button
@@ -15,6 +15,7 @@ const ResetButtonComponent = ({ formik }) => {
         content={i18next.t("reset")}
         icon="times rectangle"
         labelPosition="left"
+        type="reset"
       />
     </Container>
   );
