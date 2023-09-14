@@ -5,13 +5,12 @@ import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ErrorElement } from "@js/oarepo_ui/search";
 import PropTypes from "prop-types";
-import { useFormConfig } from "@js/oarepo_ui";
+import { useFormConfig, useDepositApiClient, I18nString } from "@js/oarepo_ui";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
 import { useQuery } from "@tanstack/react-query";
 import { Dimmer, Loader } from "semantic-ui-react";
-import axios from "axios";
 
 const breadcrumbSerialization = (array) =>
   array.map((item) => ({ key: item, content: item }));
@@ -26,15 +25,15 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     values: { id },
   } = useFormikContext();
+
+  const { read } = useDepositApiClient();
   // not possible to use apiClient because I am working just with a information
   // from a query string and not actually working with any type of record (that contains links inside)
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
-    queryFn: () =>
-      axios
-        .get(`/api/vocabularies/${type}/${newChildItemParentId}`)
-        .then((res) => res.data),
+    queryFn: () => read(`/api/vocabularies/${type}/${newChildItemParentId}`),
   });
+  console.log(data);
   if (isLoading)
     return (
       <Dimmer active inverted>
