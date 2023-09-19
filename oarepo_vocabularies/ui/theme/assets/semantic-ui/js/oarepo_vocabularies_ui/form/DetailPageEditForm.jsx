@@ -13,6 +13,7 @@ import { useLocation } from "react-router-dom";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
 import Overridable from "react-overridable";
 import { useFormConfig, FormFeedback, BaseForm } from "@js/oarepo_ui";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const DetailPageEditForm = ({
   initialValues,
@@ -52,7 +53,10 @@ export const DetailPageEditForm = ({
           </Grid.Row>
 
           <Grid.Column mobile={16} tablet={16} computer={11}>
-            <VocabularyMultilingualInputField fieldPath="title" />
+            <VocabularyMultilingualInputField
+              fieldPath="title"
+              textFieldLabel={i18next.t("Title")}
+            />
             <TextField fieldPath="id" label={"ID"} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
