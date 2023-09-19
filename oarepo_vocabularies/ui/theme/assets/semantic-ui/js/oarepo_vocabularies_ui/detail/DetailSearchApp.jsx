@@ -69,7 +69,7 @@ export const App = ({ appConfig }) => {
   return (
     <React.Fragment>
       <OverridableContext.Provider value={overriddenComponents}>
-        <SearchConfigurationContext.Provider value={{...appConfig}}>
+        <SearchConfigurationContext.Provider value={{ ...appConfig }}>
           <ReactSearchKit
             searchApi={new InvenioSearchApi(searchApi)}
             initialQueryState={initialQueryState}

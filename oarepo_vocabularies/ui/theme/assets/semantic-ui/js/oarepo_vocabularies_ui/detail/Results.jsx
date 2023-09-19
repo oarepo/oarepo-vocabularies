@@ -25,7 +25,7 @@ export const Results = ({
   const { data } = currentResultsState;
   const { total } = data;
   const [[facet, vocabularyItem]] = [...currentFacet];
-  const config = React.useContext(SearchConfigurationContext)
+  const config = React.useContext(SearchConfigurationContext);
 
   return total ? (
     <React.Fragment>
