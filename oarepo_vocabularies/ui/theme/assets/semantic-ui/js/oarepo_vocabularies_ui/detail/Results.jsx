@@ -8,6 +8,7 @@ import {
 } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ResultCountWithState } from "@js/oarepo_ui";
+import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 
 const resultsPerPageLabel = (cmp) => (
   <React.Fragment>
@@ -24,6 +25,7 @@ export const Results = ({
   const { data } = currentResultsState;
   const { total } = data;
   const [[facet, vocabularyItem]] = [...currentFacet];
+  const config = React.useContext(SearchConfigurationContext)
 
   return total ? (
     <React.Fragment>
@@ -42,7 +44,7 @@ export const Results = ({
               primary
               fluid
               as="a"
-              href={`/vocabularies/institutions?q=&f=${facet}:${vocabularyItem}`}
+              href={`${config.uiLinks.search}?q=&f=${facet}:${vocabularyItem}`}
               icon="search"
               labelPosition="left"
               content={i18next.t("search")}

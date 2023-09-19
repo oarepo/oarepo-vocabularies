@@ -13,6 +13,7 @@ import {
 import { Results } from "./Results";
 import { VocabularyResultsListItemWithState } from "../search/components";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 
 const OnResults = withState(Results);
 
@@ -68,44 +69,48 @@ export const App = ({ appConfig }) => {
   return (
     <React.Fragment>
       <OverridableContext.Provider value={overriddenComponents}>
-        <ReactSearchKit
-          searchApi={new InvenioSearchApi(searchApi)}
-          initialQueryState={initialQueryState}
-          urlHandlerApi={{ enabled: false }}
-          defaultSortingOnEmptyQueryString={defaultSortingOnEmptyQueryString}
-        >
-          <Container>
-            <Grid relaxed centered>
-              <Grid.Row>
-                <Grid.Column
-                  floated="left"
-                  width={4}
-                  style={{ padding: "2em 2.5em" }}
-                >
-                  <DescendantsButtonWithState
-                    descendantsShown={descendantsShown}
-                    setDescendantsShown={setDescendantsShown}
-                  />
-                </Grid.Column>
-              </Grid.Row>
-              <Grid.Row>
-                {descendantsShown && (
-                  <Grid.Column width={16}>
-                    <ResultsLoader>
-                      <EmptyResults />
-                      <Error />
-                      <OnResults
-                        sortValues={sortOptions}
-                        resultsPerPageValues={paginationOptions.resultsPerPage}
-                        currentFacet={initialQueryState.filters}
-                      />
-                    </ResultsLoader>
+        <SearchConfigurationContext.Provider value={{...appConfig}}>
+          <ReactSearchKit
+            searchApi={new InvenioSearchApi(searchApi)}
+            initialQueryState={initialQueryState}
+            urlHandlerApi={{ enabled: false }}
+            defaultSortingOnEmptyQueryString={defaultSortingOnEmptyQueryString}
+          >
+            <Container>
+              <Grid relaxed centered>
+                <Grid.Row>
+                  <Grid.Column
+                    floated="left"
+                    width={4}
+                    style={{ padding: "2em 2.5em" }}
+                  >
+                    <DescendantsButtonWithState
+                      descendantsShown={descendantsShown}
+                      setDescendantsShown={setDescendantsShown}
+                    />
                   </Grid.Column>
-                )}
-              </Grid.Row>
-            </Grid>
-          </Container>
-        </ReactSearchKit>
+                </Grid.Row>
+                <Grid.Row>
+                  {descendantsShown && (
+                    <Grid.Column width={16}>
+                      <ResultsLoader>
+                        <EmptyResults />
+                        <Error />
+                        <OnResults
+                          sortValues={sortOptions}
+                          resultsPerPageValues={
+                            paginationOptions.resultsPerPage
+                          }
+                          currentFacet={initialQueryState.filters}
+                        />
+                      </ResultsLoader>
+                    </Grid.Column>
+                  )}
+                </Grid.Row>
+              </Grid>
+            </Container>
+          </ReactSearchKit>
+        </SearchConfigurationContext.Provider>
       </OverridableContext.Provider>
     </React.Fragment>
   );
