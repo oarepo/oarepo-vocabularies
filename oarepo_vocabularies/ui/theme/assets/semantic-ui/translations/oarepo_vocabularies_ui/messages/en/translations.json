@@ -11,7 +11,7 @@
   "editTopLevelItemMessage": "You are currently editing a top level item",
   "editChildItemMessage": "You are currently editing a child item with hierarchy:",
   "newItemMessage": "You are currently creating a top level item",
-  "newChildItemMessage": "You are currently creating a child item of {{item}}. New hierarchy will be:",
+  "newChildItemMessage": "You are currently creating a child item of:",
   "newItem": "New item",
   "required": "Required",
   "multipleSameLanguagesError": "You must not have two same languages",

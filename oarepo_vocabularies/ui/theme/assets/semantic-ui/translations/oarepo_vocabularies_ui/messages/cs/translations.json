@@ -11,7 +11,7 @@
   "editTopLevelItemMessage": "Právě upravujete položku nejvyšší úrovně",
   "editChildItemMessage": "Aktuálně upravujete podřízenou položku s hierarchií:",
   "newItemMessage": "Právě vytváříte položku nejvyšší úrovně",
-  "newChildItemMessage": "Právě vytváříte položku podřízenou {{item}}. Nová hierarchie bude:",
+  "newChildItemMessage": "Právě vytváříte položku podřízenou:",
   "newItem": "Nová položka",
   "required": "Požadované",
   "multipleSameLanguagesError": "Nesmíte mít dva stejné jazyky",

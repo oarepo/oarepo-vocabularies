@@ -3,7 +3,7 @@
 import React from "react";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { ErrorElement } from "@js/oarepo_ui/search";
+import { ErrorElement, I18nString } from "@js/oarepo_ui";
 import PropTypes from "prop-types";
 import { useFormConfig, useDepositApiClient } from "@js/oarepo_ui";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
@@ -43,9 +43,13 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
     <React.Fragment>
       {!isLoading && data && (
         <VocabularyBreadcrumbMessage
-          header={i18next.t("newChildItemMessage", {
-            item: data.title[i18next.language],
-          })}
+          header={
+            <div className="header">
+              {i18next.t("newChildItemMessage")}
+              {' '}
+              <I18nString value={data.title} />
+            </div>
+          }
           content={
             <VocabularyBreadcrumb
               sections={[
