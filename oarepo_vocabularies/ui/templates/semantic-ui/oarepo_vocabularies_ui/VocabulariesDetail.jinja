@@ -1,5 +1,5 @@
 
-{#def metadata, ui, layout, record, extra_context #}
+{#def metadata, ui, layout, record, extra_context, ui_links #}
 {% extends "oarepo_ui/detail.html" %}
 {%- set title = metadata.title ~ " | " ~ _("Vocabulary Detail") %}
 
@@ -15,8 +15,9 @@
 {% block page_body %}
   {{ super() }}
   <div class="ui center aligned container">
- {% block vocabulary_descendants %}
-
+    {% block vocabulary_descendants %}
+      {% set search_app_config = extra_context["search_app_config"] %}
+        {%- include "oarepo_vocabularies_ui/descendants.html" -%}
     {% endblock vocabulary_descendants %}
   </div>
 {% endblock page_body %}

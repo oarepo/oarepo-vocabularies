@@ -4,13 +4,16 @@ import _camelCase from "lodash/camelCase";
 import { App } from "./DetailSearchApp";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const searchAppElement = document.querySelectorAll(
+  const searchAppElement = document.querySelector(
     `[data-invenio-search-config]`
-  )[0];
+  );
 
   const initialAppConfig = JSON.parse(
     searchAppElement.dataset[_camelCase("invenio-search-config")]
   );
+
+  const uiLinksConfig = JSON.parse(searchAppElement.dataset[_camelCase('ui-links')])
+  initialAppConfig.uiLinks = uiLinksConfig
 
   ReactDOM.render(<App appConfig={initialAppConfig} />, searchAppElement);
 });

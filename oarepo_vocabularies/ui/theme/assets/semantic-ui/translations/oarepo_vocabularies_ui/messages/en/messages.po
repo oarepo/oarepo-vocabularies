@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-07-31T06:26:23.813Z\n"
-"PO-Revision-Date: 2023-07-31T06:26:23.813Z\n"
+"POT-Creation-Date: 2023-09-12T19:27:37.605Z\n"
+"PO-Revision-Date: 2023-09-12T19:27:37.605Z\n"
 "Language: en\n"
 
 msgid "coarType"
@@ -63,22 +63,34 @@ msgstr "Must be exactly {{length}} characters"
 msgid "notANumberError"
 msgstr "Must contain only numbers"
 
+msgid "hide"
+msgstr "Hide"
+
+msgid "show"
+msgstr "Show"
+
+msgid "descendants"
+msgstr "Descendants"
+
+msgid "resultsPerPage"
+msgstr "Results per page"
+
+msgid "search"
+msgstr "Search"
+
 msgid "totalDescendants"
 msgid_plural "totalDescendants"
 msgstr[0] "totalDescendants"
 msgstr[1] "totalDescendants"
 
-msgid "hide"
-msgstr "hide"
+msgid "Add another language"
+msgstr "Add another language"
 
-msgid "show"
-msgstr "show"
+msgid "Remove field"
+msgstr "Remove field"
 
-msgid "descendants"
-msgstr "descendants"
+msgid "Title"
+msgstr "Title"
 
-msgid "resultsPerPage"
-msgstr "resultsPerPage"
-
-msgid "search"
-msgstr "search"
+msgid "Name"
+msgstr "Name"

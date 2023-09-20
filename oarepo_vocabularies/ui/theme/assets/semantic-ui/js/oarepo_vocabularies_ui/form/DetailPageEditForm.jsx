@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
-import { Container, Grid, Sticky, Ref } from "semantic-ui-react";
-import { BaseForm, TextField } from "react-invenio-forms";
+import { Container, Grid, Sticky, Ref, Card } from "semantic-ui-react";
+import { TextField } from "react-invenio-forms";
 import {
   PublishButton,
   PropFieldsComponent,
@@ -11,37 +11,14 @@ import {
 } from "./components";
 import { useLocation } from "react-router-dom";
 import { VocabularyFormSchema } from "./VocabularyFormSchema";
-import _omitBy from "lodash/omitBy";
 import Overridable from "react-overridable";
-import {
-  useOnSubmit,
-  useFormConfig,
-  ErrorElement,
-  submitContextType,
-} from "@js/oarepo_ui";
-
-const removeNullAndUnderscoreProperties = (values, formik) => {
-  return _omitBy(
-    values,
-    (value, key) =>
-      value === null ||
-      (Array.isArray(value) && value.every((item) => item === null)) ||
-      key.startsWith("_")
-  );
-};
-
-const setVocabularyHierarchy = (parentId) => {
-  return (values, formik) => {
-    if (parentId) values.hierarchy = { parent: parentId };
-    return values;
-  };
-};
+import { useFormConfig, FormFeedback, BaseForm } from "@js/oarepo_ui";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const DetailPageEditForm = ({
   initialValues,
   hasPropFields,
   editMode,
-  apiCallUrl,
 }) => {
   const {
     formConfig: { vocabularyProps },
@@ -50,28 +27,13 @@ export const DetailPageEditForm = ({
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-  const currentPath = location.pathname;
-
-  const { onSubmit, submitError } = useOnSubmit({
-    apiUrl: apiCallUrl,
-    context: editMode ? submitContextType.update : submitContextType.create,
-    onBeforeSubmit: [
-      setVocabularyHierarchy(newChildItemParentId),
-      removeNullAndUnderscoreProperties,
-    ],
-    onSubmitSuccess: (result) => {
-      window.location.href = editMode
-        ? currentPath.replace("/edit", "")
-        : currentPath.replace("_new", result.id);
-    },
-  });
 
   const sidebarRef = useRef(null);
 
   return (
     <Container>
       <BaseForm
-        onSubmit={onSubmit}
+        onSubmit={() => {}}
         formik={{
           initialValues: initialValues,
           validationSchema: VocabularyFormSchema,
@@ -90,22 +52,35 @@ export const DetailPageEditForm = ({
             </Grid.Column>
           </Grid.Row>
 
-          <Grid.Column mobile={16} tablet={16} computer={12}>
-            <VocabularyMultilingualInputField fieldPath="title" />
+          <Grid.Column mobile={16} tablet={16} computer={11}>
+            <VocabularyMultilingualInputField
+              fieldPath="title"
+              textFieldLabel={i18next.t("Title")}
+            />
             <TextField fieldPath="id" label={"ID"} required />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
             )}
-            {submitError?.message && <ErrorElement error={submitError} />}
+            <FormFeedback />
           </Grid.Column>
-          <Ref innerRef={sidebarRef}>
-            <Grid.Column mobile={16} tablet={16} computer={4}>
+          <Ref innerRef={sidebarRef} className="rel-mt-3">
+            <Grid.Column mobile={16} tablet={16} computer={5}>
               <Sticky context={sidebarRef} offset={20}>
                 <Overridable id="FormApp.buttons">
-                  <React.Fragment>
-                    <PublishButton />
-                    <ResetButton />
-                  </React.Fragment>
+                  <Card fluid>
+                    <Card.Content>
+                      <Grid>
+                        <Grid.Column width={16}>
+                          <PublishButton
+                            newChildItemParentId={newChildItemParentId}
+                          />
+                        </Grid.Column>
+                        <Grid.Column width={16}>
+                          <ResetButton />
+                        </Grid.Column>
+                      </Grid>
+                    </Card.Content>
+                  </Card>
                 </Overridable>
               </Sticky>
             </Grid.Column>
@@ -115,11 +90,6 @@ export const DetailPageEditForm = ({
     </Container>
   );
 };
-
-const TitlePropType = PropTypes.shape({
-  language: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-});
 
 DetailPageEditForm.propTypes = {
   initialValues: PropTypes.shape({

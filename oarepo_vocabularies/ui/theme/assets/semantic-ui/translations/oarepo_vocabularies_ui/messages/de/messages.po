@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-07-31T06:26:23.955Z\n"
-"PO-Revision-Date: 2023-07-31T06:26:23.955Z\n"
+"POT-Creation-Date: 2023-09-12T19:27:37.717Z\n"
+"PO-Revision-Date: 2023-09-12T19:27:37.717Z\n"
 "Language: de\n"
 
 msgid "coarType"
@@ -81,4 +81,16 @@ msgid "invalidLengthError"
 msgstr ""
 
 msgid "notANumberError"
+msgstr ""
+
+msgid "Add another language"
+msgstr ""
+
+msgid "Remove field"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Name"
 msgstr ""

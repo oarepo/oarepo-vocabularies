@@ -3,13 +3,11 @@
 import React from "react";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { ErrorElement } from "@js/oarepo_ui/search";
+import { ErrorElement, I18nString } from "@js/oarepo_ui";
 import PropTypes from "prop-types";
-import { useFormConfig } from "@js/oarepo_ui/forms";
+import { useFormConfig, useDepositApiClient } from "@js/oarepo_ui";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
-import { useFormikContext } from "formik";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
-import { OARepoDepositApiClient } from "@js/oarepo_ui";
 import { useQuery } from "@tanstack/react-query";
 import { Dimmer, Loader } from "semantic-ui-react";
 
@@ -23,17 +21,17 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
   const {
     record: { type },
   } = useFormConfig();
+
   const {
+    read,
     values: { id },
-  } = useFormikContext();
+  } = useDepositApiClient();
+  // not possible to use apiClient because I am working just with a information
+  // from a query string and not actually working with any type of record (that contains links inside)
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
-    queryFn: () =>
-      OARepoDepositApiClient.readDraft(
-        `/api/vocabularies/${type}/${newChildItemParentId}`
-      ),
+    queryFn: () => read(`/api/vocabularies/${type}/${newChildItemParentId}`),
   });
-
   if (isLoading)
     return (
       <Dimmer active inverted>
@@ -45,18 +43,22 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
     <React.Fragment>
       {!isLoading && data && (
         <VocabularyBreadcrumbMessage
-          header={i18next.t("newChildItemMessage", {
-            item: data?.title?.cs,
-          })}
+          header={
+            <div className="header">
+              {i18next.t("newChildItemMessage")}
+              {' '}
+              <I18nString value={data.title} />
+            </div>
+          }
           content={
             <VocabularyBreadcrumb
               sections={[
                 ..._reverse(
-                  breadcrumbSerialization(data?.hierarchy?.ancestors_or_self)
+                  breadcrumbSerialization(data.hierarchy?.ancestors_or_self)
                 ),
                 {
                   key: "new",
-                  content: id ? id : i18next.t("newItem"),
+                  content: id ?? i18next.t("newItem"),
                   active: true,
                 },
               ]}

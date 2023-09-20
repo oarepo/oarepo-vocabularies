@@ -11,26 +11,12 @@ const checkDuplicateLanguage = (array) => {
 };
 
 export const VocabularyFormSchema = Yup.object().shape({
-  _title: Yup.array()
-    .of(
-      Yup.object().shape({
-        language: Yup.string().required(i18next.t("required")),
-        name: Yup.string().required(i18next.t("required")),
-      })
-    )
-    .test(
-      "same language",
-      (value) => {
-        return [
-          value.value.map((item) => ({
-            language: i18next.t("multipleSameLanguagesError"),
-          })),
-        ];
-      },
-      (value, context) => {
-        return checkDuplicateLanguage(value);
-      }
-    ),
+  _title: Yup.array().of(
+    Yup.object().shape({
+      lang: Yup.string().required(i18next.t("required")),
+      name: Yup.string().required(i18next.t("required")),
+    })
+  ),
   props: Yup.object()
     .shape({
       ICO: Yup.string()

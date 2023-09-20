@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"POT-Creation-Date: 2023-07-31T06:26:23.745Z\n"
-"PO-Revision-Date: 2023-07-31T06:26:23.745Z\n"
+"POT-Creation-Date: 2023-09-12T19:27:37.552Z\n"
+"PO-Revision-Date: 2023-09-12T19:27:37.552Z\n"
 "Language: cs\n"
 
 msgid "coarType"
@@ -63,23 +63,35 @@ msgstr "Musí mít přesně {{length}} znaků"
 msgid "notANumberError"
 msgstr "Musí obsahovat pouze čísla"
 
+msgid "hide"
+msgstr "Skrýt"
+
+msgid "show"
+msgstr "Zobrazit"
+
+msgid "descendants"
+msgstr "Podřízené položky"
+
+msgid "resultsPerPage"
+msgstr "Výsledky na stránku"
+
+msgid "search"
+msgstr "Hledat"
+
 msgid "totalDescendants"
 msgid_plural "totalDescendants"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-msgid "hide"
+msgid "Add another language"
 msgstr ""
 
-msgid "show"
+msgid "Remove field"
 msgstr ""
 
-msgid "descendants"
+msgid "Title"
 msgstr ""
 
-msgid "resultsPerPage"
-msgstr ""
-
-msgid "search"
+msgid "Name"
 msgstr ""
