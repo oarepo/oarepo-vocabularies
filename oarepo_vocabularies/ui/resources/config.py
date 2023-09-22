@@ -27,7 +27,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
                 "record_sidebar": "VocabulariesSidebar",
             },
         },
-        "search": {"layout": "oarepo_vocabularies_ui/search.html"},
+        "search": {"layout": "oarepo_vocabularies_ui/VocabulariesSearch.jinja"},
         "create": {"layout": "oarepo_vocabularies_ui/form.html"},
         "edit": {"layout": "oarepo_vocabularies_ui/form.html"},
     }

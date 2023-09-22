@@ -1,0 +1,14 @@
+ {% extends "oarepo_ui/search.html" %}
+{%- set title = _("Vocabulary search") %}
+
+{%- block javascript %}
+{{ super() }}
+{{ webpack['oarepo_vocabularies_search.js'] }}
+{%- endblock %}
+
+{%- block page_body %}
+<div class="ui main container">
+    {%- block searchapp_root %}
+  <div data-invenio-search-config='{"aggs": [], "appId": "OarepoVocabularies.Search", "defaultSortingOnEmptyQueryString": {"sortBy": "title"}, "initialQueryState": {"filters": [], "hiddenParams": null, "layout": "list", "page": 1, "size": 10, "sortBy": "bestmatch"}, "layoutOptions": {"gridView": false, "listView": true}, "paginationOptions": {"defaultValue": 10, "resultsPerPage": [{"text": "10", "value": 10}, {"text": "20", "value": 20}, {"text": "50", "value": 50}]}, "searchApi": {"axios": {"headers": {"Accept": "application/vnd.inveniordm.v1+json"}, "url": "/api/vocabularies/institutions", "withCredentials": true}, "invenio": {"requestSerializer": "InvenioRecordsResourcesRequestSerializer"}}, "sortOptions": [{"sortBy": "bestmatch", "text": "Best match"}, {"sortBy": "title", "text": "N\u00e1zev"}, {"sortBy": "newest", "text": "Newest"}, {"sortBy": "oldest", "text": "Oldest"}], "sortOrderDisabled": true, "ui_endpoint": "/vocabularies/", "ui_links": {"create": "https://127.0.0.1:5000/vocabularies/institutions/_new", "next": "https://127.0.0.1:5000/vocabularies/institutions/?page=2", "self": "https://127.0.0.1:5000/vocabularies/institutions/"}}'></div>    {%- endblock searchapp_root %}
+</div>
+{%- endblock page_body %}
