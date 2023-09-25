@@ -5,6 +5,7 @@ import _reverse from "lodash/reverse";
 import _join from "lodash/join";
 import _pick from "lodash/pick";
 import PropTypes from "prop-types";
+import {getIn} from "formik"
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
@@ -38,6 +39,10 @@ export const serializeVocabularyItem = (item, includeProps = ["id"]) => {
     : _pick(item, includeProps);
 };
 
+export const deserializeVocabularyItem = (item) => {
+  return Array.isArray(item) ? item.map((item) => item.id) : item?.id || "";
+};
+
 export const VocabularySelectField = ({
   type,
   fieldPath,
@@ -45,6 +50,8 @@ export const VocabularySelectField = ({
   multiple,
   ...restProps
 }) => {
+
+
   return (
     <RelatedSelectField
       fieldPath={fieldPath}
@@ -53,12 +60,8 @@ export const VocabularySelectField = ({
       selectOnBlur={false}
       serializeSuggestions={serializeVocabularySuggestions}
       multiple={multiple}
-      onChange={({ e, data, formikProps }) => {
-        formikProps.form.setFieldValue(
-          fieldPath,
-          serializeVocabularyItem(data.value)
-        );
-      }}
+      serializeSelectedItem={serializeVocabularyItem}
+      deserializeValue={deserializeVocabularyItem}
       {...restProps}
     />
   );
