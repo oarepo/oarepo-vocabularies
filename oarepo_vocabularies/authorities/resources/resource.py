@@ -54,5 +54,4 @@ class AuthoritativeVocabulariesResource(Resource):
             auth_id = item["id"]
             item.setdefault("props", {})["external"] = auth_id not in query_results
 
-        result = results
-        return result, 200
+        return results, 200
