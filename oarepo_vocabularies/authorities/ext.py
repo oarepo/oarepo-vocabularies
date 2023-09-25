@@ -9,24 +9,20 @@ class OARepoVocabulariesAuthorities(object):
     def __init__(self, app=None):
         """Extension initialization."""
         self.resource = None
+        self.app = app
         if app:
             self.init_app(app)
 
     @lru_cache(maxsize=None)
-    def auth_getter(self, app, vocabulary_type: str):
-        vocabularies_metadata = app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
-        authority_section = vocabularies_metadata[vocabulary_type].get(
-            "authority", None
-        )
-
-        return (
-            authority_section.get(obj_or_import_string("getter"), None)
-            if authority_section
-            else None
-        )
+    def get_authority_api(self, vocabulary_type: str):
+        vocabularies_metadata = self.app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
+        authority = vocabularies_metadata[vocabulary_type].get("authority", None)
+        if authority:
+            return obj_or_import_string(authority)()
 
     def init_app(self, app):
         """Flask application initialization."""
+        self.app = app
         self.init_config(app)
         self.init_resource(app)
         app.extensions["oarepo-vocabularies-authorities"] = self
