@@ -1,5 +1,6 @@
-from oarepo_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+
+from oarepo_vocabularies.records.api import Vocabulary
 
 
 def test_authority_resource(client, authority_rec, authority_type, search_clear):

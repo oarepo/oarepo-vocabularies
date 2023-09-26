@@ -3,7 +3,7 @@ import abc
 
 class AuthorityService(abc.ABC):
     @abc.abstractmethod
-    def search(self, *, query=None, page=1, size=10):
+    def search(self, *, query=None, page=1, size=10, **kwargs):
         """
         Search the external authority service by the given text query and return
         page & size with the data. The returned structure must be the same as Invenio
@@ -26,7 +26,7 @@ class AuthorityService(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get(self, item_id):
+    def get(self, item_id, **kwargs):
         """
         Gets vocabulary item by id. Returns the item as JSON or KeyError if the item could not be found.
         """

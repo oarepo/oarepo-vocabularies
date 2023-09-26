@@ -54,7 +54,6 @@ from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
-from invenio_pidstore.models import PersistentIdentifier
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
 
@@ -408,7 +407,7 @@ def authority_rec(db, identity, authority_type, service, vocab_cf):
 
 
 class AuthService(AuthorityService):
-    def search(self, query=None, page=1, size=10):
+    def search(self, query=None, page=1, size=10, **kwargs):
         return {
             "hits": {
                 "total": 2,
@@ -429,7 +428,7 @@ class AuthService(AuthorityService):
             }
         }
 
-    def get(self, item_id):
+    def get(self, item_id, **kwargs):
         return next(x for x in self.search()["hits"]["hits"] if x["id"] == item_id)
 
 

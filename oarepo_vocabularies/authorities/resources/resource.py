@@ -6,7 +6,6 @@ from invenio_records_resources.resources.records.resource import (
     request_view_args,
 )
 from invenio_vocabularies.records.models import VocabularyType
-from sqlalchemy.orm import aliased
 
 from oarepo_vocabularies.authorities.proxies import authorities
 from oarepo_vocabularies.authorities.service import AuthorityService
