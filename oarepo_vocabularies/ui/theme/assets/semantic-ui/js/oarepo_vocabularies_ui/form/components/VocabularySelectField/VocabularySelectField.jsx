@@ -3,7 +3,9 @@ import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
 import _reverse from "lodash/reverse";
 import _join from "lodash/join";
+import _pick from "lodash/pick";
 import PropTypes from "prop-types";
+import {getIn} from "formik"
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
@@ -29,6 +31,18 @@ export const serializeVocabularySuggestions = (suggestions) =>
     };
   });
 
+export const serializeVocabularyItem = (item, includeProps = ["id"]) => {
+  return typeof item === "string"
+    ? { id: item }
+    : Array.isArray(item)
+    ? item.map((i) => _pick(i, includeProps))
+    : _pick(item, includeProps);
+};
+
+export const deserializeVocabularyItem = (item) => {
+  return Array.isArray(item) ? item.map((item) => item.id) : item?.id || "";
+};
+
 export const VocabularySelectField = ({
   type,
   fieldPath,
@@ -36,6 +50,8 @@ export const VocabularySelectField = ({
   multiple,
   ...restProps
 }) => {
+
+
   return (
     <RelatedSelectField
       fieldPath={fieldPath}
@@ -44,6 +60,8 @@ export const VocabularySelectField = ({
       selectOnBlur={false}
       serializeSuggestions={serializeVocabularySuggestions}
       multiple={multiple}
+      serializeSelectedItem={serializeVocabularyItem}
+      deserializeValue={deserializeVocabularyItem}
       {...restProps}
     />
   );
