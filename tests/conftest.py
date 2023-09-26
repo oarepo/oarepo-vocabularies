@@ -16,6 +16,7 @@ import shutil
 import sys
 from pathlib import Path
 
+from oarepo_vocabularies.authorities.service import AuthorityService
 from oarepo_vocabularies.ui.resources.components import (
     DepositVocabularyOptionsComponent,
 )
@@ -53,7 +54,6 @@ from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
-from invenio_pidstore.models import PersistentIdentifier
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
 
@@ -151,6 +151,10 @@ def app_config(app_config):
                 "en": "lincenses vocabulary type.",
             },
         },
+        "authority": {
+            "name": {"en": "authority"},
+            "authority": AuthService,
+        },
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
@@ -195,6 +199,14 @@ def service(app):
 def lang_type(db):
     """Get a language vocabulary type."""
     v = VocabularyType.create(id="languages", pid_type="lng")
+    db.session.commit()
+    return v
+
+
+@pytest.fixture()
+def authority_type(db):
+    """Get a language vocabulary type."""
+    v = VocabularyType.create(id="authority", pid_type="v-auth")
     db.session.commit()
     return v
 
@@ -381,57 +393,43 @@ def empty_licences(db):
 
 
 @pytest.fixture()
-def affiliations_pids(db):
-    def _upload(uuid):
-        # One of the samples already exists and the other one is a completely new one.
-        invenio_pid = PersistentIdentifier.create(
-            pid_type="id",
-            pid_value="invenioid1",
-            object_type="object",
-            object_uuid=uuid,
-        )
-
-        authvc_pid = PersistentIdentifier.create(
-            pid_type="authvc",
-            pid_value="authid1",
-            object_type="object",
-            object_uuid=uuid,
-        )
-
-        db.session.add(invenio_pid)
-        db.session.add(authvc_pid)
-        db.session.commit()
-
-    return _upload
-
-
-@pytest.fixture()
-def mock_auth_getter_affilliations(mocker):
-    """
-    ROR-like samples.
-    """
-    mock = mocker.patch(
-        "oarepo_vocabularies.authorities.ext.OARepoVocabulariesAuthorities.auth_getter"
+def authority_rec(db, identity, authority_type, service, vocab_cf):
+    return service.create(
+        identity=identity,
+        data={
+            "id": "020bcb226",
+            "title": {
+                "en": "Oakton Community College",
+            },
+            "type": authority_type.id,
+        },
     )
 
-    mock.return_value = lambda q, page, size: [
-        {
-            "id": "https://ror.org/03zsq2967",
-            "props": {
-                "authoritative_id": "authid1",
-                "name": "Association of Asian Pacific Community Health Organizations",
-            },
-        },
-        {
-            "id": "https://ror.org/020bcb226",
-            "props": {
-                "authoritative_id": "authid2",
-                "name": "Oakton Community College",
-            },
-        },
-    ]
 
-    yield mock
+class AuthService(AuthorityService):
+    def search(self, query=None, page=1, size=10, **kwargs):
+        return {
+            "hits": {
+                "total": 2,
+                "hits": [
+                    {
+                        "id": "03zsq2967",
+                        "title": {
+                            "en": "Association of Asian Pacific Community Health Organizations",
+                        },
+                    },
+                    {
+                        "id": "020bcb226",
+                        "title": {
+                            "en": "Oakton Community College",
+                        },
+                    },
+                ],
+            }
+        }
+
+    def get(self, item_id, **kwargs):
+        return next(x for x in self.search()["hits"]["hits"] if x["id"] == item_id)
 
 
 @pytest.fixture()
@@ -457,3 +455,13 @@ def vocabularies_ui_resource_config(app):
 @pytest.fixture
 def vocabularies_ui_resource(app, vocabularies_ui_resource_config):
     return InvenioVocabulariesUIResource(vocabularies_ui_resource_config)
+
+
+@pytest.fixture(scope="module")
+def simple_record_service(app):
+    from .simple_model import ModelService, ModelServiceConfig
+
+    service = ModelService(ModelServiceConfig())
+    sregistry = app.extensions["invenio-records-resources"].registry
+    sregistry.register(service, service_id="simple_model")
+    return service
