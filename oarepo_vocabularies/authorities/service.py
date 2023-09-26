@@ -26,7 +26,10 @@ class AuthorityService(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get(self, item_id, **kwargs):
+    def get(self, item_id, *, uow, value, **kwargs):
         """
         Gets vocabulary item by id. Returns the item as JSON or KeyError if the item could not be found.
+        @param item_id  value['id']
+        @param uow      actual unit of work (if you need to create something inside the db, do it inside this uow)
+        @param value    the value passed from the client
         """
