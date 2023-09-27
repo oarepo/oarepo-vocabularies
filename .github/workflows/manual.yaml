@@ -7,7 +7,6 @@ on:
         description: OARepo version (11, 12, ...)
         required: true
         default: 11
-  push: {}
 
 jobs:
   build:
