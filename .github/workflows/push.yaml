@@ -1,0 +1,13 @@
+name: Build and test
+
+on: push
+
+jobs:
+  build:
+    uses: ./test.yaml@build
+    with:
+      oarepo: 11
+  deploy:
+    uses: ./test.yaml@publish
+    with:
+      oarepo: 11

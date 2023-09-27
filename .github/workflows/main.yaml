@@ -1,13 +1,13 @@
-name: Test python
+name: Build and publish
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       oarepo:
         description: OARepo version (11, 12, ...)
         required: true
         default: 11
-  push: {}
+        type: string
 
 jobs:
   build:
@@ -67,7 +67,7 @@ jobs:
           name: dist
           path: dist
 
-  deploy:
+  publish:
     runs-on: ubuntu-latest
     needs: build
     steps:
