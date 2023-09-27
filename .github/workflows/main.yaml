@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip wheel setuptools
-          pip install -e ".[tests,oarepo==^${{ github.event.inputs.oarepo }}]"
+          pip install -e ".[tests,oarepo-${{ github.event.inputs.oarepo }}]
           pip list
 
       - name: Test with pytest
