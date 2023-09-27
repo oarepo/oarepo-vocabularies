@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 from oarepo_vocabularies.authorities.service import AuthorityService
-from oarepo_vocabularies.ui.resources.components import (
+from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
 from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
@@ -140,6 +140,7 @@ def app_config(app_config):
                 "cs": "slovnikovy typ ceskeho jazyka.",
                 "en": "czech language vocabulary type.",
             },
+            "dump_options": True,
         },
         "licenses": {
             "name": {
@@ -368,6 +369,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng.UK"},
+            "tags": ["featured"],
         },
     )
     Vocabulary.index.refresh()

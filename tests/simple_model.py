@@ -41,7 +41,12 @@ class ModelRecord(Record):
             "authority",
             keys=["id", "title"],
             pid_field=Vocabulary.pid.with_type_ctx("authority"),
-        )
+        ),
+        lng=PIDRelation(
+            "lng",
+            keys=["id", "title"],
+            pid_field=Vocabulary.pid.with_type_ctx("languages"),
+        ),
     )
 
 
