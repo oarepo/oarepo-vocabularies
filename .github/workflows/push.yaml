@@ -4,10 +4,10 @@ on: push
 
 jobs:
   build:
-    uses: .github/workflows/main.yaml@build
+    uses: ./.github/workflows/main.yaml@build
     with:
       oarepo: 11
   deploy:
-    uses: .github/workflows/main.yaml@publish
+    uses: ./.github/workflows/main.yaml@publish
     with:
       oarepo: 11
