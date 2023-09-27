@@ -60,6 +60,7 @@ jobs:
       - name: Build package to publish
         run: |
           python setup.py sdist bdist_wheel
+          pip freeze >dist/requirements.txt 
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
