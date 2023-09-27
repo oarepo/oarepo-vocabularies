@@ -1,8 +1,8 @@
 name: Test python
 
 on:
-  push: {}
-  workflow_dispatch:
+  - push
+  - workflow_dispatch:
     inputs:
       oarepo:
         description: OARepo version (11, 12, ...)
