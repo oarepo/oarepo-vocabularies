@@ -4,10 +4,10 @@ on: push
 
 jobs:
   build:
-    uses: ./test.yaml@build
+    uses: ./main.yaml@build
     with:
       oarepo: 11
   deploy:
-    uses: ./test.yaml@publish
+    uses: ./main.yaml@publish
     with:
       oarepo: 11
