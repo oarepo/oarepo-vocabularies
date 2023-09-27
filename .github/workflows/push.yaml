@@ -1,0 +1,9 @@
+name: Build and test
+
+on: push
+
+jobs:
+  build:
+    uses: ./.github/workflows/main.yaml@build
+    with:
+      oarepo: 11
