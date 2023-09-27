@@ -4,9 +4,11 @@ from invenio_records_resources.services import Link, pagination_links
 from oarepo_ui.resources.config import RecordsUIResourceConfig
 from oarepo_ui.resources.links import UIRecordLink
 
-from oarepo_vocabularies.ui.resources.components import (
-    DepositVocabularyOptionsComponent,
+from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
     VocabularyRecordsComponent,
+)
+from oarepo_vocabularies.ui.resources.components.deposit import (
+    DepositVocabularyOptionsComponent,
 )
 
 
