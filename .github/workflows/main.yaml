@@ -1,6 +1,13 @@
 name: Test python
 
-on: [ push ]
+on:
+  push: {}
+  workflow_dispatch:
+    inputs:
+      oarepo:
+        description: OARepo version (11, 12, ...)
+        required: true
+        default: 11
 
 jobs:
   build:
@@ -37,10 +44,14 @@ jobs:
         with:
           opensearch-version: 2
 
+      - uses: actions/instrument-oarepo
+        with:
+          oarepo-version: ${{ github.event.inputs.oarepo }}
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip wheel setuptools
-          pip install -e '.[tests]'
+          pip install -e ".[tests,oarepo==^${{ github.event.inputs.oarepo }}]"
           pip list
 
       - name: Test with pytest
