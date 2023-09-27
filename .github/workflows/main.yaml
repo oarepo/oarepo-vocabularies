@@ -10,6 +10,6 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/main.yaml
+    uses: ./.github/workflows/build.yaml
     with:
       oarepo: ${{ github.event.inputs.oarepo }}

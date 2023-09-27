@@ -4,6 +4,6 @@ on: push
 
 jobs:
   build:
-    uses: ./.github/workflows/main.yaml@build
+    uses: ./.github/workflows/build.yaml
     with:
       oarepo: 11
