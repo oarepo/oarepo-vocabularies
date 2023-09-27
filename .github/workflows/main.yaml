@@ -44,10 +44,6 @@ jobs:
         with:
           opensearch-version: 2
 
-      - uses: actions/instrument-oarepo
-        with:
-          oarepo-version: ${{ github.event.inputs.oarepo }}
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip wheel setuptools
