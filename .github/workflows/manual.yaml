@@ -11,6 +11,6 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/main.yaml@build
+    uses: ./.github/workflows/main.yaml
     with:
       oarepo: ${{ github.event.inputs.oarepo }}
