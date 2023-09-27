@@ -13,6 +13,7 @@ from oarepo_runtime.relations.mapping import RelationsMapping
 
 from oarepo_vocabularies.authorities.proxies import authorities
 from oarepo_vocabularies.authorities.service import AuthorityService
+from oarepo_vocabularies.records.api import find_vocabulary_relations
 
 
 class AuthorityComponent(ServiceComponent):
@@ -23,43 +24,30 @@ class AuthorityComponent(ServiceComponent):
         self.lookup_and_store_authority_records(record)
 
     def lookup_and_store_authority_records(self, record):
-        # get the relations system field
-        relations_fields = inspect.getmembers(
-            record, lambda x: isinstance(x, RelationsMapping)
-        )
+        for found_vocabulary in find_vocabulary_relations(record):
+            try:
+                found_vocabulary.field.validate(raise_first_exception=False)
+            except MultipleInvalidRelationErrors as e:
+                authority_service = authorities.get_authority_api(
+                    found_vocabulary.vocabulary_type
+                )
 
-        for relations_field_name, relations in relations_fields:
-            # iterate all vocabularies there, check that the item exists
-            for fld_name in relations:
-                fld = getattr(relations, fld_name)
-                try:
-                    pid_context = fld.field.pid_field
-                except:
-                    continue
-                if not isinstance(pid_context, VocabularyPIDFieldContext):
-                    continue
-                try:
-                    fld.validate(raise_first_exception=False)
-                except MultipleInvalidRelationErrors as e:
-                    # check if there is an authority service
-                    vocabulary_type = pid_context._type_id
-                    authority_service = authorities.get_authority_api(vocabulary_type)
+                if not authority_service:
+                    # no authority service => can not resolve validation errors
+                    raise
 
-                    if not authority_service:
-                        raise
+                # if so, for each record store the authority record
+                for err in e.errors:
+                    self.resolve_and_store_authority_record(
+                        found_vocabulary.field,
+                        result=err[0],
+                        error=err[1],
+                        authority_service=authority_service,
+                        vocabulary_type=found_vocabulary.vocabulary_type,
+                    )
 
-                    # if so, for each record store the authority record
-                    for err in e.errors:
-                        self.resolve_and_store_authority_record(
-                            fld,
-                            result=err[0],
-                            error=err[1],
-                            authority_service=authority_service,
-                            vocabulary_type=vocabulary_type,
-                        )
-
-                    # and run again validate to populate this record with de-referenced value
-                    fld.validate()
+                # and run again validate to populate this record with de-referenced value
+                found_vocabulary.field.validate()
 
     def resolve_and_store_authority_record(
         self,

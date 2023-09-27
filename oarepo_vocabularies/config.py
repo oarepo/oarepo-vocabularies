@@ -16,18 +16,10 @@ from oarepo_vocabularies.services.service import VocabularyTypeService
 INVENIO_VOCABULARY_TYPE_METADATA = {
     # etc.
     # "affilliations": {
-    #    "authority": {
-    #        "name": "ROR",
-    #        "url": "https://api.ror.org/organizations",
-    #        "getter": lambda q, page, size: True
-    #    }
+    #    "authority": <authority service class>
     # },
     # "grants": {
-    #    "authority": {
-    #        "name": "Openaire",
-    #        "url": "https://api.openaire.eu/search/projects",
-    #        "getter": lambda q, page, size: True
-    #    }
+    #    "authority": <authority service class>
     # },
     # "languages": {
     #     "name": {
@@ -42,11 +34,7 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
     #     "props": {...}
     # },
     # "organisms": {
-    #    "authority": {
-    #        "name": "NCBI",
-    #        "url": "https://ncbi.nlm.nih.gov/",
-    #        "getter": lambda q, page, size: True
-    #    }
+    #    "authority": <authority service class>
     # }
 }
 
