@@ -13,6 +13,7 @@ from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabularyTypeService
 
+
 INVENIO_VOCABULARY_TYPE_METADATA = {
     # etc.
     # "affilliations": {
@@ -31,7 +32,8 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
     #         "en": "czech language vocabulary type.",
     #     },
     #     "hierarchical": False,
-    #     "props": {...}
+    #     "props": {...},
+    #     "dump_options": True
     # },
     # "organisms": {
     #    "authority": <authority service class>
@@ -46,6 +48,7 @@ OAREPO_VOCABULARIES_HIERARCHY_CF = [
     KeywordCF("parent"),
 ]
 
+OAREPO_VOCABULARIES_SORT_CF = []
 
 OAREPO_VOCABULARIES_CUSTOM_CF = []
 
