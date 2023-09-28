@@ -20,6 +20,8 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
     it provides their values so that they might be displayed in, for example, a combo.
     """
 
+    always_included_vocabularies = []
+
     def form_config(
         self, *, form_config, resource, record, view_args, identity, **kwargs
     ):
@@ -62,15 +64,21 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
         vocabulary_config = current_app.config.get(
             "INVENIO_VOCABULARY_TYPE_METADATA", {}
         )
+
+        used_vocabularies = [
+            vocab_field.vocabulary_type
+            for vocab_field in find_vocabulary_relations(record)
+        ]
+
+        for v in self.always_included_vocabularies:
+            if v not in used_vocabularies:
+                used_vocabularies.append(v)
+
         (
             vocabularies_to_prefetch,
             form_config_vocabularies,
         ) = self.create_form_config_vocabularies(
-            vocabulary_config,
-            used_vocabularies=[
-                vocab_field.vocabulary_type
-                for vocab_field in find_vocabulary_relations(record)
-            ],
+            vocabulary_config, used_vocabularies=used_vocabularies
         )
 
         form_config["vocabularies"] = form_config_vocabularies
@@ -93,7 +101,9 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
         if vocabularies_to_prefetch:
             for r in vocabulary_service.scan(
                 identity,
-                params={"q": " OR ".join(f"type.id:{x}" for x in vocabularies_to_prefetch)},
+                params={
+                    "q": " OR ".join(f"type.id:{x}" for x in vocabularies_to_prefetch)
+                },
             ):
                 yield r
 
