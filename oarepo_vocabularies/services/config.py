@@ -1,5 +1,5 @@
 import marshmallow as ma
-from invenio_records_resources.services import Link
+from invenio_records_resources.services import Link, pagination_links
 from invenio_records_resources.services.base import ServiceListResult
 from invenio_vocabularies.services import VocabulariesServiceConfig
 from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
@@ -169,4 +169,12 @@ class VocabulariesConfig(VocabulariesServiceConfig):
                 }
             ),
         ),
+    }
+
+    links_search = {
+        **pagination_links("{+api}/vocabularies/{type}{?args*}"),
+        **{
+            f"{k}_html": v
+            for k, v in pagination_links("{+ui}/vocabularies/{type}{?args*}").items()
+        },
     }
