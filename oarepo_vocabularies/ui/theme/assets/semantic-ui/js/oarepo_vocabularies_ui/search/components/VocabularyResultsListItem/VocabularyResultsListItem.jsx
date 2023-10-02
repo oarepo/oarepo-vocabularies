@@ -1,14 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import _toPairs from "lodash/toPairs";
 import _chunk from "lodash/chunk";
 import _reverse from "lodash/reverse";
-import { Item, Table, Label, Grid, Icon } from "semantic-ui-react";
+import { Item, Table, Grid, Breadcrumb } from "semantic-ui-react";
 import { withState, buildUID } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { I18nString } from "@js/oarepo_ui";
-import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
+
+const removeApiFromUrl = (apiUrl) => apiUrl.replace("/api", "");
 
 const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
@@ -41,12 +42,14 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
     title = "No title",
     id,
     props: itemProps,
-    hierarchy: { ancestors },
+    hierarchy: { ancestors, title: ancestorTitles, ancestors_or_self },
+    links,
   } = result;
-  const {
-    ui_links: { search },
-  } = useContext(SearchConfigurationContext);
-  const viewLink = new URL(id, search);
+  const ancestorTitlesWithId = ancestorTitles.map((ancestorTitle, index) => ({
+    ...ancestorTitle,
+    id: ancestors_or_self[index],
+  }));
+  const { self, vocabulary } = links;
   return (
     <Overridable
       id={buildUID("RecordsResultsListItem.layout", "", appName)}
@@ -56,25 +59,32 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
       <Item key={id}>
         <Item.Content>
           <Item.Header as="h2">
-            <a href={viewLink}>
+            <a href={removeApiFromUrl(self)}>
               <I18nString value={title} />
             </a>
-            <Label tag pointing="left" size="small">
-              <b>ID</b>
-              {ancestors &&
-                _reverse(ancestors).map((ancestor) => (
-                  <Label.Detail
-                    as="a"
-                    href={`${search}/${ancestor}`}
-                    key={ancestor}
-                  >
-                    {`${ancestor}`}
-                    {"-->"}
-                  </Label.Detail>
-                ))}
-              <Label.Detail>{id}</Label.Detail>
-            </Label>
           </Item.Header>
+          {ancestors && (
+            <div>
+              <Breadcrumb>
+                {_reverse(ancestorTitlesWithId).map(
+                  (ancestorTitleWithId, index) => (
+                    <React.Fragment key={ancestorTitleWithId.id}>
+                      <Breadcrumb.Section
+                        href={`${removeApiFromUrl(vocabulary)}/${
+                          ancestorTitleWithId.id
+                        }`}
+                      >
+                        <I18nString value={ancestorTitleWithId} />
+                      </Breadcrumb.Section>
+                      {index !== ancestorTitlesWithId.length - 1 && (
+                        <Breadcrumb.Divider />
+                      )}
+                    </React.Fragment>
+                  )
+                )}
+              </Breadcrumb>
+            </div>
+          )}
           {itemProps && (
             <Item.Description>
               <VocabularyItemPropsTable {...itemProps} />

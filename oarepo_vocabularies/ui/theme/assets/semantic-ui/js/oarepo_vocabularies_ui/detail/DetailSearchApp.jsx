@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { OverridableContext } from "react-overridable";
-import { Container, Grid, Button, Label } from "semantic-ui-react";
+import { Container, Grid, Label, Header } from "semantic-ui-react";
 import {
   EmptyResults,
   Error,
@@ -30,35 +30,14 @@ const overriddenComponents = {
   "Count.element": CountElement,
 };
 
-const DescendantsButton = ({
-  descendantsShown,
-  setDescendantsShown,
-  currentResultsState,
-}) => (
-  <Grid>
-    {!!currentResultsState.data.total && (
-      <Grid.Row width={6}>
-        <Button
-          fluid
-          color="green"
-          onClick={() =>
-            setDescendantsShown((prevDescendantsShown) => !prevDescendantsShown)
-          }
-          icon={descendantsShown ? "angle double up" : "angle double down"}
-          labelPosition="left"
-          content={`${
-            descendantsShown ? i18next.t("hide") : i18next.t("show")
-          } ${i18next.t("descendants")}`}
-          type="button"
-        />
-      </Grid.Row>
-    )}
-  </Grid>
-);
+// HOC that will have access to the query results and wrap the app, so that I can render it conditionally only if there are hits
+const AppWrapper = withState(({ currentResultsState, children }) => {
+  return currentResultsState.data.total ? (
+    <React.Fragment>{children}</React.Fragment>
+  ) : null;
+});
 
-const DescendantsButtonWithState = withState(DescendantsButton);
 export const App = ({ appConfig }) => {
-  const [descendantsShown, setDescendantsShown] = useState(false);
   const {
     searchApi,
     initialQueryState,
@@ -72,52 +51,42 @@ export const App = ({ appConfig }) => {
   }, [appConfig]);
 
   return (
-    <React.Fragment>
-      <OverridableContext.Provider value={overriddenComponents}>
-        <SearchConfigurationContext.Provider value={searchConfigurationValue}>
-          <ReactSearchKit
-            searchApi={new InvenioSearchApi(searchApi)}
-            initialQueryState={initialQueryState}
-            urlHandlerApi={{ enabled: false }}
-            defaultSortingOnEmptyQueryString={defaultSortingOnEmptyQueryString}
-          >
+    <OverridableContext.Provider value={overriddenComponents}>
+      <SearchConfigurationContext.Provider value={searchConfigurationValue}>
+        <ReactSearchKit
+          searchApi={new InvenioSearchApi(searchApi)}
+          initialQueryState={initialQueryState}
+          urlHandlerApi={{ enabled: false }}
+          defaultSortingOnEmptyQueryString={defaultSortingOnEmptyQueryString}
+        >
+          <AppWrapper>
             <Container>
+              <Header
+                as="h2"
+                size="huge"
+                textAlign="center"
+                content={i18next.t("descendants")}
+              />
               <Grid relaxed centered>
                 <Grid.Row>
-                  <Grid.Column
-                    floated="left"
-                    width={4}
-                    style={{ padding: "2em 2.5em" }}
-                  >
-                    <DescendantsButtonWithState
-                      descendantsShown={descendantsShown}
-                      setDescendantsShown={setDescendantsShown}
-                    />
+                  <Grid.Column width={16}>
+                    <ResultsLoader>
+                      <EmptyResults />
+                      <Error />
+                      <OnResults
+                        sortValues={sortOptions}
+                        resultsPerPageValues={paginationOptions.resultsPerPage}
+                        currentFacet={initialQueryState.filters}
+                      />
+                    </ResultsLoader>
                   </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
-                  {descendantsShown && (
-                    <Grid.Column width={16}>
-                      <ResultsLoader>
-                        <EmptyResults />
-                        <Error />
-                        <OnResults
-                          sortValues={sortOptions}
-                          resultsPerPageValues={
-                            paginationOptions.resultsPerPage
-                          }
-                          currentFacet={initialQueryState.filters}
-                        />
-                      </ResultsLoader>
-                    </Grid.Column>
-                  )}
                 </Grid.Row>
               </Grid>
             </Container>
-          </ReactSearchKit>
-        </SearchConfigurationContext.Provider>
-      </OverridableContext.Provider>
-    </React.Fragment>
+          </AppWrapper>
+        </ReactSearchKit>
+      </SearchConfigurationContext.Provider>
+    </OverridableContext.Provider>
   );
 };
 
