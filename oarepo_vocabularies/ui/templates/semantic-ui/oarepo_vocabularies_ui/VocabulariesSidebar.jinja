@@ -3,7 +3,7 @@
 <a href={{ record.extra_links.ui_links["edit"] }}><button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button></a>
 {%if extra_context.vocabularyProps["hierarchical"] == True%}
   <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
-  <a href={{ record['links']['vocabulary'].replace('/api', '') ~ '/_new?h-parent=' ~ record['id'] }}>
+  <a href={{ record['links']['vocabulary_html'] ~ '/_new?h-parent=' ~ record['id'] }}>
     <button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>New child item</button>
   </a>
 {%endif%}
@@ -43,7 +43,7 @@
       </div>
       <div class="five wide column pl-0">
         <a
-          href="{{export_path}}/json"
+          href="{{record["extra_links"]["export_path"]}}/json"
           title="Download file"
           class="ui fluid button"
           role="button"

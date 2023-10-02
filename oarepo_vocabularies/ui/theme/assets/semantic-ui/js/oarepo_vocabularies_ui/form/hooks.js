@@ -1,5 +1,4 @@
 import { useDepositApiClient } from "@js/oarepo_ui";
-import { useFormikContext } from "formik";
 import _isEmpty from "lodash/isEmpty";
 
 export const useVocabularyApiClient = (newChildItemParentId) => {
@@ -11,10 +10,10 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     setSubmitting,
     setFieldError,
     setFieldValue,
-    read
+    read,
   } = formik;
 
-  async function createOrUpdate () {
+  async function createOrUpdate() {
     const validationErrors = await validateForm();
     if (!_isEmpty(validationErrors)) return;
     setSubmitting(true);
@@ -35,8 +34,7 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
         response = await apiClient.saveDraft(values);
       }
 
-      // TODO should return self_html link similarly like in deposits?
-      window.location.href = response.links.self.replace("/api", "");
+      window.location.href = response.links.self_html;
 
       return response;
     } catch (error) {

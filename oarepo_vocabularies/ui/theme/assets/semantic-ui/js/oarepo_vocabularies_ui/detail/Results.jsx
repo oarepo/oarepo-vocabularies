@@ -15,12 +15,7 @@ const resultsPerPageLabel = (cmp) => (
   </React.Fragment>
 );
 
-export const Results = ({
-  sortValues,
-  resultsPerPageValues,
-  currentResultsState,
-  currentFacet,
-}) => {
+export const Results = ({ resultsPerPageValues, currentResultsState }) => {
   const { data } = currentResultsState;
   const { total } = data;
 
@@ -81,8 +76,5 @@ export const Results = ({
 
 Results.propTypes = {
   currentResultsState: PropTypes.object.isRequired,
-  sortValues: PropTypes.array.isRequired,
   resultsPerPageValues: PropTypes.array.isRequired,
 };
-
-Results.defaultProps = {};

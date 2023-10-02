@@ -9,8 +9,6 @@ import { withState, buildUID } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { I18nString } from "@js/oarepo_ui";
 
-const removeApiFromUrl = (apiUrl) => apiUrl.replace("/api", "");
-
 const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
   const tables = _chunk(_toPairs(props), 2).slice(0, 4);
@@ -49,7 +47,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
     ...ancestorTitle,
     id: ancestors_or_self[index],
   }));
-  const { self, vocabulary } = links;
+  const { self_html, vocabulary_html } = links;
   return (
     <Overridable
       id={buildUID("RecordsResultsListItem.layout", "", appName)}
@@ -59,7 +57,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
       <Item key={id}>
         <Item.Content>
           <Item.Header as="h2">
-            <a href={removeApiFromUrl(self)}>
+            <a href={self_html}>
               <I18nString value={title} />
             </a>
           </Item.Header>
@@ -70,9 +68,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
                   (ancestorTitleWithId, index) => (
                     <React.Fragment key={ancestorTitleWithId.id}>
                       <Breadcrumb.Section
-                        href={`${removeApiFromUrl(vocabulary)}/${
-                          ancestorTitleWithId.id
-                        }`}
+                        href={`${vocabulary_html}/${ancestorTitleWithId.id}`}
                       >
                         <I18nString value={ancestorTitleWithId} />
                       </Breadcrumb.Section>
