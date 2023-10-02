@@ -15,8 +15,9 @@ class Vocabulary(InvenioVocabulary):
     dumper = SearchDumper(
         extensions=[
             IndexedAtDumperExt(),
-            CustomFieldsDumperExt("OAREPO_VOCABULARIES_HIERARCHY_CF"),
-            CustomFieldsDumperExt("OAREPO_VOCABULARIES_CUSTOM_CF"),
+            CustomFieldsDumperExt("OAREPO_VOCABULARIES_HIERARCHY_CF", "hierarchy"),
+            CustomFieldsDumperExt("OAREPO_VOCABULARIES_SORT_CF", "sort"),
+            CustomFieldsDumperExt("OAREPO_VOCABULARIES_CUSTOM_CF", "custom_fields"),
         ]
     )
     schema = ConstantField(
@@ -27,6 +28,12 @@ class Vocabulary(InvenioVocabulary):
     hierarchy = CustomFields(
         "OAREPO_VOCABULARIES_HIERARCHY_CF",
         "hierarchy",
+        clear_none=True,
+        create_if_missing=True,
+    )
+    sort = CustomFields(
+        "OAREPO_VOCABULARIES_SORT_CF",
+        "sort",
         clear_none=True,
         create_if_missing=True,
     )

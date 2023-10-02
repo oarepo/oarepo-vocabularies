@@ -69,7 +69,7 @@ export const VocabularyMultilingualInputField = ({
 
         const availableOptions = eliminateUsedLanguages(
           indexPath,
-          allLanguages,
+          allLanguages.all,
           array
         );
 

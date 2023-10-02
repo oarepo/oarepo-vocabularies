@@ -12,6 +12,23 @@ from oarepo_vocabularies.ui.resources.components.deposit import (
 )
 
 
+class VocabularyFormDepositVocabularyOptionsComponent(
+    DepositVocabularyOptionsComponent
+):
+    always_included_vocabularies = ["languages"]
+
+    def form_config(self, *, form_config, **kwargs):
+        super().form_config(form_config=form_config, **kwargs)
+
+        if "languages" not in form_config["vocabularies"]:
+            form_config["vocabularies"]["languages"] = []
+
+        if not form_config["vocabularies"]["languages"]:
+            form_config["vocabularies"]["languages"] = [
+                {"text": "English", "value": "en"}
+            ]
+
+
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     template_folder = "../templates"
     url_prefix = "/vocabularies/"
@@ -42,7 +59,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
 
-    components = [VocabularyRecordsComponent, DepositVocabularyOptionsComponent]
+    components = [
+        VocabularyRecordsComponent,
+        VocabularyFormDepositVocabularyOptionsComponent,
+    ]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
 

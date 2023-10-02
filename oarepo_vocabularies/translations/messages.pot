@@ -1,127 +1,172 @@
-# Translations template for PROJECT.
+# Translations template for oarepo-vocabularies.
 # Copyright (C) 2023 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# This file is distributed under the same license as the oarepo-vocabularies
+# project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
+"Project-Id-Version: oarepo-vocabularies 2.0.36\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-06-29 12:54+0200\n"
+"POT-Creation-Date: 2023-09-28 11:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.10.3\n"
 
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/deposit.html:9
-msgid "New version"
+#: oarepo_vocabularies/ui/utils.py:8
+msgid "Vocabulary hierarchy"
 msgstr ""
 
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/deposit.html:11
-msgid "New upload"
+#: oarepo_vocabularies/ui/utils.py:14
+msgid "Hierarchy"
 msgstr ""
 
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/deposit.html:13
-msgid "Edit upload"
+#: oarepo_vocabularies/ui/utils.py:16
+msgid "Hierarchy title"
 msgstr ""
 
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/detail.html:2
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/detail.html:2
-msgid "Vocabulary Detail"
+#: oarepo_vocabularies/ui/utils.py:17
+msgid "Add the title..."
 msgstr ""
 
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:1
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
-msgid "Vocabulary search"
+#: oarepo_vocabularies/ui/utils.py:18
+msgid "Add the title of the hierarchy"
 msgstr ""
 
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
-msgid "vocabulary.vocabulary"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:3
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:3
-msgid "created.label"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:4
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:4
-msgid "updated.label"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:7
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:7
-msgid "links.vocabulary"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:8
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:8
-msgid "links.children"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:9
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:9
-msgid "links.descendants"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:10
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:10
-msgid "links.parent"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:11
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:11
-msgid "links.ancestors"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:12
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:12
-msgid "api.self"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:13
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:13
-msgid "api.vocabulary"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:14
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:14
-msgid "api.children"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:15
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:15
-msgid "api.descendants"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:16
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:16
-msgid "api.parent"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
-msgid "api.ancestors"
-msgstr ""
-
-#: build/lib/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
+#: oarepo_vocabularies/ui/templates/TaxonomyItem.jinja:9
+#: oarepo_vocabularies/ui/templates/VocabularyItem.jinja:5
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
 msgid "Find more records with this vocabulary term"
 msgstr ""
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/form.html:9
-msgid "New item"
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesDetail.jinja:4
+msgid "Vocabulary Detail"
 msgstr ""
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/form.html:11
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/form.html:16
-msgid "Edit item "
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:5
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
+msgid "vocabulary.vocabulary"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:10
+msgid "vocabulary.nonpreferredLabels_en"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:14
+msgid "vocabulary.nonpreferredLabels_cs"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:24
+msgid "vocabulary.hint_cs"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:27
+msgid "vocabulary.hint_en"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:12
+msgid "Export"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:58
+msgid "API"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:58
+msgid "Links"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:1
+msgid "Vocabulary types"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:6
+msgid "Vocabularies"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:12
+msgid "Vocabulary"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:15
+msgid "Items Count"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:18
+msgid "Description"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:21
+msgid "Vocabulary Code"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:24
+msgid "PID type"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:24
+msgid "(internal)"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:3
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
+msgid "Vocabulary search"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:3
+msgid "created.label"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:4
+msgid "updated.label"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:7
+msgid "links.vocabulary"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:8
+msgid "links.children"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:9
+msgid "links.descendants"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:10
+msgid "links.parent"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:11
+msgid "links.ancestors"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:12
+msgid "api.self"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:13
+msgid "api.vocabulary"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:14
+msgid "api.children"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:15
+msgid "api.descendants"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:16
+msgid "api.parent"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
+msgid "api.ancestors"
 msgstr ""
 
