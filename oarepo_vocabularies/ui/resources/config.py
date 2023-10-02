@@ -77,6 +77,8 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         return {
             **pagination_links("{+ui}{+url_prefix}{vocabulary_type}/{?args*}"),
             "create": Link("{+ui}{+url_prefix}{vocabulary_type}/_new"),
+            "search": Link("{+ui}{+url_prefix}{vocabulary_type}/"),
+
         }
 
     def vocabulary_props_config(self, vocabulary_type):

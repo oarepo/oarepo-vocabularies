@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { OverridableContext } from "react-overridable";
 import { Container, Grid, Button, Label } from "semantic-ui-react";
@@ -66,10 +66,15 @@ export const App = ({ appConfig }) => {
     sortOptions,
     paginationOptions,
   } = appConfig;
+
+  const searchConfigurationValue = useMemo(() => {
+    return { ...appConfig };
+  }, [appConfig]);
+
   return (
     <React.Fragment>
       <OverridableContext.Provider value={overriddenComponents}>
-        <SearchConfigurationContext.Provider value={{ ...appConfig }}>
+        <SearchConfigurationContext.Provider value={searchConfigurationValue}>
           <ReactSearchKit
             searchApi={new InvenioSearchApi(searchApi)}
             initialQueryState={initialQueryState}

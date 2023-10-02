@@ -1,8 +1,8 @@
 <div class="mt-20">
   <div class="ui container">
     <div
-      data-ui-links='{{ui_links | tojson}}'
-      data-invenio-search-config='{{ search_app_config(app_id="OarepoVocabularies.Search") | tojson }}'
+      data-ui-links='{{record["extra_links"]["ui_links"] | tojson}}'
+      data-invenio-search-config='{{search_app_config(app_id="OarepoVocabularies.Search", headers={"Accept":"application/json"}) | tojson }}'
     ></div>
   </div>
 </div>

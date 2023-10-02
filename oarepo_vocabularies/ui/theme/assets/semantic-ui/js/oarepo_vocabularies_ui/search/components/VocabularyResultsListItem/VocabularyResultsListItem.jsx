@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
-import _upperFirst from "lodash/upperFirst";
 import _toPairs from "lodash/toPairs";
 import _chunk from "lodash/chunk";
-
-import { Item, Table, Label, Grid } from "semantic-ui-react";
+import _reverse from "lodash/reverse";
+import { Item, Table, Label, Grid, Icon } from "semantic-ui-react";
 import { withState, buildUID } from "react-searchkit";
-
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { I18nString } from "@js/oarepo_ui";
+import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 
 const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
@@ -37,28 +37,43 @@ const VocabularyItemPropsTable = (props) => {
 };
 
 export const VocabularyResultsListItemComponent = ({ result, appName }) => {
-  const { title_l10n: title = "No title", id, props: itemProps } = result;
-  // TODO: serialize links->self in UI serializer and use here
-  const viewLink = new URL(
+  const {
+    title = "No title",
     id,
-    new URL(window.location.pathname, window.location.origin)
-  );
+    props: itemProps,
+    hierarchy: { ancestors },
+  } = result;
+  const {
+    ui_links: { search },
+  } = useContext(SearchConfigurationContext);
+  const viewLink = new URL(id, search);
   return (
     <Overridable
       id={buildUID("RecordsResultsListItem.layout", "", appName)}
       result={result}
       title={title}
     >
-      <Item key={result.id}>
+      <Item key={id}>
         <Item.Content>
           <Item.Header as="h2">
             <a href={viewLink}>
-              {_upperFirst(title)}{" "}
-              <Label pointing="left" size="small">
-                <b>ID</b>
-                <Label.Detail>{id}</Label.Detail>
-              </Label>
+              <I18nString value={title} />
             </a>
+            <Label tag pointing="left" size="small">
+              <b>ID</b>
+              {ancestors &&
+                _reverse(ancestors).map((ancestor) => (
+                  <Label.Detail
+                    as="a"
+                    href={`${search}/${ancestor}`}
+                    key={ancestor}
+                  >
+                    {`${ancestor}`}
+                    {"-->"}
+                  </Label.Detail>
+                ))}
+              <Label.Detail>{id}</Label.Detail>
+            </Label>
           </Item.Header>
           {itemProps && (
             <Item.Description>
