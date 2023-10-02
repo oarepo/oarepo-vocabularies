@@ -61,7 +61,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
               <I18nString value={title} />
             </a>
           </Item.Header>
-          {ancestors && (
+          {ancestors.length > 0 && (
             <div>
               <Breadcrumb>
                 {_reverse(ancestorTitlesWithId).map(
