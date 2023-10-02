@@ -1,7 +1,13 @@
-{% extends "oarepo_ui/search.html" %} {%- set title = _("Vocabulary search") %}
-{%- block javascript %} {{ super() }} {{
-webpack['oarepo_vocabularies_search.js'] }} {%- endblock %} {%- block
-searchapp_root %}
+{% extends "oarepo_ui/search.html" %} 
+
+{%- set title = _("Vocabulary search") %}
+
+{%- block javascript %}
+{{ super() }}
+{{ webpack['oarepo_vocabularies_search.js'] }}
+{%- endblock %}
+
+{%- block searchapp_root %}
 <div
   data-invenio-search-config='{{search_app_config(app_id="OarepoVocabularies.Search", headers={"Accept":"application/json"}) | tojson }}'
 ></div>

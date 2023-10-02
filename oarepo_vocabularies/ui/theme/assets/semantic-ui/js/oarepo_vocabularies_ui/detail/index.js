@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     searchAppElement.dataset[_camelCase("ui-links")]
   );
 
-  initialAppConfig.ui_links = uiLinksConfig;
+  initialAppConfig.uiLinks = uiLinksConfig;
 
   ReactDOM.render(<App appConfig={initialAppConfig} />, searchAppElement);
 });
