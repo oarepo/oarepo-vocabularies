@@ -70,6 +70,10 @@ class VocabularyTypeServiceConfig(PermissionsPresetsConfigMixin):
             "{+api}/vocabularies/{id}",
             vars=lambda vocab_type, vars: vars.update({"id": vocab_type["id"]}),
         ),
+        "self_html": Link(
+            "{+ui}/vocabularies/{id}",
+            vars=lambda vocab_type, vars: vars.update({"id": vocab_type["id"]}),
+        ),
     }
 
 
@@ -84,6 +88,15 @@ class VocabulariesConfig(VocabulariesServiceConfig):
 
     links_item = {
         **VocabulariesServiceConfig.links_item,
+        "self_html": Link(
+            "{+ui}/vocabularies/{type}/{id}",
+            vars=lambda record, vars: vars.update(
+                {
+                    "id": record.pid.pid_value,
+                    "type": record.type.id,
+                }
+            ),
+        ),
         "vocabulary": Link(
             "{+api}/vocabularies/{type}",
             vars=lambda record, vars: vars.update(
@@ -92,8 +105,26 @@ class VocabulariesConfig(VocabulariesServiceConfig):
                 }
             ),
         ),
+        "vocabulary_html": Link(
+            "{+ui}/vocabularies/{type}",
+            vars=lambda record, vars: vars.update(
+                {
+                    "type": record.type.id,
+                }
+            ),
+        ),
         "parent": Link(
             "{+api}/vocabularies/{type}/{parent}",
+            vars=lambda record, vars: vars.update(
+                {
+                    "type": record.type.id,
+                    "parent": record.get("hierarchy", {}).get("parent"),
+                }
+            ),
+            when=lambda obj, ctx: bool(obj.get("hierarchy", {}).get("parent")),
+        ),
+        "parent_html": Link(
+            "{+ui}/vocabularies/{type}/{parent}",
             vars=lambda record, vars: vars.update(
                 {
                     "type": record.type.id,
@@ -111,8 +142,26 @@ class VocabulariesConfig(VocabulariesServiceConfig):
                 }
             ),
         ),
+        "children_html": Link(
+            "{+ui}/vocabularies/{type}?h-parent={id}",
+            vars=lambda record, vars: vars.update(
+                {
+                    "type": record.type.id,
+                    "id": record.pid.pid_value,
+                }
+            ),
+        ),
         "descendants": Link(
             "{+api}/vocabularies/{type}?h-ancestor={id}",
+            vars=lambda record, vars: vars.update(
+                {
+                    "type": record.type.id,
+                    "id": record.pid.pid_value,
+                }
+            ),
+        ),
+        "descendants_html": Link(
+            "{+ui}/vocabularies/{type}?h-ancestor={id}",
             vars=lambda record, vars: vars.update(
                 {
                     "type": record.type.id,
