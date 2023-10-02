@@ -10,7 +10,7 @@ from tests.simple_model import ModelRecord
 
 
 def test_dump_options(sample_records, search_clear, identity):
-    comp = RecordVocabularyUIComponent(service=None, uow=None)
+    comp = RecordVocabularyUIComponent(service=None)
     form_config = {}
     rec = ModelRecord({})
     comp.form_config(
