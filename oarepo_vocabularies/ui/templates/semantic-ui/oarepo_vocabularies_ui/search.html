@@ -1,4 +1,4 @@
-{% extends "oarepo_ui/search.html" %}
+{% extends "oarepo_ui/search.html" %} 
 
 {%- set title = _("Vocabulary search") %}
 
@@ -8,5 +8,7 @@
 {%- endblock %}
 
 {%- block searchapp_root %}
-  <div data-invenio-search-config='{{ search_app_config(app_id="OarepoVocabularies.Search") | tojson }}'></div>
+<div
+  data-invenio-search-config='{{search_app_config(app_id="OarepoVocabularies.Search", headers={"Accept":"application/json"}) | tojson }}'
+></div>
 {%- endblock searchapp_root %}
