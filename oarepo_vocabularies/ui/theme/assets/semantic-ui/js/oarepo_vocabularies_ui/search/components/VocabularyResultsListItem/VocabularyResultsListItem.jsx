@@ -1,14 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
-import _upperFirst from "lodash/upperFirst";
 import _toPairs from "lodash/toPairs";
 import _chunk from "lodash/chunk";
-
-import { Item, Table, Label, Grid } from "semantic-ui-react";
+import _reverse from "lodash/reverse";
+import { Item, Table, Grid, Breadcrumb } from "semantic-ui-react";
 import { withState, buildUID } from "react-searchkit";
-
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { I18nString } from "@js/oarepo_ui";
 
 const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
@@ -37,29 +36,51 @@ const VocabularyItemPropsTable = (props) => {
 };
 
 export const VocabularyResultsListItemComponent = ({ result, appName }) => {
-  const { title_l10n: title = "No title", id, props: itemProps } = result;
-  // TODO: serialize links->self in UI serializer and use here
-  const viewLink = new URL(
+  const {
+    title = "No title",
     id,
-    new URL(window.location.pathname, window.location.origin)
-  );
+    props: itemProps,
+    hierarchy: { ancestors, title: ancestorTitles, ancestors_or_self },
+    links,
+  } = result;
+  const ancestorTitlesWithId = ancestorTitles.map((ancestorTitle, index) => ({
+    ...ancestorTitle,
+    id: ancestors_or_self[index],
+  }));
+  const { self_html, vocabulary_html } = links;
   return (
     <Overridable
       id={buildUID("RecordsResultsListItem.layout", "", appName)}
       result={result}
       title={title}
     >
-      <Item key={result.id}>
+      <Item key={id}>
         <Item.Content>
           <Item.Header as="h2">
-            <a href={viewLink}>
-              {_upperFirst(title)}{" "}
-              <Label pointing="left" size="small">
-                <b>ID</b>
-                <Label.Detail>{id}</Label.Detail>
-              </Label>
+            <a href={self_html}>
+              <I18nString value={title} />
             </a>
           </Item.Header>
+          {ancestors.length > 0 && (
+            <div>
+              <Breadcrumb>
+                {_reverse(ancestorTitlesWithId).map(
+                  (ancestorTitleWithId, index) => (
+                    <React.Fragment key={ancestorTitleWithId.id}>
+                      <Breadcrumb.Section
+                        href={`${vocabulary_html}/${ancestorTitleWithId.id}`}
+                      >
+                        <I18nString value={ancestorTitleWithId} />
+                      </Breadcrumb.Section>
+                      {index !== ancestorTitlesWithId.length - 1 && (
+                        <Breadcrumb.Divider />
+                      )}
+                    </React.Fragment>
+                  )
+                )}
+              </Breadcrumb>
+            </div>
+          )}
           {itemProps && (
             <Item.Description>
               <VocabularyItemPropsTable {...itemProps} />
