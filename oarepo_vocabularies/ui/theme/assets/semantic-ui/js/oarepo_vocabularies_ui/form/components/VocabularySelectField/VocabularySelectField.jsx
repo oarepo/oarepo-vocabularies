@@ -35,12 +35,12 @@ export const serializeVocabularyItem = (item, includeProps = ["id"]) => {
   return typeof item === "string"
     ? { id: item }
     : Array.isArray(item)
-    ? item.map((i) => _pick(i, includeProps))
+    ? item.map((i) => serializeVocabularyItem(i))
     : _pick(item, includeProps);
 };
 
 export const deserializeVocabularyItem = (item) => {
-  return Array.isArray(item) ? item.map((item) => item.id) : item?.id || "";
+  return Array.isArray(item) ? item.map((item) => deserializeVocabularyItem(item)) : item?.id || "";
 };
 
 export const VocabularySelectField = ({
