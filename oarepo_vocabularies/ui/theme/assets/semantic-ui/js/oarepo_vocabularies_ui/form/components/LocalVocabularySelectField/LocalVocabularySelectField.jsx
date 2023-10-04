@@ -53,7 +53,7 @@ export const LocalVocabularySelectField = ({
         }}
         value={deserializeVocabularyItem(
           getIn(values, fieldPath, multiple ? [] : {})
-        )}
+        ).id}
         {...uiProps}
       />
       <label style={{ fontWeight: "bold" }}>{helpText}</label>
