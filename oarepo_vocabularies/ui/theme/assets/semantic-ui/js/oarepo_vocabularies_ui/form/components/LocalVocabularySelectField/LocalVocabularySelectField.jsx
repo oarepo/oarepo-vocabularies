@@ -3,7 +3,6 @@ import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
 import {
   serializeVocabularyItem,
-  deserializeVocabularyItem,
 } from "@js/oarepo_vocabularies";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
@@ -13,6 +12,13 @@ import PropTypes from "prop-types";
 // we have except institutions vocabulary which is a bit bigger could be easily handled by this component meaning:
 // access-rights, contributor-roles, countries, funders, item-relation-types, languages, licences (rights), resource-types, subject-categories
 // need form config to contain vocabularis.[languages, licenses, resourceTypes]
+
+export const deserializeLocalVocabularyItem = (item) => {
+  return Array.isArray(item)
+    ? item.map((item) => deserializeLocalVocabularyItem(item))
+    : item.id;
+};
+
 
 export const LocalVocabularySelectField = ({
   fieldPath,
@@ -35,6 +41,9 @@ export const LocalVocabularySelectField = ({
   }
 
   const { values, setFieldTouched } = useFormikContext();
+  const value = deserializeLocalVocabularyItem(
+    getIn(values, fieldPath, multiple ? [] : {})
+  );
   return (
     <React.Fragment>
       <SelectField
@@ -51,9 +60,7 @@ export const LocalVocabularySelectField = ({
             serializeVocabularyItem(data.value)
           );
         }}
-        value={deserializeVocabularyItem(
-          getIn(values, fieldPath, multiple ? [] : {})
-        ).id}
+        value={value}
         {...uiProps}
       />
       <label style={{ fontWeight: "bold" }}>{helpText}</label>
