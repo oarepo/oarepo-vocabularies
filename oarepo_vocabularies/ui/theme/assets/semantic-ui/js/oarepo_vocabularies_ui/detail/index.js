@@ -8,9 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
     `[data-invenio-search-config]`
   );
 
-  const initialAppConfig = JSON.parse(
-    searchAppElement.dataset[_camelCase("invenio-search-config")]
-  );
+  if (searchAppElement) {
+    const initialAppConfig = JSON.parse(
+      searchAppElement.dataset[_camelCase("invenio-search-config")]
+    );
 
   const uiLinksConfig = JSON.parse(
     searchAppElement.dataset[_camelCase("ui-links")]
@@ -18,5 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   initialAppConfig.uiLinks = uiLinksConfig;
 
-  ReactDOM.render(<App appConfig={initialAppConfig} />, searchAppElement);
+    ReactDOM.render(<App appConfig={initialAppConfig} />, searchAppElement);
+  }
 });
