@@ -46,9 +46,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
                 "record_sidebar": "VocabulariesSidebar",
             },
         },
-        "search": {"layout": "oarepo_vocabularies_ui/search.html"},
-        "create": {"layout": "oarepo_vocabularies_ui/form.html"},
-        "edit": {"layout": "oarepo_vocabularies_ui/form.html"},
+        "search": {"layout": "oarepo_vocabularies_ui/VocabulariesSearch.jinja", "app_id": "OarepoVocabularies.Search" },
+         "create": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
+        "edit": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
     }
 
     routes = {

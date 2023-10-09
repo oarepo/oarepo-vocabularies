@@ -2,6 +2,7 @@ from flask import current_app, g, redirect, render_template, request
 from flask_resources import route
 from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources import UIResource
+from oarepo_ui.resources.catalog import get_jinja_template
 
 
 class VocabularyTypeUIResource(UIResource):
@@ -23,7 +24,6 @@ class VocabularyTypeUIResource(UIResource):
 
     def list(self):
         """Returns vocabulary types page."""
-        # record = self._get_record(resource_requestctx)
         list_data = self.service.search(g.identity).to_dict()
 
         config_metadata = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
@@ -36,14 +36,6 @@ class VocabularyTypeUIResource(UIResource):
         # TODO: handle permissions UI way - better response than generic error
         serialized_list_data = self.config.ui_serializer.dump_list(list_data)
 
-        # make links absolute
-        # if "links" in serialized_list_data:
-        #     for k, v in list(serialized_record["links"].items()):
-        #         if not isinstance(v, str):
-        #             continue
-        #         if not v.startswith("/") and not v.startswith("https://"):
-        #             v = f"/api{self.api_service.config.url_prefix}{v}"
-        #             serialized_record["links"][k] = v
 
         extra_context = dict()
         self.run_components(
@@ -57,16 +49,16 @@ class VocabularyTypeUIResource(UIResource):
             component_key="list",
         )
 
-        template_def = self.config.templates["list"]
-        template = current_oarepo_ui.get_template(template_def["layout"], {})
+        _catalog = current_oarepo_ui.catalog
 
-        return render_template(
-            template,
-            list_data=serialized_list_data,
-            ui_config=self.config,
-            ui_resource=self,
-            component_key="list",
-            **extra_context,
+        template_def = self.config.templates["list"]
+        source = get_jinja_template(_catalog, template_def, [])
+
+        return _catalog.render(
+            "list",
+            __source=source,
+            list_data=serialized_list_data
+
         )
 
     def list_without_slash(self):

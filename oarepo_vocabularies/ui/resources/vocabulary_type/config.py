@@ -13,7 +13,7 @@ class VocabularyTypeUIResourceConfig(UIResourceConfig):
 
     templates = {
         "list": {
-            "layout": "oarepo_vocabularies_ui/list.html",
+            "layout": "oarepo_vocabularies_ui/VocabulariesList.jinja",
         }
     }
 
