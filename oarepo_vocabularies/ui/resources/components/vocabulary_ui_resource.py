@@ -9,6 +9,7 @@ class VocabularyRecordsComponent(ServiceComponent):
     """
 
     def before_ui_search(self, *, resource, search_options, view_args, **kwargs):
+        search_options['headers'] = {'Accept': 'application/json'}
         vocabulary_type = view_args["vocabulary_type"]
         api_service = resource.api_service
         search_options.setdefault(
