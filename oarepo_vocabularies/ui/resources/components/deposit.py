@@ -1,17 +1,18 @@
 import inspect
 import json
-from functools import partial
 
 from flask import current_app
 from invenio_records import Record
 from invenio_records_resources.services.records.components import ServiceComponent
-from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
-from oarepo_runtime.relations.mapping import RelationsMapping
-
-from oarepo_vocabularies.records.api import find_vocabulary_relations
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
+from oarepo_vocabularies.records.api import find_vocabulary_relations
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
+
+try:
+    pass
+except ImportError:
+    pass
 
 
 class DepositVocabularyOptionsComponent(ServiceComponent):
@@ -102,8 +103,10 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
             for r in vocabulary_service.scan(
                 identity,
                 params={
-                    "q": " OR ".join(f"type.id:{x}" for x in vocabularies_to_prefetch)
+                    "q": " OR ".join(f"type.id:{x}" for x in vocabularies_to_prefetch),
+                    "sort": "title",
                 },
+                preserve_order=True,
             ):
                 yield r
 

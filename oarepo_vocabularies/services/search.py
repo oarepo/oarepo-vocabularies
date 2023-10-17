@@ -1,4 +1,3 @@
-import json
 
 from flask import current_app
 from invenio_records_resources.services.records.params import FilterParam
@@ -6,8 +5,8 @@ from invenio_records_resources.services.records.queryparser import QueryParser
 from invenio_vocabularies.services.service import (
     VocabularySearchOptions as InvenioVocabularySearchOptions,
 )
-from sqlalchemy.util import classproperty
 from opensearch_dsl import query
+from sqlalchemy.util import classproperty
 
 try:
     from invenio_i18n import get_locale
