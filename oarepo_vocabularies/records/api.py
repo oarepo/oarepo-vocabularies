@@ -1,4 +1,3 @@
-import inspect
 from collections import namedtuple
 
 from invenio_records.dumpers import SearchDumper

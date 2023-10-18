@@ -13,7 +13,6 @@ from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabularyTypeService
 
-
 INVENIO_VOCABULARY_TYPE_METADATA = {
     # etc.
     # "affilliations": {
