@@ -11,34 +11,30 @@
       <thead>
         <tr>
           <th>
-            Id
+            {{_("Vocabulary")}}
           </th>
           <th>
-            PID type
+            {{_("Items Count")}}
           </th>
           <th>
-            Count
+            {{_("Description")}}
           </th>
           <th>
-            Link
+            {{_("Vocabulary Code")}}
           </th>
           <th>
-            Name
-          </th>
-          <th>
-            Description
+            {{_("PID type")}} {{_("(internal)")}}
           </th>
         </tr>
       </thead>
       <tbody>
         {% for item in list_data['hits']['hits'] %}
           <tr>
+            <td><a href={{ item.links['self'].replace("/api/", "/") }}>{{ item.name or item.id }}</a></td>
+            <td>{{ item.count }}</td>
+            <td>{{ item.description }}</td>
             <td>{{ item.id }}</td>
             <td>{{ item.pid_type }}</td>
-            <td>{{ item.count }}</td>
-            <td><a href={{ item.links['self'].replace("/api/", "/") }}>{{ item.id }}</a></td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.description }}</td>
           </tr>
         {% endfor %}
       </tbody>
