@@ -75,3 +75,5 @@ from oarepo_runtime.cf.icu import ICUSortCF
 
 OAREPO_VOCABULARIES_SORT_CF = [ICUSortCF("cs", "czech", "title.cs")]
 ```
+
+When set up this way, the pre-fetched vocabularies (for ui inputs etc) are sorted as well.
