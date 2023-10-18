@@ -7,6 +7,7 @@ from oarepo_ui.resources.links import UIRecordLink
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
+from oarepo_vocabularies.ui.resources.components.search import VocabularySearchComponent
 from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
     VocabularyRecordsComponent,
 )
@@ -65,6 +66,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     components = [
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
+        VocabularySearchComponent,
     ]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}

@@ -1,4 +1,3 @@
-
 from flask import current_app
 from invenio_records_resources.services.records.params import FilterParam
 from invenio_records_resources.services.records.queryparser import QueryParser
