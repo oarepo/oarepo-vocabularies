@@ -62,3 +62,16 @@ class FundingService(AuthorityService):
         # in this example:
         return next(x for x in self.search()['hits']['hits'] if x['id'] == item_id)
 ```
+
+## Ordering
+
+To support other than English ordering, `sort` custom field has been added to the vocabulary api. This
+custom field automatically populates `sort.<lang>` mapping property for each language specified in the
+configuration:
+
+```python
+# invenio.cfg
+from oarepo_runtime.cf.icu import ICUSortCF
+
+OAREPO_VOCABULARIES_SORT_CF = [ICUSortCF("cs", "czech", "title.cs")]
+```
