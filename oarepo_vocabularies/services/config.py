@@ -9,6 +9,7 @@ from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
 
+from .components.scanning_order import ScanningOrderComponent
 from .permissions import PermissionPolicy
 
 
@@ -81,7 +82,11 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
-    components = [*VocabulariesServiceConfig.components, HierarchyComponent]
+    components = [
+        *VocabulariesServiceConfig.components,
+        HierarchyComponent,
+        ScanningOrderComponent,
+    ]
     permission_policy_cls = PermissionPolicy
 
     url_prefix = "/vocabularies/"

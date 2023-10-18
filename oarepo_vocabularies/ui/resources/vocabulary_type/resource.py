@@ -1,4 +1,4 @@
-from flask import current_app, g, redirect, render_template, request
+from flask import current_app, g, redirect, request
 from flask_resources import route
 from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources import UIResource
@@ -36,7 +36,6 @@ class VocabularyTypeUIResource(UIResource):
         # TODO: handle permissions UI way - better response than generic error
         serialized_list_data = self.config.ui_serializer.dump_list(list_data)
 
-
         extra_context = dict()
         self.run_components(
             "before_ui_list",
@@ -54,12 +53,7 @@ class VocabularyTypeUIResource(UIResource):
         template_def = self.config.templates["list"]
         source = get_jinja_template(_catalog, template_def, [])
 
-        return _catalog.render(
-            "list",
-            __source=source,
-            list_data=serialized_list_data
-
-        )
+        return _catalog.render("list", __source=source, list_data=serialized_list_data)
 
     def list_without_slash(self):
         split_path = request.full_path.split("?", maxsplit=1)
