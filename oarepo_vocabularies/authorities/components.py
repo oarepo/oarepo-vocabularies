@@ -1,4 +1,3 @@
-
 from invenio_access.permissions import system_identity
 from invenio_db import db
 from invenio_records_resources.services.records.components import ServiceComponent

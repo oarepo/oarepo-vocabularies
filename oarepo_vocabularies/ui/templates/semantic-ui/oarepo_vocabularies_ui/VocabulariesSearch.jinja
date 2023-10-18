@@ -10,6 +10,6 @@
 {%- block page_body %}
 <div class="ui main container">
     {%- block searchapp_root %}
-  <div data-invenio-search-config='{{search_app_config}}'></div>    {%- endblock searchapp_root %}
+  <div data-invenio-search-config='{{search_app_config | tojson}}'></div>    {%- endblock searchapp_root %}
 </div>
 {%- endblock page_body %}
