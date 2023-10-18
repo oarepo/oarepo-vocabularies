@@ -106,6 +106,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
                     "q": " OR ".join(f"type.id:{x}" for x in vocabularies_to_prefetch),
                     "sort": "title",
                 },
+                # this needs the ScanningOrderComponent to be installed, otherwise does not sort
                 preserve_order=True,
             ):
                 yield r
