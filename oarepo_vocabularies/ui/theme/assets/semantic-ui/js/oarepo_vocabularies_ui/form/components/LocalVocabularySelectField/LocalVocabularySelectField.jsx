@@ -41,6 +41,7 @@ export const LocalVocabularySelectField = ({
         // formik exhibits strange behavior when you enable search prop to semantic ui's dropdown i.e. handleBlur stops working - did not investigate the details very deep
         // but imperatively calling setFieldTouched gets the job done
         onBlur={() => setFieldTouched(fieldPath)}
+        deburr
         search
         fieldPath={fieldPath}
         multiple={multiple}
