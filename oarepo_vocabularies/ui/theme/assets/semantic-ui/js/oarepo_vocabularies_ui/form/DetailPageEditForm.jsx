@@ -6,6 +6,7 @@ import {
   PublishButton,
   PropFieldsComponent,
   ResetButton,
+  FeaturedButton,
   CurrentLocationInformation,
   VocabularyMultilingualInputField,
 } from "./components";
@@ -14,7 +15,6 @@ import { VocabularyFormSchema } from "./VocabularyFormSchema";
 import Overridable from "react-overridable";
 import { useFormConfig, FormFeedback, BaseForm } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-
 export const DetailPageEditForm = ({
   initialValues,
   hasPropFields,
@@ -23,7 +23,7 @@ export const DetailPageEditForm = ({
   const {
     formConfig: { vocabularyProps },
   } = useFormConfig();
-  console.log(useFormConfig())
+  console.log(useFormConfig());
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
@@ -85,6 +85,16 @@ export const DetailPageEditForm = ({
                         <Grid.Column width={16}>
                           <PublishButton
                             newChildItemParentId={newChildItemParentId}
+                          />
+                        </Grid.Column>
+                        <Grid.Column width={16}>
+                          <FeaturedButton
+                            fluid
+                            color="green"
+                            icon="upload"
+                            labelPosition="left"
+                            content={i18next.t("publmaish")}
+                            type="button"
                           />
                         </Grid.Column>
                         <Grid.Column width={16}>
