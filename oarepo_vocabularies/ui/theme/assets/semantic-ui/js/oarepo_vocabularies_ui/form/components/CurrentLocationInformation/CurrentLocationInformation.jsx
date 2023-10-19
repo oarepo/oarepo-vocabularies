@@ -30,8 +30,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
     read,
     values: { id },
   } = useDepositApiClient();
-  // not possible to use apiClient because I am working just with a information
-  // from a query string and not actually working with any type of record (that contains links inside)
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
     queryFn: () => read(`/api/vocabularies/${type}/${newChildItemParentId}`),
