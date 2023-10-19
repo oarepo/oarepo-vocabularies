@@ -52,7 +52,7 @@ export const DetailPageEditForm = ({
             </Grid.Column>
           </Grid.Row>
 
-          <Grid.Column mobile={16} tablet={16} computer={11}>
+          <Grid.Column id="main-content" mobile={16} tablet={16} computer={11}>
             <VocabularyMultilingualInputField
               fieldPath="title"
               textFieldLabel={i18next.t("Title")}
@@ -71,7 +71,12 @@ export const DetailPageEditForm = ({
             <FormFeedback />
           </Grid.Column>
           <Ref innerRef={sidebarRef} className="rel-mt-3">
-            <Grid.Column mobile={16} tablet={16} computer={5}>
+            <Grid.Column
+              id="control-panel"
+              mobile={16}
+              tablet={16}
+              computer={5}
+            >
               <Sticky context={sidebarRef} offset={20}>
                 <Overridable id="FormApp.buttons">
                   <Card fluid>

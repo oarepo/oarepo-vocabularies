@@ -15,23 +15,29 @@ except ImportError:
 
 class VocabularyQueryParser(QueryParser):
     def parse(self, query_str):
-        ret = super().parse(query_str)
-        ret = query.Bool(
-            should=[
+        original_parsed_query = super().parse(query_str)
+        current_locale = get_locale()
+        if current_locale:
+            language_conditions = [
                 query.QueryString(
-                    query=ret.query,
-                    fields=[f"hierarchy.title.{get_locale().language}"],
-                    default_operator="AND",
-                ),
-                query.QueryString(
-                    query=ret.query,
-                    fields=[f"title.{get_locale().language}"],
+                    query=original_parsed_query.query,
+                    fields=[f"hierarchy.title.{current_locale.language}"],
                     default_operator="AND",
                     boost=5,
                 ),
+                query.QueryString(
+                    query=original_parsed_query.query,
+                    fields=[f"title.{current_locale.language}"],
+                    default_operator="AND",
+                    boost=10,
+                ),
             ]
-        )
-        return ret
+            original_parsed_query = query.Bool(
+                should=[original_parsed_query, *language_conditions],
+                minimum_should_match=1,
+            )
+
+        return original_parsed_query
 
 
 class VocabularySearchOptions(InvenioVocabularySearchOptions):

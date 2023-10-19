@@ -1,24 +1,15 @@
 import React from "react";
 import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
-import {
-  serializeVocabularyItem,
-} from "@js/oarepo_vocabularies";
+import { serializeVocabularyItem } from "@js/oarepo_vocabularies";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
-
-// the idea is for this component to be a simple searchable single or multiple selection drop down
-// that would handle things items that are going to be placed inside the formConfig (HTML). From what I see, all the vocabularies
-// we have except institutions vocabulary which is a bit bigger could be easily handled by this component meaning:
-// access-rights, contributor-roles, countries, funders, item-relation-types, languages, licences (rights), resource-types, subject-categories
-// need form config to contain vocabularis.[languages, licenses, resourceTypes]
 
 export const deserializeLocalVocabularyItem = (item) => {
   return Array.isArray(item)
     ? item.map((item) => deserializeLocalVocabularyItem(item))
     : item.id;
 };
-
 
 export const LocalVocabularySelectField = ({
   fieldPath,
@@ -50,6 +41,7 @@ export const LocalVocabularySelectField = ({
         // formik exhibits strange behavior when you enable search prop to semantic ui's dropdown i.e. handleBlur stops working - did not investigate the details very deep
         // but imperatively calling setFieldTouched gets the job done
         onBlur={() => setFieldTouched(fieldPath)}
+        deburr
         search
         fieldPath={fieldPath}
         multiple={multiple}
@@ -63,7 +55,7 @@ export const LocalVocabularySelectField = ({
         value={value}
         {...uiProps}
       />
-      <label style={{ fontWeight: "bold" }}>{helpText}</label>
+      <label className="helptext">{helpText}</label>
     </React.Fragment>
   );
 };
