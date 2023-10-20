@@ -16,6 +16,7 @@ class Vocabulary(InvenioVocabulary):
             IndexedAtDumperExt(),
             CustomFieldsDumperExt("OAREPO_VOCABULARIES_HIERARCHY_CF", "hierarchy"),
             CustomFieldsDumperExt("OAREPO_VOCABULARIES_SORT_CF", "sort"),
+            CustomFieldsDumperExt("OAREPO_VOCABULARIES_SUGGEST_CF", "suggest"),
             CustomFieldsDumperExt("OAREPO_VOCABULARIES_CUSTOM_CF", "custom_fields"),
         ]
     )
@@ -33,6 +34,12 @@ class Vocabulary(InvenioVocabulary):
     sort = CustomFields(
         "OAREPO_VOCABULARIES_SORT_CF",
         "sort",
+        clear_none=True,
+        create_if_missing=True,
+    )
+    suggest = CustomFields(
+        "OAREPO_VOCABULARIES_SUGGEST_CF",
+        "suggest",
         clear_none=True,
         create_if_missing=True,
     )
