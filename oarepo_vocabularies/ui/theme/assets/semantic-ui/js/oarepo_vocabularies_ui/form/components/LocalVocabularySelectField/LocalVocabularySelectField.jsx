@@ -4,11 +4,37 @@ import { useFormConfig } from "@js/oarepo_ui";
 import { serializeVocabularyItem } from "@js/oarepo_vocabularies";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
+import { Dropdown, Divider } from "semantic-ui-react";
+import _sortBy from "lodash/sortBy";
 
 export const deserializeLocalVocabularyItem = (item) => {
   return Array.isArray(item)
     ? item.map((item) => deserializeLocalVocabularyItem(item))
     : item.id;
+};
+
+const InnerDropdown = ({ options, featured, ...rest }) => {
+  const featuredValues = featured.map((f) => f.value);
+  const otherOptions = options.filter((o) => !featuredValues.includes(o.value));
+
+  return (
+    <Dropdown
+      options={[
+        ...(featured.length
+          ? [
+              ...featured.sort((a, b) => a.text.localeCompare(b.text)),
+              {
+                content: <Divider fitted />,
+                disabled: true,
+                key: "featured-divider",
+              },
+            ]
+          : []),
+        ...otherOptions,
+      ]}
+      {...rest}
+    /> 
+  );
 };
 
 export const LocalVocabularySelectField = ({
@@ -21,10 +47,11 @@ export const LocalVocabularySelectField = ({
   const {
     formConfig: { vocabularies },
   } = useFormConfig();
-  let optionsList = [];
-  if (vocabularies[optionsListName]?.all !== undefined) {
-    optionsList = vocabularies[optionsListName].all;
-  } else {
+
+  const { all: allOptions, featured: featuredOptions } =
+    vocabularies[optionsListName];
+
+  if (!allOptions) {
     console.error(
       `Do not have options for ${optionsListName} inside:`,
       vocabularies
@@ -43,9 +70,11 @@ export const LocalVocabularySelectField = ({
         onBlur={() => setFieldTouched(fieldPath)}
         deburr
         search
+        control={InnerDropdown}
         fieldPath={fieldPath}
         multiple={multiple}
-        options={optionsList}
+        featured={featuredOptions}
+        options={allOptions}
         onChange={({ e, data, formikProps }) => {
           formikProps.form.setFieldValue(
             fieldPath,
