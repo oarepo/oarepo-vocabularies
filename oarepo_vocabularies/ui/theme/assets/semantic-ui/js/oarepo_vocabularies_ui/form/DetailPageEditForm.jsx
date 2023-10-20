@@ -23,7 +23,6 @@ export const DetailPageEditForm = ({
   const {
     formConfig: { vocabularyProps },
   } = useFormConfig();
-  console.log(useFormConfig());
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
