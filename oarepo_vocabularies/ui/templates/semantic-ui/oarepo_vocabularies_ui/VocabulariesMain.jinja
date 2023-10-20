@@ -30,6 +30,14 @@
   <dt>{{_("vocabulary.relatedURI_" + t.0)}}</dt>
   <dd>{{t.1}}</dd>
   {% endfor %} {% endif %}
+  {% if 'tags' in metadata and metadata.tags | length > 0 %}
+  <dt>{{_("vocabulary.tags")}}</dt>
+  <dd>
+  {% for t in metadata.tags %}
+  <span class="ui tag label {% if t =='featured' -%}red{%- endif %}">{{t}}</span>
+  {% endfor %}
+  </dd>
+  {% endif %}
 </dl>
 <div class="ui center aligned container">
   
