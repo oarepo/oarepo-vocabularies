@@ -77,7 +77,7 @@ def app_config(app_config):
     """Mimic an instance's configuration."""
     app_config["JSONSCHEMAS_HOST"] = "localhost"
     app_config["BABEL_DEFAULT_LOCALE"] = "en"
-    app_config["I18N_LANGUAGES"] = [("da", "Danish")]
+    app_config["I18N_LANGUAGES"] = [("da", "Danish"), ("cs", "Czech")]
     app_config[
         "RECORDS_REFRESOLVER_CLS"
     ] = "invenio_records.resolver.InvenioRefResolver"
@@ -162,6 +162,16 @@ def app_config(app_config):
     app_config[
         "THEME_HEADER_TEMPLATE"
     ] = "oarepo_vocabularies_ui/test_header_template.html"
+
+    from oarepo_runtime.cf.icu import ICUSortCF, ICUSuggestCF
+
+    app_config["OAREPO_VOCABULARIES_SORT_CF"] = [
+        ICUSortCF("cs", "czech", "title.cs", sort_option="title")
+    ]
+    app_config["OAREPO_VOCABULARIES_SUGGEST_CF"] = [
+        ICUSuggestCF("cs", "czech", "title.cs")
+    ]
+
     return app_config
 
 
@@ -217,7 +227,7 @@ def lang_data():
     """Example data."""
     return {
         "id": "eng",
-        "title": {"en": "English", "da": "Engelsk"},
+        "title": {"en": "English", "da": "Engelsk", "cs": "Angličtina"},
         "description": {"en": "English description", "da": "Engelsk beskrivelse"},
         "icon": "file-o",
         "props": {
@@ -233,7 +243,11 @@ def lang_data_child():
     """Example data."""
     return {
         "id": "eng.US",
-        "title": {"en": "English (US)", "da": "Engelsk (US)"},
+        "title": {
+            "en": "English (US)",
+            "da": "Engelsk (US)",
+            "cs": "Angličtina (Spojené státy)",
+        },
         "icon": "file-o",
         "type": "languages",
         "hierarchy": {"parent": "eng"},
@@ -345,7 +359,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         system_identity,
         {
             "id": "eng.US",
-            "title": {"en": "English (US)", "da": "Engelsk (US)"},
+            "title": {
+                "en": "English (US)",
+                "da": "Engelsk (US)",
+                "cs": "Angličtina (US)",
+            },
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
@@ -355,7 +373,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         system_identity,
         {
             "id": "eng.UK",
-            "title": {"en": "English (UK)", "da": "Engelsk (UK)"},
+            "title": {
+                "en": "English (UK)",
+                "da": "Engelsk (UK)",
+                "cs": "Angličtina (UK)",
+            },
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
@@ -365,7 +387,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         system_identity,
         {
             "id": "eng.UK.S",
-            "title": {"en": "English (UK, Scotland)", "da": "Engelsk (UK, Scotland)"},
+            "title": {
+                "en": "English (UK, Scotland)",
+                "da": "Engelsk (UK, Scotland)",
+                "cs": "Angličtina (A pro řazení)",
+            },
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng.UK"},

@@ -71,9 +71,19 @@ configuration:
 
 ```python
 # invenio.cfg
-from oarepo_runtime.cf.icu import ICUSortCF
+from oarepo_runtime.cf.icu import ICUSortCF, ICUSuggestCF
 
-OAREPO_VOCABULARIES_SORT_CF = [ICUSortCF("cs", "czech", "title.cs")]
+OAREPO_VOCABULARIES_SORT_CF = [
+        ICUSortCF("cs", "czech", "title.cs", sort_option="title")
+    ]
+
+OAREPO_VOCABULARIES_SUGGEST_CF = [
+        ICUSuggestCF("cs", "czech", "title.cs")
+    ]
 ```
 
 When set up this way, the pre-fetched vocabularies (for ui inputs etc) are sorted as well.
+
+## Suggesting
+
+To suggest in the actual locale, set the `OAREPO_VOCABULARIES_SUGGEST_CF` as above.
