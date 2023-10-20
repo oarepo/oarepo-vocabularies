@@ -61,12 +61,6 @@ export const App = ({ appConfig }) => {
         >
           <AppWrapper>
             <Container>
-              <Header
-                as="h2"
-                size="huge"
-                textAlign="center"
-                content={i18next.t("descendants")}
-              />
               <Grid relaxed centered>
                 <Grid.Row>
                   <Grid.Column width={16}>
