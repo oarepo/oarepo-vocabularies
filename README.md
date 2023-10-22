@@ -65,25 +65,6 @@ class FundingService(AuthorityService):
 
 ## Ordering
 
-To support other than English ordering, `sort` custom field has been added to the vocabulary api. This
-custom field automatically populates `sort.<lang>` mapping property for each language specified in the
-configuration:
-
-```python
-# invenio.cfg
-from oarepo_runtime.cf.icu import ICUSortCF, ICUSuggestCF
-
-OAREPO_VOCABULARIES_SORT_CF = [
-        ICUSortCF("cs", "czech", "title.cs", sort_option="title")
-    ]
-
-OAREPO_VOCABULARIES_SUGGEST_CF = [
-        ICUSuggestCF("cs", "czech", "title.cs")
-    ]
-```
-
-When set up this way, the pre-fetched vocabularies (for ui inputs etc) are sorted as well.
-
-## Suggesting
-
-To suggest in the actual locale, set the `OAREPO_VOCABULARIES_SUGGEST_CF` as above.
+This extension supports ordering and suggestion in different languages. It is enabled by default
+and enables all languages in `I18N_LANGUAGES`, `BABEL_DEFAULT_LOCALE`. Sorting by `title` sorts
+by the title in the current language, suggestion suggests in `id` and title in the default language.
