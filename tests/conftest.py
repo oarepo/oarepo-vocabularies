@@ -163,15 +163,6 @@ def app_config(app_config):
         "THEME_HEADER_TEMPLATE"
     ] = "oarepo_vocabularies_ui/test_header_template.html"
 
-    from oarepo_runtime.cf.icu import ICUSortCF, ICUSuggestCF
-
-    app_config["OAREPO_VOCABULARIES_SORT_CF"] = [
-        ICUSortCF("cs", "czech", "title.cs", sort_option="title")
-    ]
-    app_config["OAREPO_VOCABULARIES_SUGGEST_CF"] = [
-        ICUSuggestCF("cs", "czech", "title.cs")
-    ]
-
     return app_config
 
 

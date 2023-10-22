@@ -1,8 +1,13 @@
+from flask_babelex import lazy_gettext as _
 from invenio_records_resources.services.records.params import FilterParam
 from invenio_records_resources.services.records.queryparser import QueryParser
-from oarepo_runtime.services.search import I18nSearchOptions
+from oarepo_runtime.services.icu import (
+    I18nSearchOptions,
+    ICUSortOptions,
+    ICUSuggestParser,
+    SuggestField,
+)
 from opensearch_dsl import query
-from flask_babelex import lazy_gettext as _
 
 try:
     from invenio_i18n import get_locale
@@ -74,3 +79,9 @@ class VocabularySearchOptions(I18nSearchOptions):
 
     sort_default = "bestmatch"
     sort_default_no_query = "title"
+
+    sort_options = ICUSortOptions("vocabularies")
+    suggest_parser_cls = ICUSuggestParser(
+        "vocabularies",
+        extra_fields=[SuggestField(field="id", boost=10, use_ngrams=False)],
+    )
