@@ -1,8 +1,3 @@
-from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
-from invenio_records import Record
-from invenio_records_resources.records.systemfields import PIDField
-from invenio_records_resources.records.systemfields.pid import PIDFieldContext
-
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -30,8 +25,8 @@ def test_dump_options(sample_records, search_clear, identity):
             "languages": {
                 "all": [
                     {"text": "English", "value": "eng"},
-                    {"text": "English (US)", "value": "eng.US"},
                     {"text": "English (UK)", "value": "eng.UK"},
+                    {"text": "English (US)", "value": "eng.US"},
                 ],
                 "definition": {
                     "description": {
@@ -47,7 +42,9 @@ def test_dump_options(sample_records, search_clear, identity):
     }
 
 
-def test_dump_options_with_resource(sample_records, search_clear, simple_record_service, identity):
+def test_dump_options_with_resource(
+    sample_records, search_clear, simple_record_service, identity
+):
     comp = DepositVocabularyOptionsComponent(service=None, uow=None)
     form_config = {}
     comp.form_config(
@@ -67,8 +64,8 @@ def test_dump_options_with_resource(sample_records, search_clear, simple_record_
             "languages": {
                 "all": [
                     {"text": "English", "value": "eng"},
-                    {"text": "English (US)", "value": "eng.US"},
                     {"text": "English (UK)", "value": "eng.UK"},
+                    {"text": "English (US)", "value": "eng.US"},
                 ],
                 "definition": {
                     "description": {

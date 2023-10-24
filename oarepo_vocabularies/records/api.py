@@ -1,13 +1,13 @@
-import inspect
 from collections import namedtuple
 
 from invenio_records.dumpers import SearchDumper
 from invenio_records.dumpers.indexedat import IndexedAtDumperExt
 from invenio_records.systemfields import ConstantField
-from invenio_records_resources.records.dumpers import CustomFieldsDumperExt
 from invenio_vocabularies.records.api import Vocabulary as InvenioVocabulary
 from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
 from oarepo_runtime.cf import CustomFields, InlinedCustomFields
+from oarepo_runtime.records import SystemFieldDumperExt
+from oarepo_runtime.records.icu import ICUSortField, ICUSuggestField
 from oarepo_runtime.relations.mapping import RelationsMapping
 
 
@@ -15,9 +15,7 @@ class Vocabulary(InvenioVocabulary):
     dumper = SearchDumper(
         extensions=[
             IndexedAtDumperExt(),
-            CustomFieldsDumperExt("OAREPO_VOCABULARIES_HIERARCHY_CF", "hierarchy"),
-            CustomFieldsDumperExt("OAREPO_VOCABULARIES_SORT_CF", "sort"),
-            CustomFieldsDumperExt("OAREPO_VOCABULARIES_CUSTOM_CF", "custom_fields"),
+            SystemFieldDumperExt(),
         ]
     )
     schema = ConstantField(
@@ -31,12 +29,10 @@ class Vocabulary(InvenioVocabulary):
         clear_none=True,
         create_if_missing=True,
     )
-    sort = CustomFields(
-        "OAREPO_VOCABULARIES_SORT_CF",
-        "sort",
-        clear_none=True,
-        create_if_missing=True,
-    )
+    sort = ICUSortField(source_field="title")
+    suggest = ICUSuggestField(source_field="title")
+    suggest_hierarchy = ICUSuggestField(source_field="hierarchy.title")
+
     custom_fields = InlinedCustomFields("OAREPO_VOCABULARIES_CUSTOM_CF")
 
 

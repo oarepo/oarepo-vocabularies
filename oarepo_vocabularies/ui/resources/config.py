@@ -4,11 +4,12 @@ from invenio_records_resources.services import Link, pagination_links
 from oarepo_ui.resources.config import RecordsUIResourceConfig
 from oarepo_ui.resources.links import UIRecordLink
 
-from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
-    VocabularyRecordsComponent,
-)
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
+)
+from oarepo_vocabularies.ui.resources.components.search import VocabularySearchComponent
+from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
+    VocabularyRecordsComponent,
 )
 
 
@@ -46,9 +47,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
                 "record_sidebar": "VocabulariesSidebar",
             },
         },
-        "search": {"layout": "oarepo_vocabularies_ui/search.html"},
-        "create": {"layout": "oarepo_vocabularies_ui/form.html"},
-        "edit": {"layout": "oarepo_vocabularies_ui/form.html"},
+        "search": {
+            "layout": "oarepo_vocabularies_ui/VocabulariesSearch.jinja",
+            "app_id": "OarepoVocabularies.Search",
+        },
+        "create": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
+        "edit": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
     }
 
     routes = {
@@ -62,6 +66,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     components = [
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
+        VocabularySearchComponent,
     ]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}

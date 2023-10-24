@@ -1,12 +1,12 @@
-import json
-
-from flask import current_app
+from flask_babelex import lazy_gettext as _
 from invenio_records_resources.services.records.params import FilterParam
 from invenio_records_resources.services.records.queryparser import QueryParser
-from invenio_vocabularies.services.service import (
-    VocabularySearchOptions as InvenioVocabularySearchOptions,
+from oarepo_runtime.services.icu import (
+    I18nSearchOptions,
+    ICUSortOptions,
+    ICUSuggestParser,
+    SuggestField,
 )
-from sqlalchemy.util import classproperty
 from opensearch_dsl import query
 
 try:
@@ -17,47 +17,71 @@ except ImportError:
 
 class VocabularyQueryParser(QueryParser):
     def parse(self, query_str):
-        ret = super().parse(query_str)
-        ret = query.Bool(
-            should=[
+        original_parsed_query = super().parse(query_str)
+        current_locale = get_locale()
+        if current_locale:
+            language_conditions = [
                 query.QueryString(
-                    query=ret.query,
-                    fields=[f"hierarchy.title.{get_locale().language}"],
-                    default_operator="AND",
-                ),
-                query.QueryString(
-                    query=ret.query,
-                    fields=[f"title.{get_locale().language}"],
+                    query=original_parsed_query.query,
+                    fields=[f"hierarchy.title.{current_locale.language}"],
                     default_operator="AND",
                     boost=5,
                 ),
+                query.QueryString(
+                    query=original_parsed_query.query,
+                    fields=[f"title.{current_locale.language}"],
+                    default_operator="AND",
+                    boost=10,
+                ),
             ]
-        )
-        return ret
+            original_parsed_query = query.Bool(
+                should=[original_parsed_query, *language_conditions],
+                minimum_should_match=1,
+            )
+
+        return original_parsed_query
 
 
-class VocabularySearchOptions(InvenioVocabularySearchOptions):
+class VocabularySearchOptions(I18nSearchOptions):
+    SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
+    SUGGEST_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SUGGEST_CF"
+
     params_interpreters_cls = [
+        FilterParam.factory(param="tags", field="tags"),
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
         FilterParam.factory(
             param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"
         ),
-    ] + InvenioVocabularySearchOptions.params_interpreters_cls
+    ] + I18nSearchOptions.params_interpreters_cls
 
     query_parser_cls = VocabularyQueryParser
 
-    @classproperty
-    def sort_options(clz):
-        ret = super().sort_options
-        # transform the sort options by the current language
-        locale = get_locale()
-        if not locale:
-            return ret
-        language = locale.language
-        for cf in current_app.config["OAREPO_VOCABULARIES_SORT_CF"]:
-            if cf.name == language:
-                ret["title"]["fields"] = [f"sort.{cf.name}"]
-                break
-        return ret
+    extra_sort_options = {
+        "bestmatch": dict(
+            title=_("Best match"),
+            fields=["_score"],  # ES defaults to desc on `_score` field
+        ),
+        "title": dict(
+            title=_("Title"),
+            fields=["title_sort"],
+        ),
+        "newest": dict(
+            title=_("Newest"),
+            fields=["-created"],
+        ),
+        "oldest": dict(
+            title=_("Oldest"),
+            fields=["created"],
+        ),
+    }
+
+    sort_default = "bestmatch"
+    sort_default_no_query = "title"
+
+    sort_options = ICUSortOptions("vocabularies")
+    suggest_parser_cls = ICUSuggestParser(
+        "vocabularies",
+        extra_fields=[SuggestField(field="id", boost=10, use_ngrams=False)],
+    )

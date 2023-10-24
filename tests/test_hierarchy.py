@@ -10,7 +10,7 @@ def test_hierarchy_lang(
 
     assert parent.data["hierarchy"] == {
         "level": 1,
-        "title": [{"en": "English", "da": "Engelsk"}],
+        "title": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
         "ancestors": [],
         "ancestors_or_self": ["eng"],
     }
@@ -31,8 +31,12 @@ def test_hierarchy_lang(
         "level": 2,
         "parent": "eng",
         "title": [
-            {"da": "Engelsk (US)", "en": "English (US)"},
-            {"da": "Engelsk", "en": "English"},
+            {
+                "cs": "Angličtina (Spojené státy)",
+                "da": "Engelsk (US)",
+                "en": "English (US)",
+            },
+            {"cs": "Angličtina", "da": "Engelsk", "en": "English"},
         ],
         "ancestors": ["eng"],
         "ancestors_or_self": ["eng.US", "eng"],

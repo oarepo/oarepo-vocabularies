@@ -1,15 +1,11 @@
-import inspect
-
 from invenio_access.permissions import system_identity
 from invenio_db import db
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
 from oarepo_runtime.relations.errors import (
     InvalidRelationError,
     MultipleInvalidRelationErrors,
 )
-from oarepo_runtime.relations.mapping import RelationsMapping
 
 from oarepo_vocabularies.authorities.proxies import authorities
 from oarepo_vocabularies.authorities.service import AuthorityService

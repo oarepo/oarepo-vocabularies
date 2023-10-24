@@ -1,0 +1,44 @@
+{#def list_data #}
+{%- set title = _("Vocabulary types") %}
+
+{%- extends config.BASE_TEMPLATE %}
+
+{%- block page_body %}
+<div class="ui container centered">
+  <h1 class="mt-20 floated left">{{ _("Vocabularies") }}</h1>
+  <div class="ui centered grid">
+    <table  class="ui padded centered table m-20" >
+      <thead>
+        <tr>
+          <th>
+            {{_("Vocabulary")}}
+          </th>
+          <th>
+            {{_("Items Count")}}
+          </th>
+          <th>
+            {{_("Description")}}
+          </th>
+          <th>
+            {{_("Vocabulary Code")}}
+          </th>
+          <th>
+            {{_("PID type")}} {{_("(internal)")}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in list_data['hits']['hits'] %}
+          <tr>
+            <td><a href={{ item.links['self'].replace("/api/", "/") }}>{{ item.name or item.id }}</a></td>
+            <td>{{ item.count }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.id }}</td>
+            <td>{{ item.pid_type }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  <div>
+</div>
+{%- endblock page_body %}

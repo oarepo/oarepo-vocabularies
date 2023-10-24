@@ -1,17 +1,11 @@
 import React from "react";
 import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
-import {
-  serializeVocabularyItem,
-} from "@js/oarepo_vocabularies";
+import { serializeVocabularyItem } from "@js/oarepo_vocabularies";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
-
-// the idea is for this component to be a simple searchable single or multiple selection drop down
-// that would handle things items that are going to be placed inside the formConfig (HTML). From what I see, all the vocabularies
-// we have except institutions vocabulary which is a bit bigger could be easily handled by this component meaning:
-// access-rights, contributor-roles, countries, funders, item-relation-types, languages, licences (rights), resource-types, subject-categories
-// need form config to contain vocabularis.[languages, licenses, resourceTypes]
+import { Dropdown, Divider } from "semantic-ui-react";
+import _sortBy from "lodash/sortBy";
 
 export const deserializeLocalVocabularyItem = (item) => {
   return Array.isArray(item)
@@ -19,6 +13,29 @@ export const deserializeLocalVocabularyItem = (item) => {
     : item.id;
 };
 
+const InnerDropdown = ({ options, featured, ...rest }) => {
+  const featuredValues = featured.map((f) => f.value);
+  const otherOptions = options.filter((o) => !featuredValues.includes(o.value));
+
+  return (
+    <Dropdown
+      options={[
+        ...(featured.length
+          ? [
+              ...featured.sort((a, b) => a.text.localeCompare(b.text)),
+              {
+                content: <Divider fitted />,
+                disabled: true,
+                key: "featured-divider",
+              },
+            ]
+          : []),
+        ...otherOptions,
+      ]}
+      {...rest}
+    /> 
+  );
+};
 
 export const LocalVocabularySelectField = ({
   fieldPath,
@@ -30,10 +47,11 @@ export const LocalVocabularySelectField = ({
   const {
     formConfig: { vocabularies },
   } = useFormConfig();
-  let optionsList = [];
-  if (vocabularies[optionsListName]?.all !== undefined) {
-    optionsList = vocabularies[optionsListName].all;
-  } else {
+
+  const { all: allOptions, featured: featuredOptions } =
+    vocabularies[optionsListName];
+
+  if (!allOptions) {
     console.error(
       `Do not have options for ${optionsListName} inside:`,
       vocabularies
@@ -50,10 +68,13 @@ export const LocalVocabularySelectField = ({
         // formik exhibits strange behavior when you enable search prop to semantic ui's dropdown i.e. handleBlur stops working - did not investigate the details very deep
         // but imperatively calling setFieldTouched gets the job done
         onBlur={() => setFieldTouched(fieldPath)}
+        deburr
         search
+        control={InnerDropdown}
         fieldPath={fieldPath}
         multiple={multiple}
-        options={optionsList}
+        featured={featuredOptions}
+        options={allOptions}
         onChange={({ e, data, formikProps }) => {
           formikProps.form.setFieldValue(
             fieldPath,
@@ -63,7 +84,7 @@ export const LocalVocabularySelectField = ({
         value={value}
         {...uiProps}
       />
-      <label style={{ fontWeight: "bold" }}>{helpText}</label>
+      <label className="helptext">{helpText}</label>
     </React.Fragment>
   );
 };

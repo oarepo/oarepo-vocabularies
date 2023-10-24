@@ -6,6 +6,7 @@ recursive-include oarepo_vocabularies *.jinja
 recursive-include oarepo_vocabularies *.jinja2
 recursive-include oarepo_vocabularies *.less
 recursive-include oarepo_vocabularies *.js
+recursive-include oarepo_vocabularies *.jsx
 recursive-include oarepo_vocabularies *.overrides
 recursive-include oarepo_vocabularies *.variables
 recursive-include oarepo_vocabularies *.po

@@ -62,3 +62,9 @@ class FundingService(AuthorityService):
         # in this example:
         return next(x for x in self.search()['hits']['hits'] if x['id'] == item_id)
 ```
+
+## Ordering
+
+This extension supports ordering and suggestion in different languages. It is enabled by default
+and enables all languages in `I18N_LANGUAGES`, `BABEL_DEFAULT_LOCALE`. Sorting by `title` sorts
+by the title in the current language, suggestion suggests in `id` and title in the default language.
