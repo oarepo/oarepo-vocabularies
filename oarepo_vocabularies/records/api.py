@@ -31,6 +31,7 @@ class Vocabulary(InvenioVocabulary):
     )
     sort = ICUSortField(source_field="title")
     suggest = ICUSuggestField(source_field="title")
+    suggest_hierarchy = ICUSuggestField(source_field="hierarchy.title")
 
     custom_fields = InlinedCustomFields("OAREPO_VOCABULARIES_CUSTOM_CF")
 
