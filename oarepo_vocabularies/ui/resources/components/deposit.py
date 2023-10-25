@@ -92,10 +92,9 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
                 "value": prefetched_item["id"],
                 "text": VocabularyI18nStrUIField().serialize("title", prefetched_item),
             }
+            by_type["all"].append(returned_item)
             if "featured" in prefetched_item.get("tags", []):
                 by_type["featured"].append(returned_item)
-            else:
-                by_type["all"].append(returned_item)
 
     @staticmethod
     def prefetch_vocabulary_items(identity, vocabularies_to_prefetch):
