@@ -25,6 +25,7 @@ def test_dump_options(sample_records, search_clear, identity):
             "languages": {
                 "all": [
                     {"text": "English", "value": "eng"},
+                    {"text": "English (UK, Scotland)", "value": "eng.UK.S"},
                     {"text": "English (UK)", "value": "eng.UK"},
                     {"text": "English (US)", "value": "eng.US"},
                 ],
@@ -64,6 +65,7 @@ def test_dump_options_with_resource(
             "languages": {
                 "all": [
                     {"text": "English", "value": "eng"},
+                    {"text": "English (UK, Scotland)", "value": "eng.UK.S"},
                     {"text": "English (UK)", "value": "eng.UK"},
                     {"text": "English (US)", "value": "eng.US"},
                 ],
