@@ -13,7 +13,7 @@ export const deserializeLocalVocabularyItem = (item) => {
     : item.id;
 };
 
-const InnerDropdown = ({ options, featured, usedOptions=[], value, ...rest }) => {
+const InnerDropdown = ({ options, featured, usedOptions=[], ...rest }) => {
   const _filterUsed = (opts) => opts.filter((o) => !usedOptions.includes(o.value));
   const allOptions = _filterUsed([...(featured.length
           ? [
@@ -28,7 +28,7 @@ const InnerDropdown = ({ options, featured, usedOptions=[], value, ...rest }) =>
         ...options.filter((o) => !featured.map(o => o.value).includes(o.value)),
         ])
     
-  console.log('[used]', usedOptions, '[value]', value);
+  console.log('[used]', usedOptions);
   return (
     <Dropdown
       options={allOptions}
