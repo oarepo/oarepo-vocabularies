@@ -83,6 +83,7 @@ export const LocalVocabularySelectField = ({
             serializeVocabularyItem(data.value)
           );
         }}
+        value={value}
         {...uiProps}
       />
       <label className="helptext">{helpText}</label>
