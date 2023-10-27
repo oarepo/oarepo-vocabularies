@@ -13,14 +13,9 @@ export const deserializeLocalVocabularyItem = (item) => {
     : item.id;
 };
 
-const InnerDropdown = ({ options, featured, ...rest }) => {
-  const featuredValues = featured.map((f) => f.value);
-  const otherOptions = options.filter((o) => !featuredValues.includes(o.value));
-
-  return (
-    <Dropdown
-      options={[
-        ...(featured.length
+const InnerDropdown = ({ options, featured, usedOptions=[], value, ...rest }) => {
+  const _filterUsed = (opts) => opts.filter((o) => !usedOptions.includes(o.value) || o.value == value);
+  const allOptions = _filterUsed([...(featured.length
           ? [
               ...featured.sort((a, b) => a.text.localeCompare(b.text)),
               {
@@ -30,10 +25,15 @@ const InnerDropdown = ({ options, featured, ...rest }) => {
               },
             ]
           : []),
-        ...otherOptions,
-      ]}
+        ...options.filter((o) => !featured.map(o => o.value).includes(o.value)),
+        ])
+    
+  return (
+    <Dropdown
+      options={allOptions}
+      value={value}
       {...rest}
-    /> 
+    />
   );
 };
 
@@ -41,6 +41,7 @@ export const LocalVocabularySelectField = ({
   fieldPath,
   multiple,
   optionsListName,
+  usedOptions = [],
   helpText,
   ...uiProps
 }) => {
@@ -75,6 +76,7 @@ export const LocalVocabularySelectField = ({
         multiple={multiple}
         featured={featuredOptions}
         options={allOptions}
+        usedOptions={usedOptions}
         onChange={({ e, data, formikProps }) => {
           formikProps.form.setFieldValue(
             fieldPath,
