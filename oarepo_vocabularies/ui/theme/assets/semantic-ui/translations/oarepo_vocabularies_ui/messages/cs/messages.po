@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"POT-Creation-Date: 2023-10-27T10:31:16.532Z\n"
-"PO-Revision-Date: 2023-10-27T10:31:16.532Z\n"
+"POT-Creation-Date: 2023-10-27T12:23:32.743Z\n"
+"PO-Revision-Date: 2023-10-27T12:23:32.743Z\n"
 "Language: cs\n"
 
 msgid "coarType"
@@ -72,9 +72,6 @@ msgstr "Název"
 msgid "Name"
 msgstr "Jméno"
 
-msgid "Toggle featured"
-msgstr "Přepnout preferované"
-
 msgid "Tags"
 msgstr "Štítky"
 
@@ -86,6 +83,12 @@ msgstr "Uložit"
 
 msgid "totalDescendants"
 msgid_plural "totalDescendants"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "{{count}} podřízená položka"
+msgstr[1] "{{count}} podřízené položky"
+msgstr[2] "{{count}} podřízených položek"
+
+msgid "Feature"
+msgstr ""
+
+msgid "Item will be displayed on top of form input options"
+msgstr ""

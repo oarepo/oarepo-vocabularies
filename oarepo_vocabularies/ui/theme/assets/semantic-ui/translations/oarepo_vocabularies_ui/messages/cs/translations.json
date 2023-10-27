@@ -20,11 +20,12 @@
   "Remove field": "Odebrat pole",
   "Title": "Název",
   "Name": "Jméno",
-  "Toggle featured": "Přepnout preferované",
   "Tags": "Štítky",
   "Enter one or more tags.": "Zadejte jeden nebo více štítků",
   "save": "Uložit",
   "totalDescendants_0": "{{count}} podřízená položka",
   "totalDescendants_1": "{{count}} podřízené položky",
-  "totalDescendants_2": "{{count}} podřízených položek"
+  "totalDescendants_2": "{{count}} podřízených položek",
+  "Feature": "Preferovat",
+  "Item will be displayed on top of form input options": "Položka bude mít ve formulářových polích přednost před ostatními"
 }

@@ -22,8 +22,9 @@
   "Name": "Name",
   "totalDescendants": "totalDescendants",
   "totalDescendants_plural": "totalDescendants",
-  "Toggle featured": "Toggle featured",
   "Tags": "Tags",
   "Enter one or more tags.": "Enter one or more tags.",
-  "save": "Save"
+  "save": "Save",
+  "Feature": "Feature",
+  "Item will be displayed on top of form input options": "Item will be displayed on top of form input options"
 }

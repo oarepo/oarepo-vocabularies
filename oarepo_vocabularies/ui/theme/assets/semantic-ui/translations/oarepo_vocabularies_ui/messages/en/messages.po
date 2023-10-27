@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-10-27T10:31:16.705Z\n"
-"PO-Revision-Date: 2023-10-27T10:31:16.705Z\n"
+"POT-Creation-Date: 2023-10-27T12:23:32.976Z\n"
+"PO-Revision-Date: 2023-10-27T12:23:32.976Z\n"
 "Language: en\n"
 
 msgid "coarType"
@@ -77,9 +77,6 @@ msgid_plural "totalDescendants"
 msgstr[0] "totalDescendants"
 msgstr[1] "totalDescendants"
 
-msgid "Toggle featured"
-msgstr "Toggle featured"
-
 msgid "Tags"
 msgstr "Tags"
 
@@ -88,3 +85,9 @@ msgstr "Enter one or more tags."
 
 msgid "save"
 msgstr "Save"
+
+msgid "Feature"
+msgstr "Feature"
+
+msgid "Item will be displayed on top of form input options"
+msgstr "Item will be displayed on top of form input options"
