@@ -20,11 +20,11 @@
   "Remove field": "Odebrat pole",
   "Title": "Název",
   "Name": "Jméno",
-  "totalDescendants_other": "{{count}} podřízených položek",
-  "totalDescendants_one": "{{count}} podřízená položka",
-  "totalDescendants_few": "{{count}} podřízené položky",
   "Toggle featured": "Přepnout preferované",
   "Tags": "Štítky",
   "Enter one or more tags.": "Zadejte jeden nebo více štítků",
-  "save": "Uložit"
+  "save": "Uložit",
+  "totalDescendants_0": "{{count}} podřízená položka",
+  "totalDescendants_1": "{{count}} podřízené položky",
+  "totalDescendants_2": "{{count}} podřízených položek"
 }

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-27 12:22+0200\n"
-"PO-Revision-Date: 2023-10-27 12:24+0200\n"
+"POT-Creation-Date: 2023-10-27 12:40+0200\n"
+"PO-Revision-Date: 2023-10-27 12:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: cs <LL@li.org>\n"
 "Language: cs\n"
@@ -142,7 +142,7 @@ msgstr "Editovat"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:7
 msgid "New child item"
-msgstr "Nová podřazená položka"
+msgstr "Nová podřízená položka"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:12
 msgid "Export"
@@ -207,12 +207,3 @@ msgstr "Nadřazená položka"
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
 msgid "api.ancestors"
 msgstr "Nadřazené položky"
-
-#~ msgid "Export"
-#~ msgstr "Export"
-
-#~ msgid "API"
-#~ msgstr "API"
-
-#~ msgid "Links"
-#~ msgstr "Odkazy"
