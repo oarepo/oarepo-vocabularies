@@ -14,9 +14,9 @@ export const PublishButton = ({ newChildItemParentId }) => {
       loading={isSubmitting}
       color="green"
       onClick={() => createOrUpdate()}
-      icon="upload"
+      icon="save"
       labelPosition="left"
-      content={i18next.t("publish")}
+      content={i18next.t("save")}
       type="button"
     />
   );

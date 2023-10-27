@@ -18,7 +18,7 @@ def test_empty_record(app, vocabularies_ui_resource, vocabularies_ui_resource_co
             "props": None,
             "relatedURI": None,
             "revision_id": None,
-            "tags": [None],
+            "tags": [],
             "title": None,
             "type": "test",
             "updated": None,

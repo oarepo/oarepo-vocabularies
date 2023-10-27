@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-09-12T19:27:37.665Z\n"
-"PO-Revision-Date: 2023-09-12T19:27:37.665Z\n"
+"POT-Creation-Date: 2023-10-27T12:23:33.221Z\n"
+"PO-Revision-Date: 2023-10-27T12:23:33.221Z\n"
 "Language: el\n"
 
 msgid "coarType"
@@ -35,19 +35,7 @@ msgid_plural "totalDescendants"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "hide"
-msgstr ""
-
-msgid "show"
-msgstr ""
-
-msgid "descendants"
-msgstr ""
-
 msgid "resultsPerPage"
-msgstr ""
-
-msgid "search"
 msgstr ""
 
 msgid "newItemMessage"
@@ -65,16 +53,10 @@ msgstr ""
 msgid "editChildItemMessage"
 msgstr ""
 
-msgid "publish"
-msgstr ""
-
 msgid "reset"
 msgstr ""
 
 msgid "required"
-msgstr ""
-
-msgid "multipleSameLanguagesError"
 msgstr ""
 
 msgid "invalidLengthError"
@@ -93,4 +75,19 @@ msgid "Title"
 msgstr ""
 
 msgid "Name"
+msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+msgid "Enter one or more tags."
+msgstr ""
+
+msgid "save"
+msgstr ""
+
+msgid "Feature"
+msgstr ""
+
+msgid "Item will be displayed on top of form input options"
 msgstr ""

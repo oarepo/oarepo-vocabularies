@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"POT-Creation-Date: 2023-09-12T19:27:37.552Z\n"
-"PO-Revision-Date: 2023-09-12T19:27:37.552Z\n"
+"POT-Creation-Date: 2023-10-27T12:23:32.743Z\n"
+"PO-Revision-Date: 2023-10-27T12:23:32.743Z\n"
 "Language: cs\n"
 
 msgid "coarType"
@@ -30,9 +30,6 @@ msgstr "Zkratka"
 msgid "nameType"
 msgstr "Typ názvu"
 
-msgid "publish"
-msgstr "Publikovat"
-
 msgid "reset"
 msgstr "Obnovit formulář"
 
@@ -46,7 +43,7 @@ msgid "newItemMessage"
 msgstr "Právě vytváříte položku nejvyšší úrovně"
 
 msgid "newChildItemMessage"
-msgstr "Právě vytváříte položku podřízenou {{item}}. Nová hierarchie bude:"
+msgstr "Právě vytváříte položku podřízenou:"
 
 msgid "newItem"
 msgstr "Nová položka"
@@ -54,44 +51,44 @@ msgstr "Nová položka"
 msgid "required"
 msgstr "Požadované"
 
-msgid "multipleSameLanguagesError"
-msgstr "Nesmíte mít dva stejné jazyky"
-
 msgid "invalidLengthError"
 msgstr "Musí mít přesně {{length}} znaků"
 
 msgid "notANumberError"
 msgstr "Musí obsahovat pouze čísla"
 
-msgid "hide"
-msgstr "Skrýt"
-
-msgid "show"
-msgstr "Zobrazit"
-
-msgid "descendants"
-msgstr "Podřízené položky"
-
 msgid "resultsPerPage"
 msgstr "Výsledky na stránku"
 
-msgid "search"
-msgstr "Hledat"
+msgid "Add another language"
+msgstr "Přidat další jazyk"
+
+msgid "Remove field"
+msgstr "Odebrat pole"
+
+msgid "Title"
+msgstr "Název"
+
+msgid "Name"
+msgstr "Jméno"
+
+msgid "Tags"
+msgstr "Štítky"
+
+msgid "Enter one or more tags."
+msgstr "Zadejte jeden nebo více štítků"
+
+msgid "save"
+msgstr "Uložit"
 
 msgid "totalDescendants"
 msgid_plural "totalDescendants"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "{{count}} podřízená položka"
+msgstr[1] "{{count}} podřízené položky"
+msgstr[2] "{{count}} podřízených položek"
 
-msgid "Add another language"
+msgid "Feature"
 msgstr ""
 
-msgid "Remove field"
-msgstr ""
-
-msgid "Title"
-msgstr ""
-
-msgid "Name"
+msgid "Item will be displayed on top of form input options"
 msgstr ""
