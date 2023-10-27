@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-09-28 11:49+0200\n"
-"PO-Revision-Date: 2023-09-28 11:53+0200\n"
+"POT-Creation-Date: 2023-10-27 12:22+0200\n"
+"PO-Revision-Date: 2023-10-27 12:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: cs <LL@li.org>\n"
 "Language: cs\n"
@@ -16,8 +16,24 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-"Generated-By: Babel 2.10.3\n"
-"X-Generator: Poedit 3.3.2\n"
+"Generated-By: Babel 2.12.1\n"
+"X-Generator: Poedit 3.4\n"
+
+#: oarepo_vocabularies/services/search.py:63
+msgid "Best match"
+msgstr "Nejlepší shoda"
+
+#: oarepo_vocabularies/services/search.py:67
+msgid "Title"
+msgstr "Název"
+
+#: oarepo_vocabularies/services/search.py:71
+msgid "Newest"
+msgstr "Nejnovější"
+
+#: oarepo_vocabularies/services/search.py:75
+msgid "Oldest"
+msgstr "Nejstarší"
 
 #: oarepo_vocabularies/ui/utils.py:8
 msgid "Vocabulary hierarchy"
@@ -39,15 +55,55 @@ msgstr "Přidat název …"
 msgid "Add the title of the hierarchy"
 msgstr "Přidat název hierarchie"
 
-#: oarepo_vocabularies/ui/templates/TaxonomyItem.jinja:9
-#: oarepo_vocabularies/ui/templates/VocabularyItem.jinja:5
+#: oarepo_vocabularies/ui/templates/TaxonomyItem.jinja:11
+#: oarepo_vocabularies/ui/templates/VocabularyItem.jinja:9
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
 msgid "Find more records with this vocabulary term"
 msgstr "Najít další záznamy s touto slovníkovou položkou"
 
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesDetail.jinja:4
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesDetail.jinja:3
 msgid "Vocabulary Detail"
 msgstr "Detail položky"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:2
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:1
+msgid "Vocabulary types"
+msgstr "Typy slovníků"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:8
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:6
+msgid "Vocabularies"
+msgstr "Slovníky"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:14
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:12
+msgid "Vocabulary"
+msgstr "Slovník"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:17
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:15
+msgid "Items Count"
+msgstr "Počet položek"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:20
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:18
+msgid "Description"
+msgstr "Popis"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:23
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:21
+msgid "Vocabulary Code"
+msgstr "Kód slovníku"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:26
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:24
+msgid "PID type"
+msgstr "Typ identifikátoru"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:26
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:24
+msgid "(internal)"
+msgstr "(interní)"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:5
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
@@ -70,9 +126,27 @@ msgstr ""
 msgid "vocabulary.hint_en"
 msgstr ""
 
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:34
+msgid "vocabulary.tags"
+msgstr "Štítky"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSearch.jinja:3
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:3
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
+msgid "Vocabulary search"
+msgstr "Hledání ve slovníku"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:3
+msgid "Edit"
+msgstr "Editovat"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:7
+msgid "New child item"
+msgstr "Nová podřazená položka"
+
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:12
 msgid "Export"
-msgstr "Export"
+msgstr "Exportovat"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:58
 msgid "API"
@@ -81,43 +155,6 @@ msgstr "API"
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:58
 msgid "Links"
 msgstr "Odkazy"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:1
-msgid "Vocabulary types"
-msgstr "Typy slovníků"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:6
-msgid "Vocabularies"
-msgstr "Slovníky"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:12
-msgid "Vocabulary"
-msgstr "Slovník"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:15
-msgid "Items Count"
-msgstr "Počet položek"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:18
-msgid "Description"
-msgstr "Popis"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:21
-msgid "Vocabulary Code"
-msgstr "Kód slovníku"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:24
-msgid "PID type"
-msgstr "Typ identifikátoru"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/list.html:24
-msgid "(internal)"
-msgstr "(interní)"
-
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/search.html:3
-#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:19
-msgid "Vocabulary search"
-msgstr "Hledání ve slovníku"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:3
 msgid "created.label"
@@ -170,3 +207,12 @@ msgstr "Nadřazená položka"
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:17
 msgid "api.ancestors"
 msgstr "Nadřazené položky"
+
+#~ msgid "Export"
+#~ msgstr "Export"
+
+#~ msgid "API"
+#~ msgstr "API"
+
+#~ msgid "Links"
+#~ msgstr "Odkazy"

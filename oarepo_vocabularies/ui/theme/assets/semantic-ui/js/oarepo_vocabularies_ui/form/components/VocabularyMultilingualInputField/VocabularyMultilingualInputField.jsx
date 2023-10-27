@@ -11,7 +11,6 @@ import { useFormikContext, getIn } from "formik";
 import {
   array2object,
   object2array,
-  useVocabularyOptions,
   LanguageSelectField,
 } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
@@ -25,8 +24,6 @@ export const VocabularyMultilingualInputField = ({
   newItemInitialValue,
   textFieldLabel,
 }) => {
-  const { options: allLanguages } = useVocabularyOptions("languages");
-
   const placeholderFieldPath = useMemo(() => {
     return fieldPath
       .split(".")

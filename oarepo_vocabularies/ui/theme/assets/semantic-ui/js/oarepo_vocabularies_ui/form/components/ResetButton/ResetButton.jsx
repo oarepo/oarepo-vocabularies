@@ -13,7 +13,7 @@ const ResetButtonComponent = () => {
         color="red"
         onClick={handleReset}
         content={i18next.t("reset")}
-        icon="times rectangle"
+        icon="undo"
         labelPosition="left"
         type="reset"
       />

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-09-12T19:27:37.605Z\n"
-"PO-Revision-Date: 2023-09-12T19:27:37.605Z\n"
+"POT-Creation-Date: 2023-10-27T09:41:08.885Z\n"
+"PO-Revision-Date: 2023-10-27T09:41:08.885Z\n"
 "Language: en\n"
 
 msgid "coarType"
@@ -30,9 +30,6 @@ msgstr "acronym"
 msgid "nameType"
 msgstr "Name Type"
 
-msgid "publish"
-msgstr "Publish"
-
 msgid "reset"
 msgstr "Reset Form"
 
@@ -46,7 +43,7 @@ msgid "newItemMessage"
 msgstr "You are currently creating a top level item"
 
 msgid "newChildItemMessage"
-msgstr "You are currently creating a child item of {{item}}. New hierarchy will be:"
+msgstr "You are currently creating a child item of:"
 
 msgid "newItem"
 msgstr "New item"
@@ -54,34 +51,14 @@ msgstr "New item"
 msgid "required"
 msgstr "Required"
 
-msgid "multipleSameLanguagesError"
-msgstr "You must not have two same languages"
-
 msgid "invalidLengthError"
 msgstr "Must be exactly {{length}} characters"
 
 msgid "notANumberError"
 msgstr "Must contain only numbers"
 
-msgid "hide"
-msgstr "Hide"
-
-msgid "show"
-msgstr "Show"
-
-msgid "descendants"
-msgstr "Descendants"
-
 msgid "resultsPerPage"
 msgstr "Results per page"
-
-msgid "search"
-msgstr "Search"
-
-msgid "totalDescendants"
-msgid_plural "totalDescendants"
-msgstr[0] "totalDescendants"
-msgstr[1] "totalDescendants"
 
 msgid "Add another language"
 msgstr "Add another language"
@@ -94,3 +71,20 @@ msgstr "Title"
 
 msgid "Name"
 msgstr "Name"
+
+msgid "totalDescendants"
+msgid_plural "totalDescendants"
+msgstr[0] "totalDescendants"
+msgstr[1] "totalDescendants"
+
+msgid "Toggle featured"
+msgstr "Toggle featured"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "Enter one or more tags."
+msgstr "Enter one or more tags."
+
+msgid "save"
+msgstr "save"

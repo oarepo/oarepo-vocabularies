@@ -4,7 +4,7 @@
 {%if extra_context.vocabularyProps["hierarchical"] == True%}
   <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
   <SidebarLink icon="plus" href={ record['links']['vocabulary_html'] ~ '/_new?h-parent=' ~ record['id'] }>
-    New child item
+    {{_('New child item')}}
   </SidebarLink>
 {%endif%}
 </div>
