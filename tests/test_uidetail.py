@@ -14,7 +14,6 @@ def test_uidetail(
     lang_object = vocab_service.create(system_identity, lang_data)
     detail_page = client.get("/vocabularies/languages/eng")
     assert detail_page.status_code == 200
-    print(detail_page.text)
     assert (
         remove_ws(
             """  
@@ -23,4 +22,3 @@ def test_uidetail(
         )
         in remove_ws(detail_page.text)
     )
-    print(detail_page.text)
