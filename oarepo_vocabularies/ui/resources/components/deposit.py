@@ -5,14 +5,27 @@ from flask import current_app
 from invenio_records import Record
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+import marshmallow
 
 from oarepo_vocabularies.records.api import find_vocabulary_relations
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
+from flask_babelex import get_locale
 
 try:
     pass
 except ImportError:
     pass
+
+
+class DepositI18nHierarchySchema(marshmallow.Schema):
+    title = marshmallow.fields.List(VocabularyI18nStrUIField())
+
+
+class VocabularyPrefetchSchema(marshmallow.Schema):
+    title = VocabularyI18nStrUIField(data_key="text")
+    hierarchy = marshmallow.fields.Nested(
+        DepositI18nHierarchySchema, data_key="hierarchy"
+    )
 
 
 class DepositVocabularyOptionsComponent(ServiceComponent):
@@ -83,14 +96,14 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
         )
 
         form_config["vocabularies"] = form_config_vocabularies
-
+        schema = VocabularyPrefetchSchema(context={"locale": get_locale()})
         for prefetched_item in self.prefetch_vocabulary_items(
             identity, vocabularies_to_prefetch
         ):
             by_type = form_config_vocabularies[prefetched_item["type"]]
             returned_item = {
                 "value": prefetched_item["id"],
-                "text": VocabularyI18nStrUIField().serialize("title", prefetched_item),
+                **schema.dump(prefetched_item),
             }
             by_type["all"].append(returned_item)
             if "featured" in prefetched_item.get("tags", []):
@@ -99,16 +112,28 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
     @staticmethod
     def prefetch_vocabulary_items(identity, vocabularies_to_prefetch):
         if vocabularies_to_prefetch:
-            for r in vocabulary_service.scan(
+            yield from vocabulary_service.scan(
                 identity,
                 params={
-                    "q": " OR ".join(f"type.id:{x}" for x in vocabularies_to_prefetch),
+                    "type": vocabularies_to_prefetch,
                     "sort": "title",
+                    "source": [
+                        "title",
+                        "hierarchy.title",
+                        "uuid",
+                        "version_id",
+                        "created",
+                        "updated",
+                        "pid",
+                        "type",
+                        "id",
+                        "tags",
+                    ],
+                    "size": 1000,
                 },
                 # this needs the ScanningOrderComponent to be installed, otherwise does not sort
                 preserve_order=True,
-            ):
-                yield r
+            )
 
     @staticmethod
     def create_form_config_vocabularies(

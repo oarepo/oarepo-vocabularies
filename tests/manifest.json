@@ -1226,7 +1226,7 @@
       "js/oarepo_vocabularies_detail~oarepo_vocabularies_search.71bcec28303ca863314b.js",
       "js/oarepo_vocabularies_detail.d4cf8fb17558171be139.js"
     ],
-    "oarepo_vocabularies_forms": [
+    "oarepo_vocabularies_form": [
       "js/manifest.4695496aebf9efb0cd82.js",
       "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
       "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",

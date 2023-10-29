@@ -1,3 +1,5 @@
+from flask_resources import ResponseHandler, BaseListSchema
+from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_vocabularies.resources.resource import (
     VocabulariesResourceConfig as InvenioVocabulariesResourceConfig,
 )
@@ -5,6 +7,13 @@ from invenio_vocabularies.resources.resource import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
 from marshmallow import fields
+from oarepo_runtime.resources import (
+    LocalizedUIJSONSerializer,
+)
+
+from flask_resources.serializers import JSONSerializer
+
+from oarepo_vocabularies.services.ui_schema import VocabularyUISchema
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
@@ -21,3 +30,15 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
 
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
     request_search_args = VocabularySearchRequestArgsSchema
+
+    response_handlers = {
+        **InvenioVocabulariesResourceConfig.response_handlers,
+        "application/vnd.inveniordm.v1+json": ResponseHandler(
+            LocalizedUIJSONSerializer(
+                format_serializer_cls=JSONSerializer,
+                object_schema_cls=VocabularyUISchema,
+                list_schema_cls=BaseListSchema,
+            ),
+            headers=etag_headers,
+        ),
+    }

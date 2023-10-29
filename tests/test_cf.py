@@ -1,3 +1,5 @@
+import json
+
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
@@ -81,3 +83,24 @@ def test_czech_suggest(
     assert titles == [
         "Angličtina (A pro řazení)",
     ]
+
+
+def test_ui_serializer(
+    app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear
+):
+    data = client.get(
+        "/api/vocabularies/languages?suggest=%C5%99azen%C3%AD",
+        headers=[
+            ("Accept-Language", "cs"),
+            ("Accept", "application/vnd.inveniordm.v1+json"),
+        ],
+    ).json
+
+    assert data["hits"]["hits"][0]["hierarchy"] == {
+        "parent": "eng.UK",
+        "ancestors": ["eng.UK", "eng"],
+        "level": 3,
+        "ancestors_or_self": ["eng.UK.S", "eng.UK", "eng"],
+        "title": ["Angličtina (A pro řazení)", "Angličtina (UK)", "Angličtina"],
+    }
+    assert data["hits"]["hits"][0]["title"] == "Angličtina (A pro řazení)"

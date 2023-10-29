@@ -1,7 +1,10 @@
 from flask_babelex import lazy_gettext as _
-from invenio_records_resources.services.records.params import FilterParam
+from invenio_records_resources.services.records.params import (
+    FilterParam,
+    ParamInterpreter,
+)
 from invenio_records_resources.services.records.queryparser import QueryParser
-from oarepo_runtime.services.icu import (
+from oarepo_runtime.services.search import (
     I18nSearchOptions,
     ICUSortOptions,
     ICUSuggestParser,
@@ -42,18 +45,30 @@ class VocabularyQueryParser(QueryParser):
         return original_parsed_query
 
 
+class SourceParam(ParamInterpreter):
+    """Evaluate the 'q' or 'suggest' parameter."""
+
+    def apply(self, identity, search, params):
+        source = params.get("source")
+        if not source:
+            return search
+        return search.source(source)
+
+
 class VocabularySearchOptions(I18nSearchOptions):
     SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
     SUGGEST_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SUGGEST_CF"
 
     params_interpreters_cls = [
         FilterParam.factory(param="tags", field="tags"),
+        FilterParam.factory(param="type", field="type.id"),
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
         FilterParam.factory(
             param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"
         ),
+        SourceParam,
     ] + I18nSearchOptions.params_interpreters_cls
 
     query_parser_cls = VocabularyQueryParser
