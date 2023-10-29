@@ -4,7 +4,7 @@ from invenio_records_resources.services.records.params import (
     ParamInterpreter,
 )
 from invenio_records_resources.services.records.queryparser import QueryParser
-from oarepo_runtime.services.icu import (
+from oarepo_runtime.services.search import (
     I18nSearchOptions,
     ICUSortOptions,
     ICUSuggestParser,

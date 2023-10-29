@@ -24,20 +24,54 @@ def test_dump_options(sample_records, search_clear, identity):
             },
             "languages": {
                 "all": [
-                    {"text": "English", "value": "eng"},
-                    {"text": "English (UK, Scotland)", "value": "eng.UK.S"},
-                    {"text": "English (UK)", "value": "eng.UK"},
-                    {"text": "English (US)", "value": "eng.US"},
+                    {
+                        "hierarchy": {"title": ["English"]},
+                        "text": "English",
+                        "value": "eng",
+                    },
+                    {
+                        "hierarchy": {
+                            "title": [
+                                "English (UK, " "Scotland)",
+                                "English (UK)",
+                                "English",
+                            ]
+                        },
+                        "text": "English (UK, Scotland)",
+                        "value": "eng.UK.S",
+                    },
+                    {
+                        "hierarchy": {"title": ["English (UK)", "English"]},
+                        "text": "English (UK)",
+                        "value": "eng.UK",
+                    },
+                    {
+                        "hierarchy": {"title": ["English (US)", "English"]},
+                        "text": "English (US)",
+                        "value": "eng.US",
+                    },
                 ],
                 "definition": {
                     "description": {
                         "cs": "slovnikovy typ ceskeho jazyka.",
-                        "en": "czech language vocabulary type.",
+                        "en": "czech " "language " "vocabulary " "type.",
                     },
                     "dump_options": True,
                     "name": {"cs": "jazyky", "en": "languages"},
                 },
-                "featured": [{"text": "English (UK, Scotland)", "value": "eng.UK.S"}],
+                "featured": [
+                    {
+                        "hierarchy": {
+                            "title": [
+                                "English " "(UK, " "Scotland)",
+                                "English " "(UK)",
+                                "English",
+                            ]
+                        },
+                        "text": "English (UK, Scotland)",
+                        "value": "eng.UK.S",
+                    }
+                ],
             },
         }
     }
@@ -64,20 +98,54 @@ def test_dump_options_with_resource(
             },
             "languages": {
                 "all": [
-                    {"text": "English", "value": "eng"},
-                    {"text": "English (UK, Scotland)", "value": "eng.UK.S"},
-                    {"text": "English (UK)", "value": "eng.UK"},
-                    {"text": "English (US)", "value": "eng.US"},
+                    {
+                        "hierarchy": {"title": ["English"]},
+                        "text": "English",
+                        "value": "eng",
+                    },
+                    {
+                        "hierarchy": {
+                            "title": [
+                                "English (UK, " "Scotland)",
+                                "English (UK)",
+                                "English",
+                            ]
+                        },
+                        "text": "English (UK, Scotland)",
+                        "value": "eng.UK.S",
+                    },
+                    {
+                        "hierarchy": {"title": ["English (UK)", "English"]},
+                        "text": "English (UK)",
+                        "value": "eng.UK",
+                    },
+                    {
+                        "hierarchy": {"title": ["English (US)", "English"]},
+                        "text": "English (US)",
+                        "value": "eng.US",
+                    },
                 ],
                 "definition": {
                     "description": {
-                        "cs": "slovnikovy typ ceskeho jazyka.",
-                        "en": "czech language vocabulary type.",
+                        "cs": "slovnikovy " "typ " "ceskeho " "jazyka.",
+                        "en": "czech " "language " "vocabulary " "type.",
                     },
                     "dump_options": True,
                     "name": {"cs": "jazyky", "en": "languages"},
                 },
-                "featured": [{"text": "English (UK, Scotland)", "value": "eng.UK.S"}],
+                "featured": [
+                    {
+                        "hierarchy": {
+                            "title": [
+                                "English " "(UK, " "Scotland)",
+                                "English " "(UK)",
+                                "English",
+                            ]
+                        },
+                        "text": "English (UK, Scotland)",
+                        "value": "eng.UK.S",
+                    }
+                ],
             },
         }
     }

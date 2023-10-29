@@ -24,13 +24,8 @@ class DepositI18nHierarchySchema(marshmallow.Schema):
 class VocabularyPrefetchSchema(marshmallow.Schema):
     title = VocabularyI18nStrUIField(data_key="text")
     hierarchy = marshmallow.fields.Nested(
-        DepositI18nHierarchySchema, data_key="ancestors_or_self"
+        DepositI18nHierarchySchema, data_key="hierarchy"
     )
-
-    @marshmallow.post_dump
-    def add_hierarchy(self, data, **kwargs):
-        data["hierarchy"] = {"ancestors_or_self": data.pop("ancestors_or_self", [])}
-        return data
 
 
 class DepositVocabularyOptionsComponent(ServiceComponent):
@@ -132,6 +127,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
                         "pid",
                         "type",
                         "id",
+                        "tags",
                     ],
                     "size": 1000,
                 },

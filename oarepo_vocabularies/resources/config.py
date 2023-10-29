@@ -7,7 +7,7 @@ from invenio_vocabularies.resources.resource import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
 from marshmallow import fields
-from oarepo_runtime.resources.localized_ui_json_serializer import (
+from oarepo_runtime.resources import (
     LocalizedUIJSONSerializer,
 )
 

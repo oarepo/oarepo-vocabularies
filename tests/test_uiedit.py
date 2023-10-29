@@ -32,7 +32,7 @@ def test_uiedit(
     assert (
         remove_ws(
             """  
-        {"all": [{"hierarchy": {"ancestors_or_self": {"title": ["English"]}}, "text": "English", "value": \""""
+        {"all": [{"hierarchy": {"title": ["English"]}, "text": "English", "value": \""""
         )
         in remove_ws(edit_page.text)
     )

@@ -9,8 +9,8 @@ from invenio_vocabularies.services.schema import (
 )
 from marshmallow import fields as ma_fields
 from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
-from oarepo_runtime.services.cf import CustomFieldsSchemaUI
-from oarepo_runtime.ui.marshmallow import LocalizedDateTime
+from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
+from oarepo_runtime.services.schema.ui import LocalizedDateTime
 
 
 class VocabularyI18nStrUIField(ma_fields.Field):
