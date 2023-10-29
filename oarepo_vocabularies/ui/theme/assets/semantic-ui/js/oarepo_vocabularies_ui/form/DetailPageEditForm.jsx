@@ -92,7 +92,6 @@ export const DetailPageEditForm = ({
                             color="green"
                             icon="upload"
                             labelPosition="left"
-                            content={i18next.t("publmaish")}
                             type="button"
                           />
                         </Grid.Column>
