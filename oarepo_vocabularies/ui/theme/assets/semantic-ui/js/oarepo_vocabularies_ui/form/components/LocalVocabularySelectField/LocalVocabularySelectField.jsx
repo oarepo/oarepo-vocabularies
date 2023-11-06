@@ -9,11 +9,11 @@ import { Dropdown, Divider } from "semantic-ui-react";
 export const deserializeLocalVocabularyItem = (item) => {
   return Array.isArray(item)
     ? item.map((item) => deserializeLocalVocabularyItem(item))
-    : item.id
+    : item?.id
     ? item.id
     : ["string", "number", "boolean"].includes(typeof item)
     ? item
-    : "";
+    : undefined;
 };
 
 const InnerDropdown = ({
@@ -65,20 +65,9 @@ export const LocalVocabularySelectField = ({
     );
   }
 
-  const sanitizedDefault =
-    defaultValue &&
-    allOptions
-      .map((o) => o.value)
-      .includes(multiple ? defaultValue[0] : defaultValue) &&
-    !usedOptions.includes(multiple ? defaultValue[0] : defaultValue)
-      ? defaultValue
-      : multiple
-      ? []
-      : {};
-
   const { values, setFieldTouched } = useFormikContext();
   const value = deserializeLocalVocabularyItem(
-    getIn(values, fieldPath, sanitizedDefault)
+    getIn(values, fieldPath, multiple ? [] : undefined)
   );
 
   return (
