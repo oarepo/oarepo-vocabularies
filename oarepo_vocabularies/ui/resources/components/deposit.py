@@ -1,15 +1,15 @@
 import inspect
 import json
 
+import marshmallow
 from flask import current_app
+from flask_babelex import get_locale
 from invenio_records import Record
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-import marshmallow
 
 from oarepo_vocabularies.records.api import find_vocabulary_relations
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
-from flask_babelex import get_locale
 
 try:
     pass

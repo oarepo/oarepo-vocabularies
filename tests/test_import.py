@@ -6,6 +6,7 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.api import Vocabulary
 from oarepo_runtime.datastreams.fixtures import dump_fixtures, load_fixtures
+from oarepo_runtime.datastreams.types import StatsKeepingDataStreamCallback
 
 
 def read_yaml(fp):
@@ -17,10 +18,11 @@ def read_yaml(fp):
 
 
 def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
-    result = load_fixtures(Path(__file__).parent / "data")
-    assert result.ok_count == 2
-    assert result.failed_count == 0
-    assert result.skipped_count == 0
+    callback = StatsKeepingDataStreamCallback()
+    load_fixtures(Path(__file__).parent / "data", callback=callback)
+    assert callback.ok_entries_count == 2
+    assert callback.failed_entries_count == 0
+    assert callback.filtered_entries_count == 0
 
     Vocabulary.index.refresh()
 
@@ -30,10 +32,11 @@ def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
     ]["ancestors"] == ["en"]
 
     with tempfile.TemporaryDirectory() as d:
-        result = dump_fixtures(d, include=["vocabulary-languages"])
-        assert result.ok_count == 2
-        assert result.failed_count == 0
-        assert result.skipped_count == 0
+        callback = StatsKeepingDataStreamCallback()
+        dump_fixtures(d, include=["vocabulary-languages"], callback=callback)
+        assert callback.ok_entries_count == 2
+        assert callback.failed_entries_count == 0
+        assert callback.filtered_entries_count == 0
         d = Path(d)
         assert read_yaml(d / "catalogue.yaml") == {
             "vocabulary-languages": [
