@@ -12,6 +12,9 @@ from oarepo_vocabularies.resources.vocabulary_type import (
 from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.service import VocabularyTypeService
+from oarepo_vocabularies.services.permissions import VocabulariesPermissionPolicy
+
+OAREPO_VOCABULARIES_PERMISSIONS_PRESETS = {"vocabularies": VocabulariesPermissionPolicy}
 
 INVENIO_VOCABULARY_TYPE_METADATA = {
     # etc.
@@ -61,9 +64,9 @@ OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
 
 DATASTREAMS_CONFIG_GENERATOR_VOCABULARIES = vocabularies_generator
 
-DEFAULT_DATASTREAMS_READERS = {"vocabulary": VocabularyReader}
+DATASTREAMS_READERS = {"vocabulary": VocabularyReader}
 
-DEFAULT_DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
+DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
 
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
