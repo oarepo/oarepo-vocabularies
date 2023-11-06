@@ -11,8 +11,8 @@ from oarepo_vocabularies.resources.vocabulary_type import (
 )
 from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
 from oarepo_vocabularies.services.custom_fields import hierarchy
-from oarepo_vocabularies.services.service import VocabularyTypeService
 from oarepo_vocabularies.services.permissions import VocabulariesPermissionPolicy
+from oarepo_vocabularies.services.service import VocabularyTypeService
 
 OAREPO_VOCABULARIES_PERMISSIONS_PRESETS = {"vocabularies": VocabulariesPermissionPolicy}
 

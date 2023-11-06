@@ -6,8 +6,11 @@ from invenio_records.systemfields import ConstantField
 from invenio_vocabularies.records.api import Vocabulary as InvenioVocabulary
 from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
 from oarepo_runtime.cf import CustomFields, InlinedCustomFields
-from oarepo_runtime.records.systemfields import SystemFieldDumperExt
-from oarepo_runtime.records.systemfields import ICUSortField, ICUSuggestField
+from oarepo_runtime.records.systemfields import (
+    ICUSortField,
+    ICUSuggestField,
+    SystemFieldDumperExt,
+)
 from oarepo_runtime.relations.mapping import RelationsMapping
 
 
