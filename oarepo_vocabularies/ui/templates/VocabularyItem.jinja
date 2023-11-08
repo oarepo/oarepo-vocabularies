@@ -1,6 +1,6 @@
 {#def vocabulary, search_link, searchFacet, vocabulary_type, hide_definition=False #}
 {% set vocabulary_dict = vocabulary | to_dict %}
-
+{% if vocabulary_dict %}
 {% if not hide_definition %}
 {% set definitionLink = "/vocabularies/" ~ vocabulary_type ~ "/" ~ vocabulary_dict.id %}
 <DefinitionLink  href={definitionLink}> </DefinitionLink>
@@ -15,4 +15,4 @@
 } %}
 <SearchLink search_link={search_link} className="search link" searchFacet={searchFacet} data = {data}>
 </SearchLink>
-
+{% endif %}

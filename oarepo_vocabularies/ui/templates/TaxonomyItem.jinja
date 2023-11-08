@@ -1,6 +1,6 @@
 {#def taxonomy, search_link, searchFacet, hide_definition=False #}
 {% set taxonomy_dict = taxonomy | to_dict %}
-
+{% if taxonomy_dict %}
 <div class="ui breadcrumb">
   {%- for title in taxonomy_dict.hierarchy.title -%}
       {% set id = taxonomy_dict.id if loop.first else taxonomy_dict.hierarchy.ancestors[loop.index-2] %}
@@ -22,4 +22,4 @@
   {%- endfor -%}
 </div>
 
-
+{% endif %}
