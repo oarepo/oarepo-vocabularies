@@ -1,4 +1,4 @@
-from flask_resources import BaseListSchema, MarshmallowSerializer
+from flask_resources import BaseListSchema
 from flask_resources.serializers import JSONSerializer
 from oarepo_runtime.resources import LocalizedUIJSONSerializer
 

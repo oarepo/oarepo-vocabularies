@@ -1,4 +1,3 @@
-import typing
 from functools import partial
 
 import marshmallow as ma

@@ -1,4 +1,5 @@
-from flask_resources import ResponseHandler, BaseListSchema
+from flask_resources import BaseListSchema, ResponseHandler
+from flask_resources.serializers import JSONSerializer
 from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_vocabularies.resources.resource import (
     VocabulariesResourceConfig as InvenioVocabulariesResourceConfig,
@@ -7,11 +8,7 @@ from invenio_vocabularies.resources.resource import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
 from marshmallow import fields
-from oarepo_runtime.resources import (
-    LocalizedUIJSONSerializer,
-)
-
-from flask_resources.serializers import JSONSerializer
+from oarepo_runtime.resources import LocalizedUIJSONSerializer
 
 from oarepo_vocabularies.services.ui_schema import VocabularyUISchema
 

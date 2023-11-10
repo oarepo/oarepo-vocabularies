@@ -1,4 +1,3 @@
-import json
 
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service

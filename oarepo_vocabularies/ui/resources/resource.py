@@ -1,6 +1,6 @@
 from flask import g
-from flask_security import login_required
 from flask_resources import from_conf, request_parser, resource_requestctx
+from flask_security import login_required
 from invenio_records_resources.resources.records.resource import (
     request_read_args,
     request_view_args,
