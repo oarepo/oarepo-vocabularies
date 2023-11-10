@@ -5,36 +5,41 @@ import { serializeVocabularyItem } from "@js/oarepo_vocabularies";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
-import _sortBy from "lodash/sortBy";
 
 export const deserializeLocalVocabularyItem = (item) => {
   return Array.isArray(item)
     ? item.map((item) => deserializeLocalVocabularyItem(item))
-    : item.id;
+    : item?.id
+    ? item.id
+    : ["string", "number", "boolean"].includes(typeof item)
+    ? item
+    : undefined;
 };
 
-const InnerDropdown = ({ options, featured, usedOptions=[], value, ...rest }) => {
-  const _filterUsed = (opts) => opts.filter((o) => !usedOptions.includes(o.value) || o.value == value);
-  const allOptions = _filterUsed([...(featured.length
-          ? [
-              ...featured.sort((a, b) => a.text.localeCompare(b.text)),
-              {
-                content: <Divider fitted />,
-                disabled: true,
-                key: "featured-divider",
-              },
-            ]
-          : []),
-        ...options.filter((o) => !featured.map(o => o.value).includes(o.value)),
-        ])
-    
-  return (
-    <Dropdown
-      options={allOptions}
-      value={value}
-      {...rest}
-    />
-  );
+const InnerDropdown = ({
+  options,
+  featured,
+  usedOptions = [],
+  value,
+  ...rest
+}) => {
+  const _filterUsed = (opts) =>
+    opts.filter((o) => !usedOptions.includes(o.value) || o.value === value);
+  const allOptions = _filterUsed([
+    ...(featured.length
+      ? [
+          ...featured.sort((a, b) => a.text.localeCompare(b.text)),
+          {
+            content: <Divider fitted />,
+            disabled: true,
+            key: "featured-divider",
+          },
+        ]
+      : []),
+    ...options.filter((o) => !featured.map((o) => o.value).includes(o.value)),
+  ]);
+
+  return <Dropdown options={allOptions} value={value} {...rest} />;
 };
 
 export const LocalVocabularySelectField = ({
@@ -43,6 +48,7 @@ export const LocalVocabularySelectField = ({
   optionsListName,
   usedOptions = [],
   helpText,
+  defaultValue,
   ...uiProps
 }) => {
   const {
@@ -61,8 +67,9 @@ export const LocalVocabularySelectField = ({
 
   const { values, setFieldTouched } = useFormikContext();
   const value = deserializeLocalVocabularyItem(
-    getIn(values, fieldPath, multiple ? [] : {})
+    getIn(values, fieldPath, multiple ? [] : undefined)
   );
+
   return (
     <React.Fragment>
       <SelectField
