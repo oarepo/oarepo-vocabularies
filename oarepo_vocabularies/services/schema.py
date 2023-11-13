@@ -8,7 +8,7 @@ from invenio_vocabularies.services.schema import (
 from invenio_vocabularies.services.schema import i18n_strings
 from marshmallow import fields as ma_fields
 from marshmallow_utils.fields import NestedAttribute
-from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
+from oarepo_runtime.services.custom_fields import InlinedCustomFieldsSchemaMixin
 
 
 class VocabularySchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):

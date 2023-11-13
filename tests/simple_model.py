@@ -15,7 +15,7 @@ from invenio_records_resources.services import (
 )
 from invenio_records_resources.services.records.components import DataComponent
 from invenio_vocabularies.records.api import Vocabulary
-from oarepo_runtime.relations import PIDRelation, RelationsField
+from oarepo_runtime.records.relations import PIDRelation, RelationsField
 from oarepo_ui.resources import (
     BabelComponent,
     RecordsUIResource,
