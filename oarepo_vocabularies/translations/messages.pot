@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-27 12:40+0200\n"
+"POT-Creation-Date: 2023-11-21 16:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
-#: oarepo_vocabularies/services/search.py:63
+#: oarepo_vocabularies/services/search.py:78
 msgid "Best match"
 msgstr ""
 
-#: oarepo_vocabularies/services/search.py:67
+#: oarepo_vocabularies/services/search.py:82
 msgid "Title"
 msgstr ""
 
-#: oarepo_vocabularies/services/search.py:71
+#: oarepo_vocabularies/services/search.py:86
 msgid "Newest"
 msgstr ""
 
-#: oarepo_vocabularies/services/search.py:75
+#: oarepo_vocabularies/services/search.py:90
 msgid "Oldest"
 msgstr ""
 
