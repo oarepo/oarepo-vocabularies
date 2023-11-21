@@ -100,3 +100,6 @@ class VocabularySearchOptions(I18nSearchOptions):
         "vocabularies",
         extra_fields=[SuggestField(field="id", boost=10, use_ngrams=False)],
     )
+
+    # empty facet groups as we are inheriting from I18nSearchOptions
+    facet_groups = {}
