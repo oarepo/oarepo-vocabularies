@@ -5,7 +5,7 @@ import { serializeVocabularyItem } from "@js/oarepo_vocabularies";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
-// import { i18next } from "@translations/oarepo_vocabularies/i18next";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const deserializeLocalVocabularyItem = (item) => {
   return Array.isArray(item)
@@ -108,5 +108,5 @@ LocalVocabularySelectField.propTypes = {
 };
 
 LocalVocabularySelectField.defaultProps = {
-  // noResultsMessage: i18next.t("No results found."),
+  noResultsMessage: i18next.t("No results found."),
 };
