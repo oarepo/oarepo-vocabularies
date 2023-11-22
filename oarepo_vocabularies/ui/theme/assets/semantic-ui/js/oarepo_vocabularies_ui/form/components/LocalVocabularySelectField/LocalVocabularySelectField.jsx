@@ -108,7 +108,7 @@ export const LocalVocabularySelectField = ({
   };
 
   const { values, setFieldTouched } = useFormikContext();
-  const value = getIn(values, fieldPath, multiple ? [] : undefined);
+  const value = getIn(values, fieldPath, multiple ? [] : {});
 
   return (
     <React.Fragment>
