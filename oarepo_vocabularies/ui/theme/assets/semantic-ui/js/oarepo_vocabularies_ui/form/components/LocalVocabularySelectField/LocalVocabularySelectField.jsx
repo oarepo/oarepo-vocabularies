@@ -7,7 +7,11 @@ import PropTypes from "prop-types";
 import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
 
 export const serializedVocabularyItems = (vocabularyItems) =>
-  vocabularyItems.map(({ hierarchy: { title }, value, text }) => {
+  vocabularyItems.map((vocabularyItem) => {
+    const {
+      hierarchy: { title },
+      text,
+    } = vocabularyItem;
     const sections = [
       ...title.map((title, index) => ({
         content: title,
@@ -15,13 +19,13 @@ export const serializedVocabularyItems = (vocabularyItems) =>
       })),
     ];
     return {
+      ...vocabularyItem,
       text:
         title.length === 1 ? (
           text
         ) : (
           <Breadcrumb icon="right angle" sections={_reverse(sections)} />
         ),
-      value: value,
     };
   });
 
