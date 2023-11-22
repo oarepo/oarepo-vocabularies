@@ -5,6 +5,7 @@ import _reverse from "lodash/reverse";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const serializedVocabularyItems = (vocabularyItems) =>
   vocabularyItems.map((vocabularyItem) => {
@@ -136,5 +137,10 @@ LocalVocabularySelectField.propTypes = {
   multiple: PropTypes.bool,
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
+  noResultsMessage: PropTypes.string,
   usedOptions: PropTypes.array,
+};
+
+LocalVocabularySelectField.defaultProps = {
+  noResultsMessage: i18next.t("No results found."),
 };
