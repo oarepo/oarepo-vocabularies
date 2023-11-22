@@ -335,7 +335,7 @@ def cache():
 
 @pytest.fixture()
 def vocab_cf(app, db, cache):
-    from oarepo_runtime.cf.mappings import prepare_cf_indices
+    from oarepo_runtime.services.custom_fields.mappings import prepare_cf_indices
 
     prepare_cf_indices()
 

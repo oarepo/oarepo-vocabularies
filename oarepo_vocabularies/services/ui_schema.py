@@ -7,7 +7,7 @@ from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from marshmallow import fields as ma_fields
-from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
+from oarepo_runtime.services.custom_fields import InlinedCustomFieldsSchemaMixin
 from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
 from oarepo_runtime.services.schema.ui import LocalizedDateTime
 

@@ -57,6 +57,8 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
     def empty_record(self, resource_requestctx, **kwargs):
         record = super().empty_record(resource_requestctx=resource_requestctx)
+        if 'metadata' in record:
+            del record['metadata']
         record["type"] = resource_requestctx.view_args["vocabulary_type"]
         record["tags"] = []
         return record

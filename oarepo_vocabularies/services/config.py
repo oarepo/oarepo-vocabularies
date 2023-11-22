@@ -2,7 +2,7 @@ import marshmallow as ma
 from invenio_records_resources.services import Link, pagination_links
 from invenio_records_resources.services.base import ServiceListResult
 from invenio_vocabularies.services import VocabulariesServiceConfig
-from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
+from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
