@@ -1,21 +1,34 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
-import { serializeVocabularyItem } from "@js/oarepo_vocabularies";
+import _reverse from "lodash/reverse";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
-import { Dropdown, Divider } from "semantic-ui-react";
+import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
-export const deserializeLocalVocabularyItem = (item) => {
-  return Array.isArray(item)
-    ? item.map((item) => deserializeLocalVocabularyItem(item))
-    : item?.id
-    ? item.id
-    : ["string", "number", "boolean"].includes(typeof item)
-    ? item
-    : undefined;
-};
+export const serializedVocabularyItems = (vocabularyItems) =>
+  vocabularyItems.map((vocabularyItem) => {
+    const {
+      hierarchy: { title },
+      text,
+    } = vocabularyItem;
+    const sections = [
+      ...title.map((title, index) => ({
+        content: title,
+        key: index,
+      })),
+    ];
+    return {
+      ...vocabularyItem,
+      text:
+        title.length === 1 ? (
+          text
+        ) : (
+          <Breadcrumb icon="right angle" sections={_reverse(sections)} />
+        ),
+    };
+  });
 
 const InnerDropdown = ({
   options,
@@ -43,13 +56,21 @@ const InnerDropdown = ({
   return <Dropdown options={allOptions} value={value} {...rest} />;
 };
 
+InnerDropdown.propTypes = {
+  options: PropTypes.array.isRequired,
+  featured: PropTypes.array,
+  usedOptions: PropTypes.array,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+};
 export const LocalVocabularySelectField = ({
   fieldPath,
   multiple,
   optionsListName,
   usedOptions = [],
   helpText,
-  defaultValue,
   ...uiProps
 }) => {
   const {
@@ -66,16 +87,33 @@ export const LocalVocabularySelectField = ({
     );
   }
 
-  const { values, setFieldTouched } = useFormikContext();
-  const value = deserializeLocalVocabularyItem(
-    getIn(values, fieldPath, multiple ? [] : undefined)
+  const serializedOptions = useMemo(
+    () => serializedVocabularyItems(allOptions),
+    [allOptions]
   );
+
+  const handleChange = ({ e, data, formikProps }) => {
+    if (multiple) {
+      let vocabularyItems = allOptions.filter((o) =>
+        data.value.includes(o.value)
+      );
+      vocabularyItems = vocabularyItems.map((vocabularyItem) => {
+        return { ...vocabularyItem, id: vocabularyItem.value };
+      });
+      formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
+    } else {
+      let vocabularyItem = allOptions.find((o) => o.value === data.value);
+      vocabularyItem = { ...vocabularyItem, id: vocabularyItem?.value };
+      formikProps.form.setFieldValue(fieldPath, vocabularyItem);
+    }
+  };
+
+  const { values, setFieldTouched } = useFormikContext();
+  const value = getIn(values, fieldPath, multiple ? [] : {});
 
   return (
     <React.Fragment>
       <SelectField
-        // formik exhibits strange behavior when you enable search prop to semantic ui's dropdown i.e. handleBlur stops working - did not investigate the details very deep
-        // but imperatively calling setFieldTouched gets the job done
         onBlur={() => setFieldTouched(fieldPath)}
         deburr
         search
@@ -83,15 +121,10 @@ export const LocalVocabularySelectField = ({
         fieldPath={fieldPath}
         multiple={multiple}
         featured={featuredOptions}
-        options={allOptions}
+        options={serializedOptions}
         usedOptions={usedOptions}
-        onChange={({ e, data, formikProps }) => {
-          formikProps.form.setFieldValue(
-            fieldPath,
-            serializeVocabularyItem(data.value)
-          );
-        }}
-        value={value}
+        onChange={handleChange}
+        value={multiple ? value.map((o) => o?.id) : value?.id}
         {...uiProps}
       />
       <label className="helptext">{helpText}</label>
@@ -105,6 +138,7 @@ LocalVocabularySelectField.propTypes = {
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
   noResultsMessage: PropTypes.string,
+  usedOptions: PropTypes.array,
 };
 
 LocalVocabularySelectField.defaultProps = {
