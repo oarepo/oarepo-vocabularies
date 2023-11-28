@@ -7,7 +7,7 @@ def test_empty_record(app, vocabularies_ui_resource, vocabularies_ui_resource_co
     with ctx:
         assert vocabularies_ui_resource.empty_record(resource_requestctx=ctx) == {
             "blah": "",
-            "created": "",
+            "created": None,
             "description": None,
             "hierarchy": {
                 "ancestors": [],
