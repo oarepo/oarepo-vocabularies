@@ -19,6 +19,7 @@ except ImportError:
 
 class DepositI18nHierarchySchema(marshmallow.Schema):
     title = marshmallow.fields.List(VocabularyI18nStrUIField())
+    ancestors = marshmallow.fields.List(marshmallow.fields.String())
 
 
 class VocabularyPrefetchSchema(marshmallow.Schema):
@@ -109,6 +110,18 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
             if "featured" in prefetched_item.get("tags", []):
                 by_type["featured"].append(returned_item)
 
+        for vocabularies in form_config['vocabularies'].values():
+            if 'all' in vocabularies:
+                for voc in vocabularies["all"]:
+                    for _voc in vocabularies["all"]:
+                        if voc["value"] in _voc["hierarchy"]["ancestors"]:
+                            voc["element_type"] = "parent"
+                            break
+                    if "element_type" not in voc:
+                        voc["element_type"] = "leaf"
+
+
+
     @staticmethod
     def prefetch_vocabulary_items(identity, vocabularies_to_prefetch):
         if vocabularies_to_prefetch:
@@ -120,6 +133,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
                     "source": [
                         "title",
                         "hierarchy.title",
+                        "hierarchy.ancestors",
                         "uuid",
                         "version_id",
                         "created",
