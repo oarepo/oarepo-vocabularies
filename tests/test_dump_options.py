@@ -16,76 +16,29 @@ def test_dump_options(sample_records, search_clear, identity):
         identity=identity,
     )
 
-    assert form_config == {
-        "vocabularies": {
-            "authority": {
-                "definition": {"authority": "AuthService", "name": {"en": "authority"}},
-                "url": "/api/vocabularies/authority",
-            },
-            "languages": {
-                "all": [
-                    {
-                        "element_type": "parent",
-                        "hierarchy": {"ancestors": [], "title": ["English"]},
-                        "text": "English",
-                        "value": "eng",
-                    },
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {
-                            'ancestors': ['eng.UK', 'eng'],
-                            "title": [
-                                "English (UK, " "Scotland)",
-                                "English (UK)",
-                                "English",
-                            ]
-                        },
-                        "text": "English (UK, Scotland)",
-                        "value": "eng.UK.S",
-                    },
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {'ancestors': ['eng'],"title": ["English (UK)", "English"]},
-                        "text": "English (UK)",
-                        "value": "eng.UK",
-                    },
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {'ancestors': ['eng'],"title": ["English (US)", "English"]},
-                        "text": "English (US)",
-                        "value": "eng.US",
-                    },
-                ],
-                "definition": {
-                    "description": {
-                        "cs": "slovnikovy typ ceskeho jazyka.",
-                        "en": "czech " "language " "vocabulary " "type.",
-                    },
-                    "dump_options": True,
-                    "name": {"cs": "jazyky", "en": "languages"},
-                },
-                "featured": [
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {
-                            'ancestors': ['eng.UK', 'eng'],
-                            "title": [
-                                "English " "(UK, " "Scotland)",
-                                "English " "(UK)",
-                                "English",
-                            ]
-                        },
-                        "text": "English (UK, Scotland)",
-                        "value": "eng.UK.S",
-                    }
-                ],
-            },
-        }
-    }
+    assert form_config == {'vocabularies': {
+        'authority': {'definition': {'name': {'en': 'authority'}, 'authority': 'AuthService'},
+                      'url': '/api/vocabularies/authority'}, 'languages': {
+            'definition': {'name': {'cs': 'jazyky', 'en': 'languages'},
+                           'description': {'cs': 'slovnikovy typ ceskeho jazyka.',
+                                           'en': 'czech language vocabulary type.'}, 'dump_options': True}, 'all': [
+                {'value': 'eng', 'text': 'English', 'hierarchy': {'title': ['English'], 'ancestors': []},
+                 'element_type': 'parent'}, {'value': 'eng.UK.S', 'text': 'English (UK, Scotland)', 'hierarchy': {
+                    'title': ['English (UK, Scotland)', 'English (UK)', 'English'], 'ancestors': ['eng.UK', 'eng']},
+                                             'element_type': 'leaf'}, {'value': 'eng.UK', 'text': 'English (UK)',
+                                                                       'hierarchy': {
+                                                                           'title': ['English (UK)', 'English'],
+                                                                           'ancestors': ['eng']},
+                                                                       'element_type': 'parent'},
+                {'value': 'eng.US', 'text': 'English (US)',
+                 'hierarchy': {'title': ['English (US)', 'English'], 'ancestors': ['eng']}, 'element_type': 'leaf'}],
+            'featured': [{'value': 'eng.UK.S', 'text': 'English (UK, Scotland)',
+                          'hierarchy': {'title': ['English (UK, Scotland)', 'English (UK)', 'English'],
+                                        'ancestors': ['eng.UK', 'eng']}, 'element_type': 'leaf'}]}}}
 
 
 def test_dump_options_with_resource(
-    sample_records, search_clear, simple_record_service, identity
+        sample_records, search_clear, simple_record_service, identity
 ):
     comp = DepositVocabularyOptionsComponent(service=None, uow=None)
     form_config = {}
@@ -97,69 +50,22 @@ def test_dump_options_with_resource(
         identity=identity,
     )
 
-    assert form_config == {
-        "vocabularies": {
-            "authority": {
-                "definition": {"authority": "AuthService", "name": {"en": "authority"}},
-                "url": "/api/vocabularies/authority",
-            },
-            "languages": {
-                "all": [
-                    {
-                        "element_type": "parent",
-                        "hierarchy": {"ancestors": [],"title": ["English"]},
-                        "text": "English",
-                        "value": "eng",
-                    },
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {
-                            'ancestors': ['eng.UK', 'eng'],
-                            "title": [
-                                "English (UK, " "Scotland)",
-                                "English (UK)",
-                                "English",
-                            ]
-                        },
-                        "text": "English (UK, Scotland)",
-                        "value": "eng.UK.S",
-                    },
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {'ancestors': ['eng'],"title": ["English (UK)", "English"]},
-                        "text": "English (UK)",
-                        "value": "eng.UK",
-                    },
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {'ancestors': ['eng'],"title": ["English (US)", "English"]},
-                        "text": "English (US)",
-                        "value": "eng.US",
-                    },
-                ],
-                "definition": {
-                    "description": {
-                        "cs": "slovnikovy " "typ " "ceskeho " "jazyka.",
-                        "en": "czech " "language " "vocabulary " "type.",
-                    },
-                    "dump_options": True,
-                    "name": {"cs": "jazyky", "en": "languages"},
-                },
-                "featured": [
-                    {
-                        "element_type": "leaf",
-                        "hierarchy": {
-                            'ancestors': ['eng.UK', 'eng'],
-                            "title": [
-                                "English " "(UK, " "Scotland)",
-                                "English " "(UK)",
-                                "English",
-                            ]
-                        },
-                        "text": "English (UK, Scotland)",
-                        "value": "eng.UK.S",
-                    }
-                ],
-            },
-        }
-    }
+    assert form_config == {'vocabularies':
+                {'authority': {'definition': {'name': {'en': 'authority'}, 'authority': 'AuthService'},
+                                           'url': '/api/vocabularies/authority'}, 'languages': {
+               'definition': {'name': {'cs': 'jazyky', 'en': 'languages'},
+                              'description': {'cs': 'slovnikovy typ ceskeho jazyka.',
+                                              'en': 'czech language vocabulary type.'}, 'dump_options': True}, 'all': [
+                   {'value': 'eng', 'text': 'English', 'hierarchy': {'title': ['English'], 'ancestors': []},
+                    'element_type': 'parent'}, {'value': 'eng.UK.S', 'text': 'English (UK, Scotland)', 'hierarchy': {
+                       'title': ['English (UK, Scotland)', 'English (UK)', 'English'], 'ancestors': ['eng.UK', 'eng']},
+                                                'element_type': 'leaf'}, {'value': 'eng.UK', 'text': 'English (UK)',
+                                                                          'hierarchy': {
+                                                                              'title': ['English (UK)', 'English'],
+                                                                              'ancestors': ['eng']},
+                                                                          'element_type': 'parent'},
+                   {'value': 'eng.US', 'text': 'English (US)',
+                    'hierarchy': {'title': ['English (US)', 'English'], 'ancestors': ['eng']}, 'element_type': 'leaf'}],
+               'featured': [{'value': 'eng.UK.S', 'text': 'English (UK, Scotland)',
+                             'hierarchy': {'title': ['English (UK, Scotland)', 'English (UK)', 'English'],
+                                           'ancestors': ['eng.UK', 'eng']}, 'element_type': 'leaf'}]}}}
