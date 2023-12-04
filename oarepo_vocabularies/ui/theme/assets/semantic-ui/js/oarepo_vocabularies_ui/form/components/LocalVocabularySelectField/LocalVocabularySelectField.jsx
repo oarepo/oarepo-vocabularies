@@ -71,6 +71,7 @@ export const LocalVocabularySelectField = ({
   optionsListName,
   usedOptions = [],
   helpText,
+  showLeafsOnly,
   ...uiProps
 }) => {
   const {
@@ -87,10 +88,16 @@ export const LocalVocabularySelectField = ({
     );
   }
 
-  const serializedOptions = useMemo(
+  let serializedOptions = useMemo(
     () => serializedVocabularyItems(allOptions),
     [allOptions]
   );
+
+  if (showLeafsOnly) {
+    serializedOptions = serializedOptions.filter(
+      (o) => o.element_type === "leaf"
+    );
+  }
 
   const handleChange = ({ e, data, formikProps }) => {
     if (multiple) {
@@ -139,8 +146,10 @@ LocalVocabularySelectField.propTypes = {
   helpText: PropTypes.string,
   noResultsMessage: PropTypes.string,
   usedOptions: PropTypes.array,
+  showLeafsOnly: PropTypes.bool,
 };
 
 LocalVocabularySelectField.defaultProps = {
   noResultsMessage: i18next.t("No results found."),
+  showLeafsOnly: false,
 };
