@@ -26,13 +26,14 @@ def test_dump_options(sample_records, search_clear, identity):
                 "all": [
                     {
                         "element_type": "parent",
-                        "hierarchy": {"title": ["English"]},
+                        "hierarchy": {"ancestors": [], "title": ["English"]},
                         "text": "English",
                         "value": "eng",
                     },
                     {
                         "element_type": "leaf",
                         "hierarchy": {
+                            'ancestors': ['eng.UK', 'eng'],
                             "title": [
                                 "English (UK, " "Scotland)",
                                 "English (UK)",
@@ -44,13 +45,13 @@ def test_dump_options(sample_records, search_clear, identity):
                     },
                     {
                         "element_type": "leaf",
-                        "hierarchy": {"title": ["English (UK)", "English"]},
+                        "hierarchy": {'ancestors': ['eng'],"title": ["English (UK)", "English"]},
                         "text": "English (UK)",
                         "value": "eng.UK",
                     },
                     {
                         "element_type": "leaf",
-                        "hierarchy": {"title": ["English (US)", "English"]},
+                        "hierarchy": {'ancestors': ['eng'],"title": ["English (US)", "English"]},
                         "text": "English (US)",
                         "value": "eng.US",
                     },
@@ -67,6 +68,7 @@ def test_dump_options(sample_records, search_clear, identity):
                     {
                         "element_type": "leaf",
                         "hierarchy": {
+                            'ancestors': ['eng.UK', 'eng'],
                             "title": [
                                 "English " "(UK, " "Scotland)",
                                 "English " "(UK)",
@@ -105,13 +107,14 @@ def test_dump_options_with_resource(
                 "all": [
                     {
                         "element_type": "parent",
-                        "hierarchy": {"title": ["English"]},
+                        "hierarchy": {"ancestors": [],"title": ["English"]},
                         "text": "English",
                         "value": "eng",
                     },
                     {
                         "element_type": "leaf",
                         "hierarchy": {
+                            'ancestors': ['eng.UK', 'eng'],
                             "title": [
                                 "English (UK, " "Scotland)",
                                 "English (UK)",
@@ -123,13 +126,13 @@ def test_dump_options_with_resource(
                     },
                     {
                         "element_type": "leaf",
-                        "hierarchy": {"title": ["English (UK)", "English"]},
+                        "hierarchy": {'ancestors': ['eng'],"title": ["English (UK)", "English"]},
                         "text": "English (UK)",
                         "value": "eng.UK",
                     },
                     {
                         "element_type": "leaf",
-                        "hierarchy": {"title": ["English (US)", "English"]},
+                        "hierarchy": {'ancestors': ['eng'],"title": ["English (US)", "English"]},
                         "text": "English (US)",
                         "value": "eng.US",
                     },
@@ -146,6 +149,7 @@ def test_dump_options_with_resource(
                     {
                         "element_type": "leaf",
                         "hierarchy": {
+                            'ancestors': ['eng.UK', 'eng'],
                             "title": [
                                 "English " "(UK, " "Scotland)",
                                 "English " "(UK)",
