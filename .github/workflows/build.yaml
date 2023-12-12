@@ -21,7 +21,7 @@ jobs:
 
       - name: Show oarepo version
         run: |
-          echo "OAREPO_VERSION: $OAREPO_VERSION $OA_REPO_VERSION_1"
+          echo "OAREPO_VERSION: $OAREPO_VERSION $OAREPO_VERSION_1"
 
       - uses: actions/checkout@v3
       - name: Set up Python
