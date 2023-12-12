@@ -10,18 +10,16 @@ on:
         type: string
 
 env:
-  OAREPO_VERSION: ${{ github.event.inputs.oarepo }}
+  OAREPO_VERSION: ${{ inputs.oarepo }}
 
 jobs:
   build:
-    env:
-      OAREPO_VERSION_1: ${{ github.event.inputs.oarepo }}
     runs-on: ubuntu-latest
     steps:
 
       - name: Show oarepo version
         run: |
-          echo "OAREPO_VERSION: $OAREPO_VERSION $OAREPO_VERSION_1"
+          echo "OAREPO_VERSION: >>>$OAREPO_VERSION<<<"
 
       - uses: actions/checkout@v3
       - name: Set up Python

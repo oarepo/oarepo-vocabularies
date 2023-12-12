@@ -10,12 +10,12 @@ jobs:
   build11:
     uses: ./.github/workflows/build.yaml
     with:
-      oarepo: 11
+      oarepo: "11"
 
   build12:
     uses: ./.github/workflows/build.yaml
     with:
-      oarepo: 12
+      oarepo: "12"
 
   publish:
     runs-on: ubuntu-latest
