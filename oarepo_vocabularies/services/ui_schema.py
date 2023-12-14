@@ -2,7 +2,7 @@ from functools import partial
 
 import marshmallow as ma
 from flask import current_app
-from flask_babelex import get_locale
+from oarepo_runtime.i18n import get_locale
 from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )

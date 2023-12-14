@@ -1,4 +1,4 @@
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 
 def load_custom_fields():
