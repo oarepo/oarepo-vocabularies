@@ -5,7 +5,7 @@ from tests.simple_model import ModelRecord, ModelUIResource, ModelUIResourceConf
 
 
 def test_dump_options(sample_records, search_clear, identity):
-    comp = DepositVocabularyOptionsComponent(service=None, uow=None)
+    comp = DepositVocabularyOptionsComponent(service=None)
     form_config = {}
     rec = ModelRecord({})
     comp.form_config(
@@ -40,7 +40,7 @@ def test_dump_options(sample_records, search_clear, identity):
 def test_dump_options_with_resource(
         sample_records, search_clear, simple_record_service, identity
 ):
-    comp = DepositVocabularyOptionsComponent(service=None, uow=None)
+    comp = DepositVocabularyOptionsComponent(service=None)
     form_config = {}
     comp.form_config(
         form_config=form_config,

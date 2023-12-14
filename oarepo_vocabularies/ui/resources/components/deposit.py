@@ -3,7 +3,7 @@ import json
 
 import marshmallow
 from flask import current_app
-from flask_babelex import get_locale
+from oarepo_runtime.i18n import get_locale
 from invenio_records import Record
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
