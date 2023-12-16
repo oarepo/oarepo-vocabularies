@@ -484,3 +484,9 @@ def simple_record_service(app):
     sregistry = app.extensions["invenio-records-resources"].registry
     sregistry.register(service, service_id="simple_model")
     return service
+
+@pytest.fixture(scope="module")
+def simple_record_ui_resource(app):
+    from .simple_model import ModelUIResource, ModelUIResourceConfig
+
+    return ModelUIResource(ModelUIResourceConfig())
