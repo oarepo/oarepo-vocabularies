@@ -7,6 +7,7 @@ from oarepo_runtime.i18n import get_locale
 from invenio_records import Record
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from oarepo_ui.resources.components import UIResourceComponent
 
 from oarepo_vocabularies.records.api import find_vocabulary_relations
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
@@ -29,7 +30,7 @@ class VocabularyPrefetchSchema(marshmallow.Schema):
     )
 
 
-class DepositVocabularyOptionsComponent(ServiceComponent):
+class DepositVocabularyOptionsComponent(UIResourceComponent):
     """
     This component is used in deposit form of normal records. For small vocabularies,
     it provides their values so that they might be displayed in, for example, a combo.
@@ -38,7 +39,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
     always_included_vocabularies = []
 
     def form_config(
-        self, *, form_config, resource, record, view_args, identity, **kwargs
+        self, *, form_config, api_record, view_args, identity, **kwargs
     ):
         """
         Adds vocabularies to the form config as in:
@@ -67,9 +68,9 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
             }
         ```
         """
-        if not isinstance(record, Record):
-            record_cls = resource.api_service.config.record_cls
-            record = record_cls({})
+        if not isinstance(api_record, Record):
+            record_cls = self.resource.api_service.config.record_cls # noqa
+            api_record = record_cls({})
 
         form_config.setdefault("vocabularies", {})
 
@@ -82,7 +83,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
 
         used_vocabularies = [
             vocab_field.vocabulary_type
-            for vocab_field in find_vocabulary_relations(record)
+            for vocab_field in find_vocabulary_relations(api_record)
         ]
 
         for v in self.always_included_vocabularies:
