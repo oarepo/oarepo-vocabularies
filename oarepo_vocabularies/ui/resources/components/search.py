@@ -1,6 +1,6 @@
-from invenio_records_resources.services.records.components import ServiceComponent
+from oarepo_ui.resources.components import UIResourceComponent
 
 
-class VocabularySearchComponent(ServiceComponent):
-    def before_ui_search(self, *, resource, search_options, view_args, **kwargs):
+class VocabularySearchComponent(UIResourceComponent):
+    def before_ui_search(self, *, search_options, view_args, **kwargs):
         search_options["headers"] = {"Accept": "application/json"}

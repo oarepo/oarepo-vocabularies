@@ -1,6 +1,6 @@
 {#def record, extra_context #}
 <div style=" margin-top: 2em">
-<SidebarLink href={record.extra_links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
+<SidebarLink href={record.links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
 {%if extra_context.vocabularyProps["hierarchical"] == True%}
   <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
   <SidebarLink icon="plus" href={ record['links']['vocabulary_html'] ~ '/_new?h-parent=' ~ record['id'] }>
@@ -43,7 +43,7 @@
       </div>
       <div class="five wide column pl-0">
         <a
-          href="{{record["extra_links"]["export_path"]}}/json"
+          href="{{record["links"]["export_path"]}}/json"
           title="Download file"
           class="ui fluid button"
           role="button"

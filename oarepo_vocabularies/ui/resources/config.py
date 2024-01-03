@@ -38,21 +38,13 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
     )
     api_service = "vocabularies"
-    layout = "oarepo_vocabularies_ui"
+    search_app_id = "OarepoVocabularies.Search"
 
     templates = {
-        "detail": {
-            "layout": "oarepo_vocabularies_ui/VocabulariesDetail.jinja",
-            "blocks": {
-                "record_sidebar": "VocabulariesSidebar",
-            },
-        },
-        "search": {
-            "layout": "oarepo_vocabularies_ui/VocabulariesSearch.jinja",
-            "app_id": "OarepoVocabularies.Search",
-        },
-        "create": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
-        "edit": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
+        "detail": "oarepo_vocabularies_ui.VocabulariesDetail",
+        "search": "oarepo_vocabularies_ui.VocabulariesSearch",
+        "create": "oarepo_vocabularies_ui.VocabulariesForm",
+        "edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
     routes = {
