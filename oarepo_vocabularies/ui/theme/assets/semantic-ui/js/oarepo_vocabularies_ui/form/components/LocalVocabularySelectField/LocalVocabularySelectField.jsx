@@ -72,6 +72,7 @@ export const LocalVocabularySelectField = ({
   usedOptions = [],
   helpText,
   showLeafsOnly,
+  optimized,
   ...uiProps
 }) => {
   const {
@@ -121,6 +122,7 @@ export const LocalVocabularySelectField = ({
   return (
     <React.Fragment>
       <SelectField
+        optimized={optimized}
         onBlur={() => setFieldTouched(fieldPath)}
         deburr
         search
@@ -147,9 +149,11 @@ LocalVocabularySelectField.propTypes = {
   noResultsMessage: PropTypes.string,
   usedOptions: PropTypes.array,
   showLeafsOnly: PropTypes.bool,
+  optimized: PropTypes.bool,
 };
 
 LocalVocabularySelectField.defaultProps = {
   noResultsMessage: i18next.t("No results found."),
   showLeafsOnly: false,
+  optimized: false,
 };
