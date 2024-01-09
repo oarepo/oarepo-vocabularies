@@ -16,12 +16,16 @@ export const serializedVocabularyItems = (vocabularyItems) =>
       ...titlesArray.map((title, index) => {
         if (index === 0) {
           return {
-            content: <span style={{ fontSize: "1.15rem" }}>{title}</span>,
+            content: <span>{title}</span>,
             key: index,
           };
         } else {
           return {
-            content: <span style={{ opacity: "0.5" }}>{title}</span>,
+            content: (
+              <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
+                {title}
+              </span>
+            ),
             key: index,
           };
         }
@@ -31,7 +35,7 @@ export const serializedVocabularyItems = (vocabularyItems) =>
       ...vocabularyItem,
       text:
         titlesArray.length === 1 ? (
-          <span style={{ fontSize: "1.15rem" }}>{text}</span>
+          <span>{text}</span>
         ) : (
           <Breadcrumb icon="left angle" sections={sections} />
         ),
