@@ -17,7 +17,7 @@ export const serializedVocabularyItems = (vocabularyItems) =>
         if (index === 0) {
           return {
             content: <span>{title}</span>,
-            key: index,
+            key: crypto.randomUUID(),
           };
         } else {
           return {
@@ -26,7 +26,7 @@ export const serializedVocabularyItems = (vocabularyItems) =>
                 {title}
               </span>
             ),
-            key: index,
+            key: crypto.randomUUID(),
           };
         }
       }),
