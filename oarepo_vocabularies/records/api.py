@@ -5,12 +5,12 @@ from invenio_records.dumpers.indexedat import IndexedAtDumperExt
 from invenio_records.systemfields import ConstantField
 from invenio_vocabularies.records.api import Vocabulary as InvenioVocabulary
 from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
-from oarepo_runtime.services.custom_fields import CustomFields, InlinedCustomFields
 from oarepo_runtime.records.systemfields import (
     ICUSortField,
     ICUSuggestField,
     SystemFieldDumperExt,
 )
+from oarepo_runtime.services.custom_fields import CustomFields, InlinedCustomFields
 from oarepo_runtime.services.relations.mapping import RelationsMapping
 
 

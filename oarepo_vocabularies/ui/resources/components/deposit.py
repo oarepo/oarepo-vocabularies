@@ -3,10 +3,9 @@ import json
 
 import marshmallow
 from flask import current_app
-from oarepo_runtime.i18n import get_locale
 from invenio_records import Record
-from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from oarepo_runtime.i18n import get_locale
 from oarepo_ui.resources.components import UIResourceComponent
 
 from oarepo_vocabularies.records.api import find_vocabulary_relations
@@ -38,9 +37,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
 
     always_included_vocabularies = []
 
-    def form_config(
-        self, *, form_config, api_record, view_args, identity, **kwargs
-    ):
+    def form_config(self, *, form_config, api_record, view_args, identity, **kwargs):
         """
         Adds vocabularies to the form config as in:
         ```
@@ -69,7 +66,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         ```
         """
         if not isinstance(api_record, Record):
-            record_cls = self.resource.api_service.config.record_cls # noqa
+            record_cls = self.resource.api_service.config.record_cls  # noqa
             api_record = record_cls({})
 
         form_config.setdefault("vocabularies", {})
@@ -81,14 +78,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
             "INVENIO_VOCABULARY_TYPE_METADATA", {}
         )
 
-        used_vocabularies = [
-            vocab_field.vocabulary_type
-            for vocab_field in find_vocabulary_relations(api_record)
-        ]
-
-        for v in self.always_included_vocabularies:
-            if v not in used_vocabularies:
-                used_vocabularies.append(v)
+        used_vocabularies = self._get_used_vocabularies(api_record)
 
         (
             vocabularies_to_prefetch,
@@ -98,9 +88,32 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         )
 
         form_config["vocabularies"] = form_config_vocabularies
+        self._prefetch_vocabularies_to_form_config(form_config_vocabularies, vocabularies_to_prefetch, identity)
+
+        for vocabularies in form_config["vocabularies"].values():
+            if "all" in vocabularies:
+                for voc in vocabularies["all"]:
+                    for _voc in vocabularies["all"]:
+                        if voc["value"] in _voc["hierarchy"]["ancestors"]:
+                            voc["element_type"] = "parent"
+                            break
+                    if "element_type" not in voc:
+                        voc["element_type"] = "leaf"
+
+    def _get_used_vocabularies(self, api_record):
+        used_vocabularies = [
+            vocab_field.vocabulary_type
+            for vocab_field in find_vocabulary_relations(api_record)
+        ]
+        for v in self.always_included_vocabularies:
+            if v not in used_vocabularies:
+                used_vocabularies.append(v)
+        return used_vocabularies
+
+    def _prefetch_vocabularies_to_form_config(self, form_config_vocabularies, vocabularies_to_prefetch, identity):
         schema = VocabularyPrefetchSchema(context={"locale": get_locale()})
         for prefetched_item in self.prefetch_vocabulary_items(
-            identity, vocabularies_to_prefetch
+                identity, vocabularies_to_prefetch
         ):
             by_type = form_config_vocabularies[prefetched_item["type"]]
             returned_item = {
@@ -110,18 +123,6 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
             by_type["all"].append(returned_item)
             if "featured" in prefetched_item.get("tags", []):
                 by_type["featured"].append(returned_item)
-
-        for vocabularies in form_config['vocabularies'].values():
-            if 'all' in vocabularies:
-                for voc in vocabularies["all"]:
-                    for _voc in vocabularies["all"]:
-                        if voc["value"] in _voc["hierarchy"]["ancestors"]:
-                            voc["element_type"] = "parent"
-                            break
-                    if "element_type" not in voc:
-                        voc["element_type"] = "leaf"
-
-
 
     @staticmethod
     def prefetch_vocabulary_items(identity, vocabularies_to_prefetch):

@@ -51,9 +51,9 @@ class OARepoVocabularies(object):
 
         for k in config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS:
             if k not in app.config["OAREPO_PERMISSIONS_PRESETS"]:
-                app.config["OAREPO_PERMISSIONS_PRESETS"][
-                    k
-                ] = config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
+                app.config["OAREPO_PERMISSIONS_PRESETS"][k] = (
+                    config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
+                )
 
     def init_resource(self, app):
         """Initialize resources."""
