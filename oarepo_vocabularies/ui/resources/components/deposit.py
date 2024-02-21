@@ -78,14 +78,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
             "INVENIO_VOCABULARY_TYPE_METADATA", {}
         )
 
-        used_vocabularies = [
-            vocab_field.vocabulary_type
-            for vocab_field in find_vocabulary_relations(api_record)
-        ]
-
-        for v in self.always_included_vocabularies:
-            if v not in used_vocabularies:
-                used_vocabularies.append(v)
+        used_vocabularies = self._get_used_vocabularies(api_record)
 
         (
             vocabularies_to_prefetch,
@@ -95,18 +88,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         )
 
         form_config["vocabularies"] = form_config_vocabularies
-        schema = VocabularyPrefetchSchema(context={"locale": get_locale()})
-        for prefetched_item in self.prefetch_vocabulary_items(
-            identity, vocabularies_to_prefetch
-        ):
-            by_type = form_config_vocabularies[prefetched_item["type"]]
-            returned_item = {
-                "value": prefetched_item["id"],
-                **schema.dump(prefetched_item),
-            }
-            by_type["all"].append(returned_item)
-            if "featured" in prefetched_item.get("tags", []):
-                by_type["featured"].append(returned_item)
+        self._prefetch_vocabularies_to_form_config(form_config_vocabularies, vocabularies_to_prefetch, identity)
 
         for vocabularies in form_config["vocabularies"].values():
             if "all" in vocabularies:
@@ -117,6 +99,30 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                             break
                     if "element_type" not in voc:
                         voc["element_type"] = "leaf"
+
+    def _get_used_vocabularies(self, api_record):
+        used_vocabularies = [
+            vocab_field.vocabulary_type
+            for vocab_field in find_vocabulary_relations(api_record)
+        ]
+        for v in self.always_included_vocabularies:
+            if v not in used_vocabularies:
+                used_vocabularies.append(v)
+        return used_vocabularies
+
+    def _prefetch_vocabularies_to_form_config(self, form_config_vocabularies, vocabularies_to_prefetch, identity):
+        schema = VocabularyPrefetchSchema(context={"locale": get_locale()})
+        for prefetched_item in self.prefetch_vocabulary_items(
+                identity, vocabularies_to_prefetch
+        ):
+            by_type = form_config_vocabularies[prefetched_item["type"]]
+            returned_item = {
+                "value": prefetched_item["id"],
+                **schema.dump(prefetched_item),
+            }
+            by_type["all"].append(returned_item)
+            if "featured" in prefetched_item.get("tags", []):
+                by_type["featured"].append(returned_item)
 
     @staticmethod
     def prefetch_vocabulary_items(identity, vocabularies_to_prefetch):
