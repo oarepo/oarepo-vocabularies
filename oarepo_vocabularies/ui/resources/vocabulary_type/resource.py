@@ -49,7 +49,9 @@ class VocabularyTypeUIResource(UIResource):
 
         _catalog = current_oarepo_ui.catalog
 
-        return _catalog.render(self.config.templates["list"], list_data=serialized_list_data)
+        return _catalog.render(
+            self.config.templates["list"], list_data=serialized_list_data
+        )
 
     def list_without_slash(self):
         split_path = request.full_path.split("?", maxsplit=1)

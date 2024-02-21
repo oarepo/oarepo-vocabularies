@@ -78,12 +78,12 @@ def app_config(app_config):
     app_config["JSONSCHEMAS_HOST"] = "localhost"
     app_config["BABEL_DEFAULT_LOCALE"] = "en"
     app_config["I18N_LANGUAGES"] = [("da", "Danish"), ("cs", "Czech")]
-    app_config[
-        "RECORDS_REFRESOLVER_CLS"
-    ] = "invenio_records.resolver.InvenioRefResolver"
-    app_config[
-        "RECORDS_REFRESOLVER_STORE"
-    ] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config["RECORDS_REFRESOLVER_CLS"] = (
+        "invenio_records.resolver.InvenioRefResolver"
+    )
+    app_config["RECORDS_REFRESOLVER_STORE"] = (
+        "invenio_jsonschemas.proxies.current_refresolver_store"
+    )
 
     # note: This line must always be added to the invenio.cfg file
     from oarepo_vocabularies.authorities.resources import (
@@ -111,9 +111,9 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
 
     app_config["OAREPO_VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
-    app_config[
-        "OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"
-    ] = AuthoritativeVocabulariesResourceConfig
+    app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = (
+        AuthoritativeVocabulariesResourceConfig
+    )
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -159,9 +159,9 @@ def app_config(app_config):
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
-    app_config[
-        "THEME_HEADER_TEMPLATE"
-    ] = "oarepo_vocabularies_ui/test_header_template.html"
+    app_config["THEME_HEADER_TEMPLATE"] = (
+        "oarepo_vocabularies_ui/test_header_template.html"
+    )
 
     return app_config
 
@@ -484,6 +484,7 @@ def simple_record_service(app):
     sregistry = app.extensions["invenio-records-resources"].registry
     sregistry.register(service, service_id="simple_model")
     return service
+
 
 @pytest.fixture(scope="module")
 def simple_record_ui_resource(app):

@@ -11,9 +11,7 @@ class VocabularyTypeUIResourceConfig(UIResourceConfig):
     api_service = "vocabulary_type"
     layout = "vocabulary"
 
-    templates = {
-        "list": "oarepo_vocabularies_ui.VocabulariesList"
-    }
+    templates = {"list": "oarepo_vocabularies_ui.VocabulariesList"}
 
     routes = {"list": "/"}
 

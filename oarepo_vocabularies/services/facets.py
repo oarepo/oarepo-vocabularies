@@ -9,9 +9,11 @@ class VocabularyFacet(TermsFacet):
         field = field + ".id"
         super().__init__(
             field=field,
-            value_labels=CachedVocabularyLabels(vocabulary)
-            if use_cache
-            else VocabularyLabels(vocabulary),
+            value_labels=(
+                CachedVocabularyLabels(vocabulary)
+                if use_cache
+                else VocabularyLabels(vocabulary)
+            ),
             **kwargs,
         )
 
@@ -21,9 +23,11 @@ class HierarchyVocabularyFacet(TermsFacet):
         field = field + ".hierarchy.ancestors_or_self"
         super().__init__(
             field=field,
-            value_labels=CachedVocabularyLabels(vocabulary)
-            if use_cache
-            else VocabularyLabels(vocabulary),
+            value_labels=(
+                CachedVocabularyLabels(vocabulary)
+                if use_cache
+                else VocabularyLabels(vocabulary)
+            ),
             **kwargs,
         )
 

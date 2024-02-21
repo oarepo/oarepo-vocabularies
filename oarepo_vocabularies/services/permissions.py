@@ -10,21 +10,16 @@
 
 from invenio_records_permissions import RecordPermissionPolicy
 from invenio_records_permissions.generators import AnyUser, SystemProcess
-from invenio_records_permissions.policies.base import BasePermissionPolicy
 
 
-class PermissionPolicy(RecordPermissionPolicy):
+class VocabulariesPermissionPolicy(RecordPermissionPolicy):
     """Permission policy."""
 
     can_search = [SystemProcess(), AnyUser()]
     can_read = [SystemProcess(), AnyUser()]
-
-    can_create = [SystemProcess(), AnyUser()]
-    can_update = [SystemProcess(), AnyUser()]
-    can_delete = [SystemProcess(), AnyUser()]
-    can_manage = [SystemProcess(), AnyUser()]
-
-
-class VocabulariesPermissionPolicy(BasePermissionPolicy):
-    # NOTE: probably change to an authenticated user later.
     can_list_vocabularies = [SystemProcess(), AnyUser()]
+
+    can_create = [SystemProcess()]
+    can_update = [SystemProcess()]
+    can_delete = [SystemProcess()]
+    can_manage = [SystemProcess()]
