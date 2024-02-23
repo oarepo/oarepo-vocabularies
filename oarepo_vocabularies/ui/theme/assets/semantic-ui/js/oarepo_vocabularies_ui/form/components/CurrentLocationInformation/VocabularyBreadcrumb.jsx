@@ -35,6 +35,7 @@ VocabularyBreadcrumb.propTypes = {
       content: PropTypes.string.isRequired,
     })
   ).isRequired,
+  icon: PropTypes.string,
 };
 
 VocabularyBreadcrumb.defaultProps = {

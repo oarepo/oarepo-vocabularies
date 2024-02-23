@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { OverridableContext } from "react-overridable";
-import { Container, Grid, Label, Header } from "semantic-ui-react";
+import { Container, Grid, Label } from "semantic-ui-react";
 import {
   EmptyResults,
   Error,
@@ -23,6 +23,10 @@ const CountElement = ({ totalResults }) => {
       {i18next.t("totalDescendants", { count: totalResults })}
     </Label>
   );
+};
+
+CountElement.propTypes = {
+  totalResults: PropTypes.number.isRequired,
 };
 
 const overriddenComponents = {

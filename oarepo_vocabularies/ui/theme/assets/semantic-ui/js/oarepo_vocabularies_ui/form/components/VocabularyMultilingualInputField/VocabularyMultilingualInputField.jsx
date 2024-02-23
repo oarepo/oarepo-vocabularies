@@ -8,11 +8,7 @@ import {
 } from "react-invenio-forms";
 import { Button, Form, Icon } from "semantic-ui-react";
 import { useFormikContext, getIn } from "formik";
-import {
-  array2object,
-  object2array,
-  LanguageSelectField,
-} from "@js/oarepo_ui";
+import { array2object, object2array, LanguageSelectField } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const VocabularyMultilingualInputField = ({
@@ -105,6 +101,7 @@ VocabularyMultilingualInputField.propTypes = {
   required: PropTypes.bool,
   newItemInitialValue: PropTypes.object,
   textFieldLabel: PropTypes.string,
+  emptyNewInput: PropTypes.object,
 };
 
 VocabularyMultilingualInputField.defaultProps = {
