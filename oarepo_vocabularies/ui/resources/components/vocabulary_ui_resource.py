@@ -19,11 +19,6 @@ class VocabularyRecordsComponent(UIResourceComponent):
                 None, {"type": vocabulary_type, "api": "/api"}
             ),
         )
-        extra_context["permissions"] = {
-            "can_create": self.resource.api_service.check_permission(identity, "create")
-        }
-        # fixes issue with permissions not propagating down to template
-        search_options["overrides"]["permissions"] = extra_context["permissions"]
 
     def before_ui_detail(
         self, *, extra_context, identity, view_args, api_record, **kwargs

@@ -3,6 +3,7 @@ from flask import current_app
 from invenio_records_resources.services import Link, pagination_links
 from oarepo_ui.resources.config import RecordsUIResourceConfig
 from oarepo_ui.resources.links import UIRecordLink
+from oarepo_ui.resources.components import PermissionsComponent
 
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
@@ -56,6 +57,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
 
     components = [
+        PermissionsComponent,
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
         VocabularySearchComponent,
