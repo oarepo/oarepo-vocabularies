@@ -69,6 +69,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
         "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
         "search": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/"),
+        "create": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/_new"),
     }
 
     @property

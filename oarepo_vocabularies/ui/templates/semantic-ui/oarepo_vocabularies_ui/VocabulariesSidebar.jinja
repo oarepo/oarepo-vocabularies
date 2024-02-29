@@ -1,10 +1,10 @@
 {#def record, extra_context #}
 <div class="rel-mt-2">
+  {{record.links.ui_links}}
 {%- if current_user and current_user.is_authenticated %}
   <SidebarLink href={record.links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
   {%if extra_context.vocabularyProps["hierarchical"] == True%}
-    <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
-    <SidebarLink icon="plus" href={ record['links']['vocabulary_html'] ~ '/_new?h-parent=' ~ record['id'] }>
+    <SidebarLink icon="plus" href={ record.links.ui_links["create"] ~ '?h-parent=' ~ record['id'] }>
       {{_('New child item')}}
     </SidebarLink>
   {%endif%}
