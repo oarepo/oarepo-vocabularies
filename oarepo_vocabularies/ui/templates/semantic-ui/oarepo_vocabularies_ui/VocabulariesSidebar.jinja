@@ -1,11 +1,13 @@
 {#def record, extra_context #}
-<div style=" margin-top: 2em">
-<SidebarLink href={record.links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
-{%if extra_context.vocabularyProps["hierarchical"] == True%}
-  <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
-  <SidebarLink icon="plus" href={ record['links']['vocabulary_html'] ~ '/_new?h-parent=' ~ record['id'] }>
-    {{_('New child item')}}
-  </SidebarLink>
+<div class="rel-mt-2">
+{%- if current_user and current_user.is_authenticated %}
+  <SidebarLink href={record.links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
+  {%if extra_context.vocabularyProps["hierarchical"] == True%}
+    <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
+    <SidebarLink icon="plus" href={ record['links']['vocabulary_html'] ~ '/_new?h-parent=' ~ record['id'] }>
+      {{_('New child item')}}
+    </SidebarLink>
+  {%endif%}
 {%endif%}
 </div>
 <section id="export-record" aria-label="Export" class="ui segment exports">

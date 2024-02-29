@@ -76,4 +76,8 @@ VocabularySelectField.propTypes = {
 
 VocabularySelectField.defaultProps = {
   multiple: false,
+  suggestionAPIHeaders: {
+    // TODO: remove after #BE-96 gets resolved
+    Accept: "application/json",
+  },
 };
