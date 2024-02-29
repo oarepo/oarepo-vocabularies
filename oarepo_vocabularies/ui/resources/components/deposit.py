@@ -88,7 +88,9 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         )
 
         form_config["vocabularies"] = form_config_vocabularies
-        self._prefetch_vocabularies_to_form_config(form_config_vocabularies, vocabularies_to_prefetch, identity)
+        self._prefetch_vocabularies_to_form_config(
+            form_config_vocabularies, vocabularies_to_prefetch, identity
+        )
 
         for vocabularies in form_config["vocabularies"].values():
             if "all" in vocabularies:
@@ -110,10 +112,12 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                 used_vocabularies.append(v)
         return used_vocabularies
 
-    def _prefetch_vocabularies_to_form_config(self, form_config_vocabularies, vocabularies_to_prefetch, identity):
+    def _prefetch_vocabularies_to_form_config(
+        self, form_config_vocabularies, vocabularies_to_prefetch, identity
+    ):
         schema = VocabularyPrefetchSchema(context={"locale": get_locale()})
         for prefetched_item in self.prefetch_vocabulary_items(
-                identity, vocabularies_to_prefetch
+            identity, vocabularies_to_prefetch
         ):
             by_type = form_config_vocabularies[prefetched_item["type"]]
             returned_item = {

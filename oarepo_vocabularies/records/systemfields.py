@@ -16,13 +16,10 @@ class HierarchyPartSelector(PathSelector):
 
         elements = []
         for dg in parts:
-            ids = dg['hierarchy']['ancestors_or_self']
-            titles = dg['hierarchy']['title']
+            ids = dg["hierarchy"]["ancestors_or_self"]
+            titles = dg["hierarchy"]["title"]
             if len(ids) > self.level:
-                elements.append({
-                    "id": ids[-1 - self.level],
-                    "title": titles[-1 - self.level]
-                })
+                elements.append(
+                    {"id": ids[-1 - self.level], "title": titles[-1 - self.level]}
+                )
         return elements
-
-
