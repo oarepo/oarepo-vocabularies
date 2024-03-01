@@ -30,15 +30,19 @@ export const serializeVocabularySuggestions = (suggestions) =>
   });
 
 export const serializeVocabularyItem = (item, includeProps = ["id"]) => {
-  return typeof item === "string"
-    ? { id: item }
-    : Array.isArray(item)
-    ? item.map((i) => serializeVocabularyItem(i))
-    : item;
+  if (typeof item === "string") {
+    return { id: item };
+  } else if (Array.isArray(item)) {
+    return item.map((i) => serializeVocabularyItem(i));
+  } else {
+    return item;
+  }
 };
 
 export const deserializeVocabularyItem = (item) => {
-  return Array.isArray(item) ? item.map((item) => deserializeVocabularyItem(item)) : item;
+  return Array.isArray(item)
+    ? item.map((item) => deserializeVocabularyItem(item))
+    : item;
 };
 
 export const VocabularySelectField = ({
@@ -48,8 +52,6 @@ export const VocabularySelectField = ({
   multiple,
   ...restProps
 }) => {
-
-
   return (
     <RelatedSelectField
       fieldPath={fieldPath}

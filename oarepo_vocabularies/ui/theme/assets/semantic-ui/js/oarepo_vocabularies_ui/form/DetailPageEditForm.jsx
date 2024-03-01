@@ -61,7 +61,7 @@ export const DetailPageEditForm = ({
               fieldPath="tags"
               label={i18next.t("Tags")}
               icon="tags"
-              description={i18next.t("Enter one or more tags.")}
+              placeholder={i18next.t("Enter one or more tags.")}
               required={false}
             />
             {hasPropFields && (
@@ -120,4 +120,5 @@ DetailPageEditForm.propTypes = {
     nameType: PropTypes.string,
   }),
   hasPropFields: PropTypes.bool,
+  editMode: PropTypes.bool,
 };

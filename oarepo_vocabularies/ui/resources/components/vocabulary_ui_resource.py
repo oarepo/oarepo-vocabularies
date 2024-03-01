@@ -8,7 +8,9 @@ class VocabularyRecordsComponent(UIResourceComponent):
     This component is used for UI search & display of a vocabulary item
     """
 
-    def before_ui_search(self, *, search_options, view_args, **kwargs):
+    def before_ui_search(
+        self, *, extra_context, identity, search_options, view_args, **kwargs
+    ):
         vocabulary_type = view_args["vocabulary_type"]
         api_service = self.resource.api_service
         search_options.setdefault(
@@ -53,6 +55,6 @@ class VocabularyRecordsComponent(UIResourceComponent):
         form_config.setdefault(
             "vocabularyProps", self.config.vocabulary_props_config(vocabulary_type)
         )
-        form_config["createUrl"] = (
-            f"/api{api_service.config.url_prefix}{vocabulary_type}"
-        )
+        form_config[
+            "createUrl"
+        ] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
