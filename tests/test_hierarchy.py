@@ -1,6 +1,8 @@
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
+from oarepo_vocabularies.records.systemfields import HierarchyPartSelector
+
 
 def test_hierarchy_lang(
     app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf
@@ -106,3 +108,35 @@ def test_parent(sample_records, client):
 
     for s in sample_records:
         _test_parent(s, None)
+
+
+def test_hierarchy_selector():
+    data = {
+        "authority": {
+            "@v": "95bcf144-e477-4888-b7ba-68555090d01f::1",
+            "id": "03zsq2967",
+            "title": {
+                "en": "Association of Asian Pacific Community Health Organizations"
+            },
+            "hierarchy": {
+                "ancestors_or_self": ["03zsq2967", "11111"],
+                "title": [
+                    {
+                        "en": "Association of Asian Pacific Community Health Organizations"
+                    },
+                    {"en": "AAAAA"},
+                ],
+            },
+        }
+    }
+    assert HierarchyPartSelector("authority", level=0).select(data) == [
+        {"id": "11111", "title": {"en": "AAAAA"}}
+    ]
+    assert HierarchyPartSelector("authority", level=1).select(data) == [
+        {
+            "id": "03zsq2967",
+            "title": {
+                "en": "Association of Asian Pacific Community Health " "Organizations"
+            },
+        }
+    ]
