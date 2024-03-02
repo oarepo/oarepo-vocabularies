@@ -43,5 +43,8 @@
 <div class="ui center aligned container">
   
 </div>
-<ICustomFields custom_fields="VOCABULARIES_CF_UI" d={d} value_list_class="ui very basic table" />
+
+{% set custom_field_name="VOCABULARIES_CF_UI." + record.type %}
+<ICustomFields custom_fields={custom_field_name} d={d} />
+
 </div>
