@@ -1,5 +1,6 @@
-{#def metadata, ui, record #}
+{#def metadata, ui, record, d #}
 
+<div class="vocabularies-main">
 <h1 class="rel-mb-1 rel-mt-1" >{{metadata.title}}</h1>
 <dl class="ui very basic table">
   <dt>{{ _('vocabulary.vocabulary') }}</dt>
@@ -41,4 +42,6 @@
 </dl>
 <div class="ui center aligned container">
   
+</div>
+<ICustomFields custom_fields="VOCABULARIES_CF_UI" d={d} value_list_class="ui very basic table" />
 </div>

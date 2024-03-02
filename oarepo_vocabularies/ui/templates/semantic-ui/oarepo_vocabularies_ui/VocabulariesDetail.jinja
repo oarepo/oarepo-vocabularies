@@ -1,4 +1,4 @@
-{#def metadata, ui, record, extra_context #}
+{#def metadata, ui, record, extra_context, d #}
 {% extends "oarepo_ui/detail.html" %}
 {%- set title = metadata.title ~ " | " ~ _("Vocabulary Detail") %}
 
@@ -8,7 +8,7 @@
 {%- endblock %}
 
 {% block record_main_content %}
-<oarepo_vocabularies_ui.VocabulariesMain metadata={metadata} ui={ui} url_prefix={url_prefix} record={record} extra_context={extra_context}></oarepo_vocabularies_ui.VocabulariesMain>
+<oarepo_vocabularies_ui.VocabulariesMain metadata={metadata} ui={ui} url_prefix={url_prefix} record={record} extra_context={extra_context} custom_fields={custom_fields} d={d}></oarepo_vocabularies_ui.VocabulariesMain>
 {% endblock record_main_content %}
 
 {% block record_sidebar %}
