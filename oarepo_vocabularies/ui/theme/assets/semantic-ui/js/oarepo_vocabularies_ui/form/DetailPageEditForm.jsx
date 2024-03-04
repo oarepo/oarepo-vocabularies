@@ -5,7 +5,6 @@ import {
   TextField,
   MultiInput,
   CustomFields,
-  AccordionField,
   FieldLabel,
 } from "react-invenio-forms";
 import {
@@ -58,7 +57,7 @@ export const DetailPageEditForm = ({
             </Grid.Column>
           </Grid.Row>
 
-          <Grid.Column id="main-content" mobile={16} tablet={16} computer={11}>
+          <Grid.Column id="main-content" className="vocabulary-form-main-content" mobile={16} tablet={16} computer={11}>
             <VocabularyMultilingualInputField
               fieldPath="title"
               textFieldLabel={i18next.t("Title")}
