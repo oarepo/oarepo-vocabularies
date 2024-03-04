@@ -59,42 +59,41 @@ export const DetailPageEditForm = ({
           </Grid.Row>
 
           <Grid.Column id="main-content" mobile={16} tablet={16} computer={11}>
-            <AccordionField
-              includesPaths={["title", "id", "props", "tags"]}
-              active
-              label={i18next.t("Basic information")}
-            >
-              <VocabularyMultilingualInputField
-                fieldPath="title"
-                textFieldLabel={i18next.t("Title")}
-              />
-              <TextField
-                fieldPath="id"
-                label={
-                  <FieldLabel
-                    htmlFor="id"
-                    icon="pencil"
-                    label={i18next.t("ID")}
-                  />
-                }
-                required
-              />
-              <MultiInput
-                fieldPath="tags"
-                label={i18next.t("Tags")}
-                icon="tags"
-                placeholder={i18next.t("Enter one or more tags.")}
-                required={false}
-              />
-              {hasPropFields && (
-                <PropFieldsComponent vocabularyProps={vocabularyProps} />
-              )}
-            </AccordionField>
+            <VocabularyMultilingualInputField
+              fieldPath="title"
+              textFieldLabel={i18next.t("Title")}
+            />
+            <TextField
+              fieldPath="id"
+              label={
+                <FieldLabel
+                  htmlFor="id"
+                  icon="pencil"
+                  label={i18next.t("ID")}
+                />
+              }
+              required
+            />
+            <MultiInput
+              fieldPath="tags"
+              label={i18next.t("Tags")}
+              icon="tags"
+              placeholder={i18next.t("Enter one or more tags.")}
+              required={false}
+            />
+            {hasPropFields && (
+              <PropFieldsComponent vocabularyProps={vocabularyProps} />
+            )}
             {!_isEmpty(customFields.ui) && (
               <CustomFields
                 config={customFields.ui[initialValues?.type]}
                 templateLoaders={[
-                  (widget) => import(`@templates/custom_fields/${widget}.js`),
+                  (widget) =>
+                    import(
+                      `@templates/custom_fields/vocabularies/${widget}.js`
+                    ),
+                  (widget) =>
+                    import(`@templates/custom_fields/vocabularies/index.js`),
                   (widget) => import(`react-invenio-forms`),
                 ]}
                 fieldPathPrefix="custom_fields"
