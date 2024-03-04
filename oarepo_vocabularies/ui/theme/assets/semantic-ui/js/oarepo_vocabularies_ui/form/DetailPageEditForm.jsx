@@ -1,7 +1,13 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Container, Grid, Sticky, Ref, Card } from "semantic-ui-react";
-import { TextField, MultiInput } from "react-invenio-forms";
+import {
+  TextField,
+  MultiInput,
+  CustomFields,
+  AccordionField,
+  FieldLabel,
+} from "react-invenio-forms";
 import {
   PublishButton,
   PropFieldsComponent,
@@ -15,18 +21,19 @@ import { VocabularyFormSchema } from "./VocabularyFormSchema";
 import Overridable from "react-overridable";
 import { useFormConfig, FormFeedback, BaseForm } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import _isEmpty from "lodash/isEmpty";
+
 export const DetailPageEditForm = ({
   initialValues,
   hasPropFields,
   editMode,
 }) => {
   const {
-    formConfig: { vocabularyProps },
+    formConfig: { vocabularyProps, custom_fields: customFields },
   } = useFormConfig();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-
   const sidebarRef = useRef(null);
 
   return (
@@ -52,20 +59,46 @@ export const DetailPageEditForm = ({
           </Grid.Row>
 
           <Grid.Column id="main-content" mobile={16} tablet={16} computer={11}>
-            <VocabularyMultilingualInputField
-              fieldPath="title"
-              textFieldLabel={i18next.t("Title")}
-            />
-            <TextField fieldPath="id" label={"ID"} required />
-            <MultiInput
-              fieldPath="tags"
-              label={i18next.t("Tags")}
-              icon="tags"
-              placeholder={i18next.t("Enter one or more tags.")}
-              required={false}
-            />
-            {hasPropFields && (
-              <PropFieldsComponent vocabularyProps={vocabularyProps} />
+            <AccordionField
+              includesPaths={["title", "id", "props", "tags"]}
+              active
+              label={i18next.t("Basic information")}
+            >
+              <VocabularyMultilingualInputField
+                fieldPath="title"
+                textFieldLabel={i18next.t("Title")}
+              />
+              <TextField
+                fieldPath="id"
+                label={
+                  <FieldLabel
+                    htmlFor="id"
+                    icon="pencil"
+                    label={i18next.t("ID")}
+                  />
+                }
+                required
+              />
+              <MultiInput
+                fieldPath="tags"
+                label={i18next.t("Tags")}
+                icon="tags"
+                placeholder={i18next.t("Enter one or more tags.")}
+                required={false}
+              />
+              {hasPropFields && (
+                <PropFieldsComponent vocabularyProps={vocabularyProps} />
+              )}
+            </AccordionField>
+            {!_isEmpty(customFields.ui) && (
+              <CustomFields
+                config={customFields.ui[initialValues?.type]}
+                templateLoaders={[
+                  (widget) => import(`@templates/custom_fields/${widget}.js`),
+                  (widget) => import(`react-invenio-forms`),
+                ]}
+                fieldPathPrefix="custom_fields"
+              />
             )}
             <FormFeedback />
           </Grid.Column>

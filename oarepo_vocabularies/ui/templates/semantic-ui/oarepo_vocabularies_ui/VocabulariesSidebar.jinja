@@ -1,6 +1,5 @@
 {#def record, extra_context #}
 <div class="rel-mt-2">
-  {{record.links.ui_links}}
 {%- if current_user and current_user.is_authenticated %}
   <SidebarLink href={record.links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
   {%if extra_context.vocabularyProps["hierarchical"] == True%}

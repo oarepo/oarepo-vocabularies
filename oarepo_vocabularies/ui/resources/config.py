@@ -30,6 +30,11 @@ class VocabularyFormDepositVocabularyOptionsComponent(
                 {"text": "English", "value": "en"}
             ]
 
+        if current_app.config["VOCABULARIES_CF_UI"]:
+            form_config["custom_fields"]["ui"] = current_app.config[
+                "VOCABULARIES_CF_UI"
+            ]
+
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     template_folder = "../templates"
