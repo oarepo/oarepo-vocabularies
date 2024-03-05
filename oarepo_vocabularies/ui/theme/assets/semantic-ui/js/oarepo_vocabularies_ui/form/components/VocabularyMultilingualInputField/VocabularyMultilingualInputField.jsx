@@ -1,14 +1,13 @@
 import React, { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
-import {
-  TextField,
-  GroupField,
-  ArrayField,
-  FieldLabel,
-} from "react-invenio-forms";
-import { Button, Form, Icon } from "semantic-ui-react";
+import { TextField, ArrayField, FieldLabel } from "react-invenio-forms";
 import { useFormikContext, getIn } from "formik";
-import { array2object, object2array, LanguageSelectField } from "@js/oarepo_ui";
+import {
+  array2object,
+  object2array,
+  LanguageSelectField,
+  ArrayFieldItem,
+} from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const VocabularyMultilingualInputField = ({
@@ -59,7 +58,12 @@ export const VocabularyMultilingualInputField = ({
       {({ indexPath, array, arrayHelpers }) => {
         const fieldPathPrefix = `${placeholderFieldPath}.${indexPath}`;
         return (
-          <GroupField optimized>
+          <ArrayFieldItem
+            indexPath={indexPath}
+            array={array}
+            arrayHelpers={arrayHelpers}
+            displayRemoveButton={indexPath !== 0}
+          >
             <LanguageSelectField
               fieldPath={`${fieldPathPrefix}.lang`}
               placeholder=""
@@ -75,19 +79,7 @@ export const VocabularyMultilingualInputField = ({
               required={required}
               width={13}
             />
-            {indexPath > 0 && (
-              <Form.Field style={{ marginTop: "1.75rem" }}>
-                <Button
-                  aria-label={i18next.t("Remove field")}
-                  className="close-btn"
-                  icon
-                  onClick={() => arrayHelpers.remove(indexPath)}
-                >
-                  <Icon name="close" />
-                </Button>
-              </Form.Field>
-            )}
-          </GroupField>
+          </ArrayFieldItem>
         );
       }}
     </ArrayField>

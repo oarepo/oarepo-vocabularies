@@ -91,6 +91,18 @@ export const LocalVocabularySelectField = ({
     formConfig: { vocabularies },
   } = useFormConfig();
 
+  if (!vocabularies) {
+    console.error("Do not have vocabularies in formConfig");
+  }
+
+  if (!vocabularies[optionsListName]) {
+    console.error(
+      "Vocabulary with name ",
+      optionsListName,
+      " not found in formConfig"
+    );
+  }
+
   const { all: allOptions, featured: featuredOptions } =
     vocabularies[optionsListName];
 

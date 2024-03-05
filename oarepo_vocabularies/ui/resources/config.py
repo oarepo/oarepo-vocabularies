@@ -30,6 +30,11 @@ class VocabularyFormDepositVocabularyOptionsComponent(
                 {"text": "English", "value": "en"}
             ]
 
+        if current_app.config["VOCABULARIES_CF_UI"]:
+            form_config["custom_fields"]["ui"] = current_app.config[
+                "VOCABULARIES_CF_UI"
+            ]
+
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     template_folder = "../templates"
@@ -39,7 +44,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
     )
     api_service = "vocabularies"
-    search_app_id = "OarepoVocabularies.Search"
+    application_id = "OarepoVocabularies"
 
     templates = {
         "detail": "oarepo_vocabularies_ui.VocabulariesDetail",

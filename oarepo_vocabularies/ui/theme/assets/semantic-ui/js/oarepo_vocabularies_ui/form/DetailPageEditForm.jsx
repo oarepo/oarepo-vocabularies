@@ -1,7 +1,12 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Container, Grid, Sticky, Ref, Card } from "semantic-ui-react";
-import { TextField, MultiInput } from "react-invenio-forms";
+import {
+  TextField,
+  MultiInput,
+  CustomFields,
+  FieldLabel,
+} from "react-invenio-forms";
 import {
   PublishButton,
   PropFieldsComponent,
@@ -15,18 +20,19 @@ import { VocabularyFormSchema } from "./VocabularyFormSchema";
 import Overridable from "react-overridable";
 import { useFormConfig, FormFeedback, BaseForm } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import _isEmpty from "lodash/isEmpty";
+
 export const DetailPageEditForm = ({
   initialValues,
   hasPropFields,
   editMode,
 }) => {
   const {
-    formConfig: { vocabularyProps },
+    formConfig: { vocabularyProps, custom_fields: customFields },
   } = useFormConfig();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-
   const sidebarRef = useRef(null);
 
   return (
@@ -55,8 +61,19 @@ export const DetailPageEditForm = ({
             <VocabularyMultilingualInputField
               fieldPath="title"
               textFieldLabel={i18next.t("Title")}
+              labelIcon="pencil"
             />
-            <TextField fieldPath="id" label={"ID"} required />
+            <TextField
+              fieldPath="id"
+              label={
+                <FieldLabel
+                  htmlFor="id"
+                  icon="pencil"
+                  label={i18next.t("ID")}
+                />
+              }
+              required
+            />
             <MultiInput
               fieldPath="tags"
               label={i18next.t("Tags")}
@@ -66,6 +83,16 @@ export const DetailPageEditForm = ({
             />
             {hasPropFields && (
               <PropFieldsComponent vocabularyProps={vocabularyProps} />
+            )}
+            {!_isEmpty(customFields.ui) && (
+              <CustomFields
+                config={customFields.ui[initialValues?.type]}
+                templateLoaders={[
+                  (widget) => import(`@templates/custom_fields/${widget}.js`),
+                  (widget) => import(`react-invenio-forms`),
+                ]}
+                fieldPathPrefix="custom_fields"
+              />
             )}
             <FormFeedback />
           </Grid.Column>
@@ -118,6 +145,7 @@ DetailPageEditForm.propTypes = {
     RID: PropTypes.string,
     acronym: PropTypes.string,
     nameType: PropTypes.string,
+    type: PropTypes.string,
   }),
   hasPropFields: PropTypes.bool,
   editMode: PropTypes.bool,

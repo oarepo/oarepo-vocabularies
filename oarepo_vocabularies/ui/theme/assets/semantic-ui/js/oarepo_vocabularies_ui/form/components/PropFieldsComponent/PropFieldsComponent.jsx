@@ -2,7 +2,7 @@ import React from "react";
 import { Popup, Icon } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import PropTypes from "prop-types";
-import { TextField } from "react-invenio-forms";
+import { TextField, FieldLabel } from "react-invenio-forms";
 
 export const PropFieldsComponent = ({ vocabularyProps }) => {
   const { props } = vocabularyProps;
@@ -16,17 +16,25 @@ export const PropFieldsComponent = ({ vocabularyProps }) => {
           fieldPath={`props.${propField}`}
           label={
             propConfig.description ? (
-              <Popup
-                content={propConfig.description}
-                trigger={
-                  <label>
-                    {i18next.t(propField)}
-                    <Icon name="question circle" color="blue" />
-                  </label>
+              <FieldLabel
+                htmlFor={propField}
+                icon="pencil"
+                label={
+                  <React.Fragment>
+                    {i18next.t(propField)}{" "}
+                    <Popup
+                      content={propConfig.description}
+                      trigger={<Icon name="question circle" color="blue" />}
+                    />
+                  </React.Fragment>
                 }
               />
             ) : (
-              i18next.t(propField)
+              <FieldLabel
+                htmlFor={propField}
+                icon="pencil"
+                label={i18next.t(propField)}
+              />
             )
           }
         />
