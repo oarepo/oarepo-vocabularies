@@ -83,3 +83,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
             vocabulary_type, {}
         )
+
+    def _get_custom_fields_ui_config(self, key, resource_requestctx=None, **kwargs):
+        if key == "OAREPO_VOCABULARIES_HIERARCHY_CF":
+            return []
+        return current_app.config.get("VOCABULARIES_CF_UI", {}).get(
+            resource_requestctx.view_args["vocabulary_type"], []
+        )
