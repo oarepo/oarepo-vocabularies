@@ -44,7 +44,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
     )
     api_service = "vocabularies"
-    application_id = "OarepoVocabularies.Search"
+    application_id = "OarepoVocabularies"
 
     templates = {
         "detail": "oarepo_vocabularies_ui.VocabulariesDetail",

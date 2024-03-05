@@ -57,10 +57,11 @@ export const DetailPageEditForm = ({
             </Grid.Column>
           </Grid.Row>
 
-          <Grid.Column id="main-content" className="vocabulary-form-main-content" mobile={16} tablet={16} computer={11}>
+          <Grid.Column id="main-content" mobile={16} tablet={16} computer={11}>
             <VocabularyMultilingualInputField
               fieldPath="title"
               textFieldLabel={i18next.t("Title")}
+              labelIcon="pencil"
             />
             <TextField
               fieldPath="id"
@@ -87,12 +88,7 @@ export const DetailPageEditForm = ({
               <CustomFields
                 config={customFields.ui[initialValues?.type]}
                 templateLoaders={[
-                  (widget) =>
-                    import(
-                      `@templates/custom_fields/vocabularies/${widget}.js`
-                    ),
-                  (widget) =>
-                    import(`@templates/custom_fields/vocabularies/index.js`),
+                  (widget) => import(`@templates/custom_fields/${widget}.js`),
                   (widget) => import(`react-invenio-forms`),
                 ]}
                 fieldPathPrefix="custom_fields"
@@ -149,6 +145,7 @@ DetailPageEditForm.propTypes = {
     RID: PropTypes.string,
     acronym: PropTypes.string,
     nameType: PropTypes.string,
+    type: PropTypes.string,
   }),
   hasPropFields: PropTypes.bool,
   editMode: PropTypes.bool,
