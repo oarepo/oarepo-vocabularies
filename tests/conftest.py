@@ -168,7 +168,7 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = (
         AuthoritativeVocabulariesResourceConfig
     )
-    app_config["OAREPO_FINE_GRAINED_PERMISSIONS"] = True
+    app_config["OAREPO_FINE_GRAINED_VOCABULARIES_PERMISSIONS"] = True
     app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
     app_config["OAREPO_PERMISSIONS_PRESETS"] = {
         "fine-grained": FineGrainedPermissionPolicy
