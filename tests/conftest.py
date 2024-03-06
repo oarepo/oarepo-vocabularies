@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 from flask import g
-from invenio_records_permissions.generators import SystemProcess, AnyUser
+from invenio_records_permissions.generators import AnyUser, SystemProcess
 from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
 
 from oarepo_vocabularies.authorities.service import AuthorityService
@@ -561,9 +561,9 @@ def reset_babel(app):
         except ImportError:
             return
         g._flask_babel = SimpleNamespace()
+
     try:
         clear_babel_context()
         yield clear_babel_context
     finally:
         clear_babel_context()
-

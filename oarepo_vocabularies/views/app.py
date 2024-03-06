@@ -18,4 +18,5 @@ def init_create_app_blueprint(state):
 
     if app.config.get("OAREPO_FINE_GRAINED_PERMISSIONS", False):
         from oarepo_vocabularies.hacks import patch_invenio_vocabulary_service
+
         patch_invenio_vocabulary_service(app)

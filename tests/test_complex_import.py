@@ -2,8 +2,7 @@ from pathlib import Path
 
 from invenio_vocabularies.records.api import Vocabulary
 from oarepo_runtime.datastreams import StreamBatch
-from oarepo_runtime.datastreams.fixtures import load_fixtures, FixturesCallback
-from oarepo_runtime.datastreams.types import StatsKeepingDataStreamCallback
+from oarepo_runtime.datastreams.fixtures import FixturesCallback, load_fixtures
 
 
 def test_complex_import_export(app, db, cache, vocab_cf):
