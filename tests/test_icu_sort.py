@@ -7,15 +7,7 @@ from oarepo_runtime.datastreams.fixtures import load_fixtures, FixturesCallback
 from flask import g
 
 
-def clear_babel_context():
-    # for invenio 12
-    try:
-        from flask_babel import SimpleNamespace
-    except ImportError:
-        return
-    g._flask_babel = SimpleNamespace()
-
-def test_icu_sort(app, db, cache, vocab_cf):
+def test_icu_sort(app, db, cache, vocab_cf, reset_babel):
     load_fixtures(Path(__file__).parent / "icudata", callback=FixturesCallback())
     Vocabulary.index.refresh()
 
@@ -25,7 +17,7 @@ def test_icu_sort(app, db, cache, vocab_cf):
             titles.append(rec["title"]['cs'])
         assert titles == ['Angličtina', 'Čeština']
 
-    clear_babel_context()
+    reset_babel()
 
     with app.test_request_context(headers=[("Accept-Language", "en")]):
         titles = []

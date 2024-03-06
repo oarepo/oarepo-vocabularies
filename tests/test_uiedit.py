@@ -18,6 +18,7 @@ def test_uiedit(
     lang_data,
     vocab_cf,
     fake_manifest,
+    search_clear
 ):
     for _id in range(100):
         vocab_service.create(
@@ -41,15 +42,6 @@ def test_uiedit(
 
 
 
-def clear_babel_context():
-    # for invenio 12
-    try:
-        from flask_babel import SimpleNamespace
-    except ImportError:
-        return
-    g._flask_babel = SimpleNamespace()
-
-
 def test_uiedit_locale(
     client_with_credentials,
     app,
@@ -57,12 +49,16 @@ def test_uiedit_locale(
     cache,
     vocab_cf,
     fake_manifest,
+    reset_babel,
+    search_clear
 ):
     load_fixtures(Path(__file__).parent / "icudata", callback=FixturesCallback())
     Vocabulary.index.refresh()
 
+    reset_babel()
     edit_page = client_with_credentials.get("/vocabularies/languages/en/edit",
                                             headers=[("Accept-Language", "cs")])
+    print(edit_page.text)
     assert (
         remove_ws(
             """  
@@ -73,7 +69,7 @@ def test_uiedit_locale(
         in remove_ws(edit_page.text)
     )
 
-    clear_babel_context()
+    reset_babel()
     edit_page = client_with_credentials.get("/vocabularies/languages/en/edit",
                                             headers=[("Accept-Language", "en")])
     assert (

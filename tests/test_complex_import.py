@@ -1,12 +1,19 @@
 from pathlib import Path
 
 from invenio_vocabularies.records.api import Vocabulary
-from oarepo_runtime.datastreams.fixtures import load_fixtures
+from oarepo_runtime.datastreams import StreamBatch
+from oarepo_runtime.datastreams.fixtures import load_fixtures, FixturesCallback
 from oarepo_runtime.datastreams.types import StatsKeepingDataStreamCallback
 
 
 def test_complex_import_export(app, db, cache, vocab_cf):
-    callback = StatsKeepingDataStreamCallback()
+    class ErrCallback(FixturesCallback):
+        def batch_finished(self, batch: StreamBatch):
+            if batch.failed_entries:
+                print(batch.failed_entries)
+            super().batch_finished(batch)
+
+    callback = ErrCallback()
     load_fixtures(
         Path(__file__).parent / "complex-data",
         callback=callback,
