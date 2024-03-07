@@ -10,4 +10,4 @@ export const componentOverrides = {
   [`${overridableIdPrefix}.FormActions.container`]: VocabularyFormControlPanel,
 };
 
-createFormAppInit({ componentOverrides: componentOverrides });
+createFormAppInit({ componentOverrides });

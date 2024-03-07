@@ -1,7 +1,7 @@
 {#def metadata, ui, record, d #}
 
 <div class="vocabularies-main">
-<h1 class="rel-mb-1 rel-mt-1 ui header" >{{metadata.title.capitalize()}}</h1>
+<h1 class="rel-mb-1 rel-mt-1 ui header" >{{metadata.title.capitalize() if metadata.title else _("Missing title")}}</h1>
 <dl class="ui very basic table">
   <dt>{{ _('vocabulary.vocabulary') }}</dt>
   <dd>

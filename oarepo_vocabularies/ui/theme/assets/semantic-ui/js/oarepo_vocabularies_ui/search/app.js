@@ -26,4 +26,4 @@ export const componentOverrides = {
     VocabularyButtonSidebar,
   [`${overridableIdPrefix}.SearchApp.layout`]: SearchAppLayoutWithConfig,
 };
-createSearchAppsInit({ componentOverrides: componentOverrides });
+createSearchAppsInit({ componentOverrides });
