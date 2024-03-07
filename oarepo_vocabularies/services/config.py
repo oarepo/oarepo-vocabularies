@@ -88,6 +88,7 @@ class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfi
     ]
 
     PERMISSIONS_PRESETS = ["vocabularies"]
+    PERMISSIONS_PRESETS_CONFIG_KEY = "VOCABULARIES_PERMISSIONS_PRESETS"
 
     url_prefix = "/vocabularies/"
 

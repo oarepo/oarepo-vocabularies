@@ -1,6 +1,7 @@
-{#def metadata, ui, record #}
+{#def metadata, ui, record, d #}
 
-<h1 class="rel-mb-1 rel-mt-1" >{{metadata.title}}</h1>
+<div class="vocabularies-main">
+<h1 class="rel-mb-1 rel-mt-1 ui header" >{{metadata.title.capitalize() if metadata.title else _("Missing title")}}</h1>
 <dl class="ui very basic table">
   <dt>{{ _('vocabulary.vocabulary') }}</dt>
   <dd>
@@ -41,4 +42,10 @@
 </dl>
 <div class="ui center aligned container">
   
+</div>
+
+{% set custom_field_name="VOCABULARIES_CF_UI." + record.type %}
+<div class="ui vocabulary_cf">
+<ICustomFields custom_fields={custom_field_name} d={d} />
+</div>
 </div>

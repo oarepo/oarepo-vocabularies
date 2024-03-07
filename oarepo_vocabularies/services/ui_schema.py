@@ -45,7 +45,7 @@ class HierarchyUISchema(ma.Schema):
 
 
 class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):
-    CUSTOM_FIELDS_VAR = "OAREPO_VOCABULARIES_CUSTOM_CF"
+    CUSTOM_FIELDS_VAR = "VOCABULARIES_CF"
     hierarchy = ma_fields.Nested(
         partial(CustomFieldsSchemaUI, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
     )

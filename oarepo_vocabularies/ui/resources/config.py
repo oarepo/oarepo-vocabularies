@@ -39,7 +39,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
     )
     api_service = "vocabularies"
-    search_app_id = "OarepoVocabularies.Search"
+    application_id = "OarepoVocabularies"
 
     templates = {
         "detail": "oarepo_vocabularies_ui.VocabulariesDetail",
@@ -82,4 +82,11 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     def vocabulary_props_config(self, vocabulary_type):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
             vocabulary_type, {}
+        )
+
+    def _get_custom_fields_ui_config(self, key, resource_requestctx=None, **kwargs):
+        if key == "OAREPO_VOCABULARIES_HIERARCHY_CF":
+            return []
+        return current_app.config.get("VOCABULARIES_CF_UI", {}).get(
+            resource_requestctx.view_args["vocabulary_type"], []
         )
