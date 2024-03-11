@@ -36,7 +36,7 @@ class Vocabulary(InvenioVocabulary):
     suggest = ICUSuggestField(source_field="title")
     suggest_hierarchy = ICUSuggestField(source_field="hierarchy.title")
 
-    custom_fields = InlinedCustomFields("OAREPO_VOCABULARIES_CUSTOM_CF")
+    custom_fields = InlinedCustomFields("VOCABULARIES_CF")
 
 
 VocabularyRelation = namedtuple(

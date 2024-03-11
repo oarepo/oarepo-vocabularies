@@ -178,7 +178,7 @@ def app_config(app_config):
 
     from tests.customfields import HintCF, NonPreferredLabelsCF, RelatedURICF
 
-    app_config["OAREPO_VOCABULARIES_CUSTOM_CF"] = [
+    app_config["VOCABULARIES_CF"] = [
         KeywordCF("blah"),
         RelatedURICF("relatedURI"),
         HintCF("hint"),

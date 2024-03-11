@@ -1,7 +1,6 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
-import _reverse from "lodash/reverse";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
 
@@ -12,18 +11,19 @@ export const serializeVocabularySuggestions = (suggestions) =>
     const sections = [
       ...hierarchy.map((id, index, { length }) => ({
         key: id,
-        content: <I18nString value={item.hierarchy.title[index]} />,
+        content:
+          index === 0 ? (
+            <I18nString value={item.hierarchy.title[index]} />
+          ) : (
+            <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
+              <I18nString value={item.hierarchy.title[index]} />
+            </span>
+          ),
         active: index === 0 && length !== 1,
       })),
     ];
     return {
-      text: (
-        <Breadcrumb
-          key={key}
-          icon="right angle"
-          sections={_reverse(sections)}
-        />
-      ),
+      text: <Breadcrumb key={key} icon="left angle" sections={sections} />,
       value: item,
       key: key,
     };

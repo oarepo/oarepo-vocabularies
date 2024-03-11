@@ -1,8 +1,13 @@
-import { createFormAppInit } from "@js/oarepo_ui/forms";
-import VocabularyForm from "./VocabularyForm";
+import { createFormAppInit, parseFormAppConfig } from "@js/oarepo_ui/forms";
+import FormAppLayout from "./FormAppLayout";
+import { VocabularyFormControlPanel, VocabularyFormFields } from "./components";
+const { formConfig } = parseFormAppConfig();
+const { overridableIdPrefix } = formConfig;
 
-export const overriddenComponents = {
-    "FormApp.layout": VocabularyForm,
+export const componentOverrides = {
+  [`${overridableIdPrefix}.FormApp.layout`]: FormAppLayout,
+  [`${overridableIdPrefix}.FormFields.container`]: VocabularyFormFields,
+  [`${overridableIdPrefix}.FormActions.container`]: VocabularyFormControlPanel,
 };
 
-createFormAppInit(overriddenComponents);
+createFormAppInit({ componentOverrides });
