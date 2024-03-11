@@ -16,6 +16,10 @@ import shutil
 import sys
 from pathlib import Path
 
+from flask import g
+from invenio_records_permissions.generators import AnyUser, SystemProcess
+from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
+
 from oarepo_vocabularies.authorities.service import AuthorityService
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
@@ -72,6 +76,56 @@ def extra_entry_points():
     return {}
 
 
+class FineGrainedPermissionPolicy(EveryonePermissionPolicy):
+    can_create_languages = [SystemProcess(), AnyUser()]
+    can_update_languages = [SystemProcess(), AnyUser()]
+    can_delete_languages = [SystemProcess(), AnyUser()]
+
+    can_create_authority = [SystemProcess(), AnyUser()]
+    can_update_authority = [SystemProcess(), AnyUser()]
+    can_delete_authority = [SystemProcess(), AnyUser()]
+
+    can_create_access_rights = [SystemProcess(), AnyUser()]
+    can_update_access_rights = [SystemProcess(), AnyUser()]
+    can_delete_access_rights = [SystemProcess(), AnyUser()]
+
+    can_create_contributor_types = [SystemProcess(), AnyUser()]
+    can_update_contributor_types = [SystemProcess(), AnyUser()]
+    can_delete_contributor_types = [SystemProcess(), AnyUser()]
+
+    can_create_countries = [SystemProcess(), AnyUser()]
+    can_update_countries = [SystemProcess(), AnyUser()]
+    can_delete_countries = [SystemProcess(), AnyUser()]
+
+    can_create_funders = [SystemProcess(), AnyUser()]
+    can_update_funders = [SystemProcess(), AnyUser()]
+    can_delete_funders = [SystemProcess(), AnyUser()]
+
+    can_create_institutions = [SystemProcess(), AnyUser()]
+    can_update_institutions = [SystemProcess(), AnyUser()]
+    can_delete_institutions = [SystemProcess(), AnyUser()]
+
+    can_create_item_relation_types = [SystemProcess(), AnyUser()]
+    can_update_item_relation_types = [SystemProcess(), AnyUser()]
+    can_delete_item_relation_types = [SystemProcess(), AnyUser()]
+
+    can_create_licenses = [SystemProcess(), AnyUser()]
+    can_update_licenses = [SystemProcess(), AnyUser()]
+    can_delete_licenses = [SystemProcess(), AnyUser()]
+
+    can_create_resource_types = [SystemProcess(), AnyUser()]
+    can_update_resource_types = [SystemProcess(), AnyUser()]
+    can_delete_resource_types = [SystemProcess(), AnyUser()]
+
+    can_create_related_resource_types = [SystemProcess(), AnyUser()]
+    can_update_related_resource_types = [SystemProcess(), AnyUser()]
+    can_delete_related_resource_types = [SystemProcess(), AnyUser()]
+
+    can_create_subject_categories = [SystemProcess(), AnyUser()]
+    can_update_subject_categories = [SystemProcess(), AnyUser()]
+    can_delete_subject_categories = [SystemProcess(), AnyUser()]
+
+
 @pytest.fixture(scope="module")
 def app_config(app_config):
     """Mimic an instance's configuration."""
@@ -114,6 +168,11 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = (
         AuthoritativeVocabulariesResourceConfig
     )
+    app_config["OAREPO_FINE_GRAINED_VOCABULARIES_PERMISSIONS"] = True
+    app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
+    app_config["OAREPO_PERMISSIONS_PRESETS"] = {
+        "fine-grained": FineGrainedPermissionPolicy
+    }
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
@@ -491,3 +550,20 @@ def simple_record_ui_resource(app):
     from .simple_model import ModelUIResource, ModelUIResourceConfig
 
     return ModelUIResource(ModelUIResourceConfig())
+
+
+@pytest.fixture
+def reset_babel(app):
+    def clear_babel_context():
+        # for invenio 12
+        try:
+            from flask_babel import SimpleNamespace
+        except ImportError:
+            return
+        g._flask_babel = SimpleNamespace()
+
+    try:
+        clear_babel_context()
+        yield clear_babel_context
+    finally:
+        clear_babel_context()
