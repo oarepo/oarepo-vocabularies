@@ -60,12 +60,6 @@ export const VocabularySelectField = ({
   multiple,
   ...restProps
 }) => {
-  const { values } = useFormikContext();
-  const initialSuggestions = multiple
-    ? getIn(values, fieldPath, [])
-    : _isEmpty(getIn(values, fieldPath, {}))
-    ? []
-    : [getIn(values, fieldPath)];
   return (
     <RelatedSelectField
       fieldPath={fieldPath}
@@ -76,7 +70,6 @@ export const VocabularySelectField = ({
       multiple={multiple}
       serializeSelectedItem={serializeVocabularyItem}
       deserializeValue={deserializeVocabularyItem}
-      initialSuggestions={initialSuggestions}
       {...restProps}
     />
   );
