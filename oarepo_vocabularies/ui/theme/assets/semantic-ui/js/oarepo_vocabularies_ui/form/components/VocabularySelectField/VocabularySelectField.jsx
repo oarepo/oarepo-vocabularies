@@ -1,31 +1,39 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
-import _join from "lodash/join";
 import PropTypes from "prop-types";
+import { useFormikContext, getIn } from "formik";
+import _isEmpty from "lodash/isEmpty";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
-    const hierarchy = item.hierarchy.ancestors_or_self;
-    const key = _join(hierarchy, ".");
-    const sections = [
-      ...hierarchy.map((id, index, { length }) => ({
-        key: id,
-        content:
-          index === 0 ? (
-            <I18nString value={item.hierarchy.title[index]} />
-          ) : (
-            <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
+    const hierarchy = item?.hierarchy?.ancestors_or_self;
+    let sections;
+    if (item.hierarchy) {
+      sections = [
+        ...hierarchy.map((id, index, { length }) => ({
+          key: id,
+          content:
+            index === 0 ? (
               <I18nString value={item.hierarchy.title[index]} />
-            </span>
-          ),
-        active: index === 0 && length !== 1,
-      })),
-    ];
+            ) : (
+              <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
+                <I18nString value={item.hierarchy.title[index]} />
+              </span>
+            ),
+        })),
+      ];
+    }
     return {
-      text: <Breadcrumb key={key} icon="left angle" sections={sections} />,
-      value: item,
-      key: key,
+      text: item.hierarchy ? (
+        <Breadcrumb icon="left angle" sections={sections} />
+      ) : (
+        <I18nString value={item.title} />
+      ),
+      value: item.id,
+      key: item.id,
+      data: item,
+      id: item.id,
     };
   });
 
@@ -52,6 +60,12 @@ export const VocabularySelectField = ({
   multiple,
   ...restProps
 }) => {
+  const { values } = useFormikContext();
+  const initialSuggestions = multiple
+    ? getIn(values, fieldPath, [])
+    : _isEmpty(getIn(values, fieldPath, {}))
+    ? []
+    : [getIn(values, fieldPath)];
   return (
     <RelatedSelectField
       fieldPath={fieldPath}
@@ -62,6 +76,7 @@ export const VocabularySelectField = ({
       multiple={multiple}
       serializeSelectedItem={serializeVocabularyItem}
       deserializeValue={deserializeVocabularyItem}
+      initialSuggestions={initialSuggestions}
       {...restProps}
     />
   );
