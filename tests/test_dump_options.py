@@ -46,6 +46,7 @@ def test_dump_options(
                         "text": "English",
                         "hierarchy": {"title": ["English"], "ancestors": []},
                         "element_type": "parent",
+                        'props': {'akey': 'avalue'},
                     },
                     {
                         "value": "eng.UK.S",

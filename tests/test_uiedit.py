@@ -34,7 +34,7 @@ def test_uiedit(
     assert (
         remove_ws(
             """  
-        {"all": [{"element_type": "leaf", "hierarchy": {"ancestors": [], "title": ["English"]}, "text": "English", "value": \""""
+        {"all": [{"element_type": "leaf", "hierarchy": {"ancestors": [], "title": ["English"]}, "props": {"akey": "avalue"}, "text": "English", "value": \""""
         )
         in remove_ws(edit_page.text)
     )
