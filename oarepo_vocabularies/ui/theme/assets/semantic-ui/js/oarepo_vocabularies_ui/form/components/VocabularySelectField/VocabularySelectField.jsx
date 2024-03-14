@@ -2,8 +2,6 @@ import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
 import PropTypes from "prop-types";
-import { useFormikContext, getIn } from "formik";
-import _isEmpty from "lodash/isEmpty";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
