@@ -27,6 +27,7 @@ class VocabularyPrefetchSchema(marshmallow.Schema):
     hierarchy = marshmallow.fields.Nested(
         DepositI18nHierarchySchema, data_key="hierarchy"
     )
+    props = marshmallow.fields.Dict(keys=marshmallow.fields.String(), values=marshmallow.fields.String())
 
 
 class DepositVocabularyOptionsComponent(UIResourceComponent):
@@ -148,6 +149,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                         "type",
                         "id",
                         "tags",
+                        "props.*"
                     ],
                     "size": 1000,
                 },

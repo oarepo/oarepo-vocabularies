@@ -1,0 +1,10 @@
+
+
+vocabulary-languages:
+  - writer: vocabulary
+    vocabulary: languages
+    pid_type: lng
+    title:
+      cs: Jazyky
+      en: Languages
+  - source: languages.yaml

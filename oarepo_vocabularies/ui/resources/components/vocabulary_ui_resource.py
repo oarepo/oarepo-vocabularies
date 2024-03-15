@@ -55,6 +55,6 @@ class VocabularyRecordsComponent(UIResourceComponent):
         form_config.setdefault(
             "vocabularyProps", self.config.vocabulary_props_config(vocabulary_type)
         )
-        form_config[
-            "createUrl"
-        ] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
+        form_config["createUrl"] = (
+            f"/api{api_service.config.url_prefix}{vocabulary_type}"
+        )
