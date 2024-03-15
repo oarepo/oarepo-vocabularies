@@ -1,13 +1,17 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
+import _join from "lodash/join";
 import PropTypes from "prop-types";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
     const hierarchy = item?.hierarchy?.ancestors_or_self;
     let sections;
+    let key = item.id;
+
     if (item.hierarchy) {
+      key = _join(hierarchy, ".");
       sections = [
         ...hierarchy.map((id, index, { length }) => ({
           key: id,
@@ -24,14 +28,15 @@ export const serializeVocabularySuggestions = (suggestions) =>
     }
     return {
       text: item.hierarchy ? (
-        <Breadcrumb icon="left angle" sections={sections} />
+        <Breadcrumb key={key} icon="left angle" sections={sections} />
       ) : (
-        <I18nString value={item.title} />
+        <I18nString key={key} value={item.title} />
       ),
       value: item.id,
-      key: item.id,
+      key: key,
       data: item,
       id: item.id,
+      title: item.title,
     };
   });
 

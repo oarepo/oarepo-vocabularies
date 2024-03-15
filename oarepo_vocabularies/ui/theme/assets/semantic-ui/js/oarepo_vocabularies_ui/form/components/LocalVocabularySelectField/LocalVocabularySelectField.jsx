@@ -114,19 +114,16 @@ export const LocalVocabularySelectField = ({
     );
   }
 
-  let serializedOptions = useMemo(
-    () =>
-      showLeafsOnly
-        ? serializedVocabularyItems(allOptions).filter(
-            (o) => o.element_type === "leaf"
-          )
-        : serializedVocabularyItems(allOptions),
-    [allOptions, showLeafsOnly]
-  );
-
-  if (filterFunction) {
-    serializedOptions = filterFunction(serializedOptions);
-  }
+  let serializedOptions = useMemo(() => {
+    let options = serializedVocabularyItems(allOptions);
+    if (showLeafsOnly) {
+      options = options.filter((o) => o.element_type === "leaf");
+    }
+    if (filterFunction) {
+      options = filterFunction(options);
+    }
+    return options;
+  }, [allOptions, showLeafsOnly]);
 
   const handleChange = ({ e, data, formikProps }) => {
     if (multiple) {
