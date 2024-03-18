@@ -4,6 +4,7 @@ import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
 import { search } from "../../../utils";
+import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
@@ -47,7 +48,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
         data: item,
         id: item.id,
         title: item.title,
-        name: item.title.cs,
+        name: getTitleFromMultilingualObject(item?.title),
       };
     }
   });
