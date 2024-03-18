@@ -1,10 +1,13 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
-import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
+import {
+  I18nString,
+  RelatedSelectField,
+  getTitleFromMultilingualObject,
+} from "@js/oarepo_ui";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
 import { search } from "../../../utils";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
