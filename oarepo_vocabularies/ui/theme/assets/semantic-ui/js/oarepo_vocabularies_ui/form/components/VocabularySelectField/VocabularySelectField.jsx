@@ -3,14 +3,14 @@ import { Breadcrumb } from "semantic-ui-react";
 import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
+import { search } from "../../../utils";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
     const hierarchy = item?.hierarchy?.ancestors_or_self;
     let sections;
     let key = item.id;
-
-    if (item.hierarchy) {
+    if (hierarchy?.length > 1) {
       key = _join(hierarchy, ".");
       sections = [
         ...hierarchy.map((id, index, { length }) => ({
@@ -26,34 +26,35 @@ export const serializeVocabularySuggestions = (suggestions) =>
         })),
       ];
     }
-    return {
-      text: item.hierarchy ? (
-        <Breadcrumb key={key} icon="left angle" sections={sections} />
-      ) : (
-        <I18nString key={key} value={item.title} />
-      ),
-      value: item.id,
-      key: key,
-      data: item,
-      id: item.id,
-      title: item.title,
-    };
+    if (typeof item === "string") {
+      return {
+        text: item,
+        value: item,
+        key: item,
+        name: item,
+        id: item,
+      };
+    } else {
+      return {
+        text:
+          hierarchy.length > 1 ? (
+            <Breadcrumb key={key} icon="left angle" sections={sections} />
+          ) : (
+            <I18nString value={item.title} />
+          ),
+        value: item.id,
+        key: key,
+        data: item,
+        id: item.id,
+        title: item.title,
+        name: item.title.cs,
+      };
+    }
   });
 
-export const serializeVocabularyItem = (item, includeProps = ["id"]) => {
-  if (typeof item === "string") {
-    return { id: item };
-  } else if (Array.isArray(item)) {
-    return item.map((i) => serializeVocabularyItem(i));
-  } else {
-    return item;
-  }
-};
-
-export const deserializeVocabularyItem = (item) => {
-  return Array.isArray(item)
-    ? item.map((item) => deserializeVocabularyItem(item))
-    : item;
+// for adding free text items
+const serializeAddedValue = (value) => {
+  return { text: value, value, key: value, name: value, id: value };
 };
 
 export const VocabularySelectField = ({
@@ -71,8 +72,9 @@ export const VocabularySelectField = ({
       selectOnBlur={false}
       serializeSuggestions={serializeVocabularySuggestions}
       multiple={multiple}
-      serializeSelectedItem={serializeVocabularyItem}
-      deserializeValue={deserializeVocabularyItem}
+      deburr
+      serializeAddedValue={serializeAddedValue}
+      search={search}
       {...restProps}
     />
   );

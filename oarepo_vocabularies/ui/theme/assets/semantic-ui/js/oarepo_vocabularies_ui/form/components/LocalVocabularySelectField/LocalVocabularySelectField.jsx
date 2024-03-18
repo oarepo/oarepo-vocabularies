@@ -5,6 +5,7 @@ import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { search } from "../../../utils";
 
 export const serializedVocabularyItems = (vocabularyItems) =>
   vocabularyItems.map((vocabularyItem) => {
@@ -39,6 +40,7 @@ export const serializedVocabularyItems = (vocabularyItems) =>
         ) : (
           <Breadcrumb icon="left angle" sections={sections} />
         ),
+      name: text,
     };
   });
 
@@ -54,7 +56,7 @@ const InnerDropdown = ({
   const allOptions = _filterUsed([
     ...(featured.length
       ? [
-          ...featured.sort((a, b) => a.text.localeCompare(b.text)),
+          ...featured.sort((a, b) => a.name.localeCompare(b.name)),
           {
             content: <Divider fitted />,
             disabled: true,
@@ -65,7 +67,9 @@ const InnerDropdown = ({
     ...options.filter((o) => !featured.map((o) => o.value).includes(o.value)),
   ]);
 
-  return <Dropdown options={allOptions} value={value} {...rest} />;
+  return (
+    <Dropdown search={search} options={allOptions} value={value} {...rest} />
+  );
 };
 
 InnerDropdown.propTypes = {
@@ -125,6 +129,17 @@ export const LocalVocabularySelectField = ({
     return options;
   }, [allOptions, showLeafsOnly]);
 
+  let serializedFeaturedOptions = useMemo(() => {
+    let options = serializedVocabularyItems(featuredOptions);
+    if (showLeafsOnly) {
+      options = options.filter((o) => o.element_type === "leaf");
+    }
+    if (filterFunction) {
+      options = filterFunction(options);
+    }
+    return options;
+  }, [featuredOptions, showLeafsOnly]);
+
   const handleChange = ({ e, data, formikProps }) => {
     if (multiple) {
       let vocabularyItems = allOptions.filter((o) =>
@@ -151,11 +166,11 @@ export const LocalVocabularySelectField = ({
         optimized={optimized}
         onBlur={() => setFieldTouched(fieldPath)}
         deburr
-        search
+        search={search}
         control={InnerDropdown}
         fieldPath={fieldPath}
         multiple={multiple}
-        featured={featuredOptions}
+        featured={serializedFeaturedOptions}
         options={serializedOptions}
         usedOptions={usedOptions}
         onChange={handleChange}
