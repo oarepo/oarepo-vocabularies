@@ -5,9 +5,9 @@ import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { search } from "../../../utils";
+import { search } from "@js/oarepo_vocabularies";
 
-export const serializedVocabularyItems = (vocabularyItems) =>
+export const serializeVocabularyItems = (vocabularyItems) =>
   vocabularyItems.map((vocabularyItem) => {
     const {
       hierarchy: { title: titlesArray },
@@ -23,7 +23,7 @@ export const serializedVocabularyItems = (vocabularyItems) =>
         } else {
           return {
             content: (
-              <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
+              <span className="ui breadcrumb vocabulary-parent-item">
                 {title}
               </span>
             ),
@@ -43,6 +43,23 @@ export const serializedVocabularyItems = (vocabularyItems) =>
       name: text,
     };
   });
+
+export const processVocabularyItems = (
+  options,
+  showLeafsOnly,
+  filterFunction
+) => {
+  let serlializedOptions = serializeVocabularyItems(options);
+  if (showLeafsOnly) {
+    serlializedOptions = serlializedOptions.filter(
+      (o) => o.element_type === "leaf"
+    );
+  }
+  if (filterFunction) {
+    serlializedOptions = filterFunction(serlializedOptions);
+  }
+  return serlializedOptions;
+};
 
 const InnerDropdown = ({
   options,
@@ -118,27 +135,15 @@ export const LocalVocabularySelectField = ({
     );
   }
 
-  let serializedOptions = useMemo(() => {
-    let options = serializedVocabularyItems(allOptions);
-    if (showLeafsOnly) {
-      options = options.filter((o) => o.element_type === "leaf");
-    }
-    if (filterFunction) {
-      options = filterFunction(options);
-    }
-    return options;
-  }, [allOptions, showLeafsOnly]);
+  let serializedOptions = useMemo(
+    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+    [allOptions, showLeafsOnly]
+  );
 
-  let serializedFeaturedOptions = useMemo(() => {
-    let options = serializedVocabularyItems(featuredOptions);
-    if (showLeafsOnly) {
-      options = options.filter((o) => o.element_type === "leaf");
-    }
-    if (filterFunction) {
-      options = filterFunction(options);
-    }
-    return options;
-  }, [featuredOptions, showLeafsOnly]);
+  let serializedFeaturedOptions = useMemo(
+    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+    [featuredOptions, showLeafsOnly]
+  );
 
   const handleChange = ({ e, data, formikProps }) => {
     if (multiple) {

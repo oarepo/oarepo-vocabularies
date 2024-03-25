@@ -7,7 +7,7 @@ import {
 } from "@js/oarepo_ui";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
-import { search } from "../../../utils";
+import { search } from "@js/oarepo_vocabularies";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
@@ -23,7 +23,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
             index === 0 ? (
               <I18nString value={item.hierarchy.title[index]} />
             ) : (
-              <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
+              <span className="ui breadcrumb vocabulary-parent-item">
                 <I18nString value={item.hierarchy.title[index]} />
               </span>
             ),
