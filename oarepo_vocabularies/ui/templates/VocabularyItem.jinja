@@ -13,6 +13,11 @@
     "title": title,
     "label": vocabulary_dict.title
 } %}
-<SearchLink search_link={search_link} className="search link" searchFacet={searchFacet} data = {data}>
-</SearchLink>
+    {%if search_link%}
+        <SearchLink search_link={search_link} className="search link" searchFacet={searchFacet} data = {data}>
+        </SearchLink>
+    {% else %}
+        <span>{{data.label}}</span>
+    {% endif %}
 {% endif %}
+
