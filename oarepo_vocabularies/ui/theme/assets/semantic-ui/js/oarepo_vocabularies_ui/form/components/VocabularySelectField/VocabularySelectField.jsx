@@ -17,14 +17,14 @@ export const serializeVocabularySuggestions = (suggestions) =>
     if (hierarchy?.length > 1) {
       key = _join(hierarchy, ".");
       sections = [
-        ...hierarchy.map((id, index, { length }) => ({
+        ...hierarchy.map((id, index) => ({
           key: id,
           content:
             index === 0 ? (
-              <I18nString value={item.hierarchy.title[index]} />
+              getTitleFromMultilingualObject(item.hierarchy.title[index])
             ) : (
               <span className="ui breadcrumb vocabulary-parent-item">
-                <I18nString value={item.hierarchy.title[index]} />
+                {getTitleFromMultilingualObject(item.hierarchy.title[index])}
               </span>
             ),
         })),
@@ -41,10 +41,10 @@ export const serializeVocabularySuggestions = (suggestions) =>
     } else {
       return {
         text:
-          hierarchy.length > 1 ? (
+          hierarchy?.length > 1 ? (
             <Breadcrumb key={key} icon="left angle" sections={sections} />
           ) : (
-            <I18nString value={item.title} />
+            getTitleFromMultilingualObject(item?.title) || item.id
           ),
         value: item.id,
         key: key,
