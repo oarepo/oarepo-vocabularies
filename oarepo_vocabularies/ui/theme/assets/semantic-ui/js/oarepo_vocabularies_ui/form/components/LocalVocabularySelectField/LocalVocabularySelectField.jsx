@@ -137,12 +137,13 @@ export const LocalVocabularySelectField = ({
 
   let serializedOptions = useMemo(
     () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
-    [allOptions, showLeafsOnly]
+    [allOptions, showLeafsOnly, filterFunction]
   );
 
   let serializedFeaturedOptions = useMemo(
-    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
-    [featuredOptions, showLeafsOnly]
+    () =>
+      processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
+    [featuredOptions, showLeafsOnly, filterFunction]
   );
 
   const handleChange = ({ e, data, formikProps }) => {
