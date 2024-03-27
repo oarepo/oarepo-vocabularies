@@ -1,7 +1,6 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 import {
-  I18nString,
   RelatedSelectField,
   getTitleFromMultilingualObject,
 } from "@js/oarepo_ui";
