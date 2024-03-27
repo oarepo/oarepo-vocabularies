@@ -1,48 +1,63 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
-import { I18nString, RelatedSelectField } from "@js/oarepo_ui";
+import {
+  RelatedSelectField,
+  getTitleFromMultilingualObject,
+} from "@js/oarepo_ui";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
+import { search } from "@js/oarepo_vocabularies";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
-    const hierarchy = item.hierarchy.ancestors_or_self;
-    const key = _join(hierarchy, ".");
-    const sections = [
-      ...hierarchy.map((id, index, { length }) => ({
-        key: id,
-        content:
-          index === 0 ? (
-            <I18nString value={item.hierarchy.title[index]} />
+    const hierarchy = item?.hierarchy?.ancestors_or_self;
+    let sections;
+    let key = item.id;
+    if (hierarchy?.length > 1) {
+      key = _join(hierarchy, ".");
+      sections = [
+        ...hierarchy.map((id, index) => ({
+          key: id,
+          content:
+            index === 0 ? (
+              getTitleFromMultilingualObject(item.hierarchy.title[index])
+            ) : (
+              <span className="ui breadcrumb vocabulary-parent-item">
+                {getTitleFromMultilingualObject(item.hierarchy.title[index])}
+              </span>
+            ),
+        })),
+      ];
+    }
+    if (typeof item === "string") {
+      return {
+        text: item,
+        value: item,
+        key: item,
+        name: item,
+        id: item,
+      };
+    } else {
+      return {
+        text:
+          hierarchy?.length > 1 ? (
+            <Breadcrumb key={key} icon="left angle" sections={sections} />
           ) : (
-            <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
-              <I18nString value={item.hierarchy.title[index]} />
-            </span>
+            getTitleFromMultilingualObject(item?.title) || item.id
           ),
-        active: index === 0 && length !== 1,
-      })),
-    ];
-    return {
-      text: <Breadcrumb key={key} icon="left angle" sections={sections} />,
-      value: item,
-      key: key,
-    };
+        value: item.id,
+        key: key,
+        data: item,
+        id: item.id,
+        title: item.title,
+        name: getTitleFromMultilingualObject(item?.title),
+      };
+    }
   });
 
-export const serializeVocabularyItem = (item, includeProps = ["id"]) => {
-  if (typeof item === "string") {
-    return { id: item };
-  } else if (Array.isArray(item)) {
-    return item.map((i) => serializeVocabularyItem(i));
-  } else {
-    return item;
-  }
-};
-
-export const deserializeVocabularyItem = (item) => {
-  return Array.isArray(item)
-    ? item.map((item) => deserializeVocabularyItem(item))
-    : item;
+// for adding free text items
+const serializeAddedValue = (value) => {
+  return { text: value, value, key: value, name: value, id: value };
 };
 
 export const VocabularySelectField = ({
@@ -60,8 +75,9 @@ export const VocabularySelectField = ({
       selectOnBlur={false}
       serializeSuggestions={serializeVocabularySuggestions}
       multiple={multiple}
-      serializeSelectedItem={serializeVocabularyItem}
-      deserializeValue={deserializeVocabularyItem}
+      deburr
+      serializeAddedValue={serializeAddedValue}
+      search={search}
       {...restProps}
     />
   );

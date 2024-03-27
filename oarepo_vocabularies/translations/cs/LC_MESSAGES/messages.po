@@ -291,3 +291,26 @@ msgstr "Druh názvu"
 
 msgid "No results found."
 msgstr "Nebyly nalezeny žádné výsledky."
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/translations/jinjax_messages.jinja:1
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:21
+#: oarepo_vocabularies/translations/jinjax_messages.jinja:1
+msgid "Created"
+msgstr "Vytvořeno"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/translations/jinjax_messages.jinja:2
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:22
+#: oarepo_vocabularies/translations/jinjax_messages.jinja:2
+msgid "Updated"
+msgstr "Aktualizováno"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:10
+msgid "Table with available vocabularies"
+msgstr "Tabulka s dostupnými slovníky"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:4
+msgid "Missing title"
+msgstr "Chybí název"
+
+msgid "ID"
+msgstr "ID"

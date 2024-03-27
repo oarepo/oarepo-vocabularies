@@ -1,4 +1,4 @@
-{#def vocabulary, search_link, searchFacet, vocabulary_type, hide_definition=False #}
+{#def vocabulary, search_link=None, searchFacet=None, vocabulary_type, hide_definition=False #}
 {% set vocabulary_dict = vocabulary | to_dict %}
 {% if vocabulary_dict %}
 {% if not hide_definition %}
@@ -13,6 +13,11 @@
     "title": title,
     "label": vocabulary_dict.title
 } %}
-<SearchLink search_link={search_link} className="search link" searchFacet={searchFacet} data = {data}>
-</SearchLink>
+    {%if search_link%}
+        <SearchLink search_link={search_link} className="search link" searchFacet={searchFacet} data = {data}>
+        </SearchLink>
+    {% else %}
+        <span>{{data.label}}</span>
+    {% endif %}
 {% endif %}
+

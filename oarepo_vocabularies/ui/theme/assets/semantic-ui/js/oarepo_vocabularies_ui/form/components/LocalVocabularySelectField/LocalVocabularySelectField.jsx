@@ -5,8 +5,9 @@ import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { search } from "@js/oarepo_vocabularies";
 
-export const serializedVocabularyItems = (vocabularyItems) =>
+export const serializeVocabularyItems = (vocabularyItems) =>
   vocabularyItems.map((vocabularyItem) => {
     const {
       hierarchy: { title: titlesArray },
@@ -22,7 +23,7 @@ export const serializedVocabularyItems = (vocabularyItems) =>
         } else {
           return {
             content: (
-              <span style={{ opacity: "0.5", fontSize: "0.8rem" }}>
+              <span className="ui breadcrumb vocabulary-parent-item">
                 {title}
               </span>
             ),
@@ -39,8 +40,26 @@ export const serializedVocabularyItems = (vocabularyItems) =>
         ) : (
           <Breadcrumb icon="left angle" sections={sections} />
         ),
+      name: text,
     };
   });
+
+export const processVocabularyItems = (
+  options,
+  showLeafsOnly,
+  filterFunction
+) => {
+  let serlializedOptions = serializeVocabularyItems(options);
+  if (showLeafsOnly) {
+    serlializedOptions = serlializedOptions.filter(
+      (o) => o.element_type === "leaf"
+    );
+  }
+  if (filterFunction) {
+    serlializedOptions = filterFunction(serlializedOptions);
+  }
+  return serlializedOptions;
+};
 
 const InnerDropdown = ({
   options,
@@ -54,7 +73,7 @@ const InnerDropdown = ({
   const allOptions = _filterUsed([
     ...(featured.length
       ? [
-          ...featured.sort((a, b) => a.text.localeCompare(b.text)),
+          ...featured.sort((a, b) => a.name.localeCompare(b.name)),
           {
             content: <Divider fitted />,
             disabled: true,
@@ -65,7 +84,9 @@ const InnerDropdown = ({
     ...options.filter((o) => !featured.map((o) => o.value).includes(o.value)),
   ]);
 
-  return <Dropdown options={allOptions} value={value} {...rest} />;
+  return (
+    <Dropdown search={search} options={allOptions} value={value} {...rest} />
+  );
 };
 
 InnerDropdown.propTypes = {
@@ -85,6 +106,7 @@ export const LocalVocabularySelectField = ({
   helpText,
   showLeafsOnly,
   optimized,
+  filterFunction,
   ...uiProps
 }) => {
   const {
@@ -113,14 +135,15 @@ export const LocalVocabularySelectField = ({
     );
   }
 
-  const serializedOptions = useMemo(
+  let serializedOptions = useMemo(
+    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+    [allOptions, showLeafsOnly, filterFunction]
+  );
+
+  let serializedFeaturedOptions = useMemo(
     () =>
-      showLeafsOnly
-        ? serializedVocabularyItems(allOptions).filter(
-            (o) => o.element_type === "leaf"
-          )
-        : serializedVocabularyItems(allOptions),
-    [allOptions, showLeafsOnly]
+      processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
+    [featuredOptions, showLeafsOnly, filterFunction]
   );
 
   const handleChange = ({ e, data, formikProps }) => {
@@ -149,11 +172,11 @@ export const LocalVocabularySelectField = ({
         optimized={optimized}
         onBlur={() => setFieldTouched(fieldPath)}
         deburr
-        search
+        search={search}
         control={InnerDropdown}
         fieldPath={fieldPath}
         multiple={multiple}
-        featured={featuredOptions}
+        featured={serializedFeaturedOptions}
         options={serializedOptions}
         usedOptions={usedOptions}
         onChange={handleChange}
@@ -174,10 +197,12 @@ LocalVocabularySelectField.propTypes = {
   usedOptions: PropTypes.array,
   showLeafsOnly: PropTypes.bool,
   optimized: PropTypes.bool,
+  filterFunction: PropTypes.func,
 };
 
 LocalVocabularySelectField.defaultProps = {
   noResultsMessage: i18next.t("No results found."),
   showLeafsOnly: false,
   optimized: false,
+  filterFunction: undefined,
 };

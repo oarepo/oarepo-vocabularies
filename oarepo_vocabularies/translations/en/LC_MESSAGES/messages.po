@@ -292,6 +292,29 @@ msgstr "Name type"
 msgid "No results found."
 msgstr "No results found."
 
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/translations/jinjax_messages.jinja:1
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:21
+#: oarepo_vocabularies/translations/jinjax_messages.jinja:1
+msgid "Created"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/translations/jinjax_messages.jinja:2
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:22
+#: oarepo_vocabularies/translations/jinjax_messages.jinja:2
+msgid "Updated"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesList.jinja:10
+msgid "Table with available vocabularies"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:4
+msgid "Missing title"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
 #~ msgid "Export"
 #~ msgstr "Export"
 
