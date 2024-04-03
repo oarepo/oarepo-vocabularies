@@ -1,0 +1,5 @@
+{#def taxonomy, search_link=None, search_facet=None #}
+
+{% for tax in array(taxonomy) %}
+    <ITaxonomyItem item={tax} search_link={search_link} search_facet={search_facet}></ITaxonomyItem>
+{% endfor %}

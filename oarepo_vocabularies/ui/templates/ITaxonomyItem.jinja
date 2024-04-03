@@ -1,0 +1,27 @@
+{#def item, search_link=None, search_facet=None, hide_definition=False #}
+{% if item._has_value %}
+<div class="ui breadcrumb">
+  {%- for title in array(item.hierarchy.title) -%}
+      {% set id = item.id if loop.first else field_value(item.hierarchy.ancestors[loop.index-2]) %}
+      {% if not hide_definition %}
+        <DefinitionLink  href={ "/vocabularies/" ~ item.type ~ "/" ~ id }> </DefinitionLink>
+      {% endif %}
+      {% set _title = title ~ ": " ~ _("Find more records with this vocabulary term") %}
+      {% if search_link and search_facet %}
+          <ISearchLink search_link={search_link}
+                       className="search_link"
+                       search_facet={search_facet}
+                       value={id}
+                       title={_title}
+                       label={title}>
+          </ISearchLink>
+      {% else %}
+          {{ title }}
+      {% endif %}
+    {%- if not loop.last -%}
+      <span class="divider"><i class="left chevron green icon divider"></i></span>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% endif %}
