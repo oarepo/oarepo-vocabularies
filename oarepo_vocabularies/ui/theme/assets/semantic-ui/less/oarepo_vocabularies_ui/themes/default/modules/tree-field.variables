@@ -1,0 +1,10 @@
+@selectedColor: lightblue;
+@treeBorderColor: #9B9B93;
+@selectedBorderColor: #9B9B93;
+@fontColor: #222;
+@treeContainerMinHeight: 60vh;
+@treeColumnMaxHeight:70vh;
+@labelFontSize:1rem;
+@treeButtonFontSize: 1rem;
+@treeRowPadding: 0.5rem;
+@treeHeaderSize:1.3rem;
