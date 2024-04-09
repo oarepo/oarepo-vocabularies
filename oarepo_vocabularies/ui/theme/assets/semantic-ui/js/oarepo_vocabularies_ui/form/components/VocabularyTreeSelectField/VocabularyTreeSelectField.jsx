@@ -18,7 +18,7 @@ import {
   ModalContent,
   ModalActions,
 } from "semantic-ui-react";
-import { processVocabularyItems } from "@js/oarepo_vocabularies";
+import { processVocabularyItems } from "../LocalVocabularySelectField";
 import { useTranslation } from "react-i18next";
 
 export const VocabularyTreeSelectField = ({
@@ -235,10 +235,15 @@ export const VocabularyTreeSelectField = ({
     const moveKey = (index, newIndex, back = false) => {
       setKeybState((prev) => {
         const newState = [...prev];
-        back ? newState.splice(index, 1) : (newState[index] = newIndex);
+        if (back) {
+          newState.splice(index, 1);
+        } else {
+          newState[index] = newIndex;
+        }
         return newState;
       });
     };
+
     if (
       e.key === "ArrowUp" ||
       (e.shiftKey && e.key === "ArrowUp") ||
@@ -324,11 +329,9 @@ export const VocabularyTreeSelectField = ({
                         (item) => item.value === option.value
                       ) !== -1
                     }
-                    indeterminate={
-                      selectedState.some((item) =>
-                        item.hierarchy.ancestors.includes(option.value)
-                      )
-                    }
+                    indeterminate={selectedState.some((item) =>
+                      item.hierarchy.ancestors.includes(option.value)
+                    )}
                     onChange={(e) => {
                       handleSelect(option, e);
                     }}
@@ -390,9 +393,7 @@ export const VocabularyTreeSelectField = ({
         >
           <ModalHeader>
             <Grid.Row>
-              <Header as="h3">
-                {placeholder || "Choose Items"}
-              </Header>
+              <Header as="h3">{placeholder || "Choose Items"}</Header>
               <Grid.Column>
                 <Input
                   type="text"
