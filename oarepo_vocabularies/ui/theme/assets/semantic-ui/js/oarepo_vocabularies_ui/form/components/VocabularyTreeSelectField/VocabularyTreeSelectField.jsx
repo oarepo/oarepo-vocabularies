@@ -187,25 +187,26 @@ export const VocabularyTreeSelectField = ({
       setSelectedState((prevState) =>
         prevState.filter((_, index) => index !== existingIndex)
       );
-    } else if (multiple && selectedState.length !== 0) {
-      setSelectedState((prevState) => {
-        let newState = prevState;
-        if (childIndexes.length > 0) {
-          childIndexes.forEach((childIndex, i) => {
-            newState = newState.filter((_, index) => index !== childIndex - i);
-          });
-          return [...newState, option];
-        } else if (existingParentIndex !== -1) {
-          newState = prevState.filter(
-            (_, index) => index !== existingParentIndex
-          );
-          return [...newState, option];
-        } else {
-          return [...prevState, option];
-        }
-      });
     } else {
-      setSelectedState([option]);
+      if (multiple && selectedState.length !== 0) {
+        setSelectedState((prevState) => {
+          let newState = [...prevState];
+          if (childIndexes.length > 0) {
+            childIndexes.forEach((childIndex, i) => {
+              newState = newState.filter(
+                (_, index) => index !== childIndex - i
+              );
+            });
+          } else if (existingParentIndex !== -1) {
+            newState = newState.filter(
+              (_, index) => index !== existingParentIndex
+            );
+          }
+          return [...newState, option];
+        });
+      } else {
+        setSelectedState([option]);
+      }
     }
   };
 
@@ -250,80 +251,78 @@ export const VocabularyTreeSelectField = ({
     e.preventDefault();
     let newIndex = 0;
 
-    index = keybState.length - 1 > index ? keybState.length - 1 : index;
-    let data = hierarchicalData[index];
+    index = Math.max(keybState.length - 1, index);
+    const data = hierarchicalData[index];
 
     const moveKey = (index, newIndex, back = false) => {
       setKeybState((prev) => {
         const newState = [...prev];
-        if (back) {
-          newState.splice(index, 1);
-        } else {
-          newState[index] = newIndex;
-        }
+        back ? newState.splice(index, 1) : (newState[index] = newIndex);
         return newState;
       });
     };
-    if (
-      e.key === "ArrowUp" ||
-      (e.shiftKey && e.key === "ArrowUp") ||
-      (e.ctrlKey && e.key === "ArrowUp")
-    ) {
-      newIndex = keybState[index] - 1;
-      if (newIndex >= 0) {
-        openHierarchyNode(data[newIndex].value, index)();
-        moveKey(index, newIndex, false);
-      }
-      if (e.shiftKey && e.key === "ArrowUp") {
-        handleSelect(data[newIndex], e);
-      }
-    } else if (
-      e.key === "ArrowDown" ||
-      (e.shiftKey && e.key === "ArrowDown") ||
-      (e.ctrlKey && e.key === "ArrowDown") ||
-      e.key === "Tab"
-    ) {
-      newIndex = keybState[index] + 1;
 
-      if (newIndex < data.length) {
-        openHierarchyNode(data[newIndex].value, index)();
-        moveKey(index, newIndex, false);
-      }
-      if (e.shiftKey && e.key === "ArrowDown") {
-        handleSelect(data[newIndex], e);
-      }
-    } else if (e.key === "ArrowLeft") {
-      if (index > 0) {
-        setParentsState((prev) => {
-          const newState = [...prev];
-          newState.splice(index, 1);
-          return newState;
-        });
-        moveKey(index, null, true);
-      }
-    } else if (e.key === "ArrowRight") {
-      if (index < columnsCount - 1) {
-        const nextColumnOptions = hierarchicalData[index + 1];
-        if (nextColumnOptions) {
+    switch (e.key) {
+      case "ArrowUp" ||
+        (e.shiftKey && e.key === "ArrowUp") ||
+        (e.ctrlKey && e.key === "ArrowUp"):
+        newIndex = keybState[index] - 1;
+        if (newIndex >= 0) {
+          openHierarchyNode(data[newIndex].value, index)();
+          moveKey(index, newIndex, false);
+          if (e.shiftKey) {
+            handleSelect(data[newIndex], e);
+          }
+        }
+        if (e.shiftKey && e.key === "ArrowUp") {
+          handleSelect(data[newIndex], e);
+        }
+        break;
+
+      case "ArrowDown" ||
+        (e.shiftKey && e.key === "ArrowDown") ||
+        (e.ctrlKey && e.key === "ArrowDown"):
+        newIndex = keybState[index] + 1;
+        if (newIndex < data.length) {
+          openHierarchyNode(data[newIndex].value, index)();
+          moveKey(index, newIndex, false);
+          if (e.shiftKey) {
+            handleSelect(data[newIndex], e);
+          }
+        }
+        if (e.shiftKey && e.key === "ArrowDown") {
+          handleSelect(data[newIndex], e);
+        }
+        break;
+
+      case "ArrowLeft":
+        if (index > 0) {
+          setParentsState((prev) => {
+            const newState = [...prev];
+            newState.splice(index, 1);
+            return newState;
+          });
+          moveKey(index, null, true);
+        }
+        break;
+
+      case "ArrowRight":
+        if (index < columnsCount - 1) {
+          const nextColumnOptions = hierarchicalData[index + 1];
           const nextColumnIndex = nextColumnOptions.findIndex(
             (o) => o.hierarchy.ancestors[0] === parentsState[index]
           );
           if (nextColumnIndex !== -1) {
             newIndex = nextColumnIndex;
-            openHierarchyNode(
-              nextColumnOptions[nextColumnIndex].value,
-              index + 1
-            )();
+            openHierarchyNode(nextColumnOptions[newIndex].value, index + 1)();
             moveKey(index + 1, newIndex, false);
           }
         }
-      }
-    } else if (
-      e.key === "Enter" ||
-      (e.ctrlKey && e.key === " ") ||
-      e.key == " "
-    ) {
-      handleSelect(data[keybState[index]], e);
+        break;
+
+      case "Enter" || (e.ctrlKey && e.key === " ") || e.key == " ":
+        handleSelect(data[keybState[index]], e);
+        break;
     }
   };
 
@@ -443,7 +442,7 @@ export const VocabularyTreeSelectField = ({
           <ModalActions>
             <Grid.Row className="gapped">
               <Grid.Row className="gapped">
-                {selectedState.map((i) => (
+                {selectedState.map((i, index) => (
                   <Label key={i.hierarchy.title}>
                     {" "}
                     <Breadcrumb
@@ -487,7 +486,7 @@ VocabularyTreeSelectField.propTypes = {
   noResultsMessage: PropTypes.string,
   optimized: PropTypes.bool,
   placeholder: PropTypes.string,
-  category: PropTypes.string,
+  preFilteringOption: PropTypes.string,
 };
 
 VocabularyTreeSelectField.defaultProps = {
