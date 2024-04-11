@@ -165,7 +165,6 @@ export const VocabularyTreeSelectField = ({
     setParentsState(updatedParents);
     setKeybState(updatedKeybState);
   };
-
   const handleSelect = (option, e) => {
     e.preventDefault();
 
@@ -187,27 +186,25 @@ export const VocabularyTreeSelectField = ({
       setSelectedState((prevState) =>
         prevState.filter((_, index) => index !== existingIndex)
       );
+    } else if (multiple && selectedState.length !== 0) {
+      updateSelectedState(option, existingParentIndex, childIndexes);
     } else {
-      if (multiple && selectedState.length !== 0) {
-        setSelectedState((prevState) => {
-          let newState = [...prevState];
-          if (childIndexes.length > 0) {
-            childIndexes.forEach((childIndex, i) => {
-              newState = newState.filter(
-                (_, index) => index !== childIndex - i
-              );
-            });
-          } else if (existingParentIndex !== -1) {
-            newState = newState.filter(
-              (_, index) => index !== existingParentIndex
-            );
-          }
-          return [...newState, option];
-        });
-      } else {
-        setSelectedState([option]);
-      }
+      setSelectedState([option]);
     }
+  };
+
+  const updateSelectedState = (option, existingParentIndex, childIndexes) => {
+    setSelectedState((prevState) => {
+      let newState = [...prevState];
+      if (childIndexes.length > 0) {
+        childIndexes.forEach((childIndex, i) => {
+          newState = newState.filter((_, index) => index !== childIndex - i);
+        });
+      } else if (existingParentIndex !== -1) {
+        newState = newState.filter((_, index) => index !== existingParentIndex);
+      }
+      return [...newState, option];
+    });
   };
 
   const handleSubmit = () => {
@@ -247,89 +244,95 @@ export const VocabularyTreeSelectField = ({
     }
   };
 
+  const moveKey = (index, newIndex, back = false) => {
+    setKeybState((prev) => {
+      const newState = [...prev];
+      const newValue = back ? undefined : newIndex;
+      if (back) {
+        newState.splice(index, 1);
+      } else {
+        newState[index] = newValue;
+      }
+      return newState;
+    });
+  };
+
+  const handleArrowUp = (e, index, data) => {
+    const newIndex = keybState[index] - 1;
+    if (newIndex >= 0) {
+      openHierarchyNode(data[newIndex].value, index)();
+      moveKey(index, newIndex, false);
+      if (e.shiftKey) {
+        handleSelect(data[newIndex], e);
+      }
+    }
+  };
+
+  const handleArrowDown = (e, index, data) => {
+    const newIndex = keybState[index] + 1;
+    if (newIndex < data.length) {
+      openHierarchyNode(data[newIndex].value, index)();
+      moveKey(index, newIndex, false);
+      if (e.shiftKey) {
+        handleSelect(data[newIndex], e);
+      }
+    }
+  };
+
+  const handleArrowLeft = (index) => {
+    if (index > 0) {
+      setParentsState((prev) => {
+        const newState = [...prev];
+        newState.splice(index, 1);
+        return newState;
+      });
+      moveKey(index, null, true);
+    }
+  };
+
+  const handleArrowRight = (index) => {
+    if (index < columnsCount - 1) {
+      const nextColumnOptions = hierarchicalData[index + 1];
+      const nextColumnIndex = nextColumnOptions.findIndex(
+        (o) => o.hierarchy.ancestors[0] === parentsState[index]
+      );
+      if (nextColumnIndex !== -1) {
+        const newIndex = nextColumnIndex;
+        openHierarchyNode(nextColumnOptions[newIndex].value, index + 1)();
+        moveKey(index + 1, newIndex, false);
+      }
+    }
+  };
+
+  const handleEnterSpace = (e, index, data) => {
+    handleSelect(data[keybState[index]], e);
+  };
+
   const handleKey = (e, index) => {
     e.preventDefault();
-    let newIndex = 0;
-
     index = Math.max(keybState.length - 1, index);
     const data = hierarchicalData[index];
 
-    const moveKey = (index, newIndex, back = false) => {
-      setKeybState((prev) => {
-        const newState = [...prev];
-        back ? newState.splice(index, 1) : (newState[index] = newIndex);
-        return newState;
-      });
-    };
-
     switch (e.key) {
       case "ArrowUp":
-        if (e.shiftKey || e.ctrlKey) {
-          newIndex = keybState[index] - 1;
-          if (newIndex >= 0) {
-            openHierarchyNode(data[newIndex].value, index)();
-            moveKey(index, newIndex, false);
-            if (e.shiftKey) {
-              handleSelect(data[newIndex], e);
-            }
-          }
-        } else {
-          newIndex = keybState[index] - 1;
-          if (newIndex >= 0) {
-            openHierarchyNode(data[newIndex].value, index)();
-            moveKey(index, newIndex, false);
-          }
-        }
+        handleArrowUp(e, index, data);
         break;
 
       case "ArrowDown":
-        if (e.shiftKey || e.ctrlKey) {
-          newIndex = keybState[index] + 1;
-          if (newIndex < data.length) {
-            openHierarchyNode(data[newIndex].value, index)();
-            moveKey(index, newIndex, false);
-            if (e.shiftKey) {
-              handleSelect(data[newIndex], e);
-            }
-          }
-        } else {
-          newIndex = keybState[index] + 1;
-          if (newIndex < data.length) {
-            openHierarchyNode(data[newIndex].value, index)();
-            moveKey(index, newIndex, false);
-          }
-        }
+        handleArrowDown(e, index, data);
         break;
 
       case "ArrowLeft":
-        if (index > 0) {
-          setParentsState((prev) => {
-            const newState = [...prev];
-            newState.splice(index, 1);
-            return newState;
-          });
-          moveKey(index, null, true);
-        }
+        handleArrowLeft(index);
         break;
 
       case "ArrowRight":
-        if (index < columnsCount - 1) {
-          const nextColumnOptions = hierarchicalData[index + 1];
-          const nextColumnIndex = nextColumnOptions.findIndex(
-            (o) => o.hierarchy.ancestors[0] === parentsState[index]
-          );
-          if (nextColumnIndex !== -1) {
-            newIndex = nextColumnIndex;
-            openHierarchyNode(nextColumnOptions[newIndex].value, index + 1)();
-            moveKey(index + 1, newIndex, false);
-          }
-        }
+        handleArrowRight(index);
         break;
 
       case "Enter":
       case " ":
-        handleSelect(data[keybState[index]], e);
-
+        handleEnterSpace(e, index, data);
         break;
     }
   };
