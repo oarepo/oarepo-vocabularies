@@ -263,35 +263,41 @@ export const VocabularyTreeSelectField = ({
     };
 
     switch (e.key) {
-      case "ArrowUp" ||
-        (e.shiftKey && e.key === "ArrowUp") ||
-        (e.ctrlKey && e.key === "ArrowUp"):
-        newIndex = keybState[index] - 1;
-        if (newIndex >= 0) {
-          openHierarchyNode(data[newIndex].value, index)();
-          moveKey(index, newIndex, false);
-          if (e.shiftKey) {
-            handleSelect(data[newIndex], e);
+      case "ArrowUp":
+        if (e.shiftKey || e.ctrlKey) {
+          newIndex = keybState[index] - 1;
+          if (newIndex >= 0) {
+            openHierarchyNode(data[newIndex].value, index)();
+            moveKey(index, newIndex, false);
+            if (e.shiftKey) {
+              handleSelect(data[newIndex], e);
+            }
           }
-        }
-        if (e.shiftKey && e.key === "ArrowUp") {
-          handleSelect(data[newIndex], e);
+        } else {
+          newIndex = keybState[index] - 1;
+          if (newIndex >= 0) {
+            openHierarchyNode(data[newIndex].value, index)();
+            moveKey(index, newIndex, false);
+          }
         }
         break;
 
-      case "ArrowDown" ||
-        (e.shiftKey && e.key === "ArrowDown") ||
-        (e.ctrlKey && e.key === "ArrowDown"):
-        newIndex = keybState[index] + 1;
-        if (newIndex < data.length) {
-          openHierarchyNode(data[newIndex].value, index)();
-          moveKey(index, newIndex, false);
-          if (e.shiftKey) {
-            handleSelect(data[newIndex], e);
+      case "ArrowDown":
+        if (e.shiftKey || e.ctrlKey) {
+          newIndex = keybState[index] + 1;
+          if (newIndex < data.length) {
+            openHierarchyNode(data[newIndex].value, index)();
+            moveKey(index, newIndex, false);
+            if (e.shiftKey) {
+              handleSelect(data[newIndex], e);
+            }
           }
-        }
-        if (e.shiftKey && e.key === "ArrowDown") {
-          handleSelect(data[newIndex], e);
+        } else {
+          newIndex = keybState[index] + 1;
+          if (newIndex < data.length) {
+            openHierarchyNode(data[newIndex].value, index)();
+            moveKey(index, newIndex, false);
+          }
         }
         break;
 
@@ -320,8 +326,10 @@ export const VocabularyTreeSelectField = ({
         }
         break;
 
-      case "Enter" || (e.ctrlKey && e.key === " ") || e.key == " ":
+      case "Enter":
+      case " ":
         handleSelect(data[keybState[index]], e);
+
         break;
     }
   };
