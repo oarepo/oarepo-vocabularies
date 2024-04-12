@@ -194,17 +194,37 @@ export const VocabularyTreeSelectField = ({
   };
 
   const updateSelectedState = (option, existingParentIndex, childIndexes) => {
-    setSelectedState((prevState) => {
-      let newState = [...prevState];
-      if (childIndexes.length > 0) {
-        childIndexes.forEach((childIndex, i) => {
-          newState = newState.filter((_, index) => index !== childIndex - i);
-        });
-      } else if (existingParentIndex !== -1) {
-        newState = newState.filter((_, index) => index !== existingParentIndex);
-      }
-      return [...newState, option];
-    });
+    setSelectedState((prevState) =>
+      updateState(prevState, option, existingParentIndex, childIndexes)
+    );
+  };
+
+  const updateState = (
+    prevState,
+    option,
+    existingParentIndex,
+    childIndexes
+  ) => {
+    let newState = [...prevState];
+    newState = removeChildIndexes(newState, childIndexes);
+
+    if (existingParentIndex !== -1 && childIndexes.length === 0) {
+      newState = newState.filter((_, index) => index !== existingParentIndex);
+    }
+    return [...newState, option];
+  };
+
+  const removeChildIndexes = (state, childIndexes) => {
+    if (childIndexes.length > 0) {
+      let adjustedState = [...state];
+      childIndexes.forEach((childIndex, i) => {
+        adjustedState = adjustedState.filter(
+          (_, index) => index !== childIndex - i
+        );
+      });
+      return adjustedState;
+    }
+    return state;
   };
 
   const handleSubmit = () => {
@@ -441,7 +461,7 @@ export const VocabularyTreeSelectField = ({
                 <Grid columns={1}>
                   <Container>
                     {hierarchicalData.map((column, level) => (
-                      <React.Fragment key={level}>
+                      <React.Fragment key={column[0].value}>
                         {renderColumn(column, level)}
                       </React.Fragment>
                     ))}
