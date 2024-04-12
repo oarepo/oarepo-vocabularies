@@ -27,7 +27,7 @@ export const VocabularyTreeSelectField = ({
   optionsListName,
   helpText,
   placeholder,
-  preFilteringOption,
+  root,
   optimized,
   ...uiProps
 }) => {
@@ -84,11 +84,11 @@ export const VocabularyTreeSelectField = ({
     serializedOptions.forEach((option) => {
       const ancestorCount = option.hierarchy.ancestors.length;
 
-      if (preFilteringOption && option.value == preFilteringOption) {
+      if (root && option.value == root) {
         excludeFirstGroup = true;
       }
 
-      if (!(preFilteringOption && excludeFirstGroup && ancestorCount === 0)) {
+      if (!(root && excludeFirstGroup && ancestorCount === 0)) {
         if (!map.has(ancestorCount)) {
           map.set(ancestorCount, []);
         }
@@ -119,13 +119,13 @@ export const VocabularyTreeSelectField = ({
       .sort((a, b) => a[0] - b[0])
       .filter(
         ([ancestorCount, _]) =>
-          !(preFilteringOption && excludeFirstGroup && ancestorCount === 0)
+          !(root && excludeFirstGroup && ancestorCount === 0)
       )
       .map(([_, options]) => {
-        if (preFilteringOption) {
+        if (root) {
           return options.filter(
             (option) =>
-              option.hierarchy.ancestors.includes(preFilteringOption) ||
+              option.hierarchy.ancestors.includes(root) ||
               option.hierarchy.ancestors.length === 0
           );
         } else {
@@ -146,7 +146,7 @@ export const VocabularyTreeSelectField = ({
               .includes(query.toLowerCase())
           )
         );
-  }, [serializedOptions, query, preFilteringOption]);
+  }, [serializedOptions, query, root]);
 
   const columnsCount = hierarchicalData.length;
 
@@ -517,7 +517,7 @@ VocabularyTreeSelectField.propTypes = {
   noResultsMessage: PropTypes.string,
   optimized: PropTypes.bool,
   placeholder: PropTypes.string,
-  preFilteringOption: PropTypes.string,
+  root: PropTypes.string,
 };
 
 VocabularyTreeSelectField.defaultProps = {
