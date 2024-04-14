@@ -1,5 +1,3 @@
-import cachetools
-from flask import current_app
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_vocabularies.services.facets import VocabularyLabels
 
@@ -34,4 +32,4 @@ class CachedVocabularyLabels(VocabularyLabels):
             return {}
         cache = current_ui_vocabulary_cache
         resolved = cache.resolve([(self.vocabulary, _id) for _id in ids])
-        return {_id: resolved.get(_id)['title'] for _id in ids}
+        return {_id: resolved.get(_id)["title"] for _id in ids}

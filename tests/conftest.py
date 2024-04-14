@@ -568,8 +568,9 @@ def reset_babel(app):
     finally:
         clear_babel_context()
 
+
 @pytest.fixture()
 def cache_clear(app):
-    app.extensions['oarepo-vocabularies'].ui_cache.clear()
+    app.extensions["oarepo-vocabularies"].ui_cache.clear()
     yield
-    app.extensions['oarepo-vocabularies'].ui_cache.clear()
+    app.extensions["oarepo-vocabularies"].ui_cache.clear()

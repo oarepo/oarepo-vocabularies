@@ -47,8 +47,8 @@ def test_dump_options(
                         "text": "English",
                         "hierarchy": {"title": ["English"], "ancestors": []},
                         "element_type": "parent",
-                        'props': {'akey': 'avalue'},
-                        'tags': ['recommended'],
+                        "props": {"akey": "avalue"},
+                        "tags": ["recommended"],
                     },
                     {
                         "value": "eng.UK.S",
@@ -61,7 +61,7 @@ def test_dump_options(
                             ],
                             "ancestors": ["eng.UK", "eng"],
                         },
-                        'tags': ['featured'],
+                        "tags": ["featured"],
                         "element_type": "leaf",
                     },
                     {
@@ -95,7 +95,7 @@ def test_dump_options(
                             ],
                             "ancestors": ["eng.UK", "eng"],
                         },
-                        'tags': ['featured'],
+                        "tags": ["featured"],
                         "element_type": "leaf",
                     }
                 ],

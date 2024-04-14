@@ -6,6 +6,7 @@ from invenio_records_resources.services.records.params import (
     ParamInterpreter,
 )
 from invenio_records_resources.services.records.queryparser import QueryParser
+from oarepo_runtime.i18n import get_locale
 from oarepo_runtime.i18n import lazy_gettext as _
 from oarepo_runtime.services.search import (
     I18nSearchOptions,
@@ -14,9 +15,10 @@ from oarepo_runtime.services.search import (
     SuggestField,
 )
 from opensearch_dsl import query
-
-from oarepo_runtime.i18n import get_locale
 from opensearch_dsl.query import Bool, Range, Term, Terms
+
+TYPE_ID_FIELD = "type.id"
+ID_FIELD = "id"
 
 
 class VocabularyQueryParser(QueryParser):
@@ -55,6 +57,7 @@ class SourceParam(ParamInterpreter):
             return search
         return search.source(source)
 
+
 class UpdatedAfterParam(ParamInterpreter):
     """Evaluate type filter."""
 
@@ -78,14 +81,16 @@ class UpdatedAfterParam(ParamInterpreter):
             vocabulary_filter = []
             for k, v in value.items():
                 if v:
-                    vocabulary_filter.append(Bool(
-                        must=[
-                            Range(**{self.field_name: {"gt": v}}),
-                            Term(**{"type.id": k})
-                        ]
-                    ))
+                    vocabulary_filter.append(
+                        Bool(
+                            must=[
+                                Range(**{self.field_name: {"gt": v}}),
+                                Term(**{TYPE_ID_FIELD: k}),
+                            ]
+                        )
+                    )
                 else:
-                    vocabulary_filter.append(Term(**{"type.id": k}))
+                    vocabulary_filter.append(Term(**{TYPE_ID_FIELD: k}))
             vocabulary_filter = Bool(should=vocabulary_filter, minimum_should_match=1)
             search = search.filter(vocabulary_filter)
 
@@ -94,7 +99,7 @@ class UpdatedAfterParam(ParamInterpreter):
 
 class VocabularyIdsParam(ParamInterpreter):
     def apply(self, identity, search, params):
-        ids = params.pop('ids', None)
+        ids = params.pop("ids", None)
         if not ids:
             return search
         # ids is a list of (vocabulary_type, vocabulary_id) tuples
@@ -104,12 +109,7 @@ class VocabularyIdsParam(ParamInterpreter):
         search_filters = []
         for vt, vids in by_type.items():
             search_filters.append(
-                Bool(
-                    must=[
-                        Term(**{"type.id": vt}),
-                        Terms(**{"id": vids})
-                    ]
-                )
+                Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})])
             )
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
@@ -122,7 +122,7 @@ class VocabularySearchOptions(I18nSearchOptions):
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
         VocabularyIdsParam,
-        FilterParam.factory(param="type", field="type.id"),
+        FilterParam.factory(param="type", field=TYPE_ID_FIELD),
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
@@ -159,7 +159,7 @@ class VocabularySearchOptions(I18nSearchOptions):
     sort_options = ICUSortOptions("vocabularies")
     suggest_parser_cls = ICUSuggestParser(
         "vocabularies",
-        extra_fields=[SuggestField(field="id", boost=10, use_ngrams=False)],
+        extra_fields=[SuggestField(field=ID_FIELD, boost=10, use_ngrams=False)],
     )
 
     # empty facet groups as we are inheriting from I18nSearchOptions
