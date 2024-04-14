@@ -1,3 +1,4 @@
+from collections import defaultdict
 from functools import partial
 
 from invenio_records_resources.services.records.params import (
@@ -15,7 +16,7 @@ from oarepo_runtime.services.search import (
 from opensearch_dsl import query
 
 from oarepo_runtime.i18n import get_locale
-from opensearch_dsl.query import Bool, Range, Term
+from opensearch_dsl.query import Bool, Range, Term, Terms
 
 
 class VocabularyQueryParser(QueryParser):
@@ -91,6 +92,28 @@ class UpdatedAfterParam(ParamInterpreter):
         return search
 
 
+class VocabularyIdsParam(ParamInterpreter):
+    def apply(self, identity, search, params):
+        ids = params.pop('ids', None)
+        if not ids:
+            return search
+        # ids is a list of (vocabulary_type, vocabulary_id) tuples
+        by_type = defaultdict(list)
+        for vt, vid in ids:
+            by_type[vt].append(vid)
+        search_filters = []
+        for vt, vids in by_type.items():
+            search_filters.append(
+                Bool(
+                    must=[
+                        Term(**{"type.id": vt}),
+                        Terms(**{"id": vids})
+                    ]
+                )
+            )
+        return search.filter(Bool(should=search_filters, minimum_should_match=1))
+
+
 class VocabularySearchOptions(I18nSearchOptions):
     SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
     SUGGEST_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SUGGEST_CF"
@@ -98,6 +121,7 @@ class VocabularySearchOptions(I18nSearchOptions):
     params_interpreters_cls = [
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
+        VocabularyIdsParam,
         FilterParam.factory(param="type", field="type.id"),
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),

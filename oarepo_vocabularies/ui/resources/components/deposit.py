@@ -1,5 +1,6 @@
 import inspect
 import json
+from typing import Dict, Any
 
 from flask import current_app
 from invenio_records import Record
@@ -95,9 +96,10 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
     def _prefetch_vocabularies_to_form_config(
         self, form_config_vocabularies, vocabularies_to_prefetch, identity
     ):
+        prefetched_vocabularies: Dict[str, Dict[str, Any]]
         prefetched_vocabularies = current_ui_vocabulary_cache.get(vocabularies_to_prefetch)
         for vocabulary_type, items in prefetched_vocabularies.items():
-            for (item_id, item) in items:
+            for item_id, item in items.items():
                 by_type = form_config_vocabularies[vocabulary_type]
                 returned_item = {
                     "value": item_id,

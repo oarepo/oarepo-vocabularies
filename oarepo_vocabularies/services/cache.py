@@ -1,8 +1,10 @@
 import contextlib
+from collections import defaultdict
 from typing import List, Any, Dict
 from datetime import datetime, timezone
 
 import marshmallow
+from cachetools import TTLCache
 from invenio_access.permissions import system_identity
 
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
@@ -13,16 +15,11 @@ from oarepo_runtime.i18n import get_locale
 
 class VocabularyCacheItem:
     last_modified: datetime
-    items: List[Any]
+    items: Dict[str, Any]
 
     def __init__(self):
         self.last_modified = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
-        self.items = []
-
-    def add(self, id_, modified, ui_item):
-        if not self.last_modified or modified > self.last_modified:
-            self.last_modified = modified
-        self.items[id_] = ui_item
+        self.items = {}
 
 
 class DepositI18nHierarchySchema(marshmallow.Schema):
@@ -42,6 +39,11 @@ class VocabularyPrefetchSchema(marshmallow.Schema):
 class VocabularyCache:
     cache: Dict[str, Dict[str, VocabularyCacheItem]]
     """Language => vocabulary type => last modified + items"""
+    lru_terms_cache = TTLCache(maxsize=10000, ttl=3600)
+
+    count_from_cache = 0
+    count_prefetched = 0
+    count_fetched = 0
 
     def __init__(self):
         self.cache = {}
@@ -68,12 +70,8 @@ class VocabularyCache:
 
             by_vocabulary_type = {}
             max_modified = {}
-            schema = VocabularyPrefetchSchema(context={"locale": locale})
-
-            for item in self._prefetch_vocabularies(vocabulary_types):
-                # serialize item
-                dumped_item = schema.dump(item)
-                by_vocabulary_type.setdefault(item['type'], []).append((item['id'], dumped_item))
+            for item, dumped_item in self._serialize_items(locale, self._prefetch_vocabularies(vocabulary_types)):
+                by_vocabulary_type.setdefault(item['type'], {})[item['id']] = dumped_item
                 if item['type'] not in max_modified:
                     max_modified[item['type']] = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
 
@@ -88,10 +86,15 @@ class VocabularyCache:
                 if vocab_type not in cached_language:
                     cached_language[vocab_type] = VocabularyCacheItem()
                 cached_language[vocab_type].items = items
+                self.count_prefetched += len(items)
                 cached_language[vocab_type].last_modified = max_modified[vocab_type]
 
     def clear(self):
         self.cache = {}
+        self.lru_terms_cache = TTLCache(maxsize=10000, ttl=3600)
+        self.count_from_cache = 0
+        self.count_fetched = 0
+        self.count_prefetched = 0
 
     def _prefetch_vocabularies(self, vocabulary_types: List[str]):
         yield from vocabulary_service.scan(
@@ -119,10 +122,69 @@ class VocabularyCache:
         )
         return result.total > 0
 
+    def _serialize_items(self, locale, items):
+        schema = VocabularyPrefetchSchema(context={"locale": locale})
+
+        for item in items:
+            dumped_item = schema.dump(item)
+            yield item, dumped_item
+
     def get(self, vocabulary_types: List[str]):
         self.update(vocabulary_types)
         language = get_locale().language
-        return {
-            vocabulary_type: self.cache[language][vocabulary_type].items
-            for vocabulary_type in vocabulary_types
-        }
+        ret = {}
+        for vocabulary_type in vocabulary_types:
+            ret[vocabulary_type] = self.cache[language][vocabulary_type].items
+            self.count_from_cache += len(ret[vocabulary_type])
+
+        return ret
+
+    def resolve(self, ids):
+        """
+        Resolves vocabulary ids to their localized records.
+
+        :param ids: list of vocabulary ids in the form of tuple (type, id)
+        """
+        locale = get_locale()
+        language = locale.language
+
+        # check if these are in the lru cache
+        cached = {}
+        uncached = []
+        uncached_small = defaultdict(list)
+
+        with self.language_cache(language) as cached_language:
+
+            for vocab_id in ids:
+                term = self.lru_terms_cache.get((language, vocab_id))
+                if term:
+                    cached[vocab_id] = term
+                else:
+                    if vocab_id[0] in cached_language:
+                        uncached_small[vocab_id[0]].append(vocab_id[1])
+                    else:
+                        uncached.append(vocab_id)
+
+        self.count_from_cache += len(cached)
+        self.count_prefetched += len(uncached_small)
+        self.count_fetched += len(uncached)
+
+        if uncached_small:
+            # TODO: is there a performance improvement for uncached_small or should we treat all as uncached?
+            self.update(list(uncached_small.keys()))
+            cached_types = self.get(list(uncached_small.keys()))
+            for vocab_type, items in uncached_small.items():
+                for it in items:
+                    cached[(vocab_type, it)] = cached_types[vocab_type][it]
+                    self.lru_terms_cache[(language, (vocab_type, it))] = cached_types[vocab_type][it]
+
+        if uncached:
+            for item, serialized_item in self._serialize_items(
+                    locale, vocabulary_service.search_many(system_identity, params={
+                "ids": uncached
+            })):
+                typed_id = (item['type'], item['id'])
+                cached[typed_id] = serialized_item
+                self.lru_terms_cache[(language, typed_id)] = serialized_item
+
+        return cached

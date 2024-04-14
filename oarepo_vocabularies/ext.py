@@ -29,7 +29,7 @@ class OARepoVocabularies(object):
 
     @cached_property
     def ui_cache(self):
-        from oarepo_vocabularies.ui.resources.cache import VocabularyCache
+        from oarepo_vocabularies.services.cache import VocabularyCache
 
         return obj_or_import_string(
             self.app.config.get("OAREPO_VOCABULARIES_UI_CACHE", VocabularyCache)
