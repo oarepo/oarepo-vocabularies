@@ -1,33 +1,12 @@
 import inspect
 import json
 
-import marshmallow
 from flask import current_app
 from invenio_records import Record
-from invenio_vocabularies.proxies import current_service as vocabulary_service
-from oarepo_runtime.i18n import get_locale
 from oarepo_ui.resources.components import UIResourceComponent
 
+from oarepo_vocabularies.proxies import current_ui_vocabulary_cache
 from oarepo_vocabularies.records.api import find_vocabulary_relations
-from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
-
-try:
-    pass
-except ImportError:
-    pass
-
-
-class DepositI18nHierarchySchema(marshmallow.Schema):
-    title = marshmallow.fields.List(VocabularyI18nStrUIField())
-    ancestors = marshmallow.fields.List(marshmallow.fields.String())
-
-
-class VocabularyPrefetchSchema(marshmallow.Schema):
-    title = VocabularyI18nStrUIField(data_key="text")
-    hierarchy = marshmallow.fields.Nested(
-        DepositI18nHierarchySchema, data_key="hierarchy"
-    )
-    props = marshmallow.fields.Dict(keys=marshmallow.fields.String(), values=marshmallow.fields.String())
 
 
 class DepositVocabularyOptionsComponent(UIResourceComponent):
@@ -116,46 +95,17 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
     def _prefetch_vocabularies_to_form_config(
         self, form_config_vocabularies, vocabularies_to_prefetch, identity
     ):
-        schema = VocabularyPrefetchSchema(context={"locale": get_locale()})
-        for prefetched_item in self.prefetch_vocabulary_items(
-            identity, vocabularies_to_prefetch
-        ):
-            by_type = form_config_vocabularies[prefetched_item["type"]]
-            returned_item = {
-                "value": prefetched_item["id"],
-                **schema.dump(prefetched_item),
-            }
-            by_type["all"].append(returned_item)
-            if "featured" in prefetched_item.get("tags", []):
-                by_type["featured"].append(returned_item)
-
-    @staticmethod
-    def prefetch_vocabulary_items(identity, vocabularies_to_prefetch):
-        if vocabularies_to_prefetch:
-            yield from vocabulary_service.scan(
-                identity,
-                params={
-                    "type": vocabularies_to_prefetch,
-                    "sort": "title",
-                    "source": [
-                        "title",
-                        "hierarchy.title",
-                        "hierarchy.ancestors",
-                        "uuid",
-                        "version_id",
-                        "created",
-                        "updated",
-                        "pid",
-                        "type",
-                        "id",
-                        "tags",
-                        "props.*"
-                    ],
-                    "size": 1000,
-                },
-                # this needs the ScanningOrderComponent to be installed, otherwise does not sort
-                preserve_order=True,
-            )
+        prefetched_vocabularies = current_ui_vocabulary_cache.get(vocabularies_to_prefetch)
+        for vocabulary_type, items in prefetched_vocabularies.items():
+            for (item_id, item) in items:
+                by_type = form_config_vocabularies[vocabulary_type]
+                returned_item = {
+                    "value": item_id,
+                    **item,
+                }
+                by_type["all"].append(returned_item)
+                if "featured" in returned_item.get("tags", []):
+                    by_type["featured"].append(returned_item)
 
     @staticmethod
     def create_form_config_vocabularies(

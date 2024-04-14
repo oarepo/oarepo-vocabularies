@@ -140,3 +140,6 @@ class VocabulariesService(InvenioVocabulariesService):
     def get_vocabulary_permission_name(self, operation, vocabulary_type):
         vocabulary_type = vocabulary_type.replace("-", "_")
         return f"{operation}_{vocabulary_type}"
+
+    def search_many(self, identity, params):
+        return super(InvenioVocabulariesService, self).search(identity, params)

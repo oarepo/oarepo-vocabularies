@@ -1,3 +1,5 @@
+from functools import partial
+
 from invenio_records_resources.services.records.params import (
     FilterParam,
     ParamInterpreter,
@@ -12,10 +14,8 @@ from oarepo_runtime.services.search import (
 )
 from opensearch_dsl import query
 
-try:
-    from invenio_i18n import get_locale
-except ImportError:
-    from invenio_i18n.babel import get_locale
+from oarepo_runtime.i18n import get_locale
+from opensearch_dsl.query import Bool, Range, Term
 
 
 class VocabularyQueryParser(QueryParser):
@@ -54,6 +54,42 @@ class SourceParam(ParamInterpreter):
             return search
         return search.source(source)
 
+class UpdatedAfterParam(ParamInterpreter):
+    """Evaluate type filter."""
+
+    def __init__(self, param_name, field_name, config):
+        """."""
+        self.param_name = param_name
+        self.field_name = field_name
+        super().__init__(config)
+
+    @classmethod
+    def factory(cls, param=None, field=None):
+        """Create a new filter parameter."""
+        return partial(cls, param, field)
+
+    def apply(self, identity, search, params):
+        """Applies a filter to get only records for a specific type."""
+        # Pop because we don't want it to show up in links.
+        # TODO: only pop if needed.
+        value = params.pop(self.param_name, None)
+        if value:
+            vocabulary_filter = []
+            for k, v in value.items():
+                if v:
+                    vocabulary_filter.append(Bool(
+                        must=[
+                            Range(**{self.field_name: {"gt": v}}),
+                            Term(**{"type.id": k})
+                        ]
+                    ))
+                else:
+                    vocabulary_filter.append(Term(**{"type.id": k}))
+            vocabulary_filter = Bool(should=vocabulary_filter, minimum_should_match=1)
+            search = search.filter(vocabulary_filter)
+
+        return search
+
 
 class VocabularySearchOptions(I18nSearchOptions):
     SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
@@ -61,6 +97,7 @@ class VocabularySearchOptions(I18nSearchOptions):
 
     params_interpreters_cls = [
         FilterParam.factory(param="tags", field="tags"),
+        UpdatedAfterParam.factory(param="updated_after", field="updated"),
         FilterParam.factory(param="type", field="type.id"),
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
