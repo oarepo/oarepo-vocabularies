@@ -19,7 +19,7 @@ import {
   ModalActions,
 } from "semantic-ui-react";
 import { processVocabularyItems } from "@js/oarepo_vocabularies";
-import { i18next } from "@translations/oarepo_vocabularies/i18next";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const VocabularyTreeSelectField = ({
   fieldPath,
