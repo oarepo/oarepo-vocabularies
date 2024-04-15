@@ -2,7 +2,9 @@ import { useDepositApiClient } from "@js/oarepo_ui";
 import _isEmpty from "lodash/isEmpty";
 
 export const useVocabularyApiClient = (newChildItemParentId) => {
-  const { apiClient, createUrl, formik } = useDepositApiClient();
+  const { apiClient, createUrl, formik } = useDepositApiClient({
+    serializeVocabularyRecord: true,
+  });
   const {
     isSubmitting,
     values,
