@@ -8,3 +8,4 @@ export * from "./LocalVocabularySelectField";
 export * from "./FeaturedButton";
 export * from "./VocabularyFormFields";
 export * from "./VocabularyFormControlPanel";
+export * from "./VocabularyTreeSelectField";
