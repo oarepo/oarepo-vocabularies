@@ -419,4 +419,13 @@ TreeSelectFieldModal.propTypes = {
   multiple: PropTypes.bool,
   placeholder: PropTypes.string,
   root: PropTypes.string,
+  query: PropTypes.string.isRequired,
+  setQuery: PropTypes.func.isRequired,
+  openState: PropTypes.bool.isRequired,
+  setOpenState: PropTypes.func.isRequired,
+  allOptions: PropTypes.array.isRequired,
+  value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  selectedState: PropTypes.array.isRequired,
+  setSelectedState: PropTypes.func.isRequired,
 };
