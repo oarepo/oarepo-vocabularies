@@ -405,9 +405,7 @@ export const TreeSelectFieldModal = ({
             labelPosition="right"
             floated="right"
             icon="checkmark"
-            onClick={() => {
-              handleSubmit(), setParentsState([]);
-            }}
+            onClick={handleSubmit}
             secondary
           />
         </Grid.Row>
