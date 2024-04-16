@@ -142,4 +142,9 @@ class VocabulariesService(InvenioVocabulariesService):
         return f"{operation}_{vocabulary_type}"
 
     def search_many(self, identity, params):
+        # we are skipping Invenio vocabularies service here and calling
+        # explicitly its parent class. The reason is that invenio vocabs
+        # always filter the search by a single vocabulary type. The search_many
+        # use case is an optimization where we want to fetch multiple items
+        # from multiple vocabulary types in a single query.
         return super(InvenioVocabulariesService, self).search(identity, params)
