@@ -27,7 +27,10 @@ class VocabularyPrefetchSchema(marshmallow.Schema):
     hierarchy = marshmallow.fields.Nested(
         DepositI18nHierarchySchema, data_key="hierarchy"
     )
-    props = marshmallow.fields.Dict(keys=marshmallow.fields.String(), values=marshmallow.fields.String())
+    props = marshmallow.fields.Dict(
+        keys=marshmallow.fields.String(), values=marshmallow.fields.String()
+    )
+    icon = marshmallow.fields.String()
 
 
 class DepositVocabularyOptionsComponent(UIResourceComponent):
@@ -149,7 +152,8 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                         "type",
                         "id",
                         "tags",
-                        "props.*"
+                        "props.*",
+                        "icon",
                     ],
                     "size": 1000,
                 },
@@ -177,9 +181,9 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                 form_config_vocabularies[vocabulary_type]["featured"] = []
             else:
                 # TODO: use vocabulary service config and prefix???
-                form_config_vocabularies[vocabulary_type][
-                    "url"
-                ] = f"/api/vocabularies/{vocabulary_type}"
+                form_config_vocabularies[vocabulary_type]["url"] = (
+                    f"/api/vocabularies/{vocabulary_type}"
+                )
         return vocabularies_to_prefetch, form_config_vocabularies
 
 
