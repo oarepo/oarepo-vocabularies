@@ -82,11 +82,6 @@ export const VocabularyTreeSelectField = ({
       ...selectedState.map((item) => {
         return {
           id: item.value,
-          title: [
-            ...item.hierarchy.title.map((i) => {
-              return { cs: i };
-            }),
-          ],
         };
       }),
     ];
@@ -115,6 +110,7 @@ export const VocabularyTreeSelectField = ({
 
       {openState && (
         <TreeSelectFieldModal
+          fieldPath={fieldPath}
           query={query}
           setQuery={setQuery}
           multiple={multiple}
