@@ -371,7 +371,7 @@ export const TreeSelectFieldModal = ({
             <Grid columns={1}>
               <Container>
                 {hierarchicalData.map((column, level) => (
-                  <React.Fragment key={column[0].value}>
+                  <React.Fragment key={column[0]?.value}>
                     {renderColumn(column, level)}
                   </React.Fragment>
                 ))}
