@@ -35,6 +35,7 @@ class VocabularyPrefetchSchema(marshmallow.Schema):
         keys=marshmallow.fields.String(), values=marshmallow.fields.String()
     )
     tags = marshmallow.fields.List(marshmallow.fields.String())
+    icon = marshmallow.fields.String()
 
 
 class VocabularyCache:
