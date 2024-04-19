@@ -75,3 +75,10 @@ class OARepoVocabularies(object):
             config=app.config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"](),
             service=self.type_service,
         )
+
+    def get_config(self, vocabulary_name):
+        if isinstance(vocabulary_name, dict):
+            vocabulary_name = vocabulary_name.get("id")
+
+        vocabulary_type_metadata = self.app.config.get('INVENIO_VOCABULARY_TYPE_METADATA', {})
+        return vocabulary_type_metadata.get(vocabulary_name, {})

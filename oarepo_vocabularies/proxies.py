@@ -1,6 +1,12 @@
 from flask import current_app
 from werkzeug.local import LocalProxy
 
+import typing
+if typing.TYPE_CHECKING:
+    from .ext import OARepoVocabularies
+    from .services.service import VocabularyTypeService
+    from .services.cache import UIVocabularyCache
+
 
 def _ext_proxy(attr):
     return LocalProxy(
@@ -8,7 +14,11 @@ def _ext_proxy(attr):
     )
 
 
-current_type_service = _ext_proxy("type_service")
+current_oarepo_vocabularies: "OARepoVocabularies" = LocalProxy(  # type: ignore
+    lambda: current_app.extensions["oarepo-vocabularies"]
+)
+
+current_type_service: "VocabularyTypeService" = _ext_proxy("type_service")    # type: ignore
 """Proxy to the instantiated vocabulary type service."""
 
-current_ui_vocabulary_cache = _ext_proxy("ui_cache")
+current_ui_vocabulary_cache: "UIVocabularyCache" = _ext_proxy("ui_cache")     # type: ignore
