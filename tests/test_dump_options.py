@@ -11,6 +11,7 @@ def test_dump_options(
     simple_record_service,
     simple_record_ui_resource,
     search_clear,
+    cache_clear,
     identity,
 ):
     comp = DepositVocabularyOptionsComponent(resource=simple_record_ui_resource)
@@ -48,6 +49,7 @@ def test_dump_options(
                         "element_type": "parent",
                         "props": {"akey": "avalue"},
                         "icon": "file-o",
+                        "tags": ["recommended"],
                     },
                     {
                         "value": "eng.UK.S",
@@ -61,6 +63,7 @@ def test_dump_options(
                             "ancestors": ["eng.UK", "eng"],
                         },
                         "icon": "file-o",
+                        "tags": ["featured"],
                         "element_type": "leaf",
                     },
                     {
@@ -97,6 +100,7 @@ def test_dump_options(
                             "ancestors": ["eng.UK", "eng"],
                         },
                         "icon": "file-o",
+                        "tags": ["featured"],
                         "element_type": "leaf",
                     }
                 ],

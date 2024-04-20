@@ -10,3 +10,5 @@ def _ext_proxy(attr):
 
 current_type_service = _ext_proxy("type_service")
 """Proxy to the instantiated vocabulary type service."""
+
+current_ui_vocabulary_cache = _ext_proxy("ui_cache")

@@ -1,3 +1,8 @@
+from functools import cached_property
+
+from invenio_base.utils import obj_or_import_string
+
+
 class OARepoVocabularies(object):
     """OARepo extension of Invenio-Vocabularies."""
 
@@ -10,6 +15,7 @@ class OARepoVocabularies(object):
 
     def init_app(self, app):
         """Flask application initialization."""
+        self.app = app
         self.init_config(app)
         self.init_services(app)
         self.init_resource(app)
@@ -20,6 +26,14 @@ class OARepoVocabularies(object):
         self.type_service = app.config["OAREPO_VOCABULARY_TYPE_SERVICE"](
             config=app.config["OAREPO_VOCABULARY_TYPE_SERVICE_CONFIG"](),
         )
+
+    @cached_property
+    def ui_cache(self):
+        from oarepo_vocabularies.services.cache import VocabularyCache
+
+        return obj_or_import_string(
+            self.app.config.get("OAREPO_VOCABULARIES_UI_CACHE", VocabularyCache)
+        )()
 
     def init_config(self, app):
         """Initialize configuration."""
