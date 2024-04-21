@@ -168,7 +168,6 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = (
         AuthoritativeVocabulariesResourceConfig
     )
-    app_config["OAREPO_FINE_GRAINED_VOCABULARIES_PERMISSIONS"] = True
     app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
     app_config["OAREPO_PERMISSIONS_PRESETS"] = {
         "fine-grained": FineGrainedPermissionPolicy
@@ -200,6 +199,17 @@ def app_config(app_config):
                 "en": "czech language vocabulary type.",
             },
             "dump_options": True,
+            "props": {
+                "alpha3CodeNative": {
+                    "description": "ISO 639-2 standard 3-letter language code",
+                    "icon": None,
+                    "label": "Alpha3 code (native)",
+                    "multiple": False,
+                    "options": [],
+                    "placeholder": "eng, ces...",
+                }
+            },
+            "custom_fields": ["relatedURI"],
         },
         "licenses": {
             "name": {

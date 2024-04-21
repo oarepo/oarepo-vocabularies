@@ -27,9 +27,15 @@ class HierarchyVocabularyFacet(TermsFacet):
 class CachedVocabularyLabels(VocabularyLabels):
     _internal_vocabulary_terms_cache = None
 
+    def _get_title(self, cache, _id):
+        item = cache.get((self.vocabulary, _id))
+        if item:
+            return item["text"]
+        return None
+
     def __call__(self, ids):
         if not ids:
             return {}
         cache = current_ui_vocabulary_cache
         resolved = cache.resolve([(self.vocabulary, _id) for _id in ids])
-        return {_id: resolved.get(_id)["title"] for _id in ids}
+        return {_id: self._get_title(resolved, _id) for _id in ids}

@@ -40,6 +40,22 @@ def test_dump_options(
                         "en": "czech language vocabulary type.",
                     },
                     "dump_options": True,
+                    "custom_fields": ["relatedURI"],
+                    "props": {
+                        "alpha3CodeNative": {
+                            "description": "ISO "
+                            "639-2 "
+                            "standard "
+                            "3-letter "
+                            "language "
+                            "code",
+                            "icon": None,
+                            "label": "Alpha3 " "code " "(native)",
+                            "multiple": False,
+                            "options": [],
+                            "placeholder": "eng, " "ces...",
+                        }
+                    },
                 },
                 "all": [
                     {

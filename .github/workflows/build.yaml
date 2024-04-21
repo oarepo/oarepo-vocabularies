@@ -55,16 +55,10 @@ jobs:
         with:
           redis-version: ${{ matrix.redis-version }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip wheel setuptools
-          pip install "oarepo[tests]==${OAREPO_VERSION:-11}.*"
-          pip install -e ".[tests]"
-          pip list
 
-      - name: Test with pytest
+      - name: Run tests
         run: |
-          pytest tests
+          ./run-tests.sh
       
       - name: Freeze packages
         run: |
@@ -72,6 +66,7 @@ jobs:
 
       - name: Build package to publish
         run: |
+          pip install -U setuptools pip wheel
           python setup.py sdist bdist_wheel
 
       - name: Archive production artifacts
