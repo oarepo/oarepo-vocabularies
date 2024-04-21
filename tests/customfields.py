@@ -13,11 +13,7 @@ class RelatedURICF(BaseCF):
     def field(self):
         """Marshmallow field for custom fields."""
 
-        class PermissiveSchema(ma.Schema):
-            class Meta:
-                unknown = ma.INCLUDE
-
-        return ma.fields.Nested(PermissiveSchema())
+        return ma.fields.Dict(keys=ma.fields.Str(), values=ma.fields.Str())
 
 
 class NonPreferredLabelsCF(BaseCF):

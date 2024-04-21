@@ -8,7 +8,7 @@ def test_empty_record(app, vocabularies_ui_resource, vocabularies_ui_resource_co
         assert vocabularies_ui_resource.empty_record(resource_requestctx=ctx) == {
             "blah": "",
             "created": None,
-            "description": None,
+            "description": {},
             "hierarchy": {
                 "ancestors": [],
                 "ancestors_or_self": [],
@@ -16,16 +16,16 @@ def test_empty_record(app, vocabularies_ui_resource, vocabularies_ui_resource_co
                 "parent": "",
                 "title": [],
             },
-            "hint": None,
+            "hint": {},
             "icon": "",
             "id": "",
             "links": None,
             "nonpreferredLabels": [],
-            "props": None,
+            "props": {},
             "relatedURI": {},
             "revision_id": None,
             "tags": [],
-            "title": None,
+            "title": {},
             "type": "test",
             "updated": None,
         }

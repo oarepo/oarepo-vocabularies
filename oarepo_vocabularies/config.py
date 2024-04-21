@@ -34,7 +34,15 @@ INVENIO_VOCABULARY_TYPE_METADATA = {
     #         "en": "czech language vocabulary type.",
     #     },
     #     "hierarchical": False,
-    #     "props": {...},
+    #     "props": {"alpha3CodeNative": {
+    #                 "description": _("ISO 639-2 standard 3-letter language code"),
+    #                 "icon": None,
+    #                 "label": _("Alpha3 code (native)"),
+    #                 "multiple": False,
+    #                 "options": [],
+    #                 "placeholder": "eng, ces...",
+    #             }},
+    #     "custom_fields": ["names of custom fields from VOCABULARIES_CF to show in ui/serialize"],
     #     "dump_options": True
     # },
     # "organisms": {
@@ -70,5 +78,3 @@ DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
 
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
-
-OAREPO_FINE_GRAINED_VOCABULARIES_PERMISSIONS = False

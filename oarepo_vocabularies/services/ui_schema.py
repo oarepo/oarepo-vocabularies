@@ -58,6 +58,3 @@ class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema
     links = ma.fields.Raw(dump_only=True)
     title = VocabularyI18nStrUIField()
     type = ma.fields.Raw(dump_only=True)
-
-    def dump(self, *args, **kwargs):
-        return super().dump(*args, **kwargs)
