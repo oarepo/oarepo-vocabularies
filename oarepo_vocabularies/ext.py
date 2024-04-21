@@ -80,5 +80,7 @@ class OARepoVocabularies(object):
         if isinstance(vocabulary_name, dict):
             vocabulary_name = vocabulary_name.get("id")
 
-        vocabulary_type_metadata = self.app.config.get('INVENIO_VOCABULARY_TYPE_METADATA', {})
+        vocabulary_type_metadata = self.app.config.get(
+            "INVENIO_VOCABULARY_TYPE_METADATA", {}
+        )
         return vocabulary_type_metadata.get(vocabulary_name, {})

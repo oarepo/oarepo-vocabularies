@@ -30,7 +30,7 @@ class CachedVocabularyLabels(VocabularyLabels):
     def _get_title(self, cache, _id):
         item = cache.get((self.vocabulary, _id))
         if item:
-            return item['text']
+            return item["text"]
         return None
 
     def __call__(self, ids):
