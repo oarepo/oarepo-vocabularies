@@ -5,7 +5,7 @@ title:
 props:
   alpha3CodeNative: "eng"
 relatedURI:
-  url: http://en.com
+  url: https://en.com
 ---
 id: cs
 title:
@@ -14,4 +14,4 @@ title:
 props:
   alpha3CodeNative: "ces"
 relatedURI:
-  url: http://cs.com
+  url: https://cs.com

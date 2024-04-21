@@ -27,11 +27,11 @@ def test_serialization_api(
 
         assert hits[0]["title"]["cs"] == "Čeština"
         assert hits[0]["props"]["alpha3CodeNative"] == "ces"
-        assert hits[0]["relatedURI"]["url"] == "http://cs.com"
+        assert hits[0]["relatedURI"]["url"] == "https://cs.com"
 
         assert hits[1]["title"]["en"] == "English"
         assert hits[1]["props"]["alpha3CodeNative"] == "eng"
-        assert hits[1]["relatedURI"]["url"] == "http://en.com"
+        assert hits[1]["relatedURI"]["url"] == "https://en.com"
 
 
 def test_serialization_api_vnd(
@@ -61,8 +61,8 @@ def test_serialization_api_vnd(
 
         assert hits[1]["title"] == "Čeština"
         assert hits[1]["props"]["alpha3CodeNative"] == "ces"
-        assert hits[1]["relatedURI"]["url"] == "http://cs.com"
+        assert hits[1]["relatedURI"]["url"] == "https://cs.com"
 
         assert hits[0]["title"] == "Angličtina"
         assert hits[0]["props"]["alpha3CodeNative"] == "eng"
-        assert hits[0]["relatedURI"]["url"] == "http://en.com"
+        assert hits[0]["relatedURI"]["url"] == "https://en.com"
