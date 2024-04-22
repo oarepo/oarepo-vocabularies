@@ -43,7 +43,6 @@ class HierarchyComponent(ServiceComponent):
         # refresh to make sure the scan will return everything. This is a performance bottleneck
         # but we can not do it without this as we do not have a way to get the parent
         # directly from the database
-        print(f"Set leaf called on {record['id']}")
         if is_leaf is not None:
             if record.hierarchy.get("leaf", None) is not is_leaf:
                 record.hierarchy["leaf"] = is_leaf
@@ -64,7 +63,6 @@ class HierarchyComponent(ServiceComponent):
 
     def set_parent_leaf(self, identity, record, exclude_child=None, is_leaf=None):
         if "parent" in record.hierarchy:
-            print(f"Propagating leaf to parent of {record['id']}")
             parent = self.get_parent(identity, record)
             self.set_leaf(
                 identity,
