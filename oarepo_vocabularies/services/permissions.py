@@ -9,7 +9,7 @@
 """Vocabulary permissions."""
 
 from invenio_records_permissions import RecordPermissionPolicy
-from invenio_records_permissions.generators import AnyUser, SystemProcess, Disable
+from invenio_records_permissions.generators import AnyUser, Disable, SystemProcess
 
 
 class VocabulariesPermissionPolicy(RecordPermissionPolicy):
@@ -25,8 +25,14 @@ class VocabulariesPermissionPolicy(RecordPermissionPolicy):
     can_manage = [SystemProcess()]
 
     def __getattr__(self, item):
-        for mth in ("can_search", "can_read",
-                    "can_create", "can_update", "can_delete", "can_manage"):
+        for mth in (
+            "can_search",
+            "can_read",
+            "can_create",
+            "can_update",
+            "can_delete",
+            "can_manage",
+        ):
             if item.startswith(mth + "_"):
                 return getattr(self, mth)
         raise AttributeError(item)

@@ -3,13 +3,13 @@ from invenio_records_resources.services import Link, LinksTemplate, RecordServic
 from invenio_records_resources.services.base import Service
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records import ServiceSchemaWrapper
+from invenio_records_resources.services.uow import unit_of_work
 from invenio_search import current_search_client
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyType
 from invenio_vocabularies.services import (
     VocabulariesService as InvenioVocabulariesService,
 )
-from invenio_records_resources.services.uow import unit_of_work
 
 
 class VocabularyTypeService(Service):
@@ -107,7 +107,6 @@ class VocabulariesService(InvenioVocabulariesService):
             expand=expand,
             **kwargs,
         )
-
 
     @unit_of_work()
     def update(

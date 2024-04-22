@@ -18,7 +18,7 @@ class HierarchyComponent(ServiceComponent):
         self.set_leaf(identity, record)
 
     def delete(self, identity, record=None, **kwargs):
-        self.set_parent_leaf(identity, record, exclude_child=record['id'])
+        self.set_parent_leaf(identity, record, exclude_child=record["id"])
         return record
 
     def set_hierarchy(self, identity, record):
@@ -37,7 +37,9 @@ class HierarchyComponent(ServiceComponent):
             return None
         return current_service.read(identity, (record.type.id, parent))._record
 
-    def set_leaf(self, identity, record, exclude_child=None, commit=False, is_leaf=None):
+    def set_leaf(
+        self, identity, record, exclude_child=None, commit=False, is_leaf=None
+    ):
         # refresh to make sure the scan will return everything. This is a performance bottleneck
         # but we can not do it without this as we do not have a way to get the parent
         # directly from the database
@@ -49,9 +51,11 @@ class HierarchyComponent(ServiceComponent):
                     record.commit()
         else:
             current_service.indexer.refresh()
-            children = list(current_service.scan(identity, params={"h-parent": record['id']}))
+            children = list(
+                current_service.scan(identity, params={"h-parent": record["id"]})
+            )
             if exclude_child:
-                children = [child for child in children if child['id'] != exclude_child]
+                children = [child for child in children if child["id"] != exclude_child]
             updated_is_leaf = len(children) == 0
             if record.hierarchy.get("leaf", None) is not updated_is_leaf:
                 record.hierarchy["leaf"] = updated_is_leaf
@@ -62,4 +66,10 @@ class HierarchyComponent(ServiceComponent):
         if "parent" in record.hierarchy:
             print(f"Propagating leaf to parent of {record['id']}")
             parent = self.get_parent(identity, record)
-            self.set_leaf(identity, parent, exclude_child=exclude_child, commit=True, is_leaf=is_leaf)
+            self.set_leaf(
+                identity,
+                parent,
+                exclude_child=exclude_child,
+                commit=True,
+                is_leaf=is_leaf,
+            )

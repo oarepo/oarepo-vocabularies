@@ -15,7 +15,7 @@ def test_hierarchy_lang(
         "title": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
         "ancestors": [],
         "ancestors_or_self": ["eng"],
-        'leaf': True,
+        "leaf": True,
     }
 
     child = vocab_service.create(system_identity, lang_data_child)
@@ -43,7 +43,7 @@ def test_hierarchy_lang(
         ],
         "ancestors": ["eng"],
         "ancestors_or_self": ["eng.US", "eng"],
-        'leaf': True,
+        "leaf": True,
     }
 
 
@@ -145,11 +145,9 @@ def test_hierarchy_selector():
 
 
 def test_leaf(app, db, cache, lang_type, vocab_cf):
-    parent = vocab_service.create(system_identity, {
-        "id": "eng",
-        "title": {"en": "English"},
-        "type": "languages"
-    })
+    parent = vocab_service.create(
+        system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"}
+    )
     assert "parent" not in parent.links
     assert parent.data["hierarchy"]["leaf"] == True
 
@@ -158,12 +156,15 @@ def test_leaf(app, db, cache, lang_type, vocab_cf):
 
     assert parent_data["hierarchy"]["leaf"] == True
 
-    child = vocab_service.create(system_identity, {
-        "id": "eng.US",
-        "title": {"en": "English (US)"},
-        "hierarchy": {"parent": "eng"},
-        "type": "languages"
-    })
+    child = vocab_service.create(
+        system_identity,
+        {
+            "id": "eng.US",
+            "title": {"en": "English (US)"},
+            "hierarchy": {"parent": "eng"},
+            "type": "languages",
+        },
+    )
 
     assert child.data["hierarchy"]["leaf"] == True
 
