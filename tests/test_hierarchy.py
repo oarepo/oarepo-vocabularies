@@ -173,7 +173,7 @@ def test_leaf(app, db, cache, lang_type, vocab_cf):
     assert parent_data["hierarchy"]["leaf"] == False
 
     vocab_service.delete(system_identity, id_=("languages", child.id))
-    vocab_service.indexer.refresh()
 
+    vocab_service.indexer.refresh()
     parent_data = vocab_service.read(system_identity, ("languages", parent.id)).data
     assert parent_data["hierarchy"]["leaf"] == True

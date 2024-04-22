@@ -53,8 +53,10 @@ class HierarchyComponent(ServiceComponent):
             children = list(
                 current_service.scan(identity, params={"h-parent": record["id"]})
             )
+            print(f"Set leaf for {record['id']}: Scan returned", [x['id'] for x in children])
             if exclude_child:
                 children = [child for child in children if child["id"] != exclude_child]
+                print(f"After excluding child {exclude_child=}, got", children)
             updated_is_leaf = len(children) == 0
             if record.hierarchy.get("leaf", None) is not updated_is_leaf:
                 record.hierarchy["leaf"] = updated_is_leaf
