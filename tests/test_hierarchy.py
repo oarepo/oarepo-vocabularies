@@ -145,6 +145,11 @@ def test_hierarchy_selector():
 
 
 def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
+    from invenio_search import current_search, current_search_client
+    from pytest_invenio.fixtures import _search_create_indexes, _search_delete_indexes
+    _search_delete_indexes(current_search)
+    _search_create_indexes(current_search, current_search_client)
+
     parent = vocab_service.create(
         system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"}
     )
