@@ -5,7 +5,7 @@ from oarepo_vocabularies.records.systemfields import HierarchyPartSelector
 
 
 def test_hierarchy_lang(
-    app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf
+    app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf, search_clear
 ):
     parent = vocab_service.create(system_identity, lang_data)
     assert "parent" not in parent.links
@@ -47,7 +47,7 @@ def test_hierarchy_lang(
     }
 
 
-def test_children(sample_records, client):
+def test_children(sample_records, client, search_clear):
     def _test_children(x):
         node, expected_children = x
         children_url = node["links"]["children"]
@@ -68,7 +68,7 @@ def test_children(sample_records, client):
         _test_children(s)
 
 
-def test_descendants(sample_records, client):
+def test_descendants(sample_records, client, search_clear):
     def _get_descendants(x):
         for c in x.children:
             yield c
@@ -94,7 +94,7 @@ def test_descendants(sample_records, client):
         _test_descendants(s)
 
 
-def test_parent(sample_records, client):
+def test_parent(sample_records, client, search_clear):
     def _test_parent(x, expected_parent):
         node = x.node
         if expected_parent:
@@ -144,7 +144,7 @@ def test_hierarchy_selector():
     ]
 
 
-def test_leaf(app, db, cache, lang_type, vocab_cf):
+def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
     parent = vocab_service.create(
         system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"}
     )
