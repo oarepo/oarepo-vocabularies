@@ -100,5 +100,6 @@ def test_ui_serializer(
         "level": 3,
         "ancestors_or_self": ["eng.UK.S", "eng.UK", "eng"],
         "title": ["Angličtina (A pro řazení)", "Angličtina (UK)", "Angličtina"],
+        'leaf': True,
     }
     assert data["hits"]["hits"][0]["title"] == "Angličtina (A pro řazení)"

@@ -15,6 +15,7 @@ def test_empty_record(app, vocabularies_ui_resource, vocabularies_ui_resource_co
                 "level": None,
                 "parent": "",
                 "title": [],
+                'leaf': None,
             },
             "hint": {},
             "icon": "",
