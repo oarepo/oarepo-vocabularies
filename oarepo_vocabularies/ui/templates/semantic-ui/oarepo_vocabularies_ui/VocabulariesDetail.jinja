@@ -17,7 +17,7 @@
 
 {% block page_body %}
   {{ super() }}
-  <div class="ui center aligned container">
+  <div class="ui center aligned container rel-mb-2">
     {% block vocabulary_descendants %}
       {% set search_app_config = extra_context["search_app_config"] %}
         {%- include "oarepo_vocabularies_ui/descendants.html" -%}

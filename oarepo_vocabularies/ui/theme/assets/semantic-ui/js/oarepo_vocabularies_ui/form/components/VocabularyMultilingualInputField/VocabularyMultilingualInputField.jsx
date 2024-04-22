@@ -9,6 +9,7 @@ import {
   ArrayFieldItem,
 } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import _isEmpty from "lodash/isEmpty";
 
 export const VocabularyMultilingualInputField = ({
   fieldPath,
@@ -33,7 +34,7 @@ export const VocabularyMultilingualInputField = ({
     if (!getIn(values, placeholderFieldPath)) {
       setFieldValue(
         placeholderFieldPath,
-        getIn(values, fieldPath)
+        !_isEmpty(getIn(values, fieldPath))
           ? object2array(getIn(values, fieldPath, ""), "lang", "name")
           : object2array(newItemInitialValue, "lang", "name")
       );
