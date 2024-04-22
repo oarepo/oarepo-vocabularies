@@ -1,3 +1,4 @@
+from invenio_records_resources.services.custom_fields import BooleanCF
 from invenio_records_resources.services.custom_fields.base import BaseCF
 from invenio_records_resources.services.custom_fields.number import IntegerCF
 from invenio_records_resources.services.custom_fields.text import KeywordCF
@@ -57,3 +58,10 @@ class HierarchyAncestorsOrSelfCF(HierarchyCF, KeywordCF):
             ]
         else:
             record.hierarchy["ancestors_or_self"] = [record["id"]]
+
+
+class HierarchyLeafCF(HierarchyCF, BooleanCF):
+    def update(self, record, parent):
+        # initial value
+        if not "leaf" in record.hierarchy:
+            record.hierarchy["leaf"] = True
