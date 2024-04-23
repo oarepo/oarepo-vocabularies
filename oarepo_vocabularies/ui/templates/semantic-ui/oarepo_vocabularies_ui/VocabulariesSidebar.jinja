@@ -1,6 +1,5 @@
 {#def record, extra_context #}
 <div class="rel-mt-2">
-
 {%- if extra_context.permissions.can_edit %}
   <SidebarLink href={record.links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
   {%if extra_context.vocabularyProps["hierarchical"] == True%}

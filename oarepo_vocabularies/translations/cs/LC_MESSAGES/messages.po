@@ -314,3 +314,9 @@ msgstr "Chybí název"
 
 msgid "ID"
 msgstr "ID"
+
+msgid "Icon"
+msgstr "Ikona"
+
+msgid "URL for the icon describing the vocabulary item."
+msgstr "URL pro ikonu popisující položku slovníku."

@@ -41,7 +41,7 @@ export const VocabularyFormFields = () => {
           <FieldLabel htmlFor="icon" icon="pencil" label={i18next.t("Icon")} />
         }
         placeholder={i18next.t(
-          "URL for the icon describing the vocabulary item. "
+          "URL for the icon describing the vocabulary item."
         )}
       />
       {hasPropFields && (

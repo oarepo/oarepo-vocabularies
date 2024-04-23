@@ -1,51 +1,57 @@
 {#def metadata, ui, record, d #}
 
 <div class="vocabularies-main">
-<h1 class="rel-mb-1 rel-mt-1 ui header" >{{metadata.title.capitalize() if metadata.title else _("Missing title")}}</h1>
-<dl class="ui very basic table">
-  <dt>{{ _('vocabulary.vocabulary') }}</dt>
-  <dd>
-    <a href="/vocabularies/{{metadata.type}}">{{ _("vocabulary." + metadata.type) }}</a>
-  </dd>
-  {% for l in (metadata.nonpreferredLabels or []) %} {% if l.en %}
-  <dt>{{_("vocabulary.nonpreferredLabels_en")}}</dt>
-  <dd>{{l.en}}</dd>
-  {% endif %} {% endfor %} {% for l in (metadata.nonpreferredLabels or []) %} {% if
-  l.cs %}
-  <dt>{{_("vocabulary.nonpreferredLabels_cs")}}</dt>
-  <dd>{{l.cs}}</dd>
-  {% endif %} {% endfor %} {% for prop, val in (metadata.props or {}).items() %}
-  <dt>{{_("vocabulary." + prop)}}</dt>
-  <dd>{{val}}</dd>
-  {% endfor %}
-  <Field label={_('Created')}>{{metadata.created}}</Field>
-  <Field label={_('Updated')}>{{metadata.updated}}</Field>
-  {% if 'hint' in metadata
-  and metadata.hint.cs %}
-  <dt>{{_("vocabulary.hint_cs")}}</dt>
-  <dd>{{metadata.hint.cs}}</dd>
-  {% endif %} {% if 'hint' in metadata and metadata.hint.en %}
-  <dt>{{_("vocabulary.hint_en")}}</dt>
-  <dd>{{metadata.hint.en}}</dd>
-  {% endif %} {% if metadata.relatedURI %} {% for t in metadata.relatedURI.items() %}
-  <dt>{{_("vocabulary.relatedURI_" + t.0)}}</dt>
-  <dd>{{t.1}}</dd>
-  {% endfor %} {% endif %}
-  {% if 'tags' in metadata and metadata.tags | length > 0 %}
-  <dt>{{_("vocabulary.tags")}}</dt>
-  <dd>
-  {% for t in metadata.tags %}
-  <span class="ui tag label {% if t =='featured' -%}red{%- endif %}">{{t}}</span>
-  {% endfor %}
-  </dd>
-  {% endif %}
-</dl>
-<div class="ui center aligned container">
-  
-</div>
+  <div class="flex align-items-center">
+    <h1 class="rel-mb-1 rel-mt-1 ui header display-inline" >{{metadata.title.capitalize() if metadata.title else _("Missing title")}}</h1>
+    {% if record.icon %}
+      <img class="ui image rel-ml-1" src={{record.icon}}>
+    {% endif %}
+  </div>
 
-{% set custom_field_name="VOCABULARIES_CF_UI." + record.type %}
-<div class="ui vocabulary_cf">
-<ICustomFields custom_fields={custom_field_name} d={d} />
-</div>
+  <dl class="ui very basic table">
+    <dt>{{ _('vocabulary.vocabulary') }}</dt>
+    <dd>
+      <a href="/vocabularies/{{metadata.type}}">{{ _("vocabulary." + metadata.type) }}</a>
+    </dd>
+    {% for l in (metadata.nonpreferredLabels or []) %} {% if l.en %}
+    <dt>{{_("vocabulary.nonpreferredLabels_en")}}</dt>
+    <dd>{{l.en}}</dd>
+    {% endif %} {% endfor %} {% for l in (metadata.nonpreferredLabels or []) %} {% if
+    l.cs %}
+    <dt>{{_("vocabulary.nonpreferredLabels_cs")}}</dt>
+    <dd>{{l.cs}}</dd>
+    {% endif %} {% endfor %} {% for prop, val in (metadata.props or {}).items() %}
+    <dt>{{_("vocabulary." + prop)}}</dt>
+    <dd>{{val}}</dd>
+    {% endfor %}
+    <Field label={_('Created')}>{{metadata.created}}</Field>
+    <Field label={_('Updated')}>{{metadata.updated}}</Field>
+    {% if 'hint' in metadata
+    and metadata.hint.cs %}
+    <dt>{{_("vocabulary.hint_cs")}}</dt>
+    <dd>{{metadata.hint.cs}}</dd>
+    {% endif %} {% if 'hint' in metadata and metadata.hint.en %}
+    <dt>{{_("vocabulary.hint_en")}}</dt>
+    <dd>{{metadata.hint.en}}</dd>
+    {% endif %} {% if metadata.relatedURI %} {% for t in metadata.relatedURI.items() %}
+    <dt>{{_("vocabulary.relatedURI_" + t.0)}}</dt>
+    <dd><a href={{t.1}}>{{t.1}}</a></dd>
+    {% endfor %} {% endif %}
+    {% if 'tags' in metadata and metadata.tags | length > 0 %}
+    <dt>{{_("vocabulary.tags")}}</dt>
+    <dd>
+    {% for t in metadata.tags %}
+    <span class="ui tag label {% if t =='featured' -%}red{%- endif %}">{{t}}</span>
+    {% endfor %}
+    </dd>
+    {% endif %}
+  </dl>
+  <div class="ui center aligned container">
+    
+  </div>
+
+  {% set custom_field_name="VOCABULARIES_CF_UI." + record.type %}
+  <div class="ui vocabulary_cf">
+  <ICustomFields custom_fields={custom_field_name} d={d} />
+  </div>
 </div>

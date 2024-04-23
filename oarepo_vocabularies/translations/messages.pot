@@ -8,39 +8,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-03-18 20:52+0100\n"
+"POT-Creation-Date: 2024-04-23 09:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.10.3\n"
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:78
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:139
 msgid "Best match"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:82
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:143
 msgid "Title"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:86
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:147
 msgid "Newest"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:90
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:151
 msgid "Oldest"
 msgstr ""
 
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/translations/jinjax_messages.jinja:1
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:21
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:27
 #: oarepo_vocabularies/translations/jinjax_messages.jinja:1
 msgid "Created"
 msgstr ""
 
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/translations/jinjax_messages.jinja:2
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:22
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:28
 #: oarepo_vocabularies/translations/jinjax_messages.jinja:2
 msgid "Updated"
 msgstr ""
@@ -65,6 +65,8 @@ msgstr ""
 msgid "Add the title of the hierarchy"
 msgstr ""
 
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/ITaxonomyItem.jinja:9
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/IVocabularyItem.jinja:9
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/TaxonomyItem.jinja:11
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/VocabularyItem.jinja:9
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:20
@@ -111,32 +113,32 @@ msgstr ""
 msgid "(internal)"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:4
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:5
 msgid "Missing title"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:6
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:12
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/translations.html:2
 msgid "vocabulary.vocabulary"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:11
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:17
 msgid "vocabulary.nonpreferredLabels_en"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:15
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:21
 msgid "vocabulary.nonpreferredLabels_cs"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:25
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:31
 msgid "vocabulary.hint_cs"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:28
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:34
 msgid "vocabulary.hint_en"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:35
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:41
 msgid "vocabulary.tags"
 msgstr ""
 
@@ -146,23 +148,23 @@ msgstr ""
 msgid "Vocabulary search"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:5
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:4
 msgid "Edit"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:8
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:7
 msgid "New child item"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:14
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:13
 msgid "Export"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:60
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:59
 msgid "API"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:60
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesSidebar.jinja:59
 msgid "Links"
 msgstr ""
 
@@ -263,6 +265,12 @@ msgid "Tags"
 msgstr ""
 
 msgid "Enter one or more tags."
+msgstr ""
+
+msgid "Icon"
+msgstr ""
+
+msgid "URL for the icon describing the vocabulary item."
 msgstr ""
 
 msgid "Add another language"
