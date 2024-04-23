@@ -3,6 +3,7 @@ from invenio_records_resources.services import Link, LinksTemplate, RecordServic
 from invenio_records_resources.services.base import Service
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records import ServiceSchemaWrapper
+from invenio_records_resources.services.uow import unit_of_work
 from invenio_search import current_search_client
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyType
@@ -107,6 +108,7 @@ class VocabulariesService(InvenioVocabulariesService):
             **kwargs,
         )
 
+    @unit_of_work()
     def update(
         self, identity, id_, data, revision_id=None, uow=None, expand=False, **kwargs
     ):
@@ -127,6 +129,7 @@ class VocabulariesService(InvenioVocabulariesService):
             **kwargs,
         )
 
+    @unit_of_work()
     def delete(self, identity, id_, revision_id=None, uow=None, **kwargs):
         """Delete a record."""
         record = self.record_cls.pid.resolve(id_)
