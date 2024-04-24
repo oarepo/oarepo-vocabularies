@@ -65,6 +65,7 @@ def test_dump_options(
                         "element_type": "parent",
                         "props": {"akey": "avalue"},
                         "tags": ["recommended"],
+                        "icon": "file-o",
                     },
                     {
                         "value": "eng.UK.S",
@@ -79,6 +80,7 @@ def test_dump_options(
                         },
                         "tags": ["featured"],
                         "element_type": "leaf",
+                        "icon": "file-o",
                     },
                     {
                         "value": "eng.UK",
@@ -88,6 +90,7 @@ def test_dump_options(
                             "ancestors": ["eng"],
                         },
                         "element_type": "parent",
+                        "icon": "file-o",
                     },
                     {
                         "value": "eng.US",
@@ -97,6 +100,7 @@ def test_dump_options(
                             "ancestors": ["eng"],
                         },
                         "element_type": "leaf",
+                        "icon": "file-o",
                     },
                 ],
                 "featured": [
@@ -113,6 +117,7 @@ def test_dump_options(
                         },
                         "tags": ["featured"],
                         "element_type": "leaf",
+                        "icon": "file-o",
                     }
                 ],
             },
