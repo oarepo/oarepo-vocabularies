@@ -1,13 +1,12 @@
 {#def metadata, ui, record, d #}
 
 <div class="vocabularies-main">
-  <div class="flex align-items-center">
-    <h1 class="rel-mb-1 rel-mt-1 ui header display-inline" >{{metadata.title.capitalize() if metadata.title else _("Missing title")}}</h1>
+  <div class="flex align-items-center rel-mt-1">
     {% if record.icon %}
-      <img class="ui image rel-ml-1" src={{record.icon}}>
+      <img class="ui image rel-mr-1" src={{record.icon}}>
     {% endif %}
+    <h1 class="ui header display-inline mt-0" >{{metadata.title.capitalize() if metadata.title else _("Missing title")}}</h1>
   </div>
-
   <dl class="ui very basic table">
     <dt>{{ _('vocabulary.vocabulary') }}</dt>
     <dd>
