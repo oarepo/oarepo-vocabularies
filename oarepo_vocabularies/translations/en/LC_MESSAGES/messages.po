@@ -315,6 +315,15 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
+msgid "Icon"
+msgstr ""
+
+msgid "URL for the icon describing the vocabulary item. "
+msgstr ""
+
+msgid "URL for the icon describing the vocabulary item."
+msgstr ""
+
 #~ msgid "Export"
 #~ msgstr "Export"
 

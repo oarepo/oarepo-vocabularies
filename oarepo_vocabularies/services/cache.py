@@ -35,6 +35,7 @@ class VocabularyPrefetchSchema(marshmallow.Schema):
         keys=marshmallow.fields.String(), values=marshmallow.fields.String()
     )
     tags = marshmallow.fields.List(marshmallow.fields.String())
+    icon = marshmallow.fields.String()
 
 
 class VocabularyCache:
@@ -65,7 +66,6 @@ class VocabularyCache:
         language = locale.language
 
         with self.language_cache(language) as cached_language:
-
             if not self._check_modified(cached_language, vocabulary_types):
                 return
 
@@ -74,9 +74,9 @@ class VocabularyCache:
             for item, dumped_item in self._serialize_items(
                 locale, self._prefetch_vocabularies(vocabulary_types)
             ):
-                by_vocabulary_type.setdefault(item["type"], {})[
-                    item["id"]
-                ] = dumped_item
+                by_vocabulary_type.setdefault(item["type"], {})[item["id"]] = (
+                    dumped_item
+                )
                 if item["type"] not in max_modified:
                     max_modified[item["type"]] = datetime.fromtimestamp(0, timezone.utc)
 
@@ -196,7 +196,6 @@ class VocabularyCache:
         uncached = []
         uncached_small = defaultdict(list)
         with self.language_cache(language) as cached_language:
-
             for vocab_id in ids:
                 term = self.lru_terms_cache.get((language, vocab_id))
                 if term:

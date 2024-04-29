@@ -41,6 +41,7 @@ export const serializeVocabularyItems = (vocabularyItems) =>
           <Breadcrumb icon="left angle" sections={sections} />
         ),
       name: text,
+      icon: undefined,
     };
   });
 

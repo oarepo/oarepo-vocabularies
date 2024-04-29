@@ -35,6 +35,15 @@ export const VocabularyFormFields = () => {
         placeholder={i18next.t("Enter one or more tags.")}
         required={false}
       />
+      <TextField
+        fieldPath="icon"
+        label={
+          <FieldLabel htmlFor="icon" icon="pencil" label={i18next.t("Icon")} />
+        }
+        placeholder={i18next.t(
+          "URL for the icon describing the vocabulary item."
+        )}
+      />
       {hasPropFields && (
         <PropFieldsComponent vocabularyProps={vocabularyProps} />
       )}
