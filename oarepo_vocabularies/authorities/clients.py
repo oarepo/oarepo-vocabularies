@@ -33,8 +33,8 @@ class RORClientV2(object):
         - Searching for external identifiers
         """
         headers = {"Accept": "application/json;charset=UTF-8"}
-        search_url = f'{self.api_url}?{urlencode(('query', query))}'
-
+        search_url = f"{self.api_url}?{urlencode(('query', query))}"
+    
         search_result = json.loads(
             requests.get(search_url, timeout=self.timeout, headers=headers)
         )
