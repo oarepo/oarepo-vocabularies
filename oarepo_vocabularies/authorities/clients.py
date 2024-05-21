@@ -1,9 +1,11 @@
 import logging
+import idutils
 import requests
 from urllib.parse import quote_plus
 from invenio_records_resources.pagination import Pagination
-from requests.exceptions import RequestException, JSONDecodeError
+from requests.exceptions import RequestException
 from invenio_records_rest.errors import SearchPaginationRESTError
+from werkzeug.exceptions import BadRequest
 
 HTTP_OK = requests.codes["ok"]
 
@@ -55,9 +57,25 @@ class RORClientV2(object):
                 params=query_params,
             ).json()
             return search_result
-        except (RequestException, JSONDecodeError) as e:
+        except RequestException as e:
             logger.exception("ROR API query failed: %s", e)
             raise e
+
+    def get_record(self, item_id, **kwargs):
+        """Fetch a ROR record metadata by a given ROR PID.
+
+        :param identity: User's identity
+        :param item_id: ROR PID identifier value
+        :return: Any
+        """
+        if not idutils.is_ror(item_id):
+            raise BadRequest("{item_id} is not a valid ROR identifier.")
+
+        pid = idutils.normalize_ror(item_id)
+
+        record_url = f"{self.api_url}/{quote_plus(pid)}"
+
+        return requests.get(record_url).json()
 
     def __repr__(self):
         """Create string representation of object."""

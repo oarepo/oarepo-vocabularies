@@ -4,7 +4,7 @@ import marshmallow as ma
 from types import SimpleNamespace
 from marshmallow import fields as ma_fields
 from oarepo_vocabularies.authorities.clients import RORClientV2
-from oarepo_vocabularies.authorities.results import RORListResultV2
+from oarepo_vocabularies.authorities.results import RORListResultV2, RORItemV2
 from invenio_records_resources.services import Link, LinksTemplate, pagination_links
 from invenio_records_resources.services.records import ServiceSchemaWrapper
 
@@ -64,6 +64,7 @@ class RORServiceV2(AuthorityService):
         parent_vocabulary_type="institutions",
         permission_policy_cls=None,
         result_list_cls=RORListResultV2,
+        result_item_cls=RORItemV2,
         ror_client_cls=RORClientV2,
         links_item_tpl={
             "self": Link(
@@ -113,8 +114,15 @@ class RORServiceV2(AuthorityService):
             links_item_tpl=self.links_item_tpl,
         )
 
-    def get(self, item_id, **kwargs):
-        pass
+    def get(self, identity, item_id, **kwargs):
+        record = self.ror_client.get_record(item_id, **kwargs)
+
+        return self.result_item(
+            self,
+            identity,
+            record,
+            links_tpl=self.links_item_tpl,
+        )
 
     def result_list(self, *args, **kwargs):
         """Create a new instance of the resource list.
@@ -126,3 +134,12 @@ class RORServiceV2(AuthorityService):
         a Service must provide.
         """
         return self.config.result_list_cls(*args, **kwargs)
+
+    def result_item(self, *args, **kwargs):
+        """Create a new instance of the resource unit.
+
+        A resource unit is an instantiated object representing one unit
+        of a Resource. It is what a Resource transacts in and therefore
+        what a Service must provide.
+        """
+        return self.config.result_item_cls(*args, **kwargs)

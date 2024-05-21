@@ -1,6 +1,38 @@
 from types import SimpleNamespace
-from invenio_records_resources.services.base import ServiceItemResult, ServiceListResult
-from invenio_records_resources.services.records.results import RecordList
+from invenio_records_resources.services.records.results import RecordList, RecordItem
+
+
+def to_vocabulary_item(ror_record):
+    ror_id = ror_record.pop("id")
+    names = ror_record.pop("names")
+    # The name of the organization shown as the main heading of the
+    # organization’s record in the ROR user interface.
+    # Each record must have exactly 1 name with type = ror_display.
+    display_name = {
+        n.get("lang") or "en": n["value"] for n in names if "ror_display" in n["types"]
+    }
+
+    # Alternative name of the organization in other languages than
+    # display name.
+    alt_names = {
+        n.get("lang") or "en": n["value"]
+        for n in names
+        if "label" in n["types"]
+        and (n["lang"] and n["lang"] not in display_name.keys())
+    }
+    props = {**ror_record}
+
+    # Acronyms or initialisms for the organization name.
+    acronyms = [a["value"] for a in names if "acronym" in a["types"]]
+    if acronyms:
+        props.update({"acronyms": acronyms})
+
+    res = {
+        "id": ror_id,
+        "title": {**display_name, **alt_names},
+        "props": props,
+    }
+    return res
 
 
 class RORListResultV2(RecordList):
@@ -30,7 +62,7 @@ class RORListResultV2(RecordList):
                 ),
             )
 
-            projection = self.to_vocabulary_item(projection)
+            projection = to_vocabulary_item(projection)
 
             if self._links_item_tpl:
                 projection["links"] = self._links_item_tpl.expand(
@@ -41,41 +73,6 @@ class RORListResultV2(RecordList):
                     link.expand(self._identity, record, projection)
 
             yield projection
-
-    @staticmethod
-    def to_vocabulary_item(hit):
-        ror_id = hit.pop("id")
-        names = hit.pop("names")
-        # The name of the organization shown as the main heading of the
-        # organization’s record in the ROR user interface.
-        # Each record must have exactly 1 name with type = ror_display.
-        display_name = {
-            n.get("lang") or "en": n["value"]
-            for n in names
-            if "ror_display" in n["types"]
-        }
-
-        # Alternative name of the organization in other languages than
-        # display name.
-        alt_names = {
-            n.get("lang") or "en": n["value"]
-            for n in names
-            if "label" in n["types"]
-            and (n["lang"] and n["lang"] not in display_name.keys())
-        }
-        props = {**hit}
-
-        # Acronyms or initialisms for the organization name.
-        acronyms = [a["value"] for a in names if "acronym" in a["types"]]
-        if acronyms:
-            props.update({"acronyms": acronyms})
-
-        res = {
-            "id": ror_id,
-            "title": {**display_name, **alt_names},
-            "props": props,
-        }
-        return res
 
     def to_dict(self):
         """Return result as a dictionary."""
@@ -88,27 +85,51 @@ class RORListResultV2(RecordList):
             }
         }
 
-        if self._params:
-            if self._links_tpl:
-                res["links"] = self._links_tpl.expand(self._identity, self.pagination)
+        if self._params and self._links_tpl:
+            res["links"] = self._links_tpl.expand(self._identity, self.pagination)
 
         return res
 
 
-class RORItemV2(ServiceItemResult):
+class RORItemV2(RecordItem):
     """Single ROR v2 API search result item."""
 
-    def __init__(
-        self,
-        service,
-        identity,
-        record,
-        errors=None,
-        links_tpl=None,
-        schema=None,
-        expandable_fields=None,
-        expand=False,
-        nested_links_item=None,
-    ):
-        """Constructor."""
-        pass
+    @property
+    def links(self):
+        """Get links for this result item."""
+        return self._links_tpl.expand(self._identity, self._obj)
+
+    @property
+    def data(self):
+        """Property to get the record."""
+        if self._data:
+            return self._data
+
+        self._data = self._schema.dump(
+            self._obj,
+            context=dict(
+                identity=self._identity,
+                record=self._record,
+            ),
+        )
+
+        self._data = to_vocabulary_item(self._data)
+
+        if self._links_tpl:
+            self._data["links"] = self.links
+
+        if self._nested_links_item:
+            for link in self._nested_links_item:
+                link.expand(self._identity, self._record, self._data)
+
+        return self._data
+
+    @property
+    def _obj(self):
+        """Return the object to dump."""
+        return SimpleNamespace(**self._record)
+
+    @property
+    def id(self):
+        """Get the record id."""
+        return self._obj.id
