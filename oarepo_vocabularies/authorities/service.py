@@ -2,7 +2,7 @@ import abc
 import marshmallow as ma
 
 from types import SimpleNamespace
-from marshmallow import fields as ma_fields
+from marshmallow import fields as ma_fields, validate
 from oarepo_vocabularies.authorities.clients import RORClientV2
 from oarepo_vocabularies.authorities.results import RORListResultV2, RORItemV2
 from invenio_records_resources.services import Link, LinksTemplate, pagination_links
@@ -45,14 +45,52 @@ class AuthorityService(abc.ABC):
 
 class RORNameSchemaV2(ma.Schema):
     value = ma_fields.String(required=True)
-    types = ma_fields.List(ma_fields.String())
+    types = ma_fields.List(
+        ma_fields.String(
+            validate=validate.OneOf(["acronym", "alias", "label", "ror_display"])
+        ),
+    )
     lang = ma_fields.String()
+
+
+class RORLinkSchema(ma.Schema):
+    type = ma_fields.String(
+        required=True, validate=validate.OneOf(["website", "wikipedia"])
+    )
+    value = ma_fields.String(required=True)
+
+
+class RORGeoDetailsSchema(ma.Schema):
+    name = ma_fields.String(required=True)
+    country_name = ma_fields.String()
+    country_code = ma_fields.String()
+
+class RORLocationSchema(ma.Schema):
+    geonames_details = ma_fields.Nested(lambda: RORGeoDetailsSchema())
 
 
 class RORMetadataSchemaV2(ma.Schema):
     id = ma_fields.String(required=True)
     names = ma_fields.List(ma_fields.Nested(lambda: RORNameSchemaV2()))
-    types = ma_fields.List(ma_fields.String())
+    types = ma_fields.List(
+        ma_fields.String(
+            validate=validate.OneOf(
+                [
+                    "education",
+                    "funder",
+                    "healthcare",
+                    "company",
+                    "archive",
+                    "nonprofit",
+                    "government",
+                    "facility",
+                    "other",
+                ]
+            ),
+        ),
+    )
+    links = ma_fields.List(ma_fields.Nested(lambda: RORLinkSchema()))
+    locations = ma_fields.List(ma_fields.Nested(lambda: RORLocationSchema()))
 
     class Meta:
         unknown = ma.INCLUDE

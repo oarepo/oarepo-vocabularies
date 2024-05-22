@@ -28,16 +28,25 @@ def to_vocabulary_item(ror_record):
         else:
             other_names.append(n["value"])
 
-    types = ror_record.pop('types', [])
+    types = ror_record.pop("types", [])
+    links = [f"{l['type']}:{l['value']}" for l in ror_record.pop("links", [])]
+    locations = [
+        f"{l['geonames_details']['name']}, {l['geonames_details']['country_name']}"
+        for l in ror_record.pop("locations", [])
+    ]
 
     props = {**ror_record}
 
     if acronyms:
         props.update({"acronyms": ", ".join(acronyms)})
     if other_names:
-        props.update({"otherNames": ",".join(other_names)})
+        props.update({"otherNames": ", ".join(other_names)})
     if types:
-        props.update({"types":  ", ".join(types)})
+        props.update({"types": ", ".join(types)})
+    if links:
+        props.update({"links": ", ".join(links)})
+    if locations:
+        props.update({"locations": "; ".join(locations)})
 
     res = {
         "id": ror_id,
