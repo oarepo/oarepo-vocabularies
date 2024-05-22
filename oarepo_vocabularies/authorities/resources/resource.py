@@ -1,3 +1,4 @@
+from flask import g
 from flask_resources import Resource, resource_requestctx, response_handler, route
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
@@ -24,6 +25,7 @@ class AuthoritativeVocabulariesResource(Resource):
     @request_view_args
     @response_handler()
     def list(self):
+        identity = g.identity
         authority_service: AuthorityService = authorities.get_authority_api(
             resource_requestctx.view_args["type"]
         )
@@ -35,12 +37,7 @@ class AuthoritativeVocabulariesResource(Resource):
 
         # Get hits from authority.
         params = resource_requestctx.args
-        q, page, size = (
-            params.get("suggest"),
-            params.get("page", 1),
-            params.get("size", 20),
-        )
-        results = authority_service.search(query=q, page=page, size=size)
+        results = authority_service.search(identity, params)
 
         # Mark external, resolve uuid.
         ids = [item["id"] for item in results["hits"]["hits"]]

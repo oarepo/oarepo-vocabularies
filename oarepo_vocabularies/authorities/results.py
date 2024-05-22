@@ -1,31 +1,43 @@
 from types import SimpleNamespace
+from invenio_records_resources.pagination import Pagination
 from invenio_records_resources.services.records.results import RecordList, RecordItem
 
 
 def to_vocabulary_item(ror_record):
     ror_id = ror_record.pop("id")
     names = ror_record.pop("names")
-    # The name of the organization shown as the main heading of the
-    # organization’s record in the ROR user interface.
-    # Each record must have exactly 1 name with type = ror_display.
-    display_name = {
-        n.get("lang") or "en": n["value"] for n in names if "ror_display" in n["types"]
-    }
+    display_name = {}
+    alt_names = {}
+    acronyms = []
+    other_names = []
 
-    # Alternative name of the organization in other languages than
-    # display name.
-    alt_names = {
-        n.get("lang") or "en": n["value"]
-        for n in names
-        if "label" in n["types"]
-        and (n["lang"] and n["lang"] not in display_name.keys())
-    }
+    for n in names:
+        if "ror_display" in n["types"]:
+            # The name of the organization shown as the main heading of the
+            # organization’s record in the ROR user interface.
+            # Each record must have exactly 1 name with type = ror_display.
+            display_name = {n.get("lang") or "en": n["value"]}
+        elif "label" in n["types"] and (
+            n["lang"] and n["lang"] not in display_name.keys()
+        ):
+            # Alternative names in other languages
+            alt_names[n.get("lang")] = n["value"]
+        elif "acronym" in n["types"]:
+            # Acronyms or initialisms for the organization name.
+            acronyms.append(n["value"])
+        else:
+            other_names.append(n["value"])
+
+    types = ror_record.pop('types', [])
+
     props = {**ror_record}
 
-    # Acronyms or initialisms for the organization name.
-    acronyms = [a["value"] for a in names if "acronym" in a["types"]]
     if acronyms:
-        props.update({"acronyms": acronyms})
+        props.update({"acronyms": ", ".join(acronyms)})
+    if other_names:
+        props.update({"otherNames": ",".join(other_names)})
+    if types:
+        props.update({"types":  ", ".join(types)})
 
     res = {
         "id": ror_id,
@@ -47,6 +59,15 @@ class RORListResultV2(RecordList):
     def aggregations(self):
         """Get the search result aggregations."""
         return None
+
+    @property
+    def pagination(self):
+        """Create a pagination object."""
+        return Pagination(
+            self._params["size"],
+            self._params.get("page", 1),
+            self.total,
+        )
 
     @property
     def hits(self):

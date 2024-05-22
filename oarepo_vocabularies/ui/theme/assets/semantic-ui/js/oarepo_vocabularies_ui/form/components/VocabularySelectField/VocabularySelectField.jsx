@@ -63,15 +63,21 @@ const serializeAddedValue = (value) => {
 export const VocabularySelectField = ({
   type,
   fieldPath,
-  externalSuggestionApi,
+  externalAuthority,
   multiple,
   ...restProps
 }) => {
+  const suggestionsConfig = {
+    suggestionAPIUrl: `/api/vocabularies/${type}`,
+  };
+  if (externalAuthority) {
+    suggestionsConfig.externalSuggestionApi = `${suggestionsConfig.suggestionAPIUrl}/authoritative`;
+  }
+
   return (
     <RelatedSelectField
       fieldPath={fieldPath}
-      suggestionAPIUrl={`/api/vocabularies/${type}`}
-      externalSuggestionApi={externalSuggestionApi}
+      {...suggestionsConfig}
       selectOnBlur={false}
       serializeSuggestions={serializeVocabularySuggestions}
       multiple={multiple}
@@ -86,12 +92,13 @@ export const VocabularySelectField = ({
 VocabularySelectField.propTypes = {
   type: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
-  externalSuggestionApi: PropTypes.string,
+  externalAuthority: PropTypes.bool,
   multiple: PropTypes.bool,
 };
 
 VocabularySelectField.defaultProps = {
   multiple: false,
+  externalAuthority: false,
   suggestionAPIHeaders: {
     // TODO: remove after #BE-96 gets resolved
     Accept: "application/json",

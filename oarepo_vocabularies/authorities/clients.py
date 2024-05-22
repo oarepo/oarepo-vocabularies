@@ -19,8 +19,11 @@ class RORClientV2(object):
     search, and filter the organizations indexed in ROR.
     """
 
-    def __init__(self, url=None, testing=False, timeout=None, page_size=None):
+    def __init__(
+        self, url=None, testing=False, timeout=None, page_size=None, min_query_length=1
+    ):
         self.api_url = url or "https://api.ror.org/v2/organizations"
+        self.min_query_length = min_query_length
         self.testing = testing
         if self.testing:
             self.api_url = "https://api.dev.ror.org/v2/organizations"
@@ -28,7 +31,7 @@ class RORClientV2(object):
         self.timeout = timeout or 10000
         self.page_size = page_size or 20
 
-    def quick_search(self, query, page=1, size=10):
+    def quick_search(self, params, **kwargs):
         """Search for ROR records matching the querystring.
 
         Performs a "quick search" of only the names and external_ids fields in ROR.
@@ -39,15 +42,24 @@ class RORClientV2(object):
         - Searching for exact matches of an organization name
         - Searching for external identifiers
         """
-        headers = {"Accept": "application/json;charset=UTF-8"}
+        query, page, size = (
+            params.get("q"),
+            params.get("page", 1),
+            # Size param is not implemented by the API & fixed to 20 items per page
+            self.page_size
+        )
+        
         current_page = Pagination(self.page_size, page, size)
-        print(query, page, size)
-        query_params = {"query": quote_plus(query), "page": current_page.page}
-
         if not current_page.valid():
             raise SearchPaginationRESTError(
                 description=f"The requested page #{page} is outside the range of available pages",
             )
+
+        if not query or len(query) < self.min_query_length:
+            return {"items": [], "number_of_results": 0}
+
+        headers = {"Accept": "application/json;charset=UTF-8"}
+        query_params = {"query": quote_plus(query), "page": current_page.page}
 
         try:
             search_result = requests.get(
@@ -55,6 +67,7 @@ class RORClientV2(object):
                 timeout=self.timeout,
                 headers=headers,
                 params=query_params,
+                **kwargs
             ).json()
             return search_result
         except RequestException as e:

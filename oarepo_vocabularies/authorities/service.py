@@ -11,7 +11,7 @@ from invenio_records_resources.services.records import ServiceSchemaWrapper
 
 class AuthorityService(abc.ABC):
     @abc.abstractmethod
-    def search(self, identity, *, query=None, page=1, size=10, **kwargs):
+    def search(self, identity, params, **kwargs):
         """
         Search the external authority service by the given text query and return
         page & size with the data. The returned structure must be the same as Invenio
@@ -52,12 +52,13 @@ class RORNameSchemaV2(ma.Schema):
 class RORMetadataSchemaV2(ma.Schema):
     id = ma_fields.String(required=True)
     names = ma_fields.List(ma_fields.Nested(lambda: RORNameSchemaV2()))
+    types = ma_fields.List(ma_fields.String())
 
     class Meta:
         unknown = ma.INCLUDE
 
 
-class RORServiceV2(AuthorityService):
+class RORAuthorityServiceV2(AuthorityService):
 
     config = SimpleNamespace(
         schema=RORMetadataSchemaV2,
@@ -90,12 +91,11 @@ class RORServiceV2(AuthorityService):
             context={"type": self.config.parent_vocabulary_type},
         )
 
-    def search(self, identity, *, query=None, page=1, size=10, **kwargs):
+    def search(self, identity, params, **kwargs):
         # TODO(mesemus): check permissions (e.g. only authenticated can query authority)?
+        params = params or {}
 
-        params = dict(size=size, page=page, **kwargs)
-
-        results = self.ror_client.quick_search(query, **params)
+        results = self.ror_client.quick_search(params, **kwargs)
         results["hits"] = results.pop("items")
 
         return self.result_list(
@@ -112,7 +112,7 @@ class RORServiceV2(AuthorityService):
                 context={"args": params, "type": self.config.parent_vocabulary_type},
             ),
             links_item_tpl=self.links_item_tpl,
-        )
+        ).to_dict()
 
     def get(self, identity, item_id, **kwargs):
         record = self.ror_client.get_record(item_id, **kwargs)
@@ -122,7 +122,7 @@ class RORServiceV2(AuthorityService):
             identity,
             record,
             links_tpl=self.links_item_tpl,
-        )
+        ).to_dict()
 
     def result_list(self, *args, **kwargs):
         """Create a new instance of the resource list.
