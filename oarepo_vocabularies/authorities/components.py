@@ -14,12 +14,12 @@ from oarepo_vocabularies.records.api import find_vocabulary_relations
 
 class AuthorityComponent(ServiceComponent):
     def create(self, identity, data=None, record=None, errors=None, **kwargs):
-        self.lookup_and_store_authority_records(record)
+        self.lookup_and_store_authority_records(identity, record)
 
     def update(self, identity, data=None, record=None, **kwargs):
-        self.lookup_and_store_authority_records(record)
+        self.lookup_and_store_authority_records(identity, record)
 
-    def lookup_and_store_authority_records(self, record):
+    def lookup_and_store_authority_records(self, identity, record):
         for found_vocabulary in find_vocabulary_relations(record):
             try:
                 found_vocabulary.field.validate(raise_first_exception=False)
@@ -35,6 +35,7 @@ class AuthorityComponent(ServiceComponent):
                 # if so, for each record store the authority record
                 for err in e.errors:
                     self.resolve_and_store_authority_record(
+                        identity,
                         found_vocabulary.field,
                         result=err[0],
                         error=err[1],
@@ -47,6 +48,7 @@ class AuthorityComponent(ServiceComponent):
 
     def resolve_and_store_authority_record(
         self,
+        identity,
         fld,
         *,
         result,
@@ -64,7 +66,8 @@ class AuthorityComponent(ServiceComponent):
                 )
             item_id = value["id"]
             try:
-                fetched_item = authority_service.get(item_id, uow=self.uow, value=value)
+                fetched_item = authority_service.get(identity, item_id, uow=self.uow, value=value)
+                print(fetched_item)
             except Exception as e:
                 raise InvalidRelationError(
                     f"External authority failed: {e}",

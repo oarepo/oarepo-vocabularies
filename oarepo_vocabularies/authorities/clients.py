@@ -49,17 +49,12 @@ class RORClientV2(object):
             self.page_size
         )
         
-        current_page = Pagination(self.page_size, page, size)
-        if not current_page.valid():
-            raise SearchPaginationRESTError(
-                description=f"The requested page #{page} is outside the range of available pages",
-            )
 
         if not query or len(query) < self.min_query_length:
             return {"items": [], "number_of_results": 0}
 
         headers = {"Accept": "application/json;charset=UTF-8"}
-        query_params = {"query": quote_plus(query), "page": current_page.page}
+        query_params = {"query": quote_plus(query), "page": page}
 
         try:
             search_result = requests.get(
