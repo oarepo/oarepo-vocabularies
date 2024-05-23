@@ -66,7 +66,9 @@ class AuthorityComponent(ServiceComponent):
                 )
             item_id = value["id"]
             try:
-                fetched_item = authority_service.get(identity, item_id, uow=self.uow, value=value)
+                fetched_item = authority_service.get(
+                    identity, item_id, uow=self.uow, value=value
+                )
                 print(fetched_item)
             except Exception as e:
                 raise InvalidRelationError(

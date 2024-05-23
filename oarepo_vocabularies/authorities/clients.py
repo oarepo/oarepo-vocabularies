@@ -46,9 +46,8 @@ class RORClientV2(object):
             params.get("q"),
             params.get("page", 1),
             # Size param is not implemented by the API & fixed to 20 items per page
-            self.page_size
+            self.page_size,
         )
-        
 
         if not query or len(query) < self.min_query_length:
             return {"items": [], "number_of_results": 0}
@@ -62,7 +61,7 @@ class RORClientV2(object):
                 timeout=self.timeout,
                 headers=headers,
                 params=query_params,
-                **kwargs
+                **kwargs,
             ).json()
             return search_result
         except RequestException as e:

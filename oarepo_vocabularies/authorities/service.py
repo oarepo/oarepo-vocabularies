@@ -65,6 +65,7 @@ class RORGeoDetailsSchema(ma.Schema):
     country_name = ma_fields.String()
     country_code = ma_fields.String()
 
+
 class RORLocationSchema(ma.Schema):
     geonames_details = ma_fields.Nested(lambda: RORGeoDetailsSchema())
 
