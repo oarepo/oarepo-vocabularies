@@ -1,6 +1,7 @@
-{#def metadata, ui, record, d #}
+{#def metadata, ui, record, d, extra_context #}
 
 <div class="vocabularies-main">
+  <VocabulariesBreadcrumb extra_context={extra_context} metadata={metadata} />
   <div class="flex align-items-center rel-mt-1">
     {% if record.icon %}
       <img class="ui image rel-mr-1" src={{record.icon}}>
