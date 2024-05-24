@@ -1,0 +1,25 @@
+{#def metadata, extra_context #}
+
+
+{% set breadcrumbData = {
+    "hierarchical": extra_context.vocabularyProps.hierarchical,
+    "ancestorsOrSelf": metadata.hierarchy.ancestors_or_self|reverse|list,
+    "titles": metadata.hierarchy.title|reverse|list,
+    "vocabularyType": metadata.type,
+} %}
+
+
+{% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf|length>1 %}
+<div class="ui breadcrumb">
+    {% for index in range(0, breadcrumbData.ancestorsOrSelf|length) %}
+        {% set ancestor = breadcrumbData.ancestorsOrSelf[index] %}
+        {% set title = breadcrumbData.titles[index] %}
+        {% if loop.last %}
+            <div class="active section">{{ title }}</div>
+        {% else %}
+            <a class="section" href="/vocabularies/{{ breadcrumbData.vocabularyType }}/{{ ancestor }}">{{ title }}</a>
+            <div class="divider"> / </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
