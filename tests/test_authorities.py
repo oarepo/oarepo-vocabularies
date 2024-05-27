@@ -22,21 +22,15 @@ def test_authority_resource(client, authority_rec, authority_type, search_clear)
     assert len(internal_result) == 1
     assert internal_result[0]["id"] == "020bcb226"
 
+    # Test ROR authority resource
+    params = "q=cesnet&page=1"
+    resp = client.get(f"/api/vocabularies/ror_authority/authoritative?{params}").json
+    # Assert.
+    results = resp["hits"]["hits"]
 
-def test_ror_authority_result_to_vocabulary(example_ror_record):
-    vocab_item = to_vocabulary_item(example_ror_record)
-
-    # Test id is provided
-    assert vocab_item['id'] == example_ror_record['id']
-
-    # Test title is converted
-    assert vocab_item['title'] == {
-        'en': 'Czech Education and Scientific Network'
-    }
-
-    # Test other supported props is converted
-    assert len(vocab_item['props'].keys()) > 0
-    assert vocab_item['props']['acronyms'] == 'CESNET'
+    external_result = [res for res in results if res["props"]["external"]]
+    assert len(external_result) == 1
+    assert external_result[0]["id"] == "https://ror.org/050dkka69"
 
 
 def test_submit_record_fetch_authority(
@@ -54,3 +48,17 @@ def test_submit_record_fetch_authority(
     assert vocabulary_service.read(identity, ("authority", "03zsq2967")).data[
         "title"
     ] == {"en": "Association of Asian Pacific Community Health Organizations"}
+
+
+def test_ror_authority_result_to_vocabulary(example_ror_record):
+    vocab_item = to_vocabulary_item(example_ror_record)
+
+    # Test id is provided
+    assert vocab_item["id"] == example_ror_record["id"]
+
+    # Test title is converted
+    assert vocab_item["title"] == {"en": "Czech Education and Scientific Network"}
+
+    # Test other supported props is converted
+    assert len(vocab_item["props"].keys()) > 0
+    assert vocab_item["props"]["acronyms"] == "CESNET"
