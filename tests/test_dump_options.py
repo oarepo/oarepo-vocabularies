@@ -32,6 +32,13 @@ def test_dump_options(
                 "definition": {"name": {"en": "authority"}, "authority": "AuthService"},
                 "url": "/api/vocabularies/authority",
             },
+            "ror-authority": {
+                "definition": {
+                    "authority": "RORAuthorityServiceV2",
+                    "name": {"en": "ROR Authority"},
+                },
+                "url": "/api/vocabularies/ror-authority",
+            },
             "languages": {
                 "definition": {
                     "name": {"cs": "jazyky", "en": "languages"},
