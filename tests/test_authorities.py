@@ -1,5 +1,6 @@
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
+from oarepo_vocabularies.authorities.results import to_vocabulary_item
 from oarepo_vocabularies.records.api import Vocabulary
 
 
@@ -22,8 +23,19 @@ def test_authority_resource(client, authority_rec, authority_type, search_clear)
     assert internal_result[0]["id"] == "020bcb226"
 
 
-def test_ror_authority_service(ror_client):
-    pass
+def test_ror_authority_result_to_vocabulary(example_ror_record):
+    vocab_item = to_vocabulary_item(example_ror_record)
+
+    # Test id is provided
+    assert vocab_item['id'] == example_ror_record['id']
+
+    # Test title is converted
+    assert vocab_item['title'] == {
+        'en': 'Czech Education and Scientific Network'
+    }
+
+    # Test other supported props is converted
+    assert vocab_item['props'] != {}
 
 
 def test_submit_record_fetch_authority(

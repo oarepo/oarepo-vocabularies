@@ -21,7 +21,10 @@ from invenio_records_permissions.generators import AnyUser, SystemProcess
 from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
 
 from oarepo_vocabularies.authorities.clients import RORClientV2
-from oarepo_vocabularies.authorities.service import AuthorityService, RORAuthorityServiceV2
+from oarepo_vocabularies.authorities.service import (
+    AuthorityService,
+    RORAuthorityServiceV2,
+)
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -229,7 +232,7 @@ def app_config(app_config):
         "ror_authority": {
             "name": {"en": "ROR Authority"},
             "authority": RORAuthorityServiceV2,
-        }
+        },
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
@@ -343,6 +346,64 @@ def example_record(db, identity, service, example_data):
 
     Vocabulary.index.refresh()  # Refresh the index
     return record
+
+
+@pytest.fixture()
+def example_ror_record():
+    return {
+        "admin": {
+            "created": {"date": "2018-11-14", "schema_version": "1.0"},
+            "last_modified": {"date": "2024-05-13", "schema_version": "2.0"},
+        },
+        "domains": [],
+        "established": 1996,
+        "external_ids": [
+            {
+                "all": ["grid.423953.a"],
+                "preferred": "grid.423953.a",
+                "type": "grid",
+            },
+            {"all": ["0000 0004 0506 9234"], "preferred": None, "type": "isni"},
+            {"all": ["Q5010371"], "preferred": None, "type": "wikidata"},
+        ],
+        "id": "https://ror.org/050dkka69",
+        "links": [
+            {"type": "website", "value": "https://www.cesnet.cz/"},
+            {
+                "type": "wikipedia",
+                "value": "https://en.wikipedia.org/wiki/CESNET",
+            },
+        ],
+        "locations": [
+            {
+                "geonames_details": {
+                    "country_code": "CZ",
+                    "country_name": "Czechia",
+                    "lat": 50.08804,
+                    "lng": 14.42076,
+                    "name": "Prague",
+                },
+                "geonames_id": 3067696,
+            }
+        ],
+        "names": [
+            {"lang": None, "types": ["acronym"], "value": "CESNET"},
+            {
+                "lang": "en",
+                "types": ["ror_display", "label"],
+                "value": "Czech Education and Scientific Network",
+            },
+        ],
+        "relationships": [
+            {
+                "label": "Czech Academy of Sciences",
+                "type": "parent",
+                "id": "https://ror.org/053avzc18",
+            }
+        ],
+        "status": "active",
+        "types": ["other"],
+    }
 
 
 @pytest.fixture(scope="function")
@@ -505,7 +566,7 @@ def ror_client():
 
 
 class AuthService(AuthorityService):
-    def search(self, query=None, page=1, size=10, **kwargs):
+    def search(self, identity, params, **kwargs):
         return {
             "hits": {
                 "total": 2,
@@ -526,7 +587,7 @@ class AuthService(AuthorityService):
             }
         }
 
-    def get(self, item_id, **kwargs):
+    def get(self, identity, item_id, *, uow, value, **kwargs):
         return next(x for x in self.search()["hits"]["hits"] if x["id"] == item_id)
 
 
