@@ -35,7 +35,8 @@ def test_ror_authority_result_to_vocabulary(example_ror_record):
     }
 
     # Test other supported props is converted
-    assert vocab_item['props'] != {}
+    assert len(vocab_item['props'].keys()) > 0
+    assert vocab_item['props']['acronyms'] == 'CESNET'
 
 
 def test_submit_record_fetch_authority(

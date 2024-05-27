@@ -1,11 +1,15 @@
+from copy import deepcopy
 from types import SimpleNamespace
+
 from invenio_records_resources.pagination import Pagination
 from invenio_records_resources.services.records.results import RecordList, RecordItem
 
 
 def to_vocabulary_item(ror_record):
-    ror_id = ror_record.pop("id")
-    names = ror_record.pop("names")
+    projection = deepcopy(ror_record)
+
+    ror_id = projection.pop("id")
+    names = projection.pop("names")
     display_name = {}
     alt_names = {}
     acronyms = []
@@ -28,14 +32,14 @@ def to_vocabulary_item(ror_record):
         else:
             other_names.append(n["value"])
 
-    types = ror_record.pop("types", [])
-    links = [f"{l['type']}:{l['value']}" for l in ror_record.pop("links", [])]
+    types = projection.pop("types", [])
+    links = [f"{l['type']}:{l['value']}" for l in projection.pop("links", [])]
     locations = [
         f"{l['geonames_details']['name']}, {l['geonames_details']['country_name']}"
-        for l in ror_record.pop("locations", [])
+        for l in projection.pop("locations", [])
     ]
 
-    props = {**ror_record}
+    props = {**projection}
 
     if acronyms:
         props.update({"acronyms": ", ".join(acronyms)})
