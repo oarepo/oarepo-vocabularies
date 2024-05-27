@@ -26,7 +26,7 @@ def test_authority_resource(
 
     # Test ROR authority resource
     params = "q=cesnet&page=1"
-    resp = client.get(f"/api/vocabularies/ror_authority/authoritative?{params}").json
+    resp = client.get(f"/api/vocabularies/ror-authority/authoritative?{params}").json
     # Assert.
     results = resp["hits"]["hits"]
 
