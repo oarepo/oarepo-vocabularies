@@ -102,10 +102,7 @@ class RORListResultV2(RecordList):
                 projection["links"] = self._links_item_tpl.expand(
                     self._identity, record
                 )
-            if self._nested_links_item:
-                for link in self._nested_links_item:
-                    link.expand(self._identity, record, projection)
-
+            
             yield projection
 
     def to_dict(self):
