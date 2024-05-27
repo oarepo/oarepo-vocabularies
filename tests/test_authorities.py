@@ -57,6 +57,7 @@ def test_submit_record_fetch_authority(
     }
 
     assert response.data["ror-authority"]["id"] == "050dkka69"
+    print(response.data['ror-authority'])
     assert response.data["ror-authority"]["title"] == {
         "en": "Czech Education and Scientific Network"
     }
