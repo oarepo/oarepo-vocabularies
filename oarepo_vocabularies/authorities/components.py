@@ -19,6 +19,9 @@ class AuthorityComponent(ServiceComponent):
     def update(self, identity, data=None, record=None, **kwargs):
         self.lookup_and_store_authority_records(record)
 
+    def update_draft(self, identity, data=None, record=None, **kwargs):
+        self.lookup_and_store_authority_records(record)
+
     def lookup_and_store_authority_records(self, record):
         for found_vocabulary in find_vocabulary_relations(record):
             try:
