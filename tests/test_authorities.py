@@ -22,6 +22,10 @@ def test_authority_resource(client, authority_rec, authority_type, search_clear)
     assert internal_result[0]["id"] == "020bcb226"
 
 
+def test_ror_authority_service(ror_client):
+    pass
+
+
 def test_submit_record_fetch_authority(
     search_clear, identity, authority_type, simple_record_service, vocab_cf
 ):
