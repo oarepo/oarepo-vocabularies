@@ -77,7 +77,7 @@ class RORListResultV2(RecordList):
     def pagination(self):
         """Create a pagination object."""
         return Pagination(
-            self._params["size"],
+            self._params.get("size", 20),
             self._params.get("page", 1),
             self.total,
         )
