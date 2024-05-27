@@ -56,7 +56,7 @@ def test_submit_record_fetch_authority(
         "en": "Association of Asian Pacific Community Health Organizations"
     }
 
-    assert response.data["ror-authority"]["id"] == "https://ror.org/050dkka69"
+    assert response.data["ror-authority"]["id"] == "050dkka69"
     assert response.data["ror-authority"]["title"] == {
         "en": "Czech Education and Scientific Network"
     }
