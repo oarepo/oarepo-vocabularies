@@ -10,5 +10,5 @@ def test_authority_ror_client(ror_client):
 
     assert short_result == long_result
 
-    display_name = ''.join([name['value'] for name in long_result['names'] if name['type'] == 'ror_display'])
+    display_name = ''.join([name['value'] for name in long_result['names'] if 'ror_display' in name['types']])
     assert display_name == 'Air Force Test Center'
