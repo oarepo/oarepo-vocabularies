@@ -1,3 +1,5 @@
+import pytest
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from oarepo_vocabularies.records.api import Vocabulary
@@ -41,6 +43,11 @@ def test_submit_record_fetch_authority(
 
 
 def test_submit_record_update_authority(search_clear, identity, authority_type, simple_record_service, vocab_cf):
+    with pytest.raises(PIDDoesNotExistError):
+        vocabulary_service.read(identity, ("authority", "03zsq2967"))
+    with pytest.raises(PIDDoesNotExistError):
+        vocabulary_service.read(identity, ("authority", "020bcb226"))
+
     record_id = test_submit_record_fetch_authority(search_clear, identity, authority_type, simple_record_service, vocab_cf)
     response = simple_record_service.update(
         identity, record_id, {"title": "b", "authority": {"id": "020bcb226"}}
