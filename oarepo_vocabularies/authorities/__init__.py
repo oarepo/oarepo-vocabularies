@@ -1,3 +1,3 @@
-from .service import AuthorityService
+from .service import AuthorityProvider
 
-__all__ = ("AuthorityService",)
+__all__ = ("AuthorityProvider",)

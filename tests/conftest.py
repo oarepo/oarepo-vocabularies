@@ -22,8 +22,8 @@ from oarepo_runtime.services.config.permissions_presets import EveryonePermissio
 
 from oarepo_vocabularies.authorities.clients import RORClientV2
 from oarepo_vocabularies.authorities.service import (
-    AuthorityService,
-    RORAuthorityServiceV2,
+    AuthorityProvider,
+    RORProviderV2,
 )
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
@@ -231,7 +231,7 @@ def app_config(app_config):
         },
         "ror-authority": {
             "name": {"en": "ROR Authority"},
-            "authority": RORAuthorityServiceV2,
+            "authority": RORProviderV2,
         },
     }
 
@@ -573,7 +573,7 @@ def ror_client():
     return RORClientV2(testing=True)
 
 
-class AuthService(AuthorityService):
+class AuthService(AuthorityProvider):
     def search(self, identity, params, **kwargs):
         return {
             "hits": {

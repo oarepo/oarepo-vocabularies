@@ -9,7 +9,7 @@ from invenio_records_resources.resources.records.resource import (
 from invenio_vocabularies.records.models import VocabularyType
 
 from oarepo_vocabularies.authorities.proxies import authorities
-from oarepo_vocabularies.authorities.service import AuthorityService
+from oarepo_vocabularies.authorities.service import AuthorityProvider
 
 
 class AuthoritativeVocabulariesResource(Resource):
@@ -26,7 +26,7 @@ class AuthoritativeVocabulariesResource(Resource):
     @response_handler()
     def list(self):
         identity = g.identity
-        authority_service: AuthorityService = authorities.get_authority_api(
+        authority_service: AuthorityProvider = authorities.get_authority_api(
             resource_requestctx.view_args["type"]
         )
         vocabulary_type = VocabularyType.query.filter_by(

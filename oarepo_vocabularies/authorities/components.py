@@ -8,7 +8,7 @@ from oarepo_runtime.services.relations.errors import (
 )
 
 from oarepo_vocabularies.authorities.proxies import authorities
-from oarepo_vocabularies.authorities.service import AuthorityService
+from oarepo_vocabularies.authorities.service import AuthorityProvider
 from oarepo_vocabularies.records.api import find_vocabulary_relations
 
 
@@ -56,7 +56,7 @@ class AuthorityComponent(ServiceComponent):
         *,
         result,
         error,
-        authority_service: AuthorityService,
+        authority_service: AuthorityProvider,
         vocabulary_type,
     ):
         with db.session.begin_nested():

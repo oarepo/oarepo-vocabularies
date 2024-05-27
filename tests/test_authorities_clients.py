@@ -1,8 +1,8 @@
-
+import pytest
 from oarepo_vocabularies.authorities.clients import RORClientV2
 
 def test_authority_ror_client_get(ror_client):
-    # Given a ROR id, should resolve both formats to same record.
+    # 1. Given a ROR id, should resolve both formats to same record.
     test_id_short = '04k0tth05'
     test_id_long = 'https://ror.org/04k0tth05'
 
@@ -13,6 +13,10 @@ def test_authority_ror_client_get(ror_client):
 
     display_name = ''.join([name['value'] for name in long_result['names'] if 'ror_display' in name['types']])
     assert display_name == 'Air Force Test Center'
+
+    # 2. Returns none for non-existent ROR ID
+    bad_id = 'l33tr0r1d'
+    assert ror_client.get_record(bad_id) is None
 
 def test_authority_ror_client_search(ror_client):
     # 1. Returns nothing on empty query
@@ -42,3 +46,5 @@ def test_authority_ror_client_search(ror_client):
 
     for item in results['items']:
         assert item['id'] not in [it['id'] for it in page2_results['items']]
+
+    

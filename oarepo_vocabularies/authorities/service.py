@@ -9,7 +9,7 @@ from invenio_records_resources.services import Link, LinksTemplate, pagination_l
 from invenio_records_resources.services.records import ServiceSchemaWrapper
 
 
-class AuthorityService(abc.ABC):
+class AuthorityProvider(abc.ABC):
     @abc.abstractmethod
     def search(self, identity, params, **kwargs):
         """
@@ -43,92 +43,92 @@ class AuthorityService(abc.ABC):
         """
 
 
-class RORNameSchemaV2(ma.Schema):
-    value = ma_fields.String(required=True)
-    types = ma_fields.List(
-        ma_fields.String(
-            validate=validate.OneOf(["acronym", "alias", "label", "ror_display"])
-        ),
-    )
-    lang = ma_fields.String()
+# class RORNameSchemaV2(ma.Schema):
+#     value = ma_fields.String(required=True)
+#     types = ma_fields.List(
+#         ma_fields.String(
+#             validate=validate.OneOf(["acronym", "alias", "label", "ror_display"])
+#         ),
+#     )
+#     lang = ma_fields.String()
 
 
-class RORLinkSchema(ma.Schema):
-    type = ma_fields.String(
-        required=True, validate=validate.OneOf(["website", "wikipedia"])
-    )
-    value = ma_fields.String(required=True)
+# class RORLinkSchema(ma.Schema):
+#     type = ma_fields.String(
+#         required=True, validate=validate.OneOf(["website", "wikipedia"])
+#     )
+#     value = ma_fields.String(required=True)
 
 
-class RORGeoDetailsSchema(ma.Schema):
-    name = ma_fields.String(required=True)
-    country_name = ma_fields.String()
-    country_code = ma_fields.String()
+# class RORGeoDetailsSchema(ma.Schema):
+#     name = ma_fields.String(required=True)
+#     country_name = ma_fields.String()
+#     country_code = ma_fields.String()
 
 
-class RORLocationSchema(ma.Schema):
-    geonames_details = ma_fields.Nested(lambda: RORGeoDetailsSchema())
+# class RORLocationSchema(ma.Schema):
+#     geonames_details = ma_fields.Nested(lambda: RORGeoDetailsSchema())
 
 
-class RORMetadataSchemaV2(ma.Schema):
-    id = ma_fields.String(required=True)
-    names = ma_fields.List(ma_fields.Nested(lambda: RORNameSchemaV2()))
-    types = ma_fields.List(
-        ma_fields.String(
-            validate=validate.OneOf(
-                [
-                    "education",
-                    "funder",
-                    "healthcare",
-                    "company",
-                    "archive",
-                    "nonprofit",
-                    "government",
-                    "facility",
-                    "other",
-                ]
-            ),
-        ),
-    )
-    links = ma_fields.List(ma_fields.Nested(lambda: RORLinkSchema()))
-    locations = ma_fields.List(ma_fields.Nested(lambda: RORLocationSchema()))
+# class RORMetadataSchemaV2(ma.Schema):
+#     id = ma_fields.String(required=True)
+#     names = ma_fields.List(ma_fields.Nested(lambda: RORNameSchemaV2()))
+#     types = ma_fields.List(
+#         ma_fields.String(
+#             validate=validate.OneOf(
+#                 [
+#                     "education",
+#                     "funder",
+#                     "healthcare",
+#                     "company",
+#                     "archive",
+#                     "nonprofit",
+#                     "government",
+#                     "facility",
+#                     "other",
+#                 ]
+#             ),
+#         ),
+#     )
+#     links = ma_fields.List(ma_fields.Nested(lambda: RORLinkSchema()))
+#     locations = ma_fields.List(ma_fields.Nested(lambda: RORLocationSchema()))
 
-    class Meta:
-        unknown = ma.INCLUDE
+#     class Meta:
+#         unknown = ma.INCLUDE
 
 
-class RORAuthorityServiceV2(AuthorityService):
+class RORProviderV2(AuthorityProvider):
 
-    config = SimpleNamespace(
-        schema=RORMetadataSchemaV2,
-        parent_vocabulary_type="institutions",
-        permission_policy_cls=None,
-        result_list_cls=RORListResultV2,
-        result_item_cls=RORItemV2,
-        ror_client_cls=RORClientV2,
-        links_item_tpl={
-            "self": Link(
-                "{+api}/vocabularies/{type}/authoritative/{id}",
-                vars=lambda record, vars: vars.update({"id": record.id}),
-            )
-        },
-    )
+    # config = SimpleNamespace(
+    #     schema=RORMetadataSchemaV2,
+    #     parent_vocabulary_type="institutions",
+    #     permission_policy_cls=None,
+    #     result_list_cls=RORListResultV2,
+    #     result_item_cls=RORItemV2,
+    #     ror_client_cls=RORClientV2,
+    #     links_item_tpl={
+    #         "self": Link(
+    #             "{+api}/vocabularies/{type}/authoritative/{id}",
+    #             vars=lambda record, vars: vars.update({"id": record.id}),
+    #         )
+    #     },
+    # )
 
     def __init__(self, url=None, testing=False, **kwargs):
         self.ror_client = self.config.ror_client_cls(url, testing, **kwargs)
 
-    @property
-    def schema(self):
-        """Returns the data schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema)
+    # @property
+    # def schema(self):
+    #     """Returns the data schema instance."""
+    #     return ServiceSchemaWrapper(self, schema=self.config.schema)
 
-    @property
-    def links_item_tpl(self):
-        """Item links template."""
-        return LinksTemplate(
-            self.config.links_item_tpl,
-            context={"type": self.config.parent_vocabulary_type},
-        )
+    # @property
+    # def links_item_tpl(self):
+    #     """Item links template."""
+    #     return LinksTemplate(
+    #         self.config.links_item_tpl,
+    #         context={"type": self.config.parent_vocabulary_type},
+    #     )
 
     def search(self, identity, params, **kwargs):
         # TODO(mesemus): check permissions (e.g. only authenticated can query authority)?
@@ -137,48 +137,32 @@ class RORAuthorityServiceV2(AuthorityService):
         results = self.ror_client.quick_search(params, **kwargs)
         results["hits"] = results.pop("items")
 
-        return self.result_list(
-            self,
-            identity,
-            results,
-            params=params,
-            links_tpl=LinksTemplate(
-                {
-                    **pagination_links(
-                        "{+api}/vocabularies/{type}/authoritative{?args*}"
-                    ),
-                },
-                context={"args": params, "type": self.config.parent_vocabulary_type},
-            ),
-            links_item_tpl=self.links_item_tpl,
-        ).to_dict()
+        return results.to_dict()
 
     def get(self, identity, item_id, **kwargs):
         record = self.ror_client.get_record(item_id, **kwargs)
 
-        return self.result_item(
-            self,
-            identity,
-            record,
-            links_tpl=self.links_item_tpl,
-        ).to_dict()
+        if not record:
+            raise KeyError(item_id)
 
-    def result_list(self, *args, **kwargs):
-        """Create a new instance of the resource list.
+        return record.to_dict()
 
-        A resource list is an instantiated object representing a grouping
-        of Resource units. Sometimes this group has additional data making
-        a simple iterable of resource units inappropriate. It is what a
-        Resource list methods transact in and therefore what
-        a Service must provide.
-        """
-        return self.config.result_list_cls(*args, **kwargs)
+    # def result_list(self, *args, **kwargs):
+    #     """Create a new instance of the resource list.
 
-    def result_item(self, *args, **kwargs):
-        """Create a new instance of the resource unit.
+    #     A resource list is an instantiated object representing a grouping
+    #     of Resource units. Sometimes this group has additional data making
+    #     a simple iterable of resource units inappropriate. It is what a
+    #     Resource list methods transact in and therefore what
+    #     a Service must provide.
+    #     """
+    #     return self.config.result_list_cls(*args, **kwargs)
 
-        A resource unit is an instantiated object representing one unit
-        of a Resource. It is what a Resource transacts in and therefore
-        what a Service must provide.
-        """
-        return self.config.result_item_cls(*args, **kwargs)
+    # def result_item(self, *args, **kwargs):
+    #     """Create a new instance of the resource unit.
+
+    #     A resource unit is an instantiated object representing one unit
+    #     of a Resource. It is what a Resource transacts in and therefore
+    #     what a Service must provide.
+    #     """
+    #     return self.config.result_item_cls(*args, **kwargs)
