@@ -229,7 +229,7 @@ def app_config(app_config):
             "name": {"en": "authority"},
             "authority": AuthService,
         },
-        "ror_authority": {
+        "ror-authority": {
             "name": {"en": "ROR Authority"},
             "authority": RORAuthorityServiceV2,
         },
@@ -286,6 +286,14 @@ def lang_type(db):
 def authority_type(db):
     """Get a language vocabulary type."""
     v = VocabularyType.create(id="authority", pid_type="v-auth")
+    db.session.commit()
+    return v
+
+
+@pytest.fixture()
+def ror_authority_type(db):
+    """Create ROR authority vocabulary."""
+    v = VocabularyType.create(id="ror-authority", pid_type="v-ror")
     db.session.commit()
     return v
 
@@ -588,7 +596,11 @@ class AuthService(AuthorityService):
         }
 
     def get(self, identity, item_id, *, uow, value, **kwargs):
-        return next(x for x in self.search(identity, {'q': item_id})["hits"]["hits"] if x["id"] == item_id)
+        return next(
+            x
+            for x in self.search(identity, {"q": item_id})["hits"]["hits"]
+            if x["id"] == item_id
+        )
 
 
 @pytest.fixture()

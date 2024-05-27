@@ -4,7 +4,9 @@ from oarepo_vocabularies.authorities.results import to_vocabulary_item
 from oarepo_vocabularies.records.api import Vocabulary
 
 
-def test_authority_resource(client, authority_rec, authority_type, search_clear):
+def test_authority_resource(
+    client, authority_rec, authority_type, ror_authority_type, search_clear
+):
     # Arrange.
 
     # Act.
@@ -34,20 +36,40 @@ def test_authority_resource(client, authority_rec, authority_type, search_clear)
 
 
 def test_submit_record_fetch_authority(
-    search_clear, identity, authority_type, simple_record_service, vocab_cf
+    search_clear,
+    identity,
+    authority_type,
+    ror_authority_type,
+    simple_record_service,
+    vocab_cf,
 ):
     response = simple_record_service.create(
-        identity, {"title": "a", "authority": {"id": "03zsq2967"}}
+        identity,
+        {
+            "title": "a",
+            "authority": {"id": "03zsq2967"},
+            "ror-authority": {"id": "050dkka69"},
+        },
     )
     assert response.data["authority"]["id"] == "03zsq2967"
     assert response.data["authority"]["title"] == {
         "en": "Association of Asian Pacific Community Health Organizations"
     }
+
+    assert response.data["ror-authority"]["id"] == "https://ror.org/050dkka69"
+    assert response.data["ror-authority"]["title"] == {
+        "en": "Czech Education and Scientific Network"
+    }
+
     # check that the vocabulary item has been created
     Vocabulary.index.refresh()
     assert vocabulary_service.read(identity, ("authority", "03zsq2967")).data[
         "title"
     ] == {"en": "Association of Asian Pacific Community Health Organizations"}
+
+    assert vocabulary_service.read(
+        identity, ("ror-authority", "https://ror.org/050dkka69")
+    ).data["title"] == {"en": "Czech Education and Scientific Network"}
 
 
 def test_ror_authority_result_to_vocabulary(example_ror_record):
