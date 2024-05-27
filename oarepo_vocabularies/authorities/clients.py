@@ -42,11 +42,10 @@ class RORClientV2(object):
         - Searching for exact matches of an organization name
         - Searching for external identifiers
         """
-        query, page, size = (
+        query, page = (
             params.get("q"),
             params.get("page", 1),
             # Size param is not implemented by the API & fixed to 20 items per page
-            self.page_size,
         )
 
         if not query or len(query) < self.min_query_length:
@@ -82,7 +81,7 @@ class RORClientV2(object):
 
         record_url = f"{self.api_url}/{quote_plus(pid)}"
 
-        return requests.get(record_url).json()
+        return requests.get(record_url, **kwargs).json()
 
     def __repr__(self):
         """Create string representation of object."""
