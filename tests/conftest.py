@@ -20,7 +20,8 @@ from flask import g
 from invenio_records_permissions.generators import AnyUser, SystemProcess
 from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
 
-from oarepo_vocabularies.authorities.service import AuthorityService
+from oarepo_vocabularies.authorities.clients import RORClientV2
+from oarepo_vocabularies.authorities.service import AuthorityService, RORAuthorityServiceV2
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -225,6 +226,10 @@ def app_config(app_config):
             "name": {"en": "authority"},
             "authority": AuthService,
         },
+        "ror_authority": {
+            "name": {"en": "ROR Authority"},
+            "authority": RORAuthorityServiceV2,
+        }
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
@@ -492,6 +497,11 @@ def authority_rec(db, identity, authority_type, service, vocab_cf):
             "type": authority_type.id,
         },
     )
+
+
+@pytest.fixture()
+def ror_client():
+    return RORClientV2(testing=True)
 
 
 class AuthService(AuthorityService):
