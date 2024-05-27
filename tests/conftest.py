@@ -588,7 +588,7 @@ class AuthService(AuthorityService):
         }
 
     def get(self, identity, item_id, *, uow, value, **kwargs):
-        return next(x for x in self.search()["hits"]["hits"] if x["id"] == item_id)
+        return next(x for x in self.search(identity, {'q': item_id})["hits"]["hits"] if x["id"] == item_id)
 
 
 @pytest.fixture()

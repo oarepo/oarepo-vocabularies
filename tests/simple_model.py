@@ -59,6 +59,7 @@ class ModelPermissionPolicy(RecordPermissionPolicy):
 class ModelSchema(ma.Schema):
     title = ma.fields.String()
     authority = ma.fields.Raw()  # just a simulation ...
+    ror_authority = ma.fields.Raw()
 
     class Meta:
         unknown = ma.INCLUDE
