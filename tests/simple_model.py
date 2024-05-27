@@ -46,7 +46,7 @@ class ModelRecord(Record):
             "ror-authority",
             keys=["id", "title"],
             pid_field=Vocabulary.pid.with_type_ctx("ror-authority"),
-        )
+        ),
         lng=PIDRelation(
             "lng",
             keys=["id", "title"],
