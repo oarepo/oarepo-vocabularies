@@ -42,6 +42,11 @@ class ModelRecord(Record):
             keys=["id", "title"],
             pid_field=Vocabulary.pid.with_type_ctx("authority"),
         ),
+        ror_authority=PIDRelation(
+            "ror-authority",
+            keys=["id", "title"],
+            pid_field=Vocabulary.pid.with_type_ctx("ror-authority"),
+        )
         lng=PIDRelation(
             "lng",
             keys=["id", "title"],
@@ -59,7 +64,7 @@ class ModelPermissionPolicy(RecordPermissionPolicy):
 class ModelSchema(ma.Schema):
     title = ma.fields.String()
     authority = ma.fields.Raw()  # just a simulation ...
-    ror_authority = ma.fields.Raw()
+    ror_authority = ma.fields.Raw(data_key="ror-authority")
 
     class Meta:
         unknown = ma.INCLUDE
