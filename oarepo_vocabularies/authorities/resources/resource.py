@@ -9,7 +9,7 @@ from invenio_records_resources.resources.records.resource import (
 from invenio_vocabularies.records.models import VocabularyType
 
 from oarepo_vocabularies.authorities.proxies import authorities
-from oarepo_vocabularies.authorities.service import AuthorityProvider
+from oarepo_vocabularies.authorities.providers import AuthorityProvider
 
 
 class AuthoritativeVocabulariesResource(Resource):
@@ -26,18 +26,25 @@ class AuthoritativeVocabulariesResource(Resource):
     @response_handler()
     def list(self):
         identity = g.identity
-        authority_service: AuthorityProvider = authorities.get_authority_api(
+        authority_provider: AuthorityProvider = authorities.get_authority_api(
             resource_requestctx.view_args["type"]
         )
         vocabulary_type = VocabularyType.query.filter_by(
             id=resource_requestctx.view_args["type"]
         ).one()
-        if not authority_service:
-            return "No authority getter.", 404
+        if not authority_provider:
+            return "No authority provider.", 404
 
         # Get hits from authority.
         params = resource_requestctx.args
-        results = authority_service.search(identity, params)
+        items, total, page_size = authority_provider.search(identity, params)
+
+        results = {
+            "hits": {
+                "hits": items,
+                "total": total
+            }
+        }
 
         # Mark external, resolve uuid.
         ids = [item["id"] for item in results["hits"]["hits"]]
