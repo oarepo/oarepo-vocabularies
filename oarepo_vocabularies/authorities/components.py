@@ -8,7 +8,7 @@ from oarepo_runtime.services.relations.errors import (
 )
 
 from oarepo_vocabularies.authorities.proxies import authorities
-from oarepo_vocabularies.authorities.service import AuthorityProvider
+from oarepo_vocabularies.authorities.providers import AuthorityProvider
 from oarepo_vocabularies.records.api import find_vocabulary_relations
 
 

@@ -1,14 +1,11 @@
 import logging
+from urllib.parse import quote_plus
+
 import idutils
 import requests
-
-from copy import deepcopy
-
-from urllib.parse import quote_plus
-from werkzeug.exceptions import BadRequest
-from requests.exceptions import RequestException
 from oarepo_vocabularies.authorities.providers import AuthorityProvider
-
+from requests.exceptions import RequestException
+from werkzeug.exceptions import BadRequest
 
 logger = logging.getLogger("oarepo-vocabularies.providers.ror")
 
