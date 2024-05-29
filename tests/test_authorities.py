@@ -77,7 +77,7 @@ def test_ror_authority_result_to_vocabulary(example_ror_record):
     vocab_item = RORProviderV2.to_vocabulary_item(example_ror_record)
 
     # Test id is provided
-    assert vocab_item["id"] == example_ror_record["id"]
+    assert vocab_item["id"] == "ror:050dkka69"
 
     # Test title is converted
     assert vocab_item["title"] == {"en": "Czech Education and Scientific Network"}

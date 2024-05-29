@@ -1,4 +1,6 @@
+import pytest
 from oarepo_vocabularies.authorities.providers.ror import RORClientV2
+from werkzeug.exceptions import BadRequest
 
 
 def test_authority_ror_client_get(ror_client):
@@ -22,13 +24,14 @@ def test_authority_ror_client_get(ror_client):
 
     # 2. Returns none for non-existent ROR ID
     bad_id = "l33tr0r1d"
-    assert ror_client.get_record(bad_id) is None
+    with pytest.raises(BadRequest):
+        ror_client.get_record(bad_id) is None
 
 
 def test_authority_ror_client_search(ror_client):
     # 1. Returns nothing on empty query
     query = ""
-    results = ror_client.quick_search({"q": query})
+    results = ror_client.quick_search(query=query)
     assert results["number_of_results"] == 0
     assert len(results["items"]) == 0
 
@@ -36,18 +39,18 @@ def test_authority_ror_client_search(ror_client):
     query = "cesnet"
     cesnet_id = "https://ror.org/050dkka69"
 
-    results = ror_client.quick_search({"q": query})
+    results = ror_client.quick_search(query=query)
     assert results["number_of_results"] >= 1
     assert cesnet_id in [result["id"] for result in results["items"]]
 
     # 3. Returns the requested page if there is more records
     query = "a"
 
-    results = ror_client.quick_search({"q": query})
+    results = ror_client.quick_search(query=query)
     assert results["number_of_results"] > 20
     assert len(results["items"]) == 20
 
-    page2_results = ror_client.quick_search({"q": query, "page": 2})
+    page2_results = ror_client.quick_search(query=query, page=2)
     assert page2_results["number_of_results"] > 20
     assert len(page2_results["items"]) == 20
 

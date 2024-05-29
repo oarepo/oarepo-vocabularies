@@ -70,12 +70,12 @@ class RORClientV2(object):
 
         record_url = f"{self.api_url}/{quote_plus(pid)}"
 
-        response = requests.get(record_url, **kwargs).json()
+        response = requests.get(record_url, **kwargs)
 
         if response.status_code == 404:
             return None
 
-        return response
+        return response.json()
 
     def __repr__(self):
         """Create string representation of object."""
