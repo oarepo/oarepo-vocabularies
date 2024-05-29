@@ -594,7 +594,7 @@ class AuthService(AuthorityProvider):
     def get(self, identity, item_id, *, uow, value, **kwargs):
         return next(
             x
-            for x in self.search(identity, {"q": item_id})["hits"]["hits"]
+            for x, _, _ in self.search(identity, {"q": item_id})
             if x["id"] == item_id
         )
 
