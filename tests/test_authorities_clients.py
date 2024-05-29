@@ -1,5 +1,4 @@
-import pytest
-from oarepo_vocabularies.authorities.clients import RORClientV2
+from oarepo_vocabularies.authorities.providers.ror import RORClientV2
 
 
 def test_authority_ror_client_get(ror_client):

@@ -1,6 +1,6 @@
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
-from oarepo_vocabularies.authorities.results import to_vocabulary_item
+from oarepo_vocabularies.authorities.providers import RORProviderV2
 from oarepo_vocabularies.records.api import Vocabulary
 
 
@@ -74,7 +74,7 @@ def test_submit_record_fetch_authority(
 
 
 def test_ror_authority_result_to_vocabulary(example_ror_record):
-    vocab_item = to_vocabulary_item(example_ror_record)
+    vocab_item = RORProviderV2.to_vocabulary_item(example_ror_record)
 
     # Test id is provided
     assert vocab_item["id"] == example_ror_record["id"]
