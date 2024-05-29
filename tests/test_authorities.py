@@ -32,7 +32,7 @@ def test_authority_resource(
 
     external_result = [res for res in results if res["props"]["external"]]
     assert len(external_result) == 1
-    assert external_result[0]["id"] == "https://ror.org/050dkka69"
+    assert external_result[0]["id"] == "ror:050dkka69"
 
 
 def test_submit_record_fetch_authority(
