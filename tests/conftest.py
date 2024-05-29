@@ -575,25 +575,21 @@ def ror_client():
 
 class AuthService(AuthorityProvider):
     def search(self, identity, params, **kwargs):
-        return {
-            "hits": {
-                "total": 2,
-                "hits": [
-                    {
-                        "id": "03zsq2967",
-                        "title": {
-                            "en": "Association of Asian Pacific Community Health Organizations",
-                        },
-                    },
-                    {
-                        "id": "020bcb226",
-                        "title": {
-                            "en": "Oakton Community College",
-                        },
-                    },
-                ],
-            }
-        }
+        items = [
+            {
+                "id": "03zsq2967",
+                "title": {
+                    "en": "Association of Asian Pacific Community Health Organizations",
+                },
+            },
+            {
+                "id": "020bcb226",
+                "title": {
+                    "en": "Oakton Community College",
+                },
+            },
+        ]
+        return items, 2, 10
 
     def get(self, identity, item_id, *, uow, value, **kwargs):
         return next(
