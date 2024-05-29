@@ -592,11 +592,8 @@ class AuthService(AuthorityProvider):
         return items, 2, 10
 
     def get(self, identity, item_id, *, uow, value, **kwargs):
-        return next(
-            x
-            for x, _, _ in self.search(identity, {"q": item_id})
-            if x["id"] == item_id
-        )
+        results, _, _ = self.search(identity, {"q": item_id})
+        return next(result for result in results if result["id"] == item_id)
 
 
 @pytest.fixture()
