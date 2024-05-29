@@ -34,7 +34,7 @@ def test_dump_options(
             },
             "ror-authority": {
                 "definition": {
-                    "authority": "RORAuthorityServiceV2",
+                    "authority": "RORProviderV2",
                     "name": {"en": "ROR Authority"},
                 },
                 "url": "/api/vocabularies/ror-authority",
