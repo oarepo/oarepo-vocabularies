@@ -48,7 +48,7 @@ def test_submit_record_fetch_authority(
         {
             "title": "a",
             "authority": {"id": "03zsq2967"},
-            "ror-authority": {"id": "050dkka69"},
+            "ror-authority": {"id": "ror:050dkka69"},
         },
     )
     assert response.data["authority"]["id"] == "03zsq2967"
@@ -56,7 +56,7 @@ def test_submit_record_fetch_authority(
         "en": "Association of Asian Pacific Community Health Organizations"
     }
 
-    assert response.data["ror-authority"]["id"] == "050dkka69"
+    assert response.data["ror-authority"]["id"] == "ror:050dkka69"
     print(response.data['ror-authority'])
     assert response.data["ror-authority"]["title"] == {
         "en": "Czech Education and Scientific Network"
@@ -69,7 +69,7 @@ def test_submit_record_fetch_authority(
     ] == {"en": "Association of Asian Pacific Community Health Organizations"}
 
     assert vocabulary_service.read(
-        identity, ("ror-authority", "https://ror.org/050dkka69")
+        identity, ("ror-authority", "ror:050dkka69")
     ).data["title"] == {"en": "Czech Education and Scientific Network"}
 
 

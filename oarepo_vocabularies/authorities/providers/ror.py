@@ -101,7 +101,7 @@ class RORProviderV2(AuthorityProvider):
 
     def get(self, identity, item_id, **kwargs):
         assert item_id.startswith("ror:")
-        record = self.ror_client.get_record(item_id[4:], **kwargs)
+        record = self.ror_client.get_record(item_id[4:])
 
         if not record:
             raise KeyError(item_id)
@@ -148,5 +148,5 @@ class RORProviderV2(AuthorityProvider):
                 "locations": "; ".join(locations),
             },
             # NOTE: Requires RelatedURICF Vocabulary custom field enabled.
-            "relatedURI": idutils.to_url(ror_id, "ror", "https"),
+            "relatedURI": {"ror": idutils.to_url(ror_id, "ror", "https")}
         }

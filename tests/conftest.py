@@ -89,6 +89,10 @@ class FineGrainedPermissionPolicy(EveryonePermissionPolicy):
     can_update_authority = [SystemProcess(), AnyUser()]
     can_delete_authority = [SystemProcess(), AnyUser()]
 
+    can_create_ror_authority = [SystemProcess(), AnyUser()]
+    can_update_ror_authority = [SystemProcess(), AnyUser()]
+    can_delete_ror_authority = [SystemProcess(), AnyUser()]
+
     can_create_access_rights = [SystemProcess(), AnyUser()]
     can_update_access_rights = [SystemProcess(), AnyUser()]
     can_delete_access_rights = [SystemProcess(), AnyUser()]
