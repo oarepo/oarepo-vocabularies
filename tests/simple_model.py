@@ -57,6 +57,7 @@ class ModelRecord(Record):
 
 class ModelPermissionPolicy(RecordPermissionPolicy):
     can_create = [AnyUser(), SystemProcess()]
+    can_update = [AnyUser(), SystemProcess()]
     can_search = [AnyUser(), SystemProcess()]
     can_read = [AnyUser(), SystemProcess()]
 

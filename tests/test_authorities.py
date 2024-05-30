@@ -1,3 +1,5 @@
+import pytest
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from oarepo_vocabularies.authorities.providers import RORProviderV2
@@ -71,7 +73,8 @@ def test_submit_record_fetch_authority(
     assert vocabulary_service.read(
         identity, ("ror-authority", "ror:050dkka69")
     ).data["title"] == {"en": "Czech Education and Scientific Network"}
-
+    return response.id
+    
 
 def test_ror_authority_result_to_vocabulary(example_ror_record):
     vocab_item = RORProviderV2.to_vocabulary_item(example_ror_record)
@@ -85,3 +88,35 @@ def test_ror_authority_result_to_vocabulary(example_ror_record):
     # Test other supported props is converted
     assert len(vocab_item["props"].keys()) > 0
     assert vocab_item["props"]["acronyms"] == "CESNET"
+
+
+def test_submit_record_update_authority(search_clear, identity, authority_type, simple_record_service, vocab_cf):
+    with pytest.raises(PIDDoesNotExistError):
+        vocabulary_service.read(identity, ("authority", "03zsq2967"))
+    with pytest.raises(PIDDoesNotExistError):
+        vocabulary_service.read(identity, ("authority", "ror:050dkka69"))
+
+    record_id = test_submit_record_fetch_authority(search_clear, identity, authority_type, simple_record_service, vocab_cf)
+    response = simple_record_service.update(
+        identity, record_id, {"title": "b", "authority": {"id": "020bcb226"}, "ror-authority": {"id": "ror:050dkka69"}}
+    )
+    assert response.data["authority"]["id"] == "020bcb226"
+    assert response.data["authority"]["title"] == {
+        "en": "Oakton Community College"
+    }
+    
+    assert response.data["ror-authority"]["id"] == "ror:050dkka69"
+    print(response.data['ror-authority'])
+    assert response.data["ror-authority"]["title"] == {
+        "en": "Czech Education and Scientific Network"
+    }
+    
+    # check that the vocabulary item has been created
+    Vocabulary.index.refresh()
+    assert vocabulary_service.read(identity, ("authority", "020bcb226")).data[
+        "title"
+    ] == {"en": "Oakton Community College"}
+    
+    assert vocabulary_service.read(identity, ("ror-authority", "ror:050dkka69")).data[
+        "title"
+    ] == {"en": "Czech Education and Scientific Network"}

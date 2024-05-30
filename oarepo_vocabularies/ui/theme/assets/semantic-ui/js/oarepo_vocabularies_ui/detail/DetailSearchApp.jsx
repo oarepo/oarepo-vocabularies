@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { OverridableContext } from "react-overridable";
-import { Container, Grid, Label } from "semantic-ui-react";
+import { Container, Grid, Header } from "semantic-ui-react";
 import {
   EmptyResults,
   Error,
@@ -19,9 +19,9 @@ const OnResults = withState(Results);
 
 const CountElement = ({ totalResults }) => {
   return (
-    <Label size="large">
+    <Header as="h3">
       {i18next.t("totalDescendants", { count: totalResults })}
-    </Label>
+    </Header>
   );
 };
 

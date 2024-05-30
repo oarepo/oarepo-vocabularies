@@ -32,6 +32,7 @@ export const Results = ({ resultsPerPageValues, currentResultsState }) => {
             textAlign="center"
           >
             <Pagination
+              showWhenOnlyOnePage={false}
               options={{
                 size: "mini",
                 showFirst: false,
@@ -41,6 +42,7 @@ export const Results = ({ resultsPerPageValues, currentResultsState }) => {
           </Grid.Column>
           <Grid.Column className="mobile only" width={16} textAlign="center">
             <Pagination
+              showWhenOnlyOnePage={false}
               options={{
                 boundaryRangeCount: 0,
                 showFirst: false,
@@ -54,6 +56,7 @@ export const Results = ({ resultsPerPageValues, currentResultsState }) => {
             width={4}
           >
             <ResultsPerPage
+              showWhenOnlyOnePage={false}
               values={resultsPerPageValues}
               label={resultsPerPageLabel}
             />
@@ -64,6 +67,7 @@ export const Results = ({ resultsPerPageValues, currentResultsState }) => {
             width={16}
           >
             <ResultsPerPage
+              showWhenOnlyOnePage={false}
               values={resultsPerPageValues}
               label={resultsPerPageLabel}
             />

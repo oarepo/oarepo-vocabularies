@@ -9,21 +9,17 @@
 
 {% block record_main_content %}
 <oarepo_vocabularies_ui.VocabulariesMain metadata={metadata} ui={ui} url_prefix={url_prefix} record={record} extra_context={extra_context} d={d}></oarepo_vocabularies_ui.VocabulariesMain>
+{% block vocabulary_descendants %}
+{% set search_app_config = extra_context["search_app_config"] %}
+  {%- include "oarepo_vocabularies_ui/descendants.html" -%}
+{% endblock vocabulary_descendants %}
 {% endblock record_main_content %}
 
 {% block record_sidebar %}
 <oarepo_vocabularies_ui.VocabulariesSidebar metadata={metadata} ui={ui} url_prefix={url_prefix} record={record} extra_context={extra_context}></oarepo_vocabularies_ui.VocabulariesSidebar>
 {% endblock record_sidebar %}
 
-{% block page_body %}
-  {{ super() }}
-  <div class="ui center aligned container rel-mb-2">
-    {% block vocabulary_descendants %}
-      {% set search_app_config = extra_context["search_app_config"] %}
-        {%- include "oarepo_vocabularies_ui/descendants.html" -%}
-    {% endblock vocabulary_descendants %}
-  </div>
-{% endblock page_body %}
+
 
 {%- block javascript %}
 {{super()}}
