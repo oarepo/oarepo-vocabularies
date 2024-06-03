@@ -1,3 +1,6 @@
+import math
+from urllib.parse import urlparse
+
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_vocabularies.proxies import current_service as vocabulary_service
@@ -35,6 +38,39 @@ def test_authority_resource(
     external_result = [res for res in results if res["props"]["external"]]
     assert len(external_result) == 1
     assert external_result[0]["id"] == "ror:050dkka69"
+
+    # Test for pagination
+    assert "links" in resp.keys()
+    assert "next" not in resp["links"]
+    assert "prev" not in resp["links"]
+
+    params = "q=c&page=1"
+    resp = client.get(f"/api/vocabularies/ror-authority/authoritative?{params}").json
+    page1_results = resp["hits"]["hits"]
+    assert "links" in resp.keys()
+    assert "next" in resp["links"].keys()
+    assert "prev" not in resp["links"].keys()
+    next_link = urlparse(resp["links"]["next"])
+    assert next_link.path == "/api/vocabularies/ror-authority/authoritative"
+    assert "page=2" in next_link.query
+
+    resp = client.get(next_link.geturl()).json
+    page2_results = resp["hits"]["hits"]
+    assert page2_results[0]["id"] != page1_results[0]["id"]
+    assert "next" in resp["links"].keys()
+    assert "prev" in resp["links"].keys()
+    prev_link = urlparse(resp["links"]["prev"])
+    assert "page=1" in prev_link.query
+
+    # Test last page
+    page_size = 20
+    total = resp["hits"]["total"]
+    last_page = math.floor(total / page_size)
+
+    params = f"q=c&page={last_page + 1}"
+    resp = client.get(f"/api/vocabularies/ror-authority/authoritative?{params}").json
+    last_page_results = resp["hits"]["hits"]
+    assert len(last_page_results) == total - (last_page * page_size)
 
 
 def test_submit_record_fetch_authority(
