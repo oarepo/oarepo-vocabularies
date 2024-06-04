@@ -72,7 +72,6 @@ class AuthorityComponent(ServiceComponent):
                 fetched_item = authority_service.get(
                     identity, item_id, uow=self.uow, value=value
                 )
-                print(fetched_item)
             except Exception as e:
                 raise InvalidRelationError(
                     f"External authority failed: {e}",
