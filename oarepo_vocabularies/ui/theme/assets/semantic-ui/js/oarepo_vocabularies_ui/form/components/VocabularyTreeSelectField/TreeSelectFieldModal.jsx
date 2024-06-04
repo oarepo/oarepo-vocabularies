@@ -383,24 +383,22 @@ export const TreeSelectFieldModal = ({
       <ModalActions>
         <Grid.Row className="gapped">
           <Grid.Row className="gapped">
-            {(Array.isArray(selectedState) ? selectedState : []).map(
-              (i, index) => (
-                <Label key={i.hierarchy.title}>
-                  {" "}
-                  <Breadcrumb icon="left angle" sections={i.hierarchy.title} />
-                  {multiple && (
-                    <Button
-                      className="small transparent"
-                      onClick={(e) => {
-                        handleSelect(i, e);
-                      }}
-                    >
-                      <Icon name="delete" />
-                    </Button>
-                  )}
-                </Label>
-              )
-            )}
+            {selectedState.map((i, index) => (
+              <Label key={i.hierarchy.title}>
+                {" "}
+                <Breadcrumb icon="left angle" sections={i.hierarchy.title} />
+                {multiple && (
+                  <Button
+                    className="small transparent"
+                    onClick={(e) => {
+                      handleSelect(i, e);
+                    }}
+                  >
+                    <Icon name="delete" />
+                  </Button>
+                )}
+              </Label>
+            ))}
           </Grid.Row>
           <Button
             content="Confirm"
@@ -428,7 +426,6 @@ TreeSelectFieldModal.propTypes = {
   allOptions: PropTypes.array.isRequired,
   value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  selectedState: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
-    .isRequired,
+  selectedState: PropTypes.array.isRequired,
   setSelectedState: PropTypes.func.isRequired,
 };

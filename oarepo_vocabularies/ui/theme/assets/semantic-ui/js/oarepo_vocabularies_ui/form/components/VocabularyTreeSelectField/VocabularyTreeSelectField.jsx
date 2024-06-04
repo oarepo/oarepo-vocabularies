@@ -121,7 +121,7 @@ export const VocabularyTreeSelectField = ({
           root={root}
           value={value}
           handleSubmit={handleSubmit}
-          selectedState={selectedState}
+          selectedState={Array.isArray(selectedState) ? selectedState : []}
           setSelectedState={setSelectedState}
         />
       )}
