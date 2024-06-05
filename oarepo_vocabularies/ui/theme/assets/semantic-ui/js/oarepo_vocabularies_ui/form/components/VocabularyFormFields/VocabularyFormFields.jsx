@@ -20,6 +20,7 @@ export const VocabularyFormFields = () => {
         fieldPath="title"
         textFieldLabel={i18next.t("Title")}
         labelIcon="pencil"
+        displayFirstInputRemoveButton={false}
       />
       <TextField
         fieldPath="id"
