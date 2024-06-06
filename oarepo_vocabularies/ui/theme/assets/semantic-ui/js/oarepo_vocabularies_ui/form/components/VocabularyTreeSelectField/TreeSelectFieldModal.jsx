@@ -284,13 +284,12 @@ export const TreeSelectFieldModal = ({
         break;
     }
   };
- 
+
   useEffect(() => {
     if (selectedState.length > 0 && !multiple) {
       handleSubmit();
     }
   }, [selectedState]);
-  
 
   const renderColumn = (column, index) => {
     return (
@@ -396,11 +395,11 @@ export const TreeSelectFieldModal = ({
       <ModalActions>
         <Grid.Row className="gapped">
           <Grid.Row className="gapped">
-            {selectedState.map((i, index) => (
-              <Label key={i.hierarchy.title}>
-                {" "}
-                <Breadcrumb icon="left angle" sections={i.hierarchy.title} />
-                {multiple && (
+            {multiple &&
+              selectedState.map((i, index) => (
+                <Label key={i.hierarchy.title}>
+                  {" "}
+                  <Breadcrumb icon="left angle" sections={i.hierarchy.title} />
                   <Button
                     className="small transparent"
                     onClick={(e) => {
@@ -409,9 +408,8 @@ export const TreeSelectFieldModal = ({
                   >
                     <Icon name="delete" />
                   </Button>
-                )}
-              </Label>
-            ))}
+                </Label>
+              ))}
           </Grid.Row>
           <Button
             content="Confirm"
