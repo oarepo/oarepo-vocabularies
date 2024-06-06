@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Breadcrumb,
@@ -130,9 +130,9 @@ export const TreeSelectFieldModal = ({
     setParentsState(updatedParents);
     setKeybState(updatedKeybState);
   };
+
   const handleSelect = (option, e) => {
     e.preventDefault();
-
     const existingIndex = selectedState.findIndex(
       (i) => i.value === option?.value
     );
@@ -284,20 +284,29 @@ export const TreeSelectFieldModal = ({
         break;
     }
   };
+ 
+  useEffect(() => {
+    if (selectedState.length > 0 && !multiple) {
+      handleSubmit();
+    }
+  }, [selectedState]);
+  
 
   const renderColumn = (column, index) => {
     return (
       <Grid.Column key={index} className="tree-column">
         {column.map((option, i) => {
           if (
-            index == 0 ||
-            option.hierarchy.ancestors[0] == parentsState[index - 1]
+            index === 0 ||
+            option.hierarchy.ancestors[0] === parentsState[index - 1]
           ) {
             return (
               <Grid.Row
                 key={option.value}
                 className={
-                  option.value == parentsState[index] ? "open spaced" : "spaced"
+                  option.value === parentsState[index]
+                    ? "open spaced"
+                    : "spaced"
                 }
               >
                 {multiple && (
@@ -318,7 +327,11 @@ export const TreeSelectFieldModal = ({
                 <Button
                   basic
                   color="black"
-                  onClick={openHierarchyNode(option.value, index)}
+                  onClick={(e) =>
+                    multiple
+                      ? openHierarchyNode(option.value, index)()
+                      : handleSelect(option, e)
+                  }
                   onDoubleClick={(e) => {
                     handleSelect(option, e);
                   }}
@@ -329,7 +342,7 @@ export const TreeSelectFieldModal = ({
                 >
                   {option.hierarchy.title[0]}
                 </Button>
-                {option.element_type == "parent" && (
+                {option.element_type === "parent" && (
                   <Button onClick={openHierarchyNode(option.value, index)}>
                     {index !== columnsCount - 1 && (
                       <Icon name="angle right" color="black" />

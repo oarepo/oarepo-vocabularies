@@ -37,15 +37,17 @@
         &:not(:has(.row)) {
           display: none;
         }
-       
       }
-      &.one.column .tree-column{
+      &.one.column .tree-column {
         max-height: @treeColumnMaxHeight;
         overflow-y: auto;
-        min-width: 250px
+        min-width: 250px;
       }
       .row.spaced {
         min-width: 210px;
+        .checkbox {
+          padding: 1rem 0 1rem 1rem;
+        }
         &.open {
           background-color: @selectedColor;
         }
@@ -62,7 +64,7 @@
   }
   & > .header {
     padding-right: 2vw;
-    @media only screen  and (min-width: @tabletBreakpoint) {
+    @media only screen and (min-width: @tabletBreakpoint) {
       & {
         padding-right: 4vw;
       }
@@ -100,7 +102,7 @@
   .ui.header {
     width: 100%;
     font-size: @treeHeaderSize;
-    @media only screen and (max-width: @tabletBreakpoint)  {
+    @media only screen and (max-width: @tabletBreakpoint) {
       & {
         text-align: center;
       }
@@ -114,7 +116,7 @@
     height: 100%;
   }
   & .ui.button {
-    padding: 0.2rem;
+    padding: 1rem;
     &.basic {
       width: 100%;
       margin: 0;

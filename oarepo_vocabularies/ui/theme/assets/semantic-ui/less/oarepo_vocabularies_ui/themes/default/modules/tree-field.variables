@@ -3,5 +3,5 @@
 @selectedBorderColor: #9B9B93;
 @treeContainerMinHeight: 60vh;
 @treeColumnMaxHeight:70vh;
-@treeRowPadding: 0.5rem;
+@treeRowPadding: 0;
 @treeHeaderSize:1.3rem;
