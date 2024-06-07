@@ -1,8 +1,11 @@
+from invenio_records_resources.services.custom_fields import BooleanCF
 from invenio_records_resources.services.custom_fields.base import BaseCF
 from invenio_records_resources.services.custom_fields.number import IntegerCF
 from invenio_records_resources.services.custom_fields.text import KeywordCF
 from invenio_vocabularies.services.schema import i18n_strings
 from marshmallow import fields as ma_fields
+
+from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
 
 
 class HierarchyCF:
@@ -30,6 +33,10 @@ class HierarchyTitleCF(HierarchyCF, BaseCF):
     def field(self):
         return ma_fields.List(i18n_strings)
 
+    @property
+    def ui_field(self):
+        return ma_fields.List(VocabularyI18nStrUIField())
+
 
 class HierarchyAncestorsCF(HierarchyCF, KeywordCF):
     def update(self, record, parent):
@@ -51,3 +58,10 @@ class HierarchyAncestorsOrSelfCF(HierarchyCF, KeywordCF):
             ]
         else:
             record.hierarchy["ancestors_or_self"] = [record["id"]]
+
+
+class HierarchyLeafCF(HierarchyCF, BooleanCF):
+    def update(self, record, parent):
+        # initial value
+        if not "leaf" in record.hierarchy:
+            record.hierarchy["leaf"] = True

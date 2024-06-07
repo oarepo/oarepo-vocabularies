@@ -2,7 +2,7 @@ from invenio_access.permissions import system_identity
 from invenio_db import db
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from oarepo_runtime.relations.errors import (
+from oarepo_runtime.services.relations.errors import (
     InvalidRelationError,
     MultipleInvalidRelationErrors,
 )
@@ -17,6 +17,9 @@ class AuthorityComponent(ServiceComponent):
         self.lookup_and_store_authority_records(record)
 
     def update(self, identity, data=None, record=None, **kwargs):
+        self.lookup_and_store_authority_records(record)
+
+    def update_draft(self, identity, data=None, record=None, **kwargs):
         self.lookup_and_store_authority_records(record)
 
     def lookup_and_store_authority_records(self, record):

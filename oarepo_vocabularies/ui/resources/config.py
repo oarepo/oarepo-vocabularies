@@ -1,6 +1,7 @@
 import marshmallow as ma
 from flask import current_app
 from invenio_records_resources.services import Link, pagination_links
+from oarepo_ui.resources.components import PermissionsComponent
 from oarepo_ui.resources.config import RecordsUIResourceConfig
 from oarepo_ui.resources.links import UIRecordLink
 
@@ -38,21 +39,13 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
     )
     api_service = "vocabularies"
-    layout = "oarepo_vocabularies_ui"
+    application_id = "OarepoVocabularies"
 
     templates = {
-        "detail": {
-            "layout": "oarepo_vocabularies_ui/VocabulariesDetail.jinja",
-            "blocks": {
-                "record_sidebar": "VocabulariesSidebar",
-            },
-        },
-        "search": {
-            "layout": "oarepo_vocabularies_ui/VocabulariesSearch.jinja",
-            "app_id": "OarepoVocabularies.Search",
-        },
-        "create": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
-        "edit": {"layout": "oarepo_vocabularies_ui/VocabulariesForm.jinja"},
+        "detail": "oarepo_vocabularies_ui.VocabulariesDetail",
+        "search": "oarepo_vocabularies_ui.VocabulariesSearch",
+        "create": "oarepo_vocabularies_ui.VocabulariesForm",
+        "edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
     routes = {
@@ -64,6 +57,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
 
     components = [
+        PermissionsComponent,
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
         VocabularySearchComponent,
@@ -75,6 +69,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
         "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
         "search": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/"),
+        "create": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/_new"),
     }
 
     @property
@@ -87,4 +82,11 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     def vocabulary_props_config(self, vocabulary_type):
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
             vocabulary_type, {}
+        )
+
+    def _get_custom_fields_ui_config(self, key, resource_requestctx=None, **kwargs):
+        if key == "OAREPO_VOCABULARIES_HIERARCHY_CF":
+            return []
+        return current_app.config.get("VOCABULARIES_CF_UI", {}).get(
+            resource_requestctx.view_args["vocabulary_type"], []
         )

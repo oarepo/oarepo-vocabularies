@@ -3,9 +3,13 @@
 import React from "react";
 import _reverse from "lodash/reverse";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { ErrorElement, I18nString } from "@js/oarepo_ui";
+import {
+  ErrorElement,
+  I18nString,
+  useFormConfig,
+  useDepositApiClient,
+} from "@js/oarepo_ui";
 import PropTypes from "prop-types";
-import { useFormConfig, useDepositApiClient } from "@js/oarepo_ui";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
 import { useQuery } from "@tanstack/react-query";
@@ -26,8 +30,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
     read,
     values: { id },
   } = useDepositApiClient();
-  // not possible to use apiClient because I am working just with a information
-  // from a query string and not actually working with any type of record (that contains links inside)
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
     queryFn: () => read(`/api/vocabularies/${type}/${newChildItemParentId}`),
@@ -45,8 +48,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
         <VocabularyBreadcrumbMessage
           header={
             <div className="header">
-              {i18next.t("newChildItemMessage")}
-              {' '}
+              {i18next.t("newChildItemMessage")}{" "}
               <I18nString value={data.title} />
             </div>
           }

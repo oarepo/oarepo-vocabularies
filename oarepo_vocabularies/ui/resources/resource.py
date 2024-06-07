@@ -1,5 +1,6 @@
 from flask import g
 from flask_resources import from_conf, request_parser, resource_requestctx
+from flask_security import login_required
 from invenio_records_resources.resources.records.resource import (
     request_read_args,
     request_view_args,
@@ -31,16 +32,14 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     def search(self):
         return super().search()
 
-    # TODO: !IMPORTANT!: needs to be enabled before production deployment
-    # @login_required
+    @login_required
     @request_read_args
     @request_view_args
     @request_vocabulary_args
     def create(self):
         return super().create()
 
-    # TODO: !IMPORTANT!: needs to be enabled before production deployment
-    # @login_required
+    @login_required
     @request_read_args
     @request_view_args
     @request_vocabulary_args
@@ -58,7 +57,10 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
     def empty_record(self, resource_requestctx, **kwargs):
         record = super().empty_record(resource_requestctx=resource_requestctx)
+        if "metadata" in record:
+            del record["metadata"]
         record["type"] = resource_requestctx.view_args["vocabulary_type"]
+        record["tags"] = []
         return record
 
     def expand_detail_links(self, identity, record):

@@ -1,5 +1,6 @@
 from invenio_db import db
 from invenio_vocabularies.records.api import VocabularyType
+from oarepo_runtime.datastreams import StreamBatch
 from oarepo_runtime.datastreams.readers.service import ServiceReader
 from oarepo_runtime.datastreams.writers.service import ServiceWriter, StreamEntry
 
@@ -59,10 +60,11 @@ class VocabularyWriter(ServiceWriter):
             db.session.add(vt)
             db.session.commit()
 
-    def write(self, stream_entry: StreamEntry, *args, **kwargs):
-        entry = stream_entry.entry
-        entry["type"] = self.vocabulary
-        return super().write(stream_entry, *args, **kwargs)
+    def write(self, stream_batch: StreamBatch, *args, **kwargs):
+        for stream_entry in stream_batch.entries:
+            entry = stream_entry.entry
+            entry["type"] = self.vocabulary
+        return super().write(stream_batch, *args, **kwargs)
 
-    def _entry_id(self, entry):
-        return (self.vocabulary, super()._entry_id(entry))
+    def _get_stream_entry_id(self, entry):
+        return (self.vocabulary, super()._get_stream_entry_id(entry))

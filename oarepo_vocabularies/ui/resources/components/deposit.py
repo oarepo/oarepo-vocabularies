@@ -1,21 +1,16 @@
 import inspect
 import json
+from typing import Any, Dict
 
 from flask import current_app
 from invenio_records import Record
-from invenio_records_resources.services.records.components import ServiceComponent
-from invenio_vocabularies.proxies import current_service as vocabulary_service
+from oarepo_ui.resources.components import UIResourceComponent
 
+from oarepo_vocabularies.proxies import current_ui_vocabulary_cache
 from oarepo_vocabularies.records.api import find_vocabulary_relations
-from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
-
-try:
-    pass
-except ImportError:
-    pass
 
 
-class DepositVocabularyOptionsComponent(ServiceComponent):
+class DepositVocabularyOptionsComponent(UIResourceComponent):
     """
     This component is used in deposit form of normal records. For small vocabularies,
     it provides their values so that they might be displayed in, for example, a combo.
@@ -23,9 +18,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
 
     always_included_vocabularies = []
 
-    def form_config(
-        self, *, form_config, resource, record, view_args, identity, **kwargs
-    ):
+    def form_config(self, *, form_config, api_record, view_args, identity, **kwargs):
         """
         Adds vocabularies to the form config as in:
         ```
@@ -53,9 +46,9 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
             }
         ```
         """
-        if not isinstance(record, Record):
-            record_cls = resource.api_service.config.record_cls
-            record = record_cls({})
+        if not isinstance(api_record, Record):
+            record_cls = self.resource.api_service.config.record_cls  # noqa
+            api_record = record_cls({})
 
         form_config.setdefault("vocabularies", {})
 
@@ -66,14 +59,7 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
             "INVENIO_VOCABULARY_TYPE_METADATA", {}
         )
 
-        used_vocabularies = [
-            vocab_field.vocabulary_type
-            for vocab_field in find_vocabulary_relations(record)
-        ]
-
-        for v in self.always_included_vocabularies:
-            if v not in used_vocabularies:
-                used_vocabularies.append(v)
+        used_vocabularies = self._get_used_vocabularies(api_record)
 
         (
             vocabularies_to_prefetch,
@@ -83,33 +69,47 @@ class DepositVocabularyOptionsComponent(ServiceComponent):
         )
 
         form_config["vocabularies"] = form_config_vocabularies
+        self._prefetch_vocabularies_to_form_config(
+            form_config_vocabularies, vocabularies_to_prefetch, identity
+        )
 
-        for prefetched_item in self.prefetch_vocabulary_items(
-            identity, vocabularies_to_prefetch
-        ):
-            by_type = form_config_vocabularies[prefetched_item["type"]]
-            returned_item = {
-                "value": prefetched_item["id"],
-                "text": VocabularyI18nStrUIField().serialize("title", prefetched_item),
-            }
-            if "featured" in prefetched_item.get("tags", []):
-                by_type["featured"].append(returned_item)
-            else:
+        for vocabularies in form_config["vocabularies"].values():
+            if "all" in vocabularies:
+                for voc in vocabularies["all"]:
+                    for _voc in vocabularies["all"]:
+                        if voc["value"] in _voc["hierarchy"]["ancestors"]:
+                            voc["element_type"] = "parent"
+                            break
+                    if "element_type" not in voc:
+                        voc["element_type"] = "leaf"
+
+    def _get_used_vocabularies(self, api_record):
+        used_vocabularies = [
+            vocab_field.vocabulary_type
+            for vocab_field in find_vocabulary_relations(api_record)
+        ]
+        for v in self.always_included_vocabularies:
+            if v not in used_vocabularies:
+                used_vocabularies.append(v)
+        return used_vocabularies
+
+    def _prefetch_vocabularies_to_form_config(
+        self, form_config_vocabularies, vocabularies_to_prefetch, identity
+    ):
+        prefetched_vocabularies: Dict[str, Dict[str, Any]]
+        prefetched_vocabularies = current_ui_vocabulary_cache.get(
+            vocabularies_to_prefetch
+        )
+        for vocabulary_type, items in prefetched_vocabularies.items():
+            for item_id, item in items.items():
+                by_type = form_config_vocabularies[vocabulary_type]
+                returned_item = {
+                    "value": item_id,
+                    **item,
+                }
                 by_type["all"].append(returned_item)
-
-    @staticmethod
-    def prefetch_vocabulary_items(identity, vocabularies_to_prefetch):
-        if vocabularies_to_prefetch:
-            for r in vocabulary_service.scan(
-                identity,
-                params={
-                    "q": " OR ".join(f"type.id:{x}" for x in vocabularies_to_prefetch),
-                    "sort": "title",
-                },
-                # this needs the ScanningOrderComponent to be installed, otherwise does not sort
-                preserve_order=True,
-            ):
-                yield r
+                if "featured" in returned_item.get("tags", []):
+                    by_type["featured"].append(returned_item)
 
     @staticmethod
     def create_form_config_vocabularies(

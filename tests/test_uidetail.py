@@ -20,4 +20,3 @@ def test_uidetail(
         )
         in remove_ws(detail_page.text)
     )
-    print(detail_page.text)

@@ -16,6 +16,10 @@ import shutil
 import sys
 from pathlib import Path
 
+from flask import g
+from invenio_records_permissions.generators import AnyUser, SystemProcess
+from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
+
 from oarepo_vocabularies.authorities.service import AuthorityService
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
@@ -72,18 +76,68 @@ def extra_entry_points():
     return {}
 
 
+class FineGrainedPermissionPolicy(EveryonePermissionPolicy):
+    can_create_languages = [SystemProcess(), AnyUser()]
+    can_update_languages = [SystemProcess(), AnyUser()]
+    can_delete_languages = [SystemProcess(), AnyUser()]
+
+    can_create_authority = [SystemProcess(), AnyUser()]
+    can_update_authority = [SystemProcess(), AnyUser()]
+    can_delete_authority = [SystemProcess(), AnyUser()]
+
+    can_create_access_rights = [SystemProcess(), AnyUser()]
+    can_update_access_rights = [SystemProcess(), AnyUser()]
+    can_delete_access_rights = [SystemProcess(), AnyUser()]
+
+    can_create_contributor_types = [SystemProcess(), AnyUser()]
+    can_update_contributor_types = [SystemProcess(), AnyUser()]
+    can_delete_contributor_types = [SystemProcess(), AnyUser()]
+
+    can_create_countries = [SystemProcess(), AnyUser()]
+    can_update_countries = [SystemProcess(), AnyUser()]
+    can_delete_countries = [SystemProcess(), AnyUser()]
+
+    can_create_funders = [SystemProcess(), AnyUser()]
+    can_update_funders = [SystemProcess(), AnyUser()]
+    can_delete_funders = [SystemProcess(), AnyUser()]
+
+    can_create_institutions = [SystemProcess(), AnyUser()]
+    can_update_institutions = [SystemProcess(), AnyUser()]
+    can_delete_institutions = [SystemProcess(), AnyUser()]
+
+    can_create_item_relation_types = [SystemProcess(), AnyUser()]
+    can_update_item_relation_types = [SystemProcess(), AnyUser()]
+    can_delete_item_relation_types = [SystemProcess(), AnyUser()]
+
+    can_create_licenses = [SystemProcess(), AnyUser()]
+    can_update_licenses = [SystemProcess(), AnyUser()]
+    can_delete_licenses = [SystemProcess(), AnyUser()]
+
+    can_create_resource_types = [SystemProcess(), AnyUser()]
+    can_update_resource_types = [SystemProcess(), AnyUser()]
+    can_delete_resource_types = [SystemProcess(), AnyUser()]
+
+    can_create_related_resource_types = [SystemProcess(), AnyUser()]
+    can_update_related_resource_types = [SystemProcess(), AnyUser()]
+    can_delete_related_resource_types = [SystemProcess(), AnyUser()]
+
+    can_create_subject_categories = [SystemProcess(), AnyUser()]
+    can_update_subject_categories = [SystemProcess(), AnyUser()]
+    can_delete_subject_categories = [SystemProcess(), AnyUser()]
+
+
 @pytest.fixture(scope="module")
 def app_config(app_config):
     """Mimic an instance's configuration."""
     app_config["JSONSCHEMAS_HOST"] = "localhost"
     app_config["BABEL_DEFAULT_LOCALE"] = "en"
-    app_config["I18N_LANGUAGES"] = [("da", "Danish")]
-    app_config[
-        "RECORDS_REFRESOLVER_CLS"
-    ] = "invenio_records.resolver.InvenioRefResolver"
-    app_config[
-        "RECORDS_REFRESOLVER_STORE"
-    ] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config["I18N_LANGUAGES"] = [("da", "Danish"), ("cs", "Czech")]
+    app_config["RECORDS_REFRESOLVER_CLS"] = (
+        "invenio_records.resolver.InvenioRefResolver"
+    )
+    app_config["RECORDS_REFRESOLVER_STORE"] = (
+        "invenio_jsonschemas.proxies.current_refresolver_store"
+    )
 
     # note: This line must always be added to the invenio.cfg file
     from oarepo_vocabularies.authorities.resources import (
@@ -111,15 +165,19 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
 
     app_config["OAREPO_VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
-    app_config[
-        "OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"
-    ] = AuthoritativeVocabulariesResourceConfig
+    app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = (
+        AuthoritativeVocabulariesResourceConfig
+    )
+    app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
+    app_config["OAREPO_PERMISSIONS_PRESETS"] = {
+        "fine-grained": FineGrainedPermissionPolicy
+    }
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 
     from tests.customfields import HintCF, NonPreferredLabelsCF, RelatedURICF
 
-    app_config["OAREPO_VOCABULARIES_CUSTOM_CF"] = [
+    app_config["VOCABULARIES_CF"] = [
         KeywordCF("blah"),
         RelatedURICF("relatedURI"),
         HintCF("hint"),
@@ -141,6 +199,17 @@ def app_config(app_config):
                 "en": "czech language vocabulary type.",
             },
             "dump_options": True,
+            "props": {
+                "alpha3CodeNative": {
+                    "description": "ISO 639-2 standard 3-letter language code",
+                    "icon": None,
+                    "label": "Alpha3 code (native)",
+                    "multiple": False,
+                    "options": [],
+                    "placeholder": "eng, ces...",
+                }
+            },
+            "custom_fields": ["relatedURI"],
         },
         "licenses": {
             "name": {
@@ -159,9 +228,10 @@ def app_config(app_config):
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
-    app_config[
-        "THEME_HEADER_TEMPLATE"
-    ] = "oarepo_vocabularies_ui/test_header_template.html"
+    app_config["THEME_HEADER_TEMPLATE"] = (
+        "oarepo_vocabularies_ui/test_header_template.html"
+    )
+
     return app_config
 
 
@@ -217,7 +287,7 @@ def lang_data():
     """Example data."""
     return {
         "id": "eng",
-        "title": {"en": "English", "da": "Engelsk"},
+        "title": {"en": "English", "da": "Engelsk", "cs": "Angličtina"},
         "description": {"en": "English description", "da": "Engelsk beskrivelse"},
         "icon": "file-o",
         "props": {
@@ -233,7 +303,11 @@ def lang_data_child():
     """Example data."""
     return {
         "id": "eng.US",
-        "title": {"en": "English (US)", "da": "Engelsk (US)"},
+        "title": {
+            "en": "English (US)",
+            "da": "Engelsk (US)",
+            "cs": "Angličtina (Spojené státy)",
+        },
         "icon": "file-o",
         "type": "languages",
         "hierarchy": {"parent": "eng"},
@@ -330,7 +404,7 @@ def cache():
 
 @pytest.fixture()
 def vocab_cf(app, db, cache):
-    from oarepo_runtime.cf.mappings import prepare_cf_indices
+    from oarepo_runtime.services.custom_fields.mappings import prepare_cf_indices
 
     prepare_cf_indices()
 
@@ -345,7 +419,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         system_identity,
         {
             "id": "eng.US",
-            "title": {"en": "English (US)", "da": "Engelsk (US)"},
+            "title": {
+                "en": "English (US)",
+                "da": "Engelsk (US)",
+                "cs": "Angličtina (US)",
+            },
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
@@ -355,7 +433,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         system_identity,
         {
             "id": "eng.UK",
-            "title": {"en": "English (UK)", "da": "Engelsk (UK)"},
+            "title": {
+                "en": "English (UK)",
+                "da": "Engelsk (UK)",
+                "cs": "Angličtina (UK)",
+            },
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
@@ -365,7 +447,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         system_identity,
         {
             "id": "eng.UK.S",
-            "title": {"en": "English (UK, Scotland)", "da": "Engelsk (UK, Scotland)"},
+            "title": {
+                "en": "English (UK, Scotland)",
+                "da": "Engelsk (UK, Scotland)",
+                "cs": "Angličtina (A pro řazení)",
+            },
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng.UK"},
@@ -467,3 +553,34 @@ def simple_record_service(app):
     sregistry = app.extensions["invenio-records-resources"].registry
     sregistry.register(service, service_id="simple_model")
     return service
+
+
+@pytest.fixture(scope="module")
+def simple_record_ui_resource(app):
+    from .simple_model import ModelUIResource, ModelUIResourceConfig
+
+    return ModelUIResource(ModelUIResourceConfig())
+
+
+@pytest.fixture
+def reset_babel(app):
+    def clear_babel_context():
+        # for invenio 12
+        try:
+            from flask_babel import SimpleNamespace
+        except ImportError:
+            return
+        g._flask_babel = SimpleNamespace()
+
+    try:
+        clear_babel_context()
+        yield clear_babel_context
+    finally:
+        clear_babel_context()
+
+
+@pytest.fixture()
+def cache_clear(app):
+    app.extensions["oarepo-vocabularies"].ui_cache.clear()
+    yield
+    app.extensions["oarepo-vocabularies"].ui_cache.clear()

@@ -35,7 +35,11 @@ class AuthoritativeVocabulariesResource(Resource):
 
         # Get hits from authority.
         params = resource_requestctx.args
-        q, page, size = params["q"], params["page"], params["size"]
+        q, page, size = (
+            params.get("suggest"),
+            params.get("page", 1),
+            params.get("size", 20),
+        )
         results = authority_service.search(query=q, page=page, size=size)
 
         # Mark external, resolve uuid.

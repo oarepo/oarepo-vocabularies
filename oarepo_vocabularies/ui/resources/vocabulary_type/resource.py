@@ -2,7 +2,6 @@ from flask import current_app, g, redirect, request
 from flask_resources import route
 from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources import UIResource
-from oarepo_ui.resources.catalog import get_jinja_template
 
 
 class VocabularyTypeUIResource(UIResource):
@@ -50,10 +49,9 @@ class VocabularyTypeUIResource(UIResource):
 
         _catalog = current_oarepo_ui.catalog
 
-        template_def = self.config.templates["list"]
-        source = get_jinja_template(_catalog, template_def, [])
-
-        return _catalog.render("list", __source=source, list_data=serialized_list_data)
+        return _catalog.render(
+            self.config.templates["list"], list_data=serialized_list_data
+        )
 
     def list_without_slash(self):
         split_path = request.full_path.split("?", maxsplit=1)

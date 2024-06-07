@@ -1,18 +1,21 @@
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
+from oarepo_vocabularies.records.systemfields import HierarchyPartSelector
+
 
 def test_hierarchy_lang(
-    app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf
+    app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf, search_clear
 ):
     parent = vocab_service.create(system_identity, lang_data)
     assert "parent" not in parent.links
 
     assert parent.data["hierarchy"] == {
         "level": 1,
-        "title": [{"en": "English", "da": "Engelsk"}],
+        "title": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
         "ancestors": [],
         "ancestors_or_self": ["eng"],
+        "leaf": True,
     }
 
     child = vocab_service.create(system_identity, lang_data_child)
@@ -31,15 +34,20 @@ def test_hierarchy_lang(
         "level": 2,
         "parent": "eng",
         "title": [
-            {"da": "Engelsk (US)", "en": "English (US)"},
-            {"da": "Engelsk", "en": "English"},
+            {
+                "cs": "Angličtina (Spojené státy)",
+                "da": "Engelsk (US)",
+                "en": "English (US)",
+            },
+            {"cs": "Angličtina", "da": "Engelsk", "en": "English"},
         ],
         "ancestors": ["eng"],
         "ancestors_or_self": ["eng.US", "eng"],
+        "leaf": True,
     }
 
 
-def test_children(sample_records, client):
+def test_children(sample_records, client, search_clear):
     def _test_children(x):
         node, expected_children = x
         children_url = node["links"]["children"]
@@ -60,7 +68,7 @@ def test_children(sample_records, client):
         _test_children(s)
 
 
-def test_descendants(sample_records, client):
+def test_descendants(sample_records, client, search_clear):
     def _get_descendants(x):
         for c in x.children:
             yield c
@@ -86,7 +94,7 @@ def test_descendants(sample_records, client):
         _test_descendants(s)
 
 
-def test_parent(sample_records, client):
+def test_parent(sample_records, client, search_clear):
     def _test_parent(x, expected_parent):
         node = x.node
         if expected_parent:
@@ -102,3 +110,71 @@ def test_parent(sample_records, client):
 
     for s in sample_records:
         _test_parent(s, None)
+
+
+def test_hierarchy_selector():
+    data = {
+        "authority": {
+            "@v": "95bcf144-e477-4888-b7ba-68555090d01f::1",
+            "id": "03zsq2967",
+            "title": {
+                "en": "Association of Asian Pacific Community Health Organizations"
+            },
+            "hierarchy": {
+                "ancestors_or_self": ["03zsq2967", "11111"],
+                "title": [
+                    {
+                        "en": "Association of Asian Pacific Community Health Organizations"
+                    },
+                    {"en": "AAAAA"},
+                ],
+            },
+        }
+    }
+    assert HierarchyPartSelector("authority", level=0).select(data) == [
+        {"id": "11111", "title": {"en": "AAAAA"}}
+    ]
+    assert HierarchyPartSelector("authority", level=1).select(data) == [
+        {
+            "id": "03zsq2967",
+            "title": {
+                "en": "Association of Asian Pacific Community Health " "Organizations"
+            },
+        }
+    ]
+
+
+def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
+
+    parent = vocab_service.create(
+        system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"}
+    )
+    assert "parent" not in parent.links
+    assert parent.data["hierarchy"]["leaf"] == True
+
+    vocab_service.indexer.refresh()
+    parent_data = vocab_service.read(system_identity, ("languages", parent.id)).data
+
+    assert parent_data["hierarchy"]["leaf"] == True
+
+    child = vocab_service.create(
+        system_identity,
+        {
+            "id": "eng.US",
+            "title": {"en": "English (US)"},
+            "hierarchy": {"parent": "eng"},
+            "type": "languages",
+        },
+    )
+
+    assert child.data["hierarchy"]["leaf"] == True
+
+    vocab_service.indexer.refresh()
+    parent_data = vocab_service.read(system_identity, ("languages", parent.id)).data
+    assert parent_data["hierarchy"]["leaf"] == False
+
+    vocab_service.delete(system_identity, id_=("languages", child.id))
+
+    vocab_service.indexer.refresh()
+    parent_data = vocab_service.read(system_identity, ("languages", parent.id)).data
+    assert parent_data["hierarchy"]["leaf"] == True

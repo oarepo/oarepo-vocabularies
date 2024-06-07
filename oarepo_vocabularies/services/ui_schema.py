@@ -2,28 +2,36 @@ from functools import partial
 
 import marshmallow as ma
 from flask import current_app
-from flask_babelex import get_locale
-from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from marshmallow import fields as ma_fields
-from marshmallow_utils.fields import NestedAttribute
-from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
-from oarepo_runtime.ui.marshmallow import LocalizedDateTime
+from oarepo_runtime.i18n import get_locale
+from oarepo_runtime.services.custom_fields import InlinedCustomFieldsSchemaMixin
+from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
+from oarepo_runtime.services.schema.ui import LocalizedDateTime
 
 
 class VocabularyI18nStrUIField(ma_fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
             return None
-        locale = get_locale().language
-        if locale in value:
-            return value[locale]
+        locale = self.context["locale"]
+        if locale:
+            language = locale.language
+            if language in value:
+                return value[language]
         locale = current_app.config["BABEL_DEFAULT_LOCALE"]
         if locale in value:
             return value[locale]
         return next(iter(value.values()))
+
+    def get_locale(self):
+        if "locale" in self.context:
+            return self.context["locale"]
+        locale = get_locale()
+        self.context["locale"] = locale
+        return locale
 
 
 class HierarchyUISchema(ma.Schema):
@@ -37,9 +45,9 @@ class HierarchyUISchema(ma.Schema):
 
 
 class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):
-    CUSTOM_FIELDS_VAR = "OAREPO_VOCABULARIES_CUSTOM_CF"
-    hierarchy = NestedAttribute(
-        partial(CustomFieldsSchema, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
+    CUSTOM_FIELDS_VAR = "VOCABULARIES_CF"
+    hierarchy = ma_fields.Nested(
+        partial(CustomFieldsSchemaUI, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
     )
 
     def __init__(self, *args, **kwargs):

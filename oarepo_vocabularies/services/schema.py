@@ -8,11 +8,11 @@ from invenio_vocabularies.services.schema import (
 from invenio_vocabularies.services.schema import i18n_strings
 from marshmallow import fields as ma_fields
 from marshmallow_utils.fields import NestedAttribute
-from oarepo_runtime.cf import InlinedCustomFieldsSchemaMixin
+from oarepo_runtime.services.custom_fields import InlinedCustomFieldsSchemaMixin
 
 
 class VocabularySchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):
-    CUSTOM_FIELDS_VAR = "OAREPO_VOCABULARIES_CUSTOM_CF"
+    CUSTOM_FIELDS_VAR = "VOCABULARIES_CF"
     hierarchy = NestedAttribute(
         partial(CustomFieldsSchema, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
     )

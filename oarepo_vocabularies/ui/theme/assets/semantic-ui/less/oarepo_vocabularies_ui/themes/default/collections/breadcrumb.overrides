@@ -1,0 +1,6 @@
+.ui.breadcrumb {
+  &.vocabulary-parent-item {
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+}

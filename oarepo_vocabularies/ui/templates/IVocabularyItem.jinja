@@ -1,0 +1,20 @@
+{#def item, search_link=None, search_facet=None, hide_definition=False #}
+
+{% if item._has_value %}
+    {% if not hide_definition %}
+        {% set definitionLink = "/vocabularies/" ~ item.type ~ "/" ~ item.id %}
+        <DefinitionLink  href={definitionLink}> </DefinitionLink>
+    {% endif %}
+
+    {% set title = item.title ~ ": " ~ _("Find more records with this vocabulary term") %}
+
+    {%if search_link and search_facet %}
+        <ISearchLink search_link={search_link} className="search link" search_facet={search_facet}
+            value={item.id} title={title} label={item.title}
+        >
+        </ISearchLink>
+    {% else %}
+        <span>{{item.title}}</span>
+    {% endif %}
+{% endif %}
+

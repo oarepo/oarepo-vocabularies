@@ -1,7 +1,6 @@
 import React from "react";
 import { useFormikContext, connect } from "formik";
 import { Button, Container } from "semantic-ui-react";
-import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 const ResetButtonComponent = () => {
@@ -13,7 +12,7 @@ const ResetButtonComponent = () => {
         color="red"
         onClick={handleReset}
         content={i18next.t("reset")}
-        icon="times rectangle"
+        icon="undo"
         labelPosition="left"
         type="reset"
       />
@@ -22,7 +21,3 @@ const ResetButtonComponent = () => {
 };
 
 export const ResetButton = connect(ResetButtonComponent);
-
-ResetButtonComponent.propTypes = {
-  formik: PropTypes.object,
-};

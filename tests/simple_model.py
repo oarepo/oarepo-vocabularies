@@ -15,7 +15,7 @@ from invenio_records_resources.services import (
 )
 from invenio_records_resources.services.records.components import DataComponent
 from invenio_vocabularies.records.api import Vocabulary
-from oarepo_runtime.relations import PIDRelation, RelationsField
+from oarepo_runtime.records.relations import PIDRelation, RelationsField
 from oarepo_ui.resources import (
     BabelComponent,
     RecordsUIResource,
@@ -52,6 +52,7 @@ class ModelRecord(Record):
 
 class ModelPermissionPolicy(RecordPermissionPolicy):
     can_create = [AnyUser(), SystemProcess()]
+    can_update = [AnyUser(), SystemProcess()]
     can_search = [AnyUser(), SystemProcess()]
     can_read = [AnyUser(), SystemProcess()]
 
@@ -105,10 +106,8 @@ class ModelUIResourceConfig(RecordsUIResourceConfig):
     ui_serializer_class = ModelUISerializer
     templates = {
         **RecordsUIResourceConfig.templates,
-        "detail": {"layout": "TestDetail.jinja", "blocks": {}},
-        "search": {
-            "layout": "test_detail.html",
-        },
+        "detail": "TestDetail",
+        "search": "TestSearch",
     }
 
     components = [BabelComponent, PermissionsComponent]

@@ -1,4 +1,4 @@
-{#def metadata, ui, layout, record, extra_context #}
+{#def metadata, ui, record, extra_context, d #}
 {% extends "oarepo_ui/detail.html" %}
 {%- set title = metadata.title ~ " | " ~ _("Vocabulary Detail") %}
 
@@ -8,20 +8,21 @@
 {%- endblock %}
 
 {% block record_main_content %}
-<VocabulariesMain metadata={metadata} ui={ui} layout={layout} url_prefix={url_prefix} record={record}></VocabulariesMain>
+<oarepo_vocabularies_ui.VocabulariesMain metadata={metadata} ui={ui} url_prefix={url_prefix} record={record} extra_context={extra_context} d={d}></oarepo_vocabularies_ui.VocabulariesMain>
+{% block vocabulary_descendants %}
+{% set search_app_config = extra_context["search_app_config"] %}
+  {%- include "oarepo_vocabularies_ui/descendants.html" -%}
+{% endblock vocabulary_descendants %}
 {% endblock record_main_content %}
 
-{% block page_body %}
-  {{ super() }}
-  <div class="ui center aligned container">
-    {% block vocabulary_descendants %}
-      {% set search_app_config = extra_context["search_app_config"] %}
-        {%- include "oarepo_vocabularies_ui/descendants.html" -%}
-    {% endblock vocabulary_descendants %}
-  </div>
-{% endblock page_body %}
+{% block record_sidebar %}
+<oarepo_vocabularies_ui.VocabulariesSidebar metadata={metadata} ui={ui} url_prefix={url_prefix} record={record} extra_context={extra_context}></oarepo_vocabularies_ui.VocabulariesSidebar>
+{% endblock record_sidebar %}
+
+
 
 {%- block javascript %}
+{{super()}}
 {{webpack["oarepo_vocabularies_detail.js"] }}
 {{webpack['oarepo_vocabularies_ui_components.js']}}
 {%- endblock%}

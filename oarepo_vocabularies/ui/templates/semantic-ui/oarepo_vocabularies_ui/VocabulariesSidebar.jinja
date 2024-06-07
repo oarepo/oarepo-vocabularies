@@ -1,11 +1,12 @@
 {#def record, extra_context #}
-<div style=" margin-top: 2em">
-<a href={{ record.extra_links.ui_links["edit"] }}><button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>Edit</button></a>
-{%if extra_context.vocabularyProps["hierarchical"] == True%}
-  <!-- TODO:(mesemus) we need ui_links['create'] passed by backend here -->
-  <a href={{ record['links']['vocabulary_html'] ~ '/_new?h-parent=' ~ record['id'] }}>
-    <button class="ui left labeled icon button blue fluid mt-10"><i class="edit icon"></i>New child item</button>
-  </a>
+<div class="rel-mt-2">
+{%- if extra_context.permissions.can_edit %}
+  <SidebarLink href={record.links.ui_links["edit"]} icon="edit">{{ _('Edit')}}</SidebarLink>
+  {%if extra_context.vocabularyProps["hierarchical"] == True%}
+    <SidebarLink icon="plus" href={ record.links.ui_links["create"] ~ '?h-parent=' ~ record['id'] }>
+      {{_('New child item')}}
+    </SidebarLink>
+  {%endif%}
 {%endif%}
 </div>
 <section id="export-record" aria-label="Export" class="ui segment exports">
@@ -43,7 +44,7 @@
       </div>
       <div class="five wide column pl-0">
         <a
-          href="{{record["extra_links"]["export_path"]}}/json"
+          href="{{record["links"]["export_path"]}}/json"
           title="Download file"
           class="ui fluid button"
           role="button"
@@ -52,9 +53,6 @@
       </div>
     </div>
   </div>
+<SidebarApiLinks links={record.links}></SidebarApiLinks>
 </section>
 
-<section aria-label="API" class="ui segment">
-  <h2 class="ui small header">{{_('API')}} {{_('Links')}}</h2>
-  <SidebarApiLinks links={record.links}></SidebarApiLinks>
-</section>

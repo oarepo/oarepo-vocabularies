@@ -1,17 +1,27 @@
+from invenio_records_resources.services.records.results import RecordItem
+
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
-from tests.simple_model import ModelRecord, ModelUIResource, ModelUIResourceConfig
+from tests.simple_model import ModelRecord
 
 
-def test_dump_options(sample_records, search_clear, identity):
-    comp = DepositVocabularyOptionsComponent(service=None, uow=None)
+def test_dump_options(
+    sample_records,
+    simple_record_service,
+    simple_record_ui_resource,
+    search_clear,
+    cache_clear,
+    identity,
+):
+    comp = DepositVocabularyOptionsComponent(resource=simple_record_ui_resource)
     form_config = {}
     rec = ModelRecord({})
     comp.form_config(
         form_config=form_config,
-        resource=None,
-        record=rec,
+        api_record=RecordItem(
+            service=simple_record_service, identity=identity, record=rec
+        ),
         view_args={},
         identity=identity,
     )
@@ -19,63 +29,97 @@ def test_dump_options(sample_records, search_clear, identity):
     assert form_config == {
         "vocabularies": {
             "authority": {
-                "definition": {"authority": "AuthService", "name": {"en": "authority"}},
+                "definition": {"name": {"en": "authority"}, "authority": "AuthService"},
                 "url": "/api/vocabularies/authority",
             },
             "languages": {
-                "all": [
-                    {"text": "English", "value": "eng"},
-                    {"text": "English (UK)", "value": "eng.UK"},
-                    {"text": "English (US)", "value": "eng.US"},
-                ],
                 "definition": {
+                    "name": {"cs": "jazyky", "en": "languages"},
                     "description": {
                         "cs": "slovnikovy typ ceskeho jazyka.",
                         "en": "czech language vocabulary type.",
                     },
                     "dump_options": True,
-                    "name": {"cs": "jazyky", "en": "languages"},
-                },
-                "featured": [{"text": "English (UK, Scotland)", "value": "eng.UK.S"}],
-            },
-        }
-    }
-
-
-def test_dump_options_with_resource(
-    sample_records, search_clear, simple_record_service, identity
-):
-    comp = DepositVocabularyOptionsComponent(service=None, uow=None)
-    form_config = {}
-    comp.form_config(
-        form_config=form_config,
-        resource=ModelUIResource(config=ModelUIResourceConfig()),
-        record={},
-        view_args={},
-        identity=identity,
-    )
-
-    assert form_config == {
-        "vocabularies": {
-            "authority": {
-                "definition": {"authority": "AuthService", "name": {"en": "authority"}},
-                "url": "/api/vocabularies/authority",
-            },
-            "languages": {
-                "all": [
-                    {"text": "English", "value": "eng"},
-                    {"text": "English (UK)", "value": "eng.UK"},
-                    {"text": "English (US)", "value": "eng.US"},
-                ],
-                "definition": {
-                    "description": {
-                        "cs": "slovnikovy typ ceskeho jazyka.",
-                        "en": "czech language vocabulary type.",
+                    "custom_fields": ["relatedURI"],
+                    "props": {
+                        "alpha3CodeNative": {
+                            "description": "ISO "
+                            "639-2 "
+                            "standard "
+                            "3-letter "
+                            "language "
+                            "code",
+                            "icon": None,
+                            "label": "Alpha3 " "code " "(native)",
+                            "multiple": False,
+                            "options": [],
+                            "placeholder": "eng, " "ces...",
+                        }
                     },
-                    "dump_options": True,
-                    "name": {"cs": "jazyky", "en": "languages"},
                 },
-                "featured": [{"text": "English (UK, Scotland)", "value": "eng.UK.S"}],
+                "all": [
+                    {
+                        "value": "eng",
+                        "text": "English",
+                        "hierarchy": {"title": ["English"], "ancestors": []},
+                        "element_type": "parent",
+                        "props": {"akey": "avalue"},
+                        "tags": ["recommended"],
+                        "icon": "file-o",
+                    },
+                    {
+                        "value": "eng.UK.S",
+                        "text": "English (UK, Scotland)",
+                        "hierarchy": {
+                            "title": [
+                                "English (UK, Scotland)",
+                                "English (UK)",
+                                "English",
+                            ],
+                            "ancestors": ["eng.UK", "eng"],
+                        },
+                        "tags": ["featured"],
+                        "element_type": "leaf",
+                        "icon": "file-o",
+                    },
+                    {
+                        "value": "eng.UK",
+                        "text": "English (UK)",
+                        "hierarchy": {
+                            "title": ["English (UK)", "English"],
+                            "ancestors": ["eng"],
+                        },
+                        "element_type": "parent",
+                        "icon": "file-o",
+                    },
+                    {
+                        "value": "eng.US",
+                        "text": "English (US)",
+                        "hierarchy": {
+                            "title": ["English (US)", "English"],
+                            "ancestors": ["eng"],
+                        },
+                        "element_type": "leaf",
+                        "icon": "file-o",
+                    },
+                ],
+                "featured": [
+                    {
+                        "value": "eng.UK.S",
+                        "text": "English (UK, Scotland)",
+                        "hierarchy": {
+                            "title": [
+                                "English (UK, Scotland)",
+                                "English (UK)",
+                                "English",
+                            ],
+                            "ancestors": ["eng.UK", "eng"],
+                        },
+                        "tags": ["featured"],
+                        "element_type": "leaf",
+                        "icon": "file-o",
+                    }
+                ],
             },
         }
     }

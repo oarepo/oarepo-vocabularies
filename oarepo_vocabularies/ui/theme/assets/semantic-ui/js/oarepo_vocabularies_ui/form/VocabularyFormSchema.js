@@ -1,14 +1,6 @@
 import * as Yup from "yup";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import _uniqWith from "lodash/uniqWith";
-
-const checkDuplicateLanguage = (array) => {
-  const uniqueArray = _uniqWith(
-    array,
-    (itemA, itemB) => itemA.language === itemB.language
-  );
-  return uniqueArray.length === array.length;
-};
+import { invalidUrlMessage } from "@js/oarepo_ui";
 
 export const VocabularyFormSchema = Yup.object().shape({
   _title: Yup.array().of(
@@ -17,6 +9,7 @@ export const VocabularyFormSchema = Yup.object().shape({
       name: Yup.string().required(i18next.t("required")),
     })
   ),
+  icon: Yup.string().url(invalidUrlMessage),
   props: Yup.object()
     .shape({
       ICO: Yup.string()

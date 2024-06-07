@@ -1,69 +1,190 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
-import {
-  serializeVocabularyItem,
-} from "@js/oarepo_vocabularies";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
+import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { search } from "@js/oarepo_vocabularies";
 
-// the idea is for this component to be a simple searchable single or multiple selection drop down
-// that would handle things items that are going to be placed inside the formConfig (HTML). From what I see, all the vocabularies
-// we have except institutions vocabulary which is a bit bigger could be easily handled by this component meaning:
-// access-rights, contributor-roles, countries, funders, item-relation-types, languages, licences (rights), resource-types, subject-categories
-// need form config to contain vocabularis.[languages, licenses, resourceTypes]
+export const serializeVocabularyItems = (vocabularyItems) =>
+  vocabularyItems.map((vocabularyItem) => {
+    const {
+      hierarchy: { title: titlesArray },
+      text,
+    } = vocabularyItem;
+    const sections = [
+      ...titlesArray.map((title, index) => {
+        if (index === 0) {
+          return {
+            content: <span>{title}</span>,
+            key: crypto.randomUUID(),
+          };
+        } else {
+          return {
+            content: (
+              <span className="ui breadcrumb vocabulary-parent-item">
+                {title}
+              </span>
+            ),
+            key: crypto.randomUUID(),
+          };
+        }
+      }),
+    ];
+    return {
+      ...vocabularyItem,
+      text:
+        titlesArray.length === 1 ? (
+          <span>{text}</span>
+        ) : (
+          <Breadcrumb icon="left angle" sections={sections} />
+        ),
+      name: text,
+      icon: undefined,
+    };
+  });
 
-export const deserializeLocalVocabularyItem = (item) => {
-  return Array.isArray(item)
-    ? item.map((item) => deserializeLocalVocabularyItem(item))
-    : item.id;
+export const processVocabularyItems = (
+  options,
+  showLeafsOnly,
+  filterFunction
+) => {
+  let serlializedOptions = serializeVocabularyItems(options);
+  if (showLeafsOnly) {
+    serlializedOptions = serlializedOptions.filter(
+      (o) => o.element_type === "leaf"
+    );
+  }
+  if (filterFunction) {
+    serlializedOptions = filterFunction(serlializedOptions);
+  }
+  return serlializedOptions;
 };
 
+const InnerDropdown = ({
+  options,
+  featured,
+  usedOptions = [],
+  value,
+  ...rest
+}) => {
+  const _filterUsed = (opts) =>
+    opts.filter((o) => !usedOptions.includes(o.value) || o.value === value);
+  const allOptions = _filterUsed([
+    ...(featured.length
+      ? [
+          ...featured.sort((a, b) => a.name.localeCompare(b.name)),
+          {
+            content: <Divider fitted />,
+            disabled: true,
+            key: "featured-divider",
+          },
+        ]
+      : []),
+    ...options.filter((o) => !featured.map((o) => o.value).includes(o.value)),
+  ]);
 
+  return (
+    <Dropdown search={search} options={allOptions} value={value} {...rest} />
+  );
+};
+
+InnerDropdown.propTypes = {
+  options: PropTypes.array.isRequired,
+  featured: PropTypes.array,
+  usedOptions: PropTypes.array,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+};
 export const LocalVocabularySelectField = ({
   fieldPath,
   multiple,
   optionsListName,
+  usedOptions = [],
   helpText,
+  showLeafsOnly,
+  optimized,
+  filterFunction,
   ...uiProps
 }) => {
   const {
     formConfig: { vocabularies },
   } = useFormConfig();
-  let optionsList = [];
-  if (vocabularies[optionsListName]?.all !== undefined) {
-    optionsList = vocabularies[optionsListName].all;
-  } else {
+
+  if (!vocabularies) {
+    console.error("Do not have vocabularies in formConfig");
+  }
+
+  if (!vocabularies[optionsListName]) {
+    console.error(
+      "Vocabulary with name ",
+      optionsListName,
+      " not found in formConfig"
+    );
+  }
+
+  const { all: allOptions, featured: featuredOptions } =
+    vocabularies[optionsListName];
+
+  if (!allOptions) {
     console.error(
       `Do not have options for ${optionsListName} inside:`,
       vocabularies
     );
   }
 
-  const { values, setFieldTouched } = useFormikContext();
-  const value = deserializeLocalVocabularyItem(
-    getIn(values, fieldPath, multiple ? [] : {})
+  let serializedOptions = useMemo(
+    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+    [allOptions, showLeafsOnly, filterFunction]
   );
+
+  let serializedFeaturedOptions = useMemo(
+    () =>
+      processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
+    [featuredOptions, showLeafsOnly, filterFunction]
+  );
+
+  const handleChange = ({ e, data, formikProps }) => {
+    if (multiple) {
+      let vocabularyItems = allOptions.filter((o) =>
+        data.value.includes(o.value)
+      );
+      vocabularyItems = vocabularyItems.map((vocabularyItem) => {
+        return { ...vocabularyItem, id: vocabularyItem.value };
+      });
+      formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
+    } else {
+      let vocabularyItem = allOptions.find((o) => o.value === data.value);
+      vocabularyItem = { ...vocabularyItem, id: vocabularyItem?.value };
+      formikProps.form.setFieldValue(fieldPath, vocabularyItem);
+    }
+  };
+
+  const { values, setFieldTouched } = useFormikContext();
+  const value = getIn(values, fieldPath, multiple ? [] : {});
+
   return (
     <React.Fragment>
       <SelectField
-        // formik exhibits strange behavior when you enable search prop to semantic ui's dropdown i.e. handleBlur stops working - did not investigate the details very deep
-        // but imperatively calling setFieldTouched gets the job done
+        selectOnBlur={false}
+        optimized={optimized}
         onBlur={() => setFieldTouched(fieldPath)}
-        search
+        deburr
+        search={search}
+        control={InnerDropdown}
         fieldPath={fieldPath}
         multiple={multiple}
-        options={optionsList}
-        onChange={({ e, data, formikProps }) => {
-          formikProps.form.setFieldValue(
-            fieldPath,
-            serializeVocabularyItem(data.value)
-          );
-        }}
-        value={value}
+        featured={serializedFeaturedOptions}
+        options={serializedOptions}
+        usedOptions={usedOptions}
+        onChange={handleChange}
+        value={multiple ? value.map((o) => o?.id) : value?.id}
         {...uiProps}
       />
-      <label style={{ fontWeight: "bold" }}>{helpText}</label>
+      <label className="helptext">{helpText}</label>
     </React.Fragment>
   );
 };
@@ -73,4 +194,16 @@ LocalVocabularySelectField.propTypes = {
   multiple: PropTypes.bool,
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
+  noResultsMessage: PropTypes.string,
+  usedOptions: PropTypes.array,
+  showLeafsOnly: PropTypes.bool,
+  optimized: PropTypes.bool,
+  filterFunction: PropTypes.func,
+};
+
+LocalVocabularySelectField.defaultProps = {
+  noResultsMessage: i18next.t("No results found."),
+  showLeafsOnly: false,
+  optimized: false,
+  filterFunction: undefined,
 };

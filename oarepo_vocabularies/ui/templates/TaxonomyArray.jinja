@@ -1,5 +1,7 @@
-{#def taxonomy, search_link, searchFacet #}
+{#def taxonomy, search_link, searchFacet, vocabulary_type #}
 {% for tax in taxonomy %}
-<TaxonomyItem taxonomy={tax} search_link={search_link} searchFacet={searchFacet}></TaxonomyItem>
+<div>
+    <TaxonomyItem taxonomy={tax} search_link={search_link} searchFacet={searchFacet} vocabulary_type={vocabulary_type}></TaxonomyItem>
+</div>
 
 {% endfor %}

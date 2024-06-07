@@ -1,10 +1,15 @@
 from flask import current_app
 from invenio_records_resources.services import Link, LinksTemplate, RecordServiceConfig
 from invenio_records_resources.services.base import Service
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records import ServiceSchemaWrapper
+from invenio_records_resources.services.uow import unit_of_work
 from invenio_search import current_search_client
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyType
+from invenio_vocabularies.services import (
+    VocabulariesService as InvenioVocabulariesService,
+)
 
 
 class VocabularyTypeService(Service):
@@ -70,3 +75,79 @@ class VocabularyTypeService(Service):
         buckets = search_result.aggs.to_dict()["vocabularies"]["buckets"]
 
         return {bucket["key"]: bucket["doc_count"] for bucket in buckets}
+
+
+class VocabulariesService(InvenioVocabulariesService):
+    def _create(
+        self,
+        record_cls,
+        identity,
+        data,
+        raise_errors=True,
+        uow=None,
+        expand=False,
+        **kwargs,
+    ):
+        vocabulary_type = data.get("type", None)
+        if vocabulary_type:
+            self.require_permission(
+                identity, self.get_vocabulary_permission_name("create", vocabulary_type)
+            )
+        else:
+            return PermissionDeniedError(
+                f"Permission denied on creating vocabulary without type."
+            )
+
+        return super()._create(
+            record_cls,
+            identity,
+            data,
+            raise_errors=raise_errors,
+            uow=uow,
+            expand=expand,
+            **kwargs,
+        )
+
+    @unit_of_work()
+    def update(
+        self, identity, id_, data, revision_id=None, uow=None, expand=False, **kwargs
+    ):
+        """Replace a record."""
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(
+            identity,
+            self.get_vocabulary_permission_name("update", record.type.id),
+            record=record,
+        )
+        return super().update(
+            identity,
+            id_,
+            data,
+            revision_id=revision_id,
+            uow=uow,
+            expand=expand,
+            **kwargs,
+        )
+
+    @unit_of_work()
+    def delete(self, identity, id_, revision_id=None, uow=None, **kwargs):
+        """Delete a record."""
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(
+            identity,
+            self.get_vocabulary_permission_name("delete", record.type.id),
+            record=record,
+        )
+        return super().delete(identity, id_, revision_id=revision_id, uow=uow, **kwargs)
+
+    def get_vocabulary_permission_name(self, operation, vocabulary_type):
+        vocabulary_type = vocabulary_type.replace("-", "_")
+        return f"{operation}_{vocabulary_type}"
+
+    def search_many(self, identity, params):
+        # we are skipping Invenio vocabularies service here and calling
+        # explicitly its parent class. The reason is that invenio vocabs
+        # always filter the search by a single vocabulary type. The search_many
+        # use case is an optimization where we want to fetch multiple items
+        # from multiple vocabulary types in a single query.
+        return super(InvenioVocabulariesService, self).search(identity, params)

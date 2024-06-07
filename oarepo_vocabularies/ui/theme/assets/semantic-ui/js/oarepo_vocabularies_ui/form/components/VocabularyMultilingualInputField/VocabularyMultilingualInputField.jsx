@@ -1,21 +1,15 @@
 import React, { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
-import {
-  TextField,
-  GroupField,
-  ArrayField,
-  FieldLabel,
-} from "react-invenio-forms";
-import { Button, Form, Icon } from "semantic-ui-react";
+import { TextField, ArrayField, FieldLabel } from "react-invenio-forms";
 import { useFormikContext, getIn } from "formik";
 import {
   array2object,
   object2array,
-  eliminateUsedLanguages,
-  useVocabularyOptions,
   LanguageSelectField,
+  ArrayFieldItem,
 } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import _isEmpty from "lodash/isEmpty";
 
 export const VocabularyMultilingualInputField = ({
   fieldPath,
@@ -25,9 +19,8 @@ export const VocabularyMultilingualInputField = ({
   emptyNewInput,
   newItemInitialValue,
   textFieldLabel,
+  displayFirstInputRemoveButton,
 }) => {
-  const { options: allLanguages } = useVocabularyOptions("languages");
-
   const placeholderFieldPath = useMemo(() => {
     return fieldPath
       .split(".")
@@ -42,7 +35,7 @@ export const VocabularyMultilingualInputField = ({
     if (!getIn(values, placeholderFieldPath)) {
       setFieldValue(
         placeholderFieldPath,
-        getIn(values, fieldPath)
+        !_isEmpty(getIn(values, fieldPath))
           ? object2array(getIn(values, fieldPath, ""), "lang", "name")
           : object2array(newItemInitialValue, "lang", "name")
       );
@@ -66,24 +59,21 @@ export const VocabularyMultilingualInputField = ({
     >
       {({ indexPath, array, arrayHelpers }) => {
         const fieldPathPrefix = `${placeholderFieldPath}.${indexPath}`;
-
-        const availableOptions = eliminateUsedLanguages(
-          indexPath,
-          allLanguages.all,
-          array
-        );
-
         return (
-          <GroupField optimized>
+          <ArrayFieldItem
+            indexPath={indexPath}
+            array={array}
+            arrayHelpers={arrayHelpers}
+            displayFirstInputRemoveButton={displayFirstInputRemoveButton}
+          >
             <LanguageSelectField
-              key={availableOptions.length}
               fieldPath={`${fieldPathPrefix}.lang`}
               placeholder=""
               required
               optimized
               clearable
-              options={availableOptions}
               width={3}
+              usedLanguages={array.map((v) => v.lang)}
             />
             <TextField
               fieldPath={`${fieldPathPrefix}.name`}
@@ -91,19 +81,7 @@ export const VocabularyMultilingualInputField = ({
               required={required}
               width={13}
             />
-            {indexPath > 0 && (
-              <Form.Field style={{ marginTop: "1.75rem" }}>
-                <Button
-                  aria-label={i18next.t("Remove field")}
-                  className="close-btn"
-                  icon
-                  onClick={() => arrayHelpers.remove(indexPath)}
-                >
-                  <Icon name="close" />
-                </Button>
-              </Form.Field>
-            )}
-          </GroupField>
+          </ArrayFieldItem>
         );
       }}
     </ArrayField>
@@ -117,6 +95,8 @@ VocabularyMultilingualInputField.propTypes = {
   required: PropTypes.bool,
   newItemInitialValue: PropTypes.object,
   textFieldLabel: PropTypes.string,
+  emptyNewInput: PropTypes.object,
+  displayFirstInputRemoveButton: PropTypes.bool,
 };
 
 VocabularyMultilingualInputField.defaultProps = {
@@ -128,4 +108,5 @@ VocabularyMultilingualInputField.defaultProps = {
   },
   newItemInitialValue: { cs: "" },
   textFieldLabel: i18next.t("Name"),
+  displayFirstInputRemoveButton: true,
 };
