@@ -65,6 +65,7 @@ export const VocabularyMultilingualInputField = ({
             array={array}
             arrayHelpers={arrayHelpers}
             displayFirstInputRemoveButton={displayFirstInputRemoveButton}
+            fieldPathPrefix={fieldPathPrefix}
           >
             <LanguageSelectField
               fieldPath={`${fieldPathPrefix}.lang`}
