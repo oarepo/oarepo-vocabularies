@@ -1,20 +1,21 @@
-{#def taxonomy, search_link, searchFacet, hide_definition=False #}
+{#def taxonomy, search_link, searchFacet, hide_definition=False, vocabulary_type #}
 {% set taxonomy_dict = taxonomy | to_dict %}
 {% if taxonomy_dict %}
 <div class="ui breadcrumb">
   {%- for title in taxonomy_dict.hierarchy.title -%}
       {% set id = taxonomy_dict.id if loop.first else taxonomy_dict.hierarchy.ancestors[loop.index-2] %}
       {% if not hide_definition %}
-        {% set definitionLink = "/vocabularies/" ~ taxonomy_dict.type ~ "/" ~ id %}
+        {% set definitionLink = "/vocabularies/" ~ vocabulary_type ~ "/" ~ id %}
         <DefinitionLink  href={definitionLink}> </DefinitionLink>
       {% endif %}
       {% set _title = title ~ ": " ~ _("Find more records with this vocabulary term") %}
       {% set data = {
         "value": id,
-        "title": _title,
-        "label": title
+        "title": _("Find more records with this vocabulary term"),
+        "label": title,
+        "aria": _title,
         } %}
-        <SearchLink search_link={search_link} className="search_link" searchFacet={searchFacet} data = {data}>
+        <SearchLink search_link={search_link}  searchFacet={searchFacet} data = {data}>
         </SearchLink>
     {%- if not loop.last -%}
       <span class="divider"><i class="left chevron green icon divider"></i></span>

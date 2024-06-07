@@ -6,7 +6,6 @@ import {
 } from "@js/oarepo_ui";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
-import { search } from "@js/oarepo_vocabularies";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
@@ -77,7 +76,6 @@ export const VocabularySelectField = ({
       multiple={multiple}
       deburr
       serializeAddedValue={serializeAddedValue}
-      search={search}
       {...restProps}
     />
   );
