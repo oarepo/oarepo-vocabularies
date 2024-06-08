@@ -376,7 +376,6 @@ export const TreeSelectFieldModal = ({
           </Grid.Column>
         </Grid.Row>
       </ModalHeader>
-
       <ModalContent>
         <Grid>
           <div className="columns-container">
@@ -391,12 +390,12 @@ export const TreeSelectFieldModal = ({
             </Grid>
           </div>
         </Grid>
-      </ModalContent>
-      <ModalActions>
-        <Grid.Row className="gapped">
+      </ModalContent>{" "}
+      {multiple && (
+        <ModalActions>
           <Grid.Row className="gapped">
-            {multiple &&
-              selectedState.map((i, index) => (
+            <Grid.Row className="gapped">
+              {selectedState.map((i, index) => (
                 <Label key={i.hierarchy.title}>
                   {" "}
                   <Breadcrumb icon="left angle" sections={i.hierarchy.title} />
@@ -410,17 +409,18 @@ export const TreeSelectFieldModal = ({
                   </Button>
                 </Label>
               ))}
+            </Grid.Row>
+            <Button
+              content="Confirm"
+              labelPosition="right"
+              floated="right"
+              icon="checkmark"
+              onClick={handleSubmit}
+              secondary
+            />
           </Grid.Row>
-          <Button
-            content="Confirm"
-            labelPosition="right"
-            floated="right"
-            icon="checkmark"
-            onClick={handleSubmit}
-            secondary
-          />
-        </Grid.Row>
-      </ModalActions>
+        </ModalActions>
+      )}
     </Modal>
   );
 };
