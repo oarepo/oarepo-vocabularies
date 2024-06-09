@@ -10,11 +10,12 @@
 
 {% set data = {
     "value": vocabulary_dict.id,
-    "title": title,
-    "label": vocabulary_dict.title
+    "title": _("Find more records with this vocabulary term"),
+    "label": vocabulary_dict.title,
+    "aria": title,
 } %}
     {%if search_link%}
-        <SearchLink search_link={search_link} className="search link" searchFacet={searchFacet} data = {data}>
+        <SearchLink search_link={search_link}  searchFacet={searchFacet} data = {data}>
         </SearchLink>
     {% else %}
         <span>{{data.label}}</span>

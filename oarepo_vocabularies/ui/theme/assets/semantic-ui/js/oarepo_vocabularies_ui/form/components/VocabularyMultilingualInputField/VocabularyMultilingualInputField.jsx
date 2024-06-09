@@ -19,6 +19,7 @@ export const VocabularyMultilingualInputField = ({
   emptyNewInput,
   newItemInitialValue,
   textFieldLabel,
+  displayFirstInputRemoveButton,
 }) => {
   const placeholderFieldPath = useMemo(() => {
     return fieldPath
@@ -63,7 +64,7 @@ export const VocabularyMultilingualInputField = ({
             indexPath={indexPath}
             array={array}
             arrayHelpers={arrayHelpers}
-            displayRemoveButton={indexPath !== 0}
+            displayFirstInputRemoveButton={displayFirstInputRemoveButton}
           >
             <LanguageSelectField
               fieldPath={`${fieldPathPrefix}.lang`}
@@ -95,6 +96,7 @@ VocabularyMultilingualInputField.propTypes = {
   newItemInitialValue: PropTypes.object,
   textFieldLabel: PropTypes.string,
   emptyNewInput: PropTypes.object,
+  displayFirstInputRemoveButton: PropTypes.bool,
 };
 
 VocabularyMultilingualInputField.defaultProps = {
@@ -106,4 +108,5 @@ VocabularyMultilingualInputField.defaultProps = {
   },
   newItemInitialValue: { cs: "" },
   textFieldLabel: i18next.t("Name"),
+  displayFirstInputRemoveButton: true,
 };
