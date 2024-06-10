@@ -341,7 +341,7 @@ export const TreeSelectFieldModal = ({
                 </List.Content>
 
                 {option.element_type === "parent" && (
-                  <Button onClick={openHierarchyNode(option.value, index)}>
+                  <Button className="transparent" onClick={openHierarchyNode(option.value, index)}>
                     {index !== columnsCount - 1 && (
                       <Icon name="angle right" color="black" />
                     )}
