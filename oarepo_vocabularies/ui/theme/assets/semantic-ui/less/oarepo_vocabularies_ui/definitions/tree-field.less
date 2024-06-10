@@ -25,42 +25,16 @@
 .ui.tree-field {
   & .columns-container {
     overflow-x: auto;
-    min-height: @treeContainerMinHeight;
+    height: 70vh;
+    width: 100%;
     & .ui.grid {
-      flex-wrap: nowrap;
       height: 100%;
-      display: flex;
-
-      .column {
-        width: 100%;
-        border: 1px solid @treeBorderColor;
-        &:not(:has(.row)) {
-          display: none;
-        }
-      }
-      &.one.column .tree-column {
-        max-height: @treeColumnMaxHeight;
-        overflow-y: auto;
-        min-width: 250px;
-      }
-      .row.spaced {
-        min-width: 210px;
-        .checkbox {
-          padding: 1rem;
-        }
-        &.open {
-          background-color: @selectedColor;
-        }
-      }
+      width: inherit;
     }
   }
 
-  & .content {
+  & .content:has(.columns-container) {
     min-height: 60vh;
-    & .ui.label {
-      max-width: 30%;
-      text-align: left;
-    }
   }
   & > .header {
     padding-right: 2vw;
@@ -75,7 +49,8 @@
     & .ui.label {
       display: flex;
       text-align: left;
-      border: 1px solid @selectedBorderColor;
+      margin: 0.5rem;
+      border: 1px solid @treeSelectedBorderColor;
     }
     & .ui.button {
       padding: 0.1rem 0.3rem 0;
@@ -87,15 +62,6 @@
     & .row .row {
       width: 80%;
       flex-wrap: wrap;
-    }
-  }
-
-  .header {
-    & .ui.label {
-      padding: 10px;
-    }
-    & .column {
-      min-width: 20vw;
     }
   }
 
@@ -113,24 +79,10 @@
     width: 80vw;
     margin: 1.5rem 1.5rem 0 0;
     display: flex;
-    height: 100%;
-  }
-  & .ui.button {
-    padding: 1rem;
-    &.basic {
-      width: 100%;
-      margin: 0;
-      border-radius: 0;
-    }
-  }
-
-  & .ui.container {
-    & .row.spaced {
-      border: 1px solid @treeBorderColor;
-      padding: @treeRowPadding;
-    }
-    & .column.gapped {
-      min-width: 210px;
+    height: 95%;
+    min-width: 100%;
+    @media only screen and (max-width: @tabletBreakpoint) {
+      padding-left: 0;
     }
   }
 

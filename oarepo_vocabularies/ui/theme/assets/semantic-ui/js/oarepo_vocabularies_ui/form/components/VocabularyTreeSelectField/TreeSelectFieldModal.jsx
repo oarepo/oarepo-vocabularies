@@ -14,6 +14,7 @@ import {
   ModalHeader,
   ModalContent,
   ModalActions,
+  List,
 } from "semantic-ui-react";
 import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
@@ -293,14 +294,14 @@ export const TreeSelectFieldModal = ({
 
   const renderColumn = (column, index) => {
     return (
-      <Grid.Column key={index} className="tree-column">
+      <List key={index} className="tree-column">
         {column.map((option, i) => {
           if (
             index === 0 ||
             option.hierarchy.ancestors[0] === parentsState[index - 1]
           ) {
             return (
-              <Grid.Row
+              <List.Item
                 key={option.value}
                 className={
                   option.value === parentsState[index]
@@ -308,39 +309,37 @@ export const TreeSelectFieldModal = ({
                     : "spaced"
                 }
               >
-                {multiple && (
-                  <Checkbox
-                    checked={
-                      selectedState.findIndex(
-                        (item) => item.value === option.value
-                      ) !== -1
-                    }
-                    indeterminate={selectedState.some((item) =>
-                      item.hierarchy.ancestors.includes(option.value)
-                    )}
-                    onChange={(e) => {
-                      handleSelect(option, e);
-                    }}
-                  />
-                )}
-                <Button
-                  basic
-                  color="black"
-                  onClick={(e) =>
-                    multiple
-                      ? openHierarchyNode(option.value, index)()
-                      : handleSelect(option, e)
-                  }
-                  onDoubleClick={(e) => {
-                    handleSelect(option, e);
-                  }}
-                  onKeyDown={(e) => {
-                    handleKey(e, index);
-                  }}
-                  tabIndex={0}
-                >
+                <List.Content 
+                 onClick={(e) =>
+                  multiple
+                    ? openHierarchyNode(option.value, index)()
+                    : handleSelect(option, e)
+                }
+                onDoubleClick={(e) => {
+                  handleSelect(option, e);
+                }}
+                onKeyDown={(e) => {
+                  handleKey(e, index);
+                }}
+                tabIndex={0}>
+                  {multiple && (
+                    <Checkbox
+                      checked={
+                        selectedState.findIndex(
+                          (item) => item.value === option.value
+                        ) !== -1
+                      }
+                      indeterminate={selectedState.some((item) =>
+                        item.hierarchy.ancestors.includes(option.value)
+                      )}
+                      onChange={(e) => {
+                        handleSelect(option, e);
+                      }}
+                    />
+                  )}
                   {option.hierarchy.title[0]}
-                </Button>
+                </List.Content>
+
                 {option.element_type === "parent" && (
                   <Button onClick={openHierarchyNode(option.value, index)}>
                     {index !== columnsCount - 1 && (
@@ -348,11 +347,11 @@ export const TreeSelectFieldModal = ({
                     )}
                   </Button>
                 )}
-              </Grid.Row>
+              </List.Item>
             );
           }
         })}
-      </Grid.Column>
+      </List>
     );
   };
 
