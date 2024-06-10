@@ -26,7 +26,10 @@
   & .columns-container {
     overflow-x: auto;
     height: 70vh;
-    width: 95%;
+    width: 100%;
+    @media only screen and (max-width: @tabletBreakpoint) {
+      width: 95%;
+    }
     & .ui.grid {
       height: 100%;
       width: inherit;
