@@ -57,12 +57,11 @@ export const VocabularyMultilingualInputField = ({
       }
       required={required}
     >
-      {({ indexPath, array, arrayHelpers }) => {
+      {({ indexPath, arrayHelpers }) => {
         const fieldPathPrefix = `${placeholderFieldPath}.${indexPath}`;
         return (
           <ArrayFieldItem
             indexPath={indexPath}
-            array={array}
             arrayHelpers={arrayHelpers}
             displayFirstInputRemoveButton={displayFirstInputRemoveButton}
           >
