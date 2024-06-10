@@ -13,7 +13,7 @@
     .item.spaced {
       border: 1px solid @treeBorderColor;
       padding: 0.5rem;
-      min-height: 4rem;
+      min-height: 3.5rem;
       display: flex;
 
       .content {
