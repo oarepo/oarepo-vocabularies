@@ -16,9 +16,7 @@ def test_uidetail(
     assert detail_page.status_code == 200
     assert (
         remove_ws(
-            """  
-        <dt>vocabulary.akey</dt>
-        <dd>avalue</dd>"""
+            """<dt>vocabulary.akey</dt><dd>avalue</dd>"""
         )
         in remove_ws(detail_page.text)
     )
