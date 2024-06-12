@@ -20,7 +20,11 @@ from flask import g
 from invenio_records_permissions.generators import AnyUser, SystemProcess
 from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
 
-from oarepo_vocabularies.authorities.service import AuthorityService
+from oarepo_vocabularies.authorities.providers.ror import RORClientV2
+from oarepo_vocabularies.authorities import (
+    AuthorityProvider,
+    RORProviderV2,
+)
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -84,6 +88,10 @@ class FineGrainedPermissionPolicy(EveryonePermissionPolicy):
     can_create_authority = [SystemProcess(), AnyUser()]
     can_update_authority = [SystemProcess(), AnyUser()]
     can_delete_authority = [SystemProcess(), AnyUser()]
+
+    can_create_ror_authority = [SystemProcess(), AnyUser()]
+    can_update_ror_authority = [SystemProcess(), AnyUser()]
+    can_delete_ror_authority = [SystemProcess(), AnyUser()]
 
     can_create_access_rights = [SystemProcess(), AnyUser()]
     can_update_access_rights = [SystemProcess(), AnyUser()]
@@ -225,6 +233,10 @@ def app_config(app_config):
             "name": {"en": "authority"},
             "authority": AuthService,
         },
+        "ror-authority": {
+            "name": {"en": "ROR Authority"},
+            "authority": RORProviderV2,
+        },
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
@@ -278,6 +290,14 @@ def lang_type(db):
 def authority_type(db):
     """Get a language vocabulary type."""
     v = VocabularyType.create(id="authority", pid_type="v-auth")
+    db.session.commit()
+    return v
+
+
+@pytest.fixture()
+def ror_authority_type(db):
+    """Create ROR authority vocabulary."""
+    v = VocabularyType.create(id="ror-authority", pid_type="v-ror")
     db.session.commit()
     return v
 
@@ -338,6 +358,64 @@ def example_record(db, identity, service, example_data):
 
     Vocabulary.index.refresh()  # Refresh the index
     return record
+
+
+@pytest.fixture()
+def example_ror_record():
+    return {
+        "admin": {
+            "created": {"date": "2018-11-14", "schema_version": "1.0"},
+            "last_modified": {"date": "2024-05-13", "schema_version": "2.0"},
+        },
+        "domains": [],
+        "established": 1996,
+        "external_ids": [
+            {
+                "all": ["grid.423953.a"],
+                "preferred": "grid.423953.a",
+                "type": "grid",
+            },
+            {"all": ["0000 0004 0506 9234"], "preferred": None, "type": "isni"},
+            {"all": ["Q5010371"], "preferred": None, "type": "wikidata"},
+        ],
+        "id": "https://ror.org/050dkka69",
+        "links": [
+            {"type": "website", "value": "https://www.cesnet.cz/"},
+            {
+                "type": "wikipedia",
+                "value": "https://en.wikipedia.org/wiki/CESNET",
+            },
+        ],
+        "locations": [
+            {
+                "geonames_details": {
+                    "country_code": "CZ",
+                    "country_name": "Czechia",
+                    "lat": 50.08804,
+                    "lng": 14.42076,
+                    "name": "Prague",
+                },
+                "geonames_id": 3067696,
+            }
+        ],
+        "names": [
+            {"lang": None, "types": ["acronym"], "value": "CESNET"},
+            {
+                "lang": "en",
+                "types": ["ror_display", "label"],
+                "value": "Czech Education and Scientific Network",
+            },
+        ],
+        "relationships": [
+            {
+                "label": "Czech Academy of Sciences",
+                "type": "parent",
+                "id": "https://ror.org/053avzc18",
+            }
+        ],
+        "status": "active",
+        "types": ["other"],
+    }
 
 
 @pytest.fixture(scope="function")
@@ -494,30 +572,32 @@ def authority_rec(db, identity, authority_type, service, vocab_cf):
     )
 
 
-class AuthService(AuthorityService):
-    def search(self, query=None, page=1, size=10, **kwargs):
-        return {
-            "hits": {
-                "total": 2,
-                "hits": [
-                    {
-                        "id": "03zsq2967",
-                        "title": {
-                            "en": "Association of Asian Pacific Community Health Organizations",
-                        },
-                    },
-                    {
-                        "id": "020bcb226",
-                        "title": {
-                            "en": "Oakton Community College",
-                        },
-                    },
-                ],
-            }
-        }
+@pytest.fixture()
+def ror_client():
+    return RORClientV2(testing=True)
 
-    def get(self, item_id, **kwargs):
-        return next(x for x in self.search()["hits"]["hits"] if x["id"] == item_id)
+
+class AuthService(AuthorityProvider):
+    def search(self, identity, params, **kwargs):
+        items = [
+            {
+                "id": "03zsq2967",
+                "title": {
+                    "en": "Association of Asian Pacific Community Health Organizations",
+                },
+            },
+            {
+                "id": "020bcb226",
+                "title": {
+                    "en": "Oakton Community College",
+                },
+            },
+        ]
+        return items, 2, 10
+
+    def get(self, identity, item_id, *, uow, value, **kwargs):
+        results, _, _ = self.search(identity, {"q": item_id})
+        return next(result for result in results if result["id"] == item_id)
 
 
 @pytest.fixture()
