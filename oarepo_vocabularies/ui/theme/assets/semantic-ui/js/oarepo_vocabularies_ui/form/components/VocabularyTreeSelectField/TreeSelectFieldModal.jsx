@@ -134,7 +134,6 @@ export const TreeSelectFieldModal = ({
     setParentsState(updatedParents);
     setKeybState(updatedKeybState);
   };
-
   const handleSelect = (option, e) => {
     e.preventDefault();
     const existingIndex = selectedState.findIndex(
@@ -160,9 +159,8 @@ export const TreeSelectFieldModal = ({
         return newState;
       });
     } else if (multiple && selectedState.length !== 0) {
-      setSelectedState((prevState) => {
+      setSelectedState(() => {
         const newState = updateSelectedState(
-          prevState,
           option,
           existingParentIndex,
           childIndexes
