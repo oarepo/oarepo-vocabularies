@@ -14,6 +14,7 @@ export const VocabularyTreeSelectField = ({
   placeholder,
   root,
   optimized,
+  filterFunction,
   ...uiProps
 }) => {
   const { formConfig } = useFormConfig();
@@ -32,8 +33,8 @@ export const VocabularyTreeSelectField = ({
   }
 
   const serializedOptions = useMemo(
-    () => processVocabularyItems(allOptions),
-    [allOptions]
+    () => processVocabularyItems(allOptions, false, filterFunction),
+    [allOptions, filterFunction]
   );
 
   const [openState, setOpenState] = useState(false);
@@ -77,9 +78,9 @@ export const VocabularyTreeSelectField = ({
     setOpenState(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (newState) => {
     const prepSelect = [
-      ...selectedState.map((item) => {
+      ...newState.map((item) => {
         return {
           id: item.value,
         };
@@ -88,7 +89,7 @@ export const VocabularyTreeSelectField = ({
     formik.setFieldValue(fieldPath, multiple ? prepSelect : prepSelect[0]);
     setOpenState(false);
     setSelectedState([]);
-  };
+  };  
 
   return (
     <React.Fragment>
@@ -138,9 +139,11 @@ VocabularyTreeSelectField.propTypes = {
   optimized: PropTypes.bool,
   placeholder: PropTypes.string,
   root: PropTypes.string,
+  filterFunction: PropTypes.func,
 };
 
 VocabularyTreeSelectField.defaultProps = {
   noResultsMessage: "No results found.",
   optimized: false,
+  filterFunction: undefined,
 };

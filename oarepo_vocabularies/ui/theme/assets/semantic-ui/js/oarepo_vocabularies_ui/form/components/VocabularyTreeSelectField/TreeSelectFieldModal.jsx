@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Breadcrumb,
@@ -39,9 +39,6 @@ export const TreeSelectFieldModal = ({
     () => processVocabularyItems(allOptions),
     [allOptions]
   );
-
-  const [parentsState, setParentsState] = useState([]);
-  const [keybState, setKeybState] = useState([]);
 
   const hierarchicalData = useMemo(() => {
     const map = new Map();
@@ -116,6 +113,12 @@ export const TreeSelectFieldModal = ({
 
   const columnsCount = hierarchicalData.length;
 
+  const initialParentsState = hierarchicalData.map(() => null);
+  const initialKeybState = hierarchicalData.map(() => null);
+
+  const [parentsState, setParentsState] = useState(initialParentsState);
+  const [keybState, setKeybState] = useState(initialKeybState);
+
   const openHierarchyNode = (parent, level) => () => {
     let updatedParents = [...parentsState];
     updatedParents.splice(level + 1);
@@ -149,13 +152,28 @@ export const TreeSelectFieldModal = ({
     );
 
     if (existingIndex !== -1) {
-      setSelectedState((prevState) =>
-        prevState.filter((_, index) => index !== existingIndex)
-      );
+      setSelectedState((prevState) => {
+        const newState = prevState.filter(
+          (_, index) => index !== existingIndex
+        );
+        handleSubmit(newState);
+        return newState;
+      });
     } else if (multiple && selectedState.length !== 0) {
-      updateSelectedState(option, existingParentIndex, childIndexes);
+      setSelectedState((prevState) => {
+        const newState = updateSelectedState(
+          prevState,
+          option,
+          existingParentIndex,
+          childIndexes
+        );
+        handleSubmit(newState);
+        return newState;
+      });
     } else {
-      setSelectedState([option]);
+      const newState = [option];
+      setSelectedState(newState);
+      handleSubmit(newState);
     }
   };
 
@@ -286,12 +304,6 @@ export const TreeSelectFieldModal = ({
     }
   };
 
-  useEffect(() => {
-    if (selectedState.length > 0 && !multiple) {
-      handleSubmit();
-    }
-  }, [selectedState]);
-
   const renderColumn = (column, index) => {
     return (
       <List key={index} className="tree-column">
@@ -309,19 +321,20 @@ export const TreeSelectFieldModal = ({
                     : "spaced"
                 }
               >
-                <List.Content 
-                 onClick={(e) =>
-                  multiple
-                    ? openHierarchyNode(option.value, index)()
-                    : handleSelect(option, e)
-                }
-                onDoubleClick={(e) => {
-                  handleSelect(option, e);
-                }}
-                onKeyDown={(e) => {
-                  handleKey(e, index);
-                }}
-                tabIndex={0}>
+                <List.Content
+                  onClick={(e) =>
+                    multiple
+                      ? openHierarchyNode(option.value, index)()
+                      : handleSelect(option, e)
+                  }
+                  onDoubleClick={(e) => {
+                    handleSelect(option, e);
+                  }}
+                  onKeyDown={(e) => {
+                    handleKey(e, index);
+                  }}
+                  tabIndex={0}
+                >
                   {multiple && (
                     <Checkbox
                       checked={
@@ -341,7 +354,10 @@ export const TreeSelectFieldModal = ({
                 </List.Content>
 
                 {option.element_type === "parent" && (
-                  <Button className="transparent" onClick={openHierarchyNode(option.value, index)}>
+                  <Button
+                    className="transparent"
+                    onClick={openHierarchyNode(option.value, index)}
+                  >
                     {index !== columnsCount - 1 && (
                       <Icon name="angle right" color="black" />
                     )}
@@ -389,7 +405,7 @@ export const TreeSelectFieldModal = ({
             </Grid>
           </div>
         </Grid>
-      </ModalContent>{" "}
+      </ModalContent>
       {multiple && (
         <ModalActions>
           <Grid.Row className="gapped">
