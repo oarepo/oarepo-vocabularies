@@ -134,6 +134,7 @@ export const TreeSelectFieldModal = ({
     setParentsState(updatedParents);
     setKeybState(updatedKeybState);
   };
+
   const handleSelect = (option, e) => {
     e.preventDefault();
     const existingIndex = selectedState.findIndex(
@@ -155,30 +156,24 @@ export const TreeSelectFieldModal = ({
         const newState = prevState.filter(
           (_, index) => index !== existingIndex
         );
-        handleSubmit(newState);
+        !multiple && handleSubmit(newState);
         return newState;
       });
     } else if (multiple && selectedState.length !== 0) {
-      setSelectedState(() => {
-        const newState = updateSelectedState(
+      setSelectedState((prevState) => {
+        const newState = updateState(
+          prevState,
           option,
           existingParentIndex,
           childIndexes
         );
-        handleSubmit(newState);
         return newState;
       });
     } else {
       const newState = [option];
       setSelectedState(newState);
-      handleSubmit(newState);
+      !multiple && handleSubmit(newState);
     }
-  };
-
-  const updateSelectedState = (option, existingParentIndex, childIndexes) => {
-    setSelectedState((prevState) =>
-      updateState(prevState, option, existingParentIndex, childIndexes)
-    );
   };
 
   const updateState = (
@@ -207,19 +202,6 @@ export const TreeSelectFieldModal = ({
       return adjustedState;
     }
     return state;
-  };
-
-  const moveKey = (index, newIndex, back = false) => {
-    setKeybState((prev) => {
-      const newState = [...prev];
-      const newValue = back ? undefined : newIndex;
-      if (back) {
-        newState.splice(index, 1);
-      } else {
-        newState[index] = newValue;
-      }
-      return newState;
-    });
   };
 
   const handleArrowUp = (e, index, data) => {
@@ -428,7 +410,7 @@ export const TreeSelectFieldModal = ({
               labelPosition="right"
               floated="right"
               icon="checkmark"
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(selectedState)}
               secondary
             />
           </Grid.Row>
