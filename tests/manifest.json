@@ -691,6 +691,11 @@
       "path": "/invenio/instance/static/dist/js/prism_js.68de206741bf8e0e49b1.js",
       "publicPath": "/static/dist/js/prism_js.68de206741bf8e0e49b1.js"
     },
+    "js/record_export.d970d467ea775d1e10cf.js": {
+      "name": "js/record_export.d970d467ea775d1e10cf.js",
+      "path": "/home/dusanst/Projects/new_nr_docs/nr-docs/.venv/var/instance/static/dist/js/record_export.d970d467ea775d1e10cf.js",
+      "publicPath": "/static/dist/js/record_export.d970d467ea775d1e10cf.js"
+    },
     "js/simple_image_css.561e05d32df67a9df4c4.js": {
       "name": "js/simple_image_css.561e05d32df67a9df4c4.js",
       "path": "/invenio/instance/static/dist/js/simple_image_css.561e05d32df67a9df4c4.js",
@@ -1289,6 +1294,14 @@
       "js/manifest.4695496aebf9efb0cd82.js",
       "js/vendors~prism_js.6682fd1a890b9218fd52.js",
       "js/prism_js.68de206741bf8e0e49b1.js"
+    ],
+    "record_export": [
+      "js/manifest.0bd1cd6f2a86cfd3e86f.js",
+      "js/vendors-node_modules_react_index_js-node_modules_babel_runtime_helpers_esm_classCallCheck_js--413992.43966ff1ce9566175bb9.js",
+      "js/vendors-node_modules_i18next-browser-languagedetector_dist_esm_i18nextBrowserLanguageDetector-fa609a.f6ffcfd6310869b65e5d.js",
+      "js/vendors-node_modules_semantic-ui-react_dist_es_collections_Grid_Grid_js-node_modules_semantic-6fca2b.096a9d3d9efc73a2c214.js",
+      "js/translations_oarepo_ui_i18next_js.54440dfa61de4e1c9aa7.js",
+      "js/record_export.d970d467ea775d1e10cf.js"
     ],
     "simple_image_css": [
       "js/manifest.4695496aebf9efb0cd82.js",
