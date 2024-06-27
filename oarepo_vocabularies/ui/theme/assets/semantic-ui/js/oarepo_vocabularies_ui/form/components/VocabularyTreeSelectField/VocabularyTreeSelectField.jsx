@@ -39,21 +39,7 @@ export const VocabularyTreeSelectField = ({
 
   const [openState, setOpenState] = useState(false);
   const [query, setQuery] = useState("");
-  const [selectedState, setSelectedState] = useState(() => {
-    if (multiple && Array.isArray(value)) {
-      return value.reduce((acc, val) => {
-        const foundOption = serializedOptions.find(
-          (option) => option.value === val.id
-        );
-        if (foundOption) {
-          acc.push(foundOption);
-        }
-        return acc;
-      }, []);
-    } else {
-      return [];
-    }
-  });
+  const [selectedState, setSelectedState] = useState([]);
 
   const handleChange = ({ e, data }) => {
     if (multiple) {
@@ -75,9 +61,34 @@ export const VocabularyTreeSelectField = ({
 
   const handleOpen = (e) => {
     if (e.currentTarget.classList.contains("icon")) return;
+
+    if (multiple && Array.isArray(value)) {
+      const newSelectedState = value.reduce((acc, val) => {
+        const foundOption = serializedOptions.find(
+          (option) => option.value === val.id
+        );
+        if (foundOption) {
+          acc.push(foundOption);
+        }
+        return acc;
+      }, []);
+      setSelectedState(newSelectedState);
+    } else if (value) {
+      const foundOption = serializedOptions.find(
+        (option) => option.value === value.id
+      );
+      if (foundOption) {
+        setSelectedState([foundOption]);
+      } else {
+        setSelectedState([]);
+      }
+    } else {
+      setSelectedState([]);
+    }
+
     setOpenState(true);
   };
-
+  
   const handleSubmit = (newState) => {
     const prepSelect = [
       ...newState.map((item) => {
@@ -89,7 +100,7 @@ export const VocabularyTreeSelectField = ({
     formik.setFieldValue(fieldPath, multiple ? prepSelect : prepSelect[0]);
     setOpenState(false);
     setSelectedState([]);
-  };  
+  };
 
   return (
     <React.Fragment>
