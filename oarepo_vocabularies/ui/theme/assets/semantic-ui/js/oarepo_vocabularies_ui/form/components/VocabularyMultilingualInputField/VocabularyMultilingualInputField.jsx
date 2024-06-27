@@ -56,8 +56,9 @@ export const VocabularyMultilingualInputField = ({
         <FieldLabel htmlFor={fieldPath} icon={labelIcon ?? ""} label={label} />
       }
       required={required}
+      addButtonClassName="array-field-add-button"
     >
-      {({ indexPath, arrayHelpers }) => {
+      {({ indexPath, arrayHelpers, array }) => {
         const fieldPathPrefix = `${placeholderFieldPath}.${indexPath}`;
         return (
           <ArrayFieldItem

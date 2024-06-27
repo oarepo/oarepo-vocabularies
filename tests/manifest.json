@@ -726,6 +726,11 @@
       "path": "/invenio/instance/static/dist/js/vendors~adminlte.0def173073df55d9729d.js",
       "publicPath": "/static/dist/js/vendors~adminlte.0def173073df55d9729d.js"
     },
+    "js/record_export.d970d467ea775d1e10cf.js": {
+      "name": "js/record_export.d970d467ea775d1e10cf.js",
+      "path": "/home/dusanst/Projects/new_nr_docs/nr-docs/.venv/var/instance/static/dist/js/record_export.d970d467ea775d1e10cf.js",
+      "publicPath": "/static/dist/js/record_export.d970d467ea775d1e10cf.js"
+    },
     "js/vendors~adminlte.7dbbf26e15359810b482.js": {
       "name": "js/vendors~adminlte.7dbbf26e15359810b482.js",
       "path": "/invenio/instance/static/dist/js/vendors~adminlte.7dbbf26e15359810b482.js",
@@ -1289,6 +1294,10 @@
       "js/manifest.4695496aebf9efb0cd82.js",
       "js/vendors~prism_js.6682fd1a890b9218fd52.js",
       "js/prism_js.68de206741bf8e0e49b1.js"
+    ],
+    "record_export": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/record_export.d970d467ea775d1e10cf.js"
     ],
     "simple_image_css": [
       "js/manifest.4695496aebf9efb0cd82.js",
