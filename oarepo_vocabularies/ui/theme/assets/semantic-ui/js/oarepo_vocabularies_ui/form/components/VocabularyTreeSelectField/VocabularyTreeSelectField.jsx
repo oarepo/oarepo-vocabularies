@@ -5,6 +5,7 @@ import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const VocabularyTreeSelectField = ({
   fieldPath,
@@ -14,6 +15,7 @@ export const VocabularyTreeSelectField = ({
   placeholder,
   root,
   optimized,
+  showLeafsOnly,
   filterFunction,
   ...uiProps
 }) => {
@@ -33,8 +35,8 @@ export const VocabularyTreeSelectField = ({
   }
 
   const serializedOptions = useMemo(
-    () => processVocabularyItems(allOptions, false, filterFunction),
-    [allOptions, filterFunction]
+    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+    [allOptions, showLeafsOnly, filterFunction]
   );
 
   const [openState, setOpenState] = useState(false);
@@ -88,7 +90,7 @@ export const VocabularyTreeSelectField = ({
 
     setOpenState(true);
   };
-  
+
   const handleSubmit = (newState) => {
     const prepSelect = [
       ...newState.map((item) => {
@@ -129,7 +131,7 @@ export const VocabularyTreeSelectField = ({
           openState={openState}
           setOpenState={setOpenState}
           placeholder={placeholder}
-          allOptions={allOptions}
+          allOptions={serializedOptions}
           root={root}
           value={value}
           handleSubmit={handleSubmit}
@@ -150,11 +152,13 @@ VocabularyTreeSelectField.propTypes = {
   optimized: PropTypes.bool,
   placeholder: PropTypes.string,
   root: PropTypes.string,
+  showLeafsOnly: PropTypes.bool,
   filterFunction: PropTypes.func,
 };
 
 VocabularyTreeSelectField.defaultProps = {
-  noResultsMessage: "No results found.",
+  noResultsMessage: i18next.t("No results found."),
   optimized: false,
+  showLeafsOnly: false,
   filterFunction: undefined,
 };

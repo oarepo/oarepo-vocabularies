@@ -40,6 +40,9 @@ export const TreeSelectFieldModal = ({
     [allOptions]
   );
 
+  const [parentsState, setParentsState] = useState([]);
+  const [keybState, setKeybState] = useState([]);
+
   const hierarchicalData = useMemo(() => {
     const map = new Map();
     let excludeFirstGroup = false;
@@ -113,12 +116,6 @@ export const TreeSelectFieldModal = ({
 
   const columnsCount = hierarchicalData.length;
 
-  const initialParentsState = hierarchicalData.map(() => null);
-  const initialKeybState = hierarchicalData.map(() => null);
-
-  const [parentsState, setParentsState] = useState(initialParentsState);
-  const [keybState, setKeybState] = useState(initialKeybState);
-
   const openHierarchyNode = (parent, level) => () => {
     let updatedParents = [...parentsState];
     updatedParents.splice(level + 1);
@@ -134,12 +131,9 @@ export const TreeSelectFieldModal = ({
     setParentsState(updatedParents);
     setKeybState(updatedKeybState);
   };
-
   const handleSelect = (option, e) => {
     e.preventDefault();
-    console.log('aaaaa start')
     if (!multiple) {
-      console.log('aaaaa option 1')
       setSelectedState([option]);
       handleSubmit([option]);
     } else {
@@ -170,33 +164,7 @@ export const TreeSelectFieldModal = ({
       }
     }
   };
-  // const handleSelect = (option, e) => {
-  //   e.preventDefault();
 
-  //   const existingIndex = selectedState.findIndex(
-  //     (i) => i.value === option?.value
-  //   );
-  //   const existingParentIndex = selectedState.findIndex((i) =>
-  //     option?.hierarchy.ancestors.includes(i.value)
-  //   );
-  //   const childIndexes = selectedState.reduce(
-  //     (acc, curr, index) =>
-  //       curr.hierarchy?.ancestors.includes(option.value)
-  //         ? [...acc, index]
-  //         : acc,
-  //     []
-  //   );
-
-  //   if (existingIndex !== -1) {
-  //     setSelectedState((prevState) =>
-  //       prevState.filter((_, index) => index !== existingIndex)
-  //     );
-  //   } else if (multiple && selectedState.length !== 0) {
-  //     updateState(option, existingParentIndex, childIndexes);
-  //   } else {
-  //     setSelectedState([option]);
-  //   }
-  // };
   const updateState = (
     prevState,
     option,
@@ -223,6 +191,19 @@ export const TreeSelectFieldModal = ({
       return adjustedState;
     }
     return state;
+  };
+
+  const moveKey = (index, newIndex, back = false) => {
+    setKeybState((prev) => {
+      const newState = [...prev];
+      const newValue = back ? undefined : newIndex;
+      if (back) {
+        newState.splice(index, 1);
+      } else {
+        newState[index] = newValue;
+      }
+      return newState;
+    });
   };
 
   const handleArrowUp = (e, index, data) => {
@@ -427,7 +408,7 @@ export const TreeSelectFieldModal = ({
               ))}
             </Grid.Row>
             <Button
-              content="Confirm"
+              content={i18next.t("Confirm")}
               labelPosition="right"
               floated="right"
               icon="checkmark"
