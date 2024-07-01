@@ -5,6 +5,7 @@ import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const VocabularyTreeSelectField = ({
   fieldPath,
@@ -14,6 +15,8 @@ export const VocabularyTreeSelectField = ({
   placeholder,
   root,
   optimized,
+  showLeafsOnly,
+  filterFunction,
   ...uiProps
 }) => {
   const { formConfig } = useFormConfig();
@@ -32,27 +35,13 @@ export const VocabularyTreeSelectField = ({
   }
 
   const serializedOptions = useMemo(
-    () => processVocabularyItems(allOptions),
-    [allOptions]
+    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+    [allOptions, showLeafsOnly, filterFunction]
   );
 
   const [openState, setOpenState] = useState(false);
   const [query, setQuery] = useState("");
-  const [selectedState, setSelectedState] = useState(() => {
-    if (multiple && Array.isArray(value)) {
-      return value.reduce((acc, val) => {
-        const foundOption = serializedOptions.find(
-          (option) => option.value === val.id
-        );
-        if (foundOption) {
-          acc.push(foundOption);
-        }
-        return acc;
-      }, []);
-    } else {
-      return [];
-    }
-  });
+  const [selectedState, setSelectedState] = useState([]);
 
   const handleChange = ({ e, data }) => {
     if (multiple) {
@@ -74,12 +63,37 @@ export const VocabularyTreeSelectField = ({
 
   const handleOpen = (e) => {
     if (e.currentTarget.classList.contains("icon")) return;
+
+    if (multiple && Array.isArray(value)) {
+      const newSelectedState = value.reduce((acc, val) => {
+        const foundOption = serializedOptions.find(
+          (option) => option.value === val.id
+        );
+        if (foundOption) {
+          acc.push(foundOption);
+        }
+        return acc;
+      }, []);
+      setSelectedState(newSelectedState);
+    } else if (value) {
+      const foundOption = serializedOptions.find(
+        (option) => option.value === value.id
+      );
+      if (foundOption) {
+        setSelectedState([foundOption]);
+      } else {
+        setSelectedState([]);
+      }
+    } else {
+      setSelectedState([]);
+    }
+
     setOpenState(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (newState) => {
     const prepSelect = [
-      ...selectedState.map((item) => {
+      ...newState.map((item) => {
         return {
           id: item.value,
         };
@@ -117,7 +131,7 @@ export const VocabularyTreeSelectField = ({
           openState={openState}
           setOpenState={setOpenState}
           placeholder={placeholder}
-          allOptions={allOptions}
+          allOptions={serializedOptions}
           root={root}
           value={value}
           handleSubmit={handleSubmit}
@@ -138,9 +152,13 @@ VocabularyTreeSelectField.propTypes = {
   optimized: PropTypes.bool,
   placeholder: PropTypes.string,
   root: PropTypes.string,
+  showLeafsOnly: PropTypes.bool,
+  filterFunction: PropTypes.func,
 };
 
 VocabularyTreeSelectField.defaultProps = {
-  noResultsMessage: "No results found.",
+  noResultsMessage: i18next.t("No results found."),
   optimized: false,
+  showLeafsOnly: false,
+  filterFunction: undefined,
 };

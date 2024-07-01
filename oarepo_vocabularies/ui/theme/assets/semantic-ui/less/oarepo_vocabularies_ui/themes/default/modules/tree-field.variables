@@ -1,7 +1,2 @@
-@selectedColor: lightblue;
-@treeBorderColor: #9B9B93;
-@selectedBorderColor: #9B9B93;
-@treeContainerMinHeight: 60vh;
-@treeColumnMaxHeight:70vh;
-@treeRowPadding: 0.5rem;
+@treeSelectedBorderColor: #9B9B93;
 @treeHeaderSize:1.3rem;

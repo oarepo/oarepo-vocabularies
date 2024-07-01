@@ -25,44 +25,20 @@
 .ui.tree-field {
   & .columns-container {
     overflow-x: auto;
-    min-height: @treeContainerMinHeight;
+    height: 70vh;
+    width: 100%;
     & .ui.grid {
-      flex-wrap: nowrap;
       height: 100%;
-      display: flex;
-
-      .column {
-        width: 100%;
-        border: 1px solid @treeBorderColor;
-        &:not(:has(.row)) {
-          display: none;
-        }
-       
-      }
-      &.one.column .tree-column{
-        max-height: @treeColumnMaxHeight;
-        overflow-y: auto;
-        min-width: 250px
-      }
-      .row.spaced {
-        min-width: 210px;
-        &.open {
-          background-color: @selectedColor;
-        }
-      }
+      width: inherit;
     }
   }
 
-  & .content {
+  & .content:has(.columns-container) {
     min-height: 60vh;
-    & .ui.label {
-      max-width: 30%;
-      text-align: left;
-    }
   }
   & > .header {
     padding-right: 2vw;
-    @media only screen  and (min-width: @tabletBreakpoint) {
+    @media only screen and (min-width: @tabletBreakpoint) {
       & {
         padding-right: 4vw;
       }
@@ -73,7 +49,8 @@
     & .ui.label {
       display: flex;
       text-align: left;
-      border: 1px solid @selectedBorderColor;
+      margin: 0.5rem;
+      border: 1px solid @treeSelectedBorderColor;
     }
     & .ui.button {
       padding: 0.1rem 0.3rem 0;
@@ -88,19 +65,10 @@
     }
   }
 
-  .header {
-    & .ui.label {
-      padding: 10px;
-    }
-    & .column {
-      min-width: 20vw;
-    }
-  }
-
   .ui.header {
     width: 100%;
     font-size: @treeHeaderSize;
-    @media only screen and (max-width: @tabletBreakpoint)  {
+    @media only screen and (max-width: @tabletBreakpoint) {
       & {
         text-align: center;
       }
@@ -108,27 +76,17 @@
   }
   & .ui.container:not(.page-subheader) {
     align-self: flex-start;
-    width: 80vw;
     margin: 1.5rem 1.5rem 0 0;
     display: flex;
-    height: 100%;
-  }
-  & .ui.button {
-    padding: 0.2rem;
-    &.basic {
-      width: 100%;
-      margin: 0;
-      border-radius: 0;
-    }
-  }
-
-  & .ui.container {
-    & .row.spaced {
-      border: 1px solid @treeBorderColor;
-      padding: @treeRowPadding;
-    }
-    & .column.gapped {
-      min-width: 210px;
+    height: 95%;
+    min-width: 100%;
+    overflow: hidden;
+    overflow-x: auto;
+    @media only screen and (max-width: @tabletBreakpoint) {
+      padding-left: 0;
+      &:has(.tree-column:nth-child(2):not(:empty)) {
+        min-width: 95%;
+      }
     }
   }
 
