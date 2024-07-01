@@ -298,7 +298,7 @@ export const TreeSelectFieldModal = ({
               <List.Item
                 key={option.value}
                 className={
-                  option.value === parentsState[index]
+                  option.value === parentsState[index] || option.value === value.id
                     ? "open spaced"
                     : "spaced"
                 }

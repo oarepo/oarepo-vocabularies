@@ -72,7 +72,6 @@ export const VocabularySelectField = ({
   if (externalAuthority) {
     suggestionsConfig.externalSuggestionApi = `${suggestionsConfig.suggestionAPIUrl}/authoritative`;
   }
-
   return (
     <RelatedSelectField
       fieldPath={fieldPath}

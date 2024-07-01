@@ -2,20 +2,31 @@
   .ui.tree-field &.tree-column {
     margin: 0;
     width: 100%;
-    border: 1px solid @treeBorderColor;
     overflow-y: auto;
     min-width: 250px;
+
+    &:not(:first-child) {
+        border-left: 1px solid @borderColor;
+    }
 
     &:not(:has(.item)) {
       display: none;
     }
 
     .item.spaced {
-      border: 1px solid @treeBorderColor;
+      border-bottom: 1px solid @borderColor;
       padding: 0.5rem;
       min-height: 3.5rem;
       display: flex;
       cursor: pointer;
+
+      & :hover {
+        text-decoration: underline;
+      }
+
+      & :not(:first-child) {
+        border-top: 0;
+      }
 
       .content {
         flex: 1;
