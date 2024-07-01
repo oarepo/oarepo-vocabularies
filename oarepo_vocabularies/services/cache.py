@@ -143,8 +143,11 @@ class VocabularyCache:
         language = get_locale().language
         ret = {}
         for vocabulary_type in vocabulary_types:
-            ret[vocabulary_type] = self.cache[language][vocabulary_type].items
-            self.count_from_cache += len(ret[vocabulary_type])
+            if vocabulary_type not in self.cache.get(language, {}):
+                ret[vocabulary_type] = {}
+            else:
+                ret[vocabulary_type] = self.cache[language][vocabulary_type].items
+                self.count_from_cache += len(ret[vocabulary_type])
 
         return ret
 
