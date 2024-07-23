@@ -182,6 +182,7 @@ export const LocalVocabularySelectField = ({
         usedOptions={usedOptions}
         onChange={handleChange}
         value={multiple ? value.map((o) => o?.id) : value?.id}
+        searchInput={{ id: fieldPath }}
         {...uiProps}
       />
       <label className="helptext">{helpText}</label>
