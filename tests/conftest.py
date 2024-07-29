@@ -25,6 +25,7 @@ from oarepo_vocabularies.authorities import (
     AuthorityProvider,
     RORProviderV2,
 )
+from oarepo_vocabularies.services.permissions import NonDangerousVocabularyOperation
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -82,7 +83,7 @@ def extra_entry_points():
 
 class FineGrainedPermissionPolicy(EveryonePermissionPolicy):
     can_create_languages = [SystemProcess(), AnyUser()]
-    can_update_languages = [SystemProcess(), AnyUser()]
+    can_update_languages = [SystemProcess(), NonDangerousVocabularyOperation(AnyUser())]
     can_delete_languages = [SystemProcess(), AnyUser()]
 
     can_create_authority = [SystemProcess(), AnyUser()]

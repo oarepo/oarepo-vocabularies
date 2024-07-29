@@ -8,6 +8,7 @@ from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
+from .components.keep_vocabulary_id import KeepVocabularyIdComponent
 
 from .components.scanning_order import ScanningOrderComponent
 
@@ -82,6 +83,7 @@ class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfi
     schema = VocabularySchema
     search = VocabularySearchOptions
     components = [
+        KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
         HierarchyComponent,
         ScanningOrderComponent,
