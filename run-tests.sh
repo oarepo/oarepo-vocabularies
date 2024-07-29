@@ -2,7 +2,7 @@
 
 set -e
 
-OAREPO_VERSION="${OAREPO_VERSION:-11}"
+OAREPO_VERSION="${OAREPO_VERSION:-12}"
 
 
 VENV=".venv"
@@ -18,6 +18,10 @@ pip install -U setuptools pip wheel
 echo "Installing oarepo version $OAREPO_VERSION"
 pip install "oarepo==${OAREPO_VERSION}.*"
 pip install -e ".[tests]"
+
+curl -L -o forked_install.sh https://github.com/oarepo/nrp-devtools/raw/main/tests/forked_install.sh
+sh forked_install.sh invenio-records-resources
+
 
 pip uninstall -y uritemplate
 pip install uritemplate

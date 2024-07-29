@@ -118,6 +118,8 @@ class VocabulariesService(InvenioVocabulariesService):
             identity,
             self.get_vocabulary_permission_name("update", record.type.id),
             record=record,
+            data=data,
+            **kwargs
         )
         return super().update(
             identity,

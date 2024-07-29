@@ -91,6 +91,6 @@ yarn.lock
 package-lock.json
 node_modules
 
-
+forked_install.sh
 
 oarepo_vocabularies/ui/theme/assets/semantic-ui/translations/oarepo_vocabularies_ui/yarn.lock

@@ -1,7 +1,10 @@
+from flask_principal import PermissionDenied
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
 from oarepo_vocabularies.records.systemfields import HierarchyPartSelector
+
+import pytest
 
 
 def test_hierarchy_lang(
@@ -178,3 +181,18 @@ def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
     vocab_service.indexer.refresh()
     parent_data = vocab_service.read(system_identity, ("languages", parent.id)).data
     assert parent_data["hierarchy"]["leaf"] == True
+
+
+def test_update_with_disallowed_hierarchy(app, db, cache, lang_type, sample_records, vocab_cf, search_clear, identity_simple):
+    with pytest.raises(PermissionDenied):
+        vocab_service.update(identity_simple, ("languages", "eng.UK.S"),
+                             {"hierarchy": {"parent": "eng"},
+                             "type": "languages",
+                             "title": {"en": "English (UK)"}},)
+
+
+def test_update_with_hierarchy_change(app, db, cache, lang_type, sample_records, vocab_cf, search_clear):
+    vocab_service.update(system_identity, ("languages", "eng.UK.S"),
+                         {"hierarchy": {"parent": "eng"},
+                         "type": "languages",
+                         "title": {"en": "English (UK)"}},)
