@@ -430,7 +430,6 @@ export const TreeSelectFieldModal = ({
 };
 
 TreeSelectFieldModal.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
   placeholder: PropTypes.string,
   root: PropTypes.string,
