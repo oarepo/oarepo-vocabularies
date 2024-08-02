@@ -24,7 +24,7 @@ export const VocabularyTreeSelectField = ({
   const formik = useFormikContext();
   const { values, setFieldTouched } = useFormikContext();
   const value = getIn(values, fieldPath, multiple ? [] : {});
-  let { all: allOptions, featured: featuredOptions } =
+  let { all: allOptions } =
     vocabularies[optionsListName];
 
   if (!allOptions) {
@@ -43,27 +43,8 @@ export const VocabularyTreeSelectField = ({
   const [query, setQuery] = useState("");
   const [selectedState, setSelectedState] = useState([]);
 
-  const handleChange = ({ e, data }) => {
-    if (multiple) {
-      let vocabularyItems = allOptions.filter((o) =>
-        data.value.includes(o.value)
-      );
-      vocabularyItems = vocabularyItems.map((vocabularyItem) => {
-        return { ...vocabularyItem, id: vocabularyItem.value };
-      });
-      formik.setFieldValue(fieldPath, [...vocabularyItems]);
-      setSelectedState(vocabularyItems);
-    } else {
-      let vocabularyItem = allOptions.find((o) => o.value === data.value);
-      vocabularyItem = { ...vocabularyItem, id: vocabularyItem?.value };
-      formik.setFieldValue(fieldPath, vocabularyItem);
-      setSelectedState(vocabularyItem);
-    }
-  };
-
   const handleOpen = (e) => {
-    if (e.currentTarget.classList.contains("icon")) return;
-
+    e.preventDefault();
     if (multiple && Array.isArray(value)) {
       const newSelectedState = value.reduce((acc, val) => {
         const foundOption = serializedOptions.find(
@@ -107,16 +88,16 @@ export const VocabularyTreeSelectField = ({
   return (
     <React.Fragment>
       <SelectField
-        selectOnBlur={false}
         optimized={optimized}
         onBlur={() => setFieldTouched(fieldPath)}
-        deburr
+        closeOnBlur
+        closeOnChange
+        open={false}
+        openOnFocus={false}
         fieldPath={fieldPath}
         multiple={multiple}
-        featured={featuredOptions}
         options={serializedOptions}
         onClick={(e) => handleOpen(e)}
-        onChange={handleChange}
         value={multiple ? value.map((o) => o?.id) : value?.id}
         {...uiProps}
       />

@@ -18,9 +18,13 @@ import {
 } from "semantic-ui-react";
 import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import _has from "lodash/has"
+
+const isSelectable = (option) => {
+  return _has(option, "selectable") ? !!option.selectable : true
+}
 
 export const TreeSelectFieldModal = ({
-  fieldPath,
   multiple,
   placeholder,
   root,
@@ -33,7 +37,6 @@ export const TreeSelectFieldModal = ({
   handleSubmit,
   selectedState,
   setSelectedState,
-  ...uiProps
 }) => {
   const serializedOptions = useMemo(
     () => processVocabularyItems(allOptions),
@@ -50,7 +53,7 @@ export const TreeSelectFieldModal = ({
     serializedOptions.forEach((option) => {
       const ancestorCount = option.hierarchy.ancestors.length;
 
-      if (root && option.value == root) {
+      if (root && option.value === root) {
         excludeFirstGroup = true;
       }
 
@@ -133,6 +136,9 @@ export const TreeSelectFieldModal = ({
   };
   const handleSelect = (option, e) => {
     e.preventDefault();
+    if (!isSelectable(option)) {
+      return
+    }
     if (!multiple) {
       setSelectedState([option]);
       handleSubmit([option]);
@@ -289,7 +295,7 @@ export const TreeSelectFieldModal = ({
   const renderColumn = (column, index) => {
     return (
       <List key={index} className="tree-column">
-        {column.map((option, i) => {
+        {column.map((option) => {
           if (
             index === 0 ||
             option.hierarchy.ancestors[0] === parentsState[index - 1]
@@ -298,14 +304,14 @@ export const TreeSelectFieldModal = ({
               <List.Item
                 key={option.value}
                 className={
-                  option.value === parentsState[index] || option.value === value.id
+                  isSelectable(option) && (option.value === parentsState[index] || option.value === value.id)
                     ? "open spaced"
                     : "spaced"
                 }
               >
                 <List.Content
                   onClick={(e) =>
-                    multiple
+                    (multiple || !isSelectable(option))
                       ? openHierarchyNode(option.value, index)()
                       : handleSelect(option, e)
                   }
@@ -324,6 +330,7 @@ export const TreeSelectFieldModal = ({
                           (item) => item.value === option.value
                         ) !== -1
                       }
+                      disabled={!isSelectable(option)}
                       indeterminate={selectedState.some((item) =>
                         item.hierarchy.ancestors.includes(option.value)
                       )}
@@ -392,7 +399,7 @@ export const TreeSelectFieldModal = ({
         <ModalActions>
           <Grid.Row className="gapped">
             <Grid.Row className="gapped">
-              {selectedState.map((i, index) => (
+              {selectedState.map((i) => (
                 <Label key={i.hierarchy.title}>
                   {" "}
                   <Breadcrumb icon="left angle" sections={i.hierarchy.title} />
