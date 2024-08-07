@@ -50,16 +50,16 @@ export const processVocabularyItems = (
   showLeafsOnly,
   filterFunction
 ) => {
-  let serlializedOptions = serializeVocabularyItems(options);
+  let serializedOptions = serializeVocabularyItems(options);
   if (showLeafsOnly) {
-    serlializedOptions = serlializedOptions.filter(
+    serializedOptions = serializedOptions.filter(
       (o) => o.element_type === "leaf"
     );
   }
   if (filterFunction) {
-    serlializedOptions = filterFunction(serlializedOptions);
+    serializedOptions = filterFunction(serializedOptions);
   }
-  return serlializedOptions;
+  return serializedOptions;
 };
 
 const InnerDropdown = ({
@@ -147,7 +147,7 @@ export const LocalVocabularySelectField = ({
     [featuredOptions, showLeafsOnly, filterFunction]
   );
 
-  const handleChange = ({ e, data, formikProps }) => {
+  const handleChange = ({ data, formikProps }) => {
     if (multiple) {
       let vocabularyItems = allOptions.filter((o) =>
         data.value.includes(o.value)
