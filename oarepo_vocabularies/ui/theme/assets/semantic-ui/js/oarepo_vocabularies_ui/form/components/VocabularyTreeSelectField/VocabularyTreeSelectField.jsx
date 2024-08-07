@@ -40,7 +40,6 @@ export const VocabularyTreeSelectField = ({
   );
 
   const [openState, setOpenState] = useState(false);
-  const [query, setQuery] = useState("");
   const [selectedState, setSelectedState] = useState([]);
 
   const handleOpen = (e) => {
@@ -106,8 +105,6 @@ export const VocabularyTreeSelectField = ({
       {openState && (
         <TreeSelectFieldModal
           fieldPath={fieldPath}
-          query={query}
-          setQuery={setQuery}
           multiple={multiple}
           openState={openState}
           setOpenState={setOpenState}

@@ -19,17 +19,40 @@ import {
 import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _has from "lodash/has"
+import _groupBy from "lodash/groupBy"
+import _toPairs from "lodash/toPairs"
+import _sortBy from "lodash/sortBy"
+import _reject from "lodash/reject"
 
 const isSelectable = (option) => {
   return _has(option, "selectable") ? !!option.selectable : true
 }
 
+const isDescendant = (option, ancestorId) => {
+  return option.hierarchy.ancestors.includes(ancestorId)
+}
+
+const sortByTitle = (options) => options.sort((a, b) => {
+  const titleComparison = a.hierarchy.ancestors?.[0]?.localeCompare(
+    b.hierarchy.ancestors[0],
+    i18next.language,
+    { sensitivity: "base" }
+  );
+  if (titleComparison !== 0) {
+    return titleComparison;
+  } else {
+    return a.hierarchy.title[0].localeCompare(
+      b.hierarchy.title[0],
+      i18next.language,
+      { sensitivity: "base" }
+    );
+  }
+});
+
 export const TreeSelectFieldModal = ({
   multiple,
   placeholder,
   root,
-  query,
-  setQuery,
   openState,
   setOpenState,
   allOptions,
@@ -38,86 +61,36 @@ export const TreeSelectFieldModal = ({
   selectedState,
   setSelectedState,
 }) => {
+  const [query, setQuery] = useState("");
   const serializedOptions = useMemo(
-    () => processVocabularyItems(allOptions),
+    () => processVocabularyItems(
+        root
+            ? allOptions.filter((option) => isDescendant(option, root))
+            : allOptions
+    ),
     [allOptions]
   );
-
   const [parentsState, setParentsState] = useState([]);
   const [keybState, setKeybState] = useState([]);
 
-  const hierarchicalData = useMemo(() => {
-    const map = new Map();
-    let excludeFirstGroup = false;
+  const columnGroups = _groupBy(
+    serializedOptions.filter(o => query === '' ||
+        o.hierarchy.title[0].toLowerCase().includes(query.toLowerCase())),
+    'hierarchy.ancestors.length'
+  )
 
-    serializedOptions.forEach((option) => {
-      const ancestorCount = option.hierarchy.ancestors.length;
+  const columns = _sortBy(_toPairs(columnGroups), ([index, _]) => Number.parseInt(index))
+    .map(([_, column], columnIndex, _columns) => sortByTitle(_reject(
+        column,
+        option => !isSelectable(option) && (
+          option.element_type === 'leaf' || (
+              option.element_type === 'parent' &&
+              (columnIndex < _columns.length - 1 &&
+                !_columns[columnIndex+1][1].some(child => isDescendant(child, option.value))))
+        )
+    )))
 
-      if (root && option.value === root) {
-        excludeFirstGroup = true;
-      }
-
-      if (!(root && excludeFirstGroup && ancestorCount === 0)) {
-        if (!map.has(ancestorCount)) {
-          map.set(ancestorCount, []);
-        }
-        map.get(ancestorCount).push(option);
-      }
-    });
-
-    map.forEach((options, _) => {
-      options.sort((a, b) => {
-        const titleComparison = a.hierarchy.ancestors?.[0]?.localeCompare(
-          b.hierarchy.ancestors[0],
-          i18next.language,
-          { sensitivity: "base" }
-        );
-        if (titleComparison !== 0) {
-          return titleComparison;
-        } else {
-          return a.hierarchy.title[0].localeCompare(
-            b.hierarchy.title[0],
-            i18next.language,
-            { sensitivity: "base" }
-          );
-        }
-      });
-    });
-
-    let result = Array.from(map.entries())
-      .sort((a, b) => a[0] - b[0])
-      .filter(
-        ([ancestorCount, _]) =>
-          !(root && excludeFirstGroup && ancestorCount === 0)
-      )
-      .map(([_, options]) => {
-        if (root) {
-          return options.filter(
-            (option) =>
-              option.hierarchy.ancestors.includes(root) ||
-              option.hierarchy.ancestors.length === 0
-          );
-        } else {
-          return options;
-        }
-      })
-      .filter((group) => group.length > 0)
-      .map((group) => {
-        return group;
-      });
-
-    return query === ""
-      ? result
-      : result.map((group) =>
-          group.filter((option) =>
-            option.hierarchy.title[0]
-              .toLowerCase()
-              .includes(query.toLowerCase())
-          )
-        );
-  }, [serializedOptions, query, root]);
-
-  const columnsCount = hierarchicalData.length;
+  const columnsCount = columns.length;
 
   const openHierarchyNode = (parent, level) => () => {
     let updatedParents = [...parentsState];
@@ -126,7 +99,7 @@ export const TreeSelectFieldModal = ({
 
     let updatedKeybState = [...keybState];
 
-    const columnOptions = hierarchicalData[level];
+    const columnOptions = columns[level];
     const nextColumnIndex = columnOptions.findIndex((o) => o.value === parent);
     updatedKeybState.splice(level + 1);
     updatedKeybState[level] = nextColumnIndex;
@@ -247,7 +220,7 @@ export const TreeSelectFieldModal = ({
 
   const handleArrowRight = (index) => {
     if (index < columnsCount - 1) {
-      const nextColumnOptions = hierarchicalData[index + 1];
+      const nextColumnOptions = columns[index + 1];
       const nextColumnIndex = nextColumnOptions.findIndex(
         (o) => o.hierarchy.ancestors[0] === parentsState[index]
       );
@@ -266,7 +239,7 @@ export const TreeSelectFieldModal = ({
   const handleKey = (e, index) => {
     e.preventDefault();
     index = Math.max(keybState.length - 1, index);
-    const data = hierarchicalData[index];
+    const data = columns[index];
 
     switch (e.key) {
       case "ArrowUp":
@@ -385,7 +358,7 @@ export const TreeSelectFieldModal = ({
           <div className="columns-container">
             <Grid columns={1}>
               <Container>
-                {hierarchicalData.map((column, level) => (
+                {columns.map((column, level) => (
                   <React.Fragment key={column[0]?.value}>
                     {renderColumn(column, level)}
                   </React.Fragment>
@@ -433,8 +406,6 @@ TreeSelectFieldModal.propTypes = {
   multiple: PropTypes.bool,
   placeholder: PropTypes.string,
   root: PropTypes.string,
-  query: PropTypes.string.isRequired,
-  setQuery: PropTypes.func.isRequired,
   openState: PropTypes.bool.isRequired,
   setOpenState: PropTypes.func.isRequired,
   allOptions: PropTypes.array.isRequired,
