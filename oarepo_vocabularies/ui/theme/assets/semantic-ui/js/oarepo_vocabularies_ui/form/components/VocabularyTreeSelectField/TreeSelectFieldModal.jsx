@@ -70,7 +70,8 @@ export const TreeSelectFieldModal = ({
     ),
     [allOptions]
   );
-  const [parentsState, setParentsState] = useState([]);
+  const valueAncestors = serializedOptions.find(o => o.value === value.id)?.hierarchy?.ancestors || []
+  const [parentsState, setParentsState] = useState(valueAncestors);
   const [keybState, setKeybState] = useState([]);
 
   const columnGroups = _groupBy(
@@ -85,9 +86,11 @@ export const TreeSelectFieldModal = ({
         option => !isSelectable(option) && (
           option.element_type === 'leaf' || (
               option.element_type === 'parent' &&
-              (columnIndex < _columns.length - 1 &&
-                !_columns[columnIndex+1][1].some(child => isDescendant(child, option.value))))
-        )
+              (columnIndex < _columns.length - 1
+                  ? !_columns[columnIndex+1][1].some(child => isDescendant(child, option.value))
+                  : true
+              )
+        ))
     )))
 
   const columnsCount = columns.length;
@@ -277,7 +280,7 @@ export const TreeSelectFieldModal = ({
               <List.Item
                 key={option.value}
                 className={
-                  isSelectable(option) && (option.value === parentsState[index] || option.value === value.id)
+                  option.value === parentsState[index] || option.value === value.id
                     ? "open spaced"
                     : "spaced"
                 }
