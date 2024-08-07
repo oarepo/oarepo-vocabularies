@@ -18,36 +18,38 @@ import {
 } from "semantic-ui-react";
 import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import _has from "lodash/has"
-import _groupBy from "lodash/groupBy"
-import _toPairs from "lodash/toPairs"
-import _sortBy from "lodash/sortBy"
-import _reject from "lodash/reject"
+import _has from "lodash/has";
+import _groupBy from "lodash/groupBy";
+import _toPairs from "lodash/toPairs";
+import _sortBy from "lodash/sortBy";
+import _reject from "lodash/reject";
+import _deburr from "lodash/deburr";
 
 const isSelectable = (option) => {
-  return _has(option, "selectable") ? !!option.selectable : true
-}
+  return _has(option, "selectable") ? !!option.selectable : true;
+};
 
 const isDescendant = (option, ancestorId) => {
-  return option.hierarchy.ancestors.includes(ancestorId)
-}
+  return option.hierarchy.ancestors.includes(ancestorId);
+};
 
-const sortByTitle = (options) => options.sort((a, b) => {
-  const titleComparison = a.hierarchy.ancestors?.[0]?.localeCompare(
-    b.hierarchy.ancestors[0],
-    i18next.language,
-    { sensitivity: "base" }
-  );
-  if (titleComparison !== 0) {
-    return titleComparison;
-  } else {
-    return a.hierarchy.title[0].localeCompare(
-      b.hierarchy.title[0],
+const sortByTitle = (options) =>
+  options.sort((a, b) => {
+    const titleComparison = a.hierarchy.ancestors?.[0]?.localeCompare(
+      b.hierarchy.ancestors[0],
       i18next.language,
       { sensitivity: "base" }
     );
-  }
-});
+    if (titleComparison !== 0) {
+      return titleComparison;
+    } else {
+      return a.hierarchy.title[0].localeCompare(
+        b.hierarchy.title[0],
+        i18next.language,
+        { sensitivity: "base" }
+      );
+    }
+  });
 
 export const TreeSelectFieldModal = ({
   multiple,
@@ -63,35 +65,49 @@ export const TreeSelectFieldModal = ({
 }) => {
   const [query, setQuery] = useState("");
   const serializedOptions = useMemo(
-    () => processVocabularyItems(
+    () =>
+      processVocabularyItems(
         root
-            ? allOptions.filter((option) => isDescendant(option, root))
-            : allOptions
-    ),
+          ? allOptions.filter((option) => isDescendant(option, root))
+          : allOptions
+      ),
     [allOptions]
   );
-  const valueAncestors = serializedOptions.find(o => o.value === value.id)?.hierarchy?.ancestors || []
+  const valueAncestors =
+    serializedOptions.find((o) => o.value === value.id)?.hierarchy?.ancestors ||
+    [];
   const [parentsState, setParentsState] = useState(valueAncestors);
   const [keybState, setKeybState] = useState([]);
 
   const columnGroups = _groupBy(
-    serializedOptions.filter(o => query === '' ||
-        o.hierarchy.title[0].toLowerCase().includes(query.toLowerCase())),
-    'hierarchy.ancestors.length'
-  )
+    serializedOptions.filter(
+      (o) =>
+        query === "" ||
+        _deburr(o.hierarchy.title[0].toLowerCase()).includes(
+          _deburr(query.toLowerCase())
+        )
+    ),
+    "hierarchy.ancestors.length"
+  );
 
-  const columns = _sortBy(_toPairs(columnGroups), ([index, _]) => Number.parseInt(index))
-    .map(([_, column], columnIndex, _columns) => sortByTitle(_reject(
+  const columns = _sortBy(_toPairs(columnGroups), ([index, _]) =>
+    Number.parseInt(index)
+  ).map(([_, column], columnIndex, _columns) =>
+    sortByTitle(
+      _reject(
         column,
-        option => !isSelectable(option) && (
-          option.element_type === 'leaf' || (
-              option.element_type === 'parent' &&
+        (option) =>
+          !isSelectable(option) &&
+          (option.element_type === "leaf" ||
+            (option.element_type === "parent" &&
               (columnIndex < _columns.length - 1
-                  ? !_columns[columnIndex+1][1].some(child => isDescendant(child, option.value))
-                  : true
-              )
-        ))
-    )))
+                ? !_columns[columnIndex + 1][1].some((child) =>
+                    isDescendant(child, option.value)
+                  )
+                : true)))
+      )
+    )
+  );
 
   const columnsCount = columns.length;
 
@@ -113,7 +129,7 @@ export const TreeSelectFieldModal = ({
   const handleSelect = (option, e) => {
     e.preventDefault();
     if (!isSelectable(option)) {
-      return
+      return;
     }
     if (!multiple) {
       setSelectedState([option]);
@@ -280,14 +296,15 @@ export const TreeSelectFieldModal = ({
               <List.Item
                 key={option.value}
                 className={
-                  option.value === parentsState[index] || option.value === value.id
+                  option.value === parentsState[index] ||
+                  option.value === value.id
                     ? "open spaced"
                     : "spaced"
                 }
               >
                 <List.Content
                   onClick={(e) =>
-                    (multiple || !isSelectable(option))
+                    multiple || !isSelectable(option)
                       ? openHierarchyNode(option.value, index)()
                       : handleSelect(option, e)
                   }
