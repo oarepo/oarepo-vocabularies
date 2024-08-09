@@ -92,3 +92,4 @@ def test_serialization_api_vnd(
 
         assert hits[0]["family_name"] == "Svoboda"
         assert hits[0]["given_name"] == "Mirek"
+        assert "type" not in hits[0]

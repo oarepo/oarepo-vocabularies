@@ -9,7 +9,7 @@ from invenio_vocabularies.resources.resource import (
 from invenio_vocabularies.resources.resource import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
-from marshmallow import fields
+from marshmallow import fields, post_dump
 from oarepo_runtime.resources import LocalizedUIJSONSerializer
 
 from oarepo_vocabularies.services.ui_schema import VocabularyUISchema, VocabularySpecializedUISchema
@@ -51,6 +51,11 @@ class VocabularySchemaSelector(OneOfSchema):
             return vocabulary_type
         return "*"
 
+    def dump(self, obj, *, many=None, **kwargs):
+        ret = super().dump(obj, many=many, **kwargs)
+        if ret.get("type") == "*":
+            ret.pop("type")
+        return ret
 
 class VocabulariesUIResponseHandler(ResponseHandler):
     serializer = LocalizedUIJSONSerializer(
