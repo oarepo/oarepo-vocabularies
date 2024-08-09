@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from flask_resources import BaseListSchema, ResponseHandler
 from flask_resources.serializers import JSONSerializer
 from invenio_records_resources.resources.records.headers import etag_headers
@@ -10,7 +12,10 @@ from invenio_vocabularies.resources.resource import (
 from marshmallow import fields
 from oarepo_runtime.resources import LocalizedUIJSONSerializer
 
-from oarepo_vocabularies.services.ui_schema import VocabularyUISchema
+from oarepo_vocabularies.services.ui_schema import VocabularyUISchema, VocabularySpecializedUISchema
+from marshmallow_oneofschema import OneOfSchema
+
+from importlib_metadata import entry_points
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
@@ -25,17 +30,45 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
         return ret
 
 
+class VocabularySchemaSelector(OneOfSchema):
+    @cached_property
+    def type_schemas(self):
+        ui_schemas = {
+            "vocabulary": VocabularyUISchema,
+            "*": VocabularySpecializedUISchema,
+        }
+        for ep in entry_points().select(group="oarepo_vocabularies.ui_schemas"):
+            ui_schemas.update(ep.load())
+
+        return ui_schemas
+
+    def get_obj_type(self, obj):
+        from flask_resources import resource_requestctx
+        if "type" in obj:
+            return "vocabulary"
+        vocabulary_type = resource_requestctx.view_args.get("type")
+        if vocabulary_type in self.type_schemas:
+            return vocabulary_type
+        return "*"
+
+
+class VocabulariesUIResponseHandler(ResponseHandler):
+    serializer = LocalizedUIJSONSerializer(
+        format_serializer_cls=JSONSerializer,
+        object_schema_cls=VocabularySchemaSelector,
+        list_schema_cls=BaseListSchema,
+    )
+
+    def __init__(self, headers):
+        super().__init__(self.serializer, headers)
+
+
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
     request_search_args = VocabularySearchRequestArgsSchema
 
     response_handlers = {
         **InvenioVocabulariesResourceConfig.response_handlers,
-        "application/vnd.inveniordm.v1+json": ResponseHandler(
-            LocalizedUIJSONSerializer(
-                format_serializer_cls=JSONSerializer,
-                object_schema_cls=VocabularyUISchema,
-                list_schema_cls=BaseListSchema,
-            ),
+        "application/vnd.inveniordm.v1+json": VocabulariesUIResponseHandler(
             headers=etag_headers,
         ),
     }

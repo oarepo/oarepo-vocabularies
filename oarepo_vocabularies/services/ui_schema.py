@@ -1,3 +1,4 @@
+import copy
 from functools import partial
 
 import marshmallow as ma
@@ -58,3 +59,12 @@ class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema
     links = ma.fields.Raw(dump_only=True)
     title = VocabularyI18nStrUIField()
     type = ma.fields.Raw(dump_only=True)
+
+
+class VocabularySpecializedUISchema(VocabularyUISchema):
+    @ma.post_dump(pass_many=False, pass_original=True)
+    def dump_extra_fields(self, data, original_data, **kwargs):
+        for k, v in original_data.items():
+            if k not in data:
+                data[k] = copy.deepcopy(v)
+        return data

@@ -69,3 +69,26 @@ def test_names_fixtures_load(app, db, cache, vocab_cf, search_clear):
     # through names service
     assert correct.items() <= names_service.read(system_identity, "test").data.items()
 
+
+
+def test_serialization_api_vnd(
+    app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client
+):
+
+    callback = StatsKeepingDataStreamCallback(log_error_entry=True)
+    load_fixtures(Path(__file__).parent / "names-data", callback=callback)
+
+    with client.get(
+        "/api/vocabularies/names",
+        headers={
+            "Accept": "application/vnd.inveniordm.v1+json",
+            "Accept-Language": "cs",
+        },
+    ) as response:
+
+        assert response.status_code == 200
+        hits = response.json["hits"]["hits"]
+        assert len(hits) == 1
+
+        assert hits[0]["family_name"] == "Svoboda"
+        assert hits[0]["given_name"] == "Mirek"
