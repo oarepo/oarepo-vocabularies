@@ -181,6 +181,9 @@ def app_config(app_config):
     app_config["OAREPO_PERMISSIONS_PRESETS"] = {
         "fine-grained": FineGrainedPermissionPolicy
     }
+    app_config["OAREPO_VOCABULARIES_SPECIALIZED_SERVICES"] = {
+        "names": "names",
+    }
 
     from invenio_records_resources.services.custom_fields.text import KeywordCF
 

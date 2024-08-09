@@ -1,0 +1,10 @@
+
+
+vocabulary-names:
+  - writer: vocabulary
+    vocabulary: names
+    pid_type: nms
+    title:
+      cs: Jména
+      en: Names
+  - source: names.yaml
