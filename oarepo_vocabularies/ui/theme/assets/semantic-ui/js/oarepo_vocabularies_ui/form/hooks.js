@@ -9,7 +9,6 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     validateForm,
     setSubmitting,
     setFieldError,
-    setFieldValue,
     read,
   } = formik;
 
@@ -47,7 +46,7 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
           setFieldError(err.field, err.messages.join(" "))
         );
       } else {
-        setFieldValue(
+        setFieldError(
           "httpErrors",
           error?.response?.data?.message ?? error.message
         );
