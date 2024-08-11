@@ -69,5 +69,5 @@ class VocabularyWriter(ServiceWriter):
     def _get_stream_entry_id(self, entry):
         _id = super()._get_stream_entry_id(entry)
         if _id:
-            return (self.vocabulary, super()._get_stream_entry_id(entry))
+            return (self.vocabulary, _id)
         return None
