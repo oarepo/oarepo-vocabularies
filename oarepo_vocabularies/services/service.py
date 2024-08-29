@@ -14,6 +14,8 @@ from invenio_vocabularies.services import (
     VocabulariesService as InvenioVocabulariesService,
 )
 
+from oarepo_vocabularies.proxies import current_oarepo_vocabularies
+
 
 class VocabularyTypeService(Service):
     """Vocabulary types service."""
@@ -81,16 +83,11 @@ class VocabularyTypeService(Service):
 
 
 class VocabulariesService(InvenioVocabulariesService):
-    @functools.lru_cache()
-    def get_specialized_service(self, _type):
-        service_name = current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}).get(_type)
-        if service_name:
-            return current_service_registry.get(service_name)
 
     def search(
         self, identity, params=None, search_preference=None, type=None, **kwargs
     ):
-        specialized_service = self.get_specialized_service(type)
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
         if specialized_service:
             return specialized_service.search(
                 identity=identity, params=params, search_preference=search_preference, **kwargs)
@@ -106,7 +103,7 @@ class VocabulariesService(InvenioVocabulariesService):
         return super(InvenioVocabulariesService, self).search(identity, params)
 
     def read_all(self, identity, fields, type, cache=True, extra_filter="", **kwargs):
-        specialized_service = self.get_specialized_service(type)
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
         if specialized_service:
             return specialized_service.read_all(identity=identity,
                                                 fields=fields,
@@ -118,14 +115,14 @@ class VocabulariesService(InvenioVocabulariesService):
 
     def read_many(self, identity, type, ids, fields=None, **kwargs):
         """Search for records matching the querystring filtered by ids."""
-        specialized_service = self.get_specialized_service(type)
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
         if specialized_service:
             return specialized_service.read_many(identity=identity, ids=ids, fields=fields, **kwargs)
         return super().read_many(identity=identity, type=type, ids=ids, fields=fields, **kwargs)
 
     @unit_of_work()
     def create(self, identity, data, uow=None, expand=False, **kwargs):
-        specialized_service = self.get_specialized_service(data.get("type"))
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(data.get("type"))
         if specialized_service:
             data.pop("type")
             return specialized_service.create(identity=identity, data=data, uow=uow, expand=expand, **kwargs)
@@ -133,7 +130,7 @@ class VocabulariesService(InvenioVocabulariesService):
 
     def read(self, identity, id_, expand=False, action="read", **kwargs):
         """Retrieve a record."""
-        specialized_service = self.get_specialized_service(id_[0])
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
         if specialized_service:
             return specialized_service.read(identity=identity, id_=id_[1],
                                             expand=expand, action=action, **kwargs)
@@ -141,7 +138,7 @@ class VocabulariesService(InvenioVocabulariesService):
 
     def exists(self, identity, id_, **kwargs):
         """Check if the record exists and user has permission."""
-        specialized_service = self.get_specialized_service(id_[0])
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
         if specialized_service:
             return specialized_service.exists(identity=identity, id_=id_[1], **kwargs)
         return super().exists(identity=identity, id_=id_, **kwargs)
@@ -181,7 +178,7 @@ class VocabulariesService(InvenioVocabulariesService):
         self, identity, id_, data, revision_id=None, uow=None, expand=False, **kwargs
     ):
         """Replace a record."""
-        specialized_service = self.get_specialized_service(id_[0])
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
         if specialized_service:
             return specialized_service.update(identity=identity, id_=id_[1],
                                               data=data, revision_id=revision_id,
@@ -208,7 +205,7 @@ class VocabulariesService(InvenioVocabulariesService):
     @unit_of_work()
     def delete(self, identity, id_, revision_id=None, uow=None, **kwargs):
         """Delete a record."""
-        specialized_service = self.get_specialized_service(id_[0])
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
         if specialized_service:
             return specialized_service.delete(
                 identity=identity,

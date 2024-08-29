@@ -2,10 +2,12 @@ from pathlib import Path
 
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
+from invenio_vocabularies.contrib.names.api import Name
 from invenio_vocabularies.proxies import current_service as vocab_service
 from oarepo_runtime.datastreams.fixtures import load_fixtures
 from oarepo_runtime.datastreams.types import StatsKeepingDataStreamCallback
 
+from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.service import VocabulariesService
 
 vocab_service: VocabulariesService
@@ -102,3 +104,13 @@ def test_serialization_api_vnd(
         assert hits[0]["family_name"] == "Svoboda"
         assert hits[0]["given_name"] == "Mirek"
         assert "type" not in hits[0]
+
+
+def test_specialized_service_record_resolver(app, db, cache, vocab_cf, search_clear):
+    callback = StatsKeepingDataStreamCallback(log_error_entry=True)
+    load_fixtures(Path(__file__).parent / "names-data", callback=callback)
+
+    resolved = Vocabulary.pid.resolve(("names", "test"))
+    assert isinstance(resolved, Name)
+    assert resolved["given_name"] == "Mirek"
+    assert resolved["family_name"] == "Svoboda"
