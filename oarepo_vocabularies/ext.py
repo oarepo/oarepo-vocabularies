@@ -1,6 +1,8 @@
+import functools
 from functools import cached_property
 
 from invenio_base.utils import obj_or_import_string
+from invenio_records_resources.proxies import current_service_registry
 
 
 class OARepoVocabularies(object):
@@ -68,6 +70,17 @@ class OARepoVocabularies(object):
                 app.config["OAREPO_PERMISSIONS_PRESETS"][k] = (
                     config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
                 )
+
+    @functools.lru_cache()
+    def get_specialized_service(self, _type):
+        service_name = self.specialized_services.get(_type)
+        if service_name:
+            return current_service_registry.get(service_name)
+
+    @cached_property
+    def specialized_services(self):
+        return self.app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {})
+
 
     def init_resource(self, app):
         """Initialize resources."""

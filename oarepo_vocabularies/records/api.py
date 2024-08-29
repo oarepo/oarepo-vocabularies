@@ -12,9 +12,32 @@ from oarepo_runtime.records.systemfields import (
 )
 from oarepo_runtime.services.custom_fields import CustomFields, InlinedCustomFields
 from oarepo_runtime.services.relations.mapping import RelationsMapping
+from invenio_records_resources.records.systemfields.pid import PIDField
+from invenio_vocabularies.records.pidprovider import VocabularyIdProvider
+
+from oarepo_vocabularies.proxies import current_oarepo_vocabularies
+
+
+class SpecialVocabulariesAwarePIDFieldContext(VocabularyPIDFieldContext):
+    def resolve(self, pid_value):
+        if isinstance(pid_value, str):
+            pid_value = (self._type_id, pid_value)
+
+        pid_type, item_id = pid_value
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(pid_type)
+        if not specialized_service:
+            return super().resolve(pid_value)
+        return specialized_service.config.record_cls.pid.resolve(item_id)
 
 
 class Vocabulary(InvenioVocabulary):
+    pid = PIDField(
+        "id",
+        provider=VocabularyIdProvider,
+        context_cls=SpecialVocabulariesAwarePIDFieldContext,
+        create=False,
+    )
+
     dumper = SearchDumper(
         extensions=[
             IndexedAtDumperExt(),
