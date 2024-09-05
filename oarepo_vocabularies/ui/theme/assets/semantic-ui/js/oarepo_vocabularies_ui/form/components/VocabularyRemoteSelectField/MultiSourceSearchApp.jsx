@@ -4,7 +4,14 @@ import { OverridableContext } from "react-overridable";
 import { SearchSource } from "./constants";
 
 export const MultiSourceSearchApp = React.memo(
-  ({ source, vocabulary, overriddenComponents, children, ...rest }) => {
+  ({
+    source,
+    vocabulary,
+    overriddenComponents,
+    queryState,
+    children,
+    ...rest
+  }) => {
     const sources = {
       [SearchSource.INTERNAL]: {
         searchApi: {
@@ -29,12 +36,8 @@ export const MultiSourceSearchApp = React.memo(
     };
 
     const searchConfig = {
-      initialQueryState: {
-        size: 10,
-        page: 1,
-        sortBy: "bestmatch",
-      },
       ...sources[source],
+      ...{ initialQueryState: { ...queryState } },
     };
 
     const searchApi = new InvenioSearchApi(searchConfig.searchApi);

@@ -12,22 +12,30 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import VocabularyRemoteSearchResults from "./VocabularyRemoteSearchResults";
 import MultiSourceSearchApp from "./MultiSourceSearchApp";
 import { SearchSource } from "./constants";
+import { ExternalResultListItem } from "./ExternalResultListItem";
 
 export const VocabularyRemoteSearchAppLayout = ({
   vocabulary,
   overriddenComponents = {},
+  initialQueryState = {
+    size: 10,
+    page: 1,
+    sortBy: "bestmatch",
+  },
   handleSelect = () => {},
 }) => {
   const [source, setSource] = useState(SearchSource.INTERNAL);
+  const [queryState, setQueryState] = useState(initialQueryState);
 
   const defaultOverridenComponents = {
-    "VocabularyRemoteSelect.int.ResultsList.item": "bla",
+    "VocabularyRemoteSelect.ext.ResultsList.item": ExternalResultListItem,
   };
 
-  const findMore = () => {
+  const findMore = (previousQueryState) => {
     if (source === SearchSource.INTERNAL) {
       setSource(SearchSource.EXTERNAL);
     }
+    setQueryState({ ...previousQueryState, page: 1 });
   };
 
   return (
@@ -36,7 +44,11 @@ export const VocabularyRemoteSearchAppLayout = ({
       key={source}
       source={source}
       vocabulary={vocabulary}
-      overriddenComponents={overriddenComponents}
+      queryState={queryState}
+      overriddenComponents={{
+        ...defaultOverridenComponents,
+        ...overriddenComponents,
+      }}
     >
       <Grid stackable>
         <Grid.Row verticalAlign="middle" columns={2}>
@@ -90,11 +102,17 @@ export const VocabularyRemoteSearchAppLayout = ({
 VocabularyRemoteSearchAppLayout.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   overriddenComponents: PropTypes.object,
+  initialQueryState: PropTypes.object,
   handleSelect: PropTypes.func,
 };
 
 VocabularyRemoteSearchAppLayout.defaultProps = {
   overriddenComponents: {},
+  initialQueryState: {
+    size: 10,
+    page: 1,
+    sortBy: "bestmatch",
+  },
   handleSelect: () => {},
 };
 

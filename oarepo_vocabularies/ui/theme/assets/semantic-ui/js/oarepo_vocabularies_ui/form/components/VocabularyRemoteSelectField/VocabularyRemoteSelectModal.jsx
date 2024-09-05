@@ -10,9 +10,10 @@ import { ModalActions } from "./constants";
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
   trigger,
-  onChange = () => {},
-  label,
   value,
+  addItem,
+  removeItem,
+  label,
   multiple = false,
   initialAction = ModalActions.SEARCH,
 }) => {
@@ -28,17 +29,13 @@ export const VocabularyRemoteSelectModal = ({
 
   const handleSelect = React.useCallback((value) => {
     if (!multiple) {
-      return handleSubmit(value);
-    } else {
+      close();
     }
+    addItem(value);
   });
 
-  const handleSubmit = (values) => {
-    // We have to close the modal first because onChange and passing
-    // values as an object makes React get rid of this component. Otherwise
-    // we get a memory leak warning.
+  const handleSubmit = () => {
     close();
-    onChange(values);
   };
 
   return (
@@ -102,6 +99,8 @@ VocabularyRemoteSelectModal.propTypes = {
   initialAction: PropTypes.string,
   value: PropTypes.oneOf([PropTypes.object, PropTypes.array]),
   vocabulary: PropTypes.string.isRequired,
+  addItem: PropTypes.func.isRequired,
+  removeItem: PropTypes.func.isRequired,
 };
 
 VocabularyRemoteSelectModal.defaultProps = {

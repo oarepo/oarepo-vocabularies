@@ -3,9 +3,14 @@ import React from "react";
 import _join from "lodash/join";
 import PropTypes from "prop-types";
 import { getIn, useFormikContext } from "formik";
-import { Form } from "semantic-ui-react";
+import { Form, Grid } from "semantic-ui-react";
 import { VocabularyRemoteSelectModal } from "./VocabularyRemoteSelectModal";
+import {
+  VocabularyRemoteSelectValue,
+  VocabularyRemoteSelectValues,
+} from "./VocabularyRemoteSelectValues";
 import { useFieldData } from "@js/oarepo_ui";
+import _isEmpty from "lodash/isEmpty";
 
 export const VocabularyRemoteSelectField = ({
   vocabulary,
@@ -25,22 +30,50 @@ export const VocabularyRemoteSelectField = ({
     required: modelRequired,
   } = getFieldData({ fieldPath, icon: "drivers license" });
 
-  const value = getIn(values, fieldPath, {})?.id
-    ? getIn(values, fieldPath, {})
-    : "";
+  const initialValue = multiple ? [] : {};
+  const fieldValue = getIn(values, fieldPath, initialValue);
 
-  const onChange = (value) => {
-    setFieldValue(fieldPath, value);
-  };
+  const addItem = React.useCallback((item) => {
+    console.log("ADD ", item);
+    if (!multiple) {
+      setFieldValue(fieldPath, item);
+    } else {
+      const newValue = [...fieldValue.push(item)];
+      setFieldValue(fieldPath, newValue);
+    }
+  });
+
+  const removeItem = React.useCallback((item) => {
+    console.log("REMOVE ", item);
+    setFieldValue(fieldPath, initialValue);
+  });
+
+  const onChange = React.useCallback((value) => {}, [fieldPath]);
 
   return (
     <Form.Field required={required ?? modelRequired}>
       {label ?? modelLabel}
       <label className="helptext">{helpText ?? modelHelpText}</label>
+      {!_isEmpty(fieldValue) && (
+        <Grid.Row className="rel-mb-1">
+          {(multiple && (
+            <VocabularyRemoteSelectValues
+              fieldValue={fieldValue}
+              removeItem={removeItem}
+            />
+          )) || (
+            <VocabularyRemoteSelectValue
+              value={fieldValue}
+              removeItem={removeItem}
+            />
+          )}
+        </Grid.Row>
+      )}
       <VocabularyRemoteSelectModal
         vocabulary={vocabulary}
-        value={value}
-        onChange={onChange}
+        value={fieldValue}
+        addItem={addItem}
+        removeItem={removeItem}
         {...restProps}
       />
     </Form.Field>
