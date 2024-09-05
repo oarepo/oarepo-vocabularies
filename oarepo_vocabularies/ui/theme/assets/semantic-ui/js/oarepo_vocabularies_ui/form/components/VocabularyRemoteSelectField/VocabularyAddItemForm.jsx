@@ -4,7 +4,7 @@ import { BaseForm, FormFeedback } from "@js/oarepo_ui";
 import { VocabularyFormSchema } from "@js/oarepo_vocabularies";
 import { Grid, Ref, Sticky, Modal, Button } from "semantic-ui-react";
 import { buildUID } from "react-searchkit";
-import Overridable from "react-overridable";
+import Overridable, { OverridableContext } from "react-overridable";
 import { CustomFields } from "react-invenio-forms";
 import { VocabularyFormFields } from "../VocabularyFormFields";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
@@ -28,13 +28,14 @@ export const VocabularyAddItemForm = ({
   backToSearch,
   onSubmit,
   customFields,
+  overriddenComponents,
 }) => {
   const formFeedbackRef = React.useRef(null);
   const overridableIdPrefix = "VocabularyRemoteSelect";
   const formRef = React.useRef();
 
   return (
-    <>
+    <OverridableContext.Provider value={overriddenComponents}>
       <Modal.Content>
         <BaseForm
           id="vocabulary-form"
@@ -96,7 +97,7 @@ export const VocabularyAddItemForm = ({
         />
         <SubmitButton onSubmit={onSubmit} formRef={formRef} />
       </Modal.Actions>
-    </>
+    </OverridableContext.Provider>
   );
 };
 
@@ -104,6 +105,7 @@ VocabularyAddItemForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   customFields: PropTypes.object,
   backToSearch: PropTypes.func,
+  overriddenComponents: PropTypes.object,
 };
 
 VocabularyAddItemForm.defaultProps = {};

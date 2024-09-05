@@ -15,6 +15,7 @@ export const VocabularyRemoteSelectModal = ({
   addItem,
   removeItem,
   label,
+  overriddenComponents,
   multiple = false,
   initialAction = ModalActions.SEARCH,
 }) => {
@@ -65,6 +66,7 @@ export const VocabularyRemoteSelectModal = ({
         </Modal.Header>
         {inSearchMode && (
           <VocabularyRemoteSearchAppLayout
+            overriddenComponents={overriddenComponents}
             multiple={multiple}
             vocabulary={vocabulary}
             handleSelect={handleSelect}
@@ -74,6 +76,7 @@ export const VocabularyRemoteSelectModal = ({
         )}
         {inAddMode && (
           <VocabularyAddItemForm
+            overriddenComponents={overriddenComponents}
             backToSearch={backToSearch}
             onSubmit={handleNewItem}
           />
@@ -93,12 +96,14 @@ VocabularyRemoteSelectModal.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   addItem: PropTypes.func.isRequired,
   removeItem: PropTypes.func.isRequired,
+  overriddenComponents: PropTypes.object,
 };
 
 VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
   multiple: false,
+  overriddenComponents: {},
   onChange: () => {},
   trigger: (
     <Button

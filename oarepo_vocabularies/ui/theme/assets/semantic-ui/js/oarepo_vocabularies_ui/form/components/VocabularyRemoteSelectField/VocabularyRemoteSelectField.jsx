@@ -19,6 +19,8 @@ export const VocabularyRemoteSelectField = ({
   helpText,
   multiple,
   required,
+  triggerButton,
+  overriddenComponents,
   ...restProps
 }) => {
   const { getFieldData } = useFieldData();
@@ -72,6 +74,7 @@ export const VocabularyRemoteSelectField = ({
         value={fieldValue}
         addItem={addItem}
         removeItem={removeItem}
+        trigger={triggerButton}
         {...restProps}
       />
     </Form.Field>
@@ -83,14 +86,16 @@ VocabularyRemoteSelectField.propTypes = {
   // fieldPath: PropTypes.string.isRequired,
   externalAuthority: PropTypes.bool,
   multiple: PropTypes.bool,
-  triggerButtonLabel: PropTypes.string,
   helpText: PropTypes.string,
   label: PropTypes.string,
   fieldPath: PropTypes.string.isRequired,
   vocabulary: PropTypes.string.isRequired,
+  overriddenComponents: PropTypes.object,
+  triggerButton: PropTypes.node,
 };
 
 VocabularyRemoteSelectField.defaultProps = {
   multiple: false,
   externalAuthority: false,
+  overriddenComponents: {},
 };
