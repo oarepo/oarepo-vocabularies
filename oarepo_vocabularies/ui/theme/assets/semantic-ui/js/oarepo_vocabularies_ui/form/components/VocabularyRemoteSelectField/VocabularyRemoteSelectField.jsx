@@ -56,7 +56,10 @@ export const VocabularyRemoteSelectField = ({
   });
 
   return (
-    <Form.Field required={required ?? modelRequired}>
+    <Form.Field
+      className="vocabulary select remote"
+      required={required ?? modelRequired}
+    >
       {label ?? modelLabel}
       <label className="helptext">{helpText ?? modelHelpText}</label>
       {!_isEmpty(fieldValue) && (
@@ -81,6 +84,7 @@ export const VocabularyRemoteSelectField = ({
         removeItem={removeItem}
         trigger={triggerButton}
         multiple={multiple}
+        label={getFieldData({ fieldPath, fieldRepresentation: "text" }).label}
         {...restProps}
       />
     </Form.Field>
