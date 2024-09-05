@@ -30,7 +30,7 @@ export const VocabularyRemoteSelectField = ({
     : "";
 
   const onChange = (value) => {
-    setFieldValue(fieldPath, { id: value.id });
+    setFieldValue(fieldPath, value);
   };
 
   return (

@@ -1,44 +1,69 @@
 import React from "react";
-import PropTypes from "prop-types";
+import Overridable from "react-overridable";
 import { withState } from "react-searchkit";
-import { List, Header, Label, Icon } from "semantic-ui-react";
+import { List, Header, Label, Icon, Button } from "semantic-ui-react";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const VocabularyRemoteSearchResults = withState(
-  ({ currentResultsState: results, handleSelect, values }) => {
+  ({
+    currentResultsState: results,
+    currentQueryState: { size: querySize },
+    handleSelect,
+    findMore,
+    source,
+    values,
+  }) => {
+    const notEnoughResults = querySize > results.data.hits.length;
+
     return (
       <List verticalAlign="middle" selection size="small">
         {results.data.hits.map((result) => {
-          const { id, title, relatedURI, description } = result;
+          const { id, title, relatedURI } = result;
+          console.log({ result });
           return (
-            <List.Item
+            <Overridable
               key={id}
-              onClick={() => {
-                handleSelect(result);
-              }}
-              className="search-result-item"
-              //   active={true}
+              id={`VocabularyRemoteSelect.${source}.ResultsList.item`}
+              result={result}
             >
-              <List.Content>
-                <Header className="mb-5" size="small">
-                  {title}{" "}
-                  {Object.entries(relatedURI).map(([name, value]) => (
-                    <Label basic size="mini">
-                      <a
-                        onClick={(e) => e.stopPropagation()}
-                        href={value}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Icon name="external alternate" />
-                        {name}
-                      </a>
-                    </Label>
-                  ))}
-                </Header>
-              </List.Content>
-            </List.Item>
+              <List.Item
+                onClick={() => handleSelect(result)}
+                className="search-result-item"
+                //   active={true}
+              >
+                <List.Content>
+                  <Header className="mb-5" size="small">
+                    {title}{" "}
+                    {Object.entries(relatedURI).map(([name, value]) => (
+                      <Label key={name} basic size="mini">
+                        <a
+                          onClick={(e) => e.stopPropagation()}
+                          href={value}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Icon name="external alternate" />
+                          {name}
+                        </a>
+                      </Label>
+                    ))}
+                  </Header>
+                </List.Content>
+              </List.Item>
+            </Overridable>
           );
         })}
+        {notEnoughResults && (
+          <List.Item
+            className="search-result-item"
+            key="_find-more"
+            onClick={() => findMore()}
+          >
+            <Header color="blue" className="mb-5" size="small">
+              {i18next.t("Find more records …")}
+            </Header>
+          </List.Item>
+        )}
       </List>
     );
   }

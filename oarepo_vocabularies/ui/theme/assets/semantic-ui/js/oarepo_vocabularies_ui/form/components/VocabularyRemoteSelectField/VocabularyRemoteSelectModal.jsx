@@ -5,11 +5,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _capitalize from "lodash/capitalize";
 import PropTypes from "prop-types";
 import { VocabularyRemoteSearchAppLayout } from "./VocabularyRemoteSearchAppLayout";
-
-const ModalActions = {
-  SEARCH: "search",
-  ADD: "add",
-};
+import { ModalActions } from "./constants";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
@@ -29,6 +25,13 @@ export const VocabularyRemoteSelectModal = ({
   const handleAddNew = () => {
     setAction(ModalActions.ADD);
   };
+
+  const handleSelect = React.useCallback((value) => {
+    if (!multiple) {
+      return handleSubmit(value);
+    } else {
+    }
+  });
 
   const handleSubmit = (values) => {
     // We have to close the modal first because onChange and passing
@@ -55,7 +58,10 @@ export const VocabularyRemoteSelectModal = ({
         </Modal.Header>
         <Modal.Content>
           {inSearchMode && (
-            <VocabularyRemoteSearchAppLayout vocabulary={vocabulary} />
+            <VocabularyRemoteSearchAppLayout
+              vocabulary={vocabulary}
+              handleSelect={handleSelect}
+            />
           )}
           {inAddMode && <h1>Add new item</h1>}
         </Modal.Content>
@@ -74,12 +80,14 @@ export const VocabularyRemoteSelectModal = ({
               onClick={() => setAction(ModalActions.SEARCH)}
             />
           )}
-          <Button
-            content={i18next.t("Confirm")}
-            icon="checkmark"
-            onClick={() => handleSubmit()}
-            secondary
-          />
+          {(multiple || inAddMode) && (
+            <Button
+              content={i18next.t("Confirm")}
+              icon="checkmark"
+              onClick={() => handleSubmit()}
+              secondary
+            />
+          )}
         </Modal.Actions>
       </>
     </Modal>
