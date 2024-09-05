@@ -34,7 +34,6 @@ export const VocabularyRemoteSelectField = ({
   const fieldValue = getIn(values, fieldPath, initialValue);
 
   const addItem = React.useCallback((item) => {
-    console.log("ADD ", item);
     if (!multiple) {
       setFieldValue(fieldPath, item);
     } else {
@@ -44,7 +43,6 @@ export const VocabularyRemoteSelectField = ({
   });
 
   const removeItem = React.useCallback((item) => {
-    console.log("REMOVE ", item);
     setFieldValue(fieldPath, initialValue);
   });
 

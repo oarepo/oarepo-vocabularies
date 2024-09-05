@@ -5,6 +5,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _capitalize from "lodash/capitalize";
 import PropTypes from "prop-types";
 import { VocabularyRemoteSearchAppLayout } from "./VocabularyRemoteSearchAppLayout";
+import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
 
 export const VocabularyRemoteSelectModal = ({
@@ -23,14 +24,23 @@ export const VocabularyRemoteSelectModal = ({
   const inSearchMode = action === ModalActions.SEARCH;
   const inAddMode = action === ModalActions.ADD;
 
-  const handleAddNew = () => {
+  const addNew = React.useCallback(() => {
     setAction(ModalActions.ADD);
-  };
+  });
+
+  const backToSearch = React.useCallback(() => {
+    setAction(ModalActions.SEARCH);
+  });
 
   const handleSelect = React.useCallback((value) => {
     if (!multiple) {
       close();
     }
+    addItem(value);
+  });
+
+  const handleNewItem = React.useCallback((value) => {
+    close();
     addItem(value);
   });
 
@@ -53,39 +63,21 @@ export const VocabularyRemoteSelectModal = ({
         <Modal.Header as="h2" className="pt-10 pb-10">
           {_capitalize(action)} {label}
         </Modal.Header>
-        <Modal.Content>
-          {inSearchMode && (
-            <VocabularyRemoteSearchAppLayout
-              vocabulary={vocabulary}
-              handleSelect={handleSelect}
-            />
-          )}
-          {inAddMode && <h1>Add new item</h1>}
-        </Modal.Content>
-        <Modal.Actions>
-          {!inAddMode && (
-            <Button
-              icon="plus"
-              content={i18next.t("Add new")}
-              onClick={() => handleAddNew()}
-            />
-          )}
-          {!inSearchMode && (
-            <Button
-              icon="arrow left"
-              content={i18next.t("Back to search")}
-              onClick={() => setAction(ModalActions.SEARCH)}
-            />
-          )}
-          {(multiple || inAddMode) && (
-            <Button
-              content={i18next.t("Confirm")}
-              icon="checkmark"
-              onClick={() => handleSubmit()}
-              secondary
-            />
-          )}
-        </Modal.Actions>
+        {inSearchMode && (
+          <VocabularyRemoteSearchAppLayout
+            multiple={multiple}
+            vocabulary={vocabulary}
+            handleSelect={handleSelect}
+            addNew={addNew}
+            onSubmit={handleSubmit}
+          />
+        )}
+        {inAddMode && (
+          <VocabularyAddItemForm
+            backToSearch={backToSearch}
+            onSubmit={handleNewItem}
+          />
+        )}
       </>
     </Modal>
   );
