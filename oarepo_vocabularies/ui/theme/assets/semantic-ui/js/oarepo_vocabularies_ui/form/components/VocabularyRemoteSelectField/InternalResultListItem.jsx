@@ -9,7 +9,6 @@ export const InternalResultListItem = ({ result, handleSelect = () => {} }) => {
     <List.Item
       onClick={() => handleSelect(result)}
       className="search-result-item"
-      //   active={true}
     >
       <List.Content>
         <Header className="mb-5" size="small">

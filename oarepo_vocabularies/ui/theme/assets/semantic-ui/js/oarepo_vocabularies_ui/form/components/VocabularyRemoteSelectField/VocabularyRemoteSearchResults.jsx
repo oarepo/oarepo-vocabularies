@@ -4,6 +4,7 @@ import { withState } from "react-searchkit";
 import { List, Header } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { InternalResultListItem } from "./InternalResultListItem";
+import { SearchSource } from "./constants";
 
 export const VocabularyRemoteSearchResults = withState(
   ({
@@ -12,9 +13,14 @@ export const VocabularyRemoteSearchResults = withState(
     handleSelect,
     findMore,
     source,
-    values,
   }) => {
     const notEnoughResults = currentQueryState.size > results.data.hits.length;
+
+    React.useEffect(() => {
+      if (notEnoughResults && results && results.data.hits.length === 0) {
+        findMore(currentQueryState);
+      }
+    }, [results]);
 
     return (
       <List verticalAlign="middle" selection size="small">
@@ -32,7 +38,7 @@ export const VocabularyRemoteSearchResults = withState(
             </Overridable>
           );
         })}
-        {notEnoughResults && (
+        {notEnoughResults && source === SearchSource.INTERNAL && (
           <List.Item
             className="search-result-item"
             key="_find-more"

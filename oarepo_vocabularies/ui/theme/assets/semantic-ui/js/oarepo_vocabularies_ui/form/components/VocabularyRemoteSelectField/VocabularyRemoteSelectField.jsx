@@ -11,6 +11,7 @@ import {
 } from "./VocabularyRemoteSelectValues";
 import { useFieldData } from "@js/oarepo_ui";
 import _isEmpty from "lodash/isEmpty";
+import _remove from "lodash/remove";
 
 export const VocabularyRemoteSelectField = ({
   vocabulary,
@@ -39,16 +40,20 @@ export const VocabularyRemoteSelectField = ({
     if (!multiple) {
       setFieldValue(fieldPath, item);
     } else {
-      const newValue = [...fieldValue.push(item)];
+      const newValue = [...fieldValue, item];
       setFieldValue(fieldPath, newValue);
     }
   });
 
   const removeItem = React.useCallback((item) => {
-    setFieldValue(fieldPath, initialValue);
+    if (!multiple) {
+      setFieldValue(fieldPath, initialValue);
+    } else {
+      const newValue = [...fieldValue];
+      _remove(newValue, (value) => value.id === item.id);
+      setFieldValue(fieldPath, newValue);
+    }
   });
-
-  const onChange = React.useCallback((value) => {}, [fieldPath]);
 
   return (
     <Form.Field required={required ?? modelRequired}>
@@ -75,23 +80,11 @@ export const VocabularyRemoteSelectField = ({
         addItem={addItem}
         removeItem={removeItem}
         trigger={triggerButton}
+        multiple={multiple}
         {...restProps}
       />
     </Form.Field>
   );
-};
-
-VocabularyRemoteSelectField.propTypes = {
-  // type: PropTypes.string.isRequired,
-  // fieldPath: PropTypes.string.isRequired,
-  externalAuthority: PropTypes.bool,
-  multiple: PropTypes.bool,
-  helpText: PropTypes.string,
-  label: PropTypes.string,
-  fieldPath: PropTypes.string.isRequired,
-  vocabulary: PropTypes.string.isRequired,
-  overriddenComponents: PropTypes.object,
-  triggerButton: PropTypes.node,
 };
 
 VocabularyRemoteSelectField.defaultProps = {

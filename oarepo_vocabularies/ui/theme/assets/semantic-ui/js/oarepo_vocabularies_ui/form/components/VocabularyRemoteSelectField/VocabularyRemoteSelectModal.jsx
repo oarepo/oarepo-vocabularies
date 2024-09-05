@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Icon, Modal } from "semantic-ui-react";
+import { Button, Icon, Modal, Grid } from "semantic-ui-react";
 import { useConfirmationModal as useModal } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _capitalize from "lodash/capitalize";
@@ -7,6 +7,10 @@ import PropTypes from "prop-types";
 import { VocabularyRemoteSearchAppLayout } from "./VocabularyRemoteSearchAppLayout";
 import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
+import {
+  VocabularyRemoteSelectValue,
+  VocabularyRemoteSelectValues,
+} from "./VocabularyRemoteSelectValues";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
@@ -72,6 +76,23 @@ export const VocabularyRemoteSelectModal = ({
             handleSelect={handleSelect}
             addNew={addNew}
             onSubmit={handleSubmit}
+            extraActions={
+              multiple && (
+                <Grid.Column className="rel-mb-1" floated="left">
+                  {(multiple && (
+                    <VocabularyRemoteSelectValues
+                      fieldValue={value}
+                      removeItem={removeItem}
+                    />
+                  )) || (
+                    <VocabularyRemoteSelectValue
+                      value={value}
+                      removeItem={removeItem}
+                    />
+                  )}
+                </Grid.Column>
+              )
+            }
           />
         )}
         {inAddMode && (

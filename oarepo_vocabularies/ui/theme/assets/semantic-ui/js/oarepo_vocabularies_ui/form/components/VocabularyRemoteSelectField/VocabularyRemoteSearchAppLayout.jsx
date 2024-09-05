@@ -19,11 +19,15 @@ export const VocabularyRemoteSearchAppLayout = ({
   onSubmit,
   vocabulary,
   multiple,
+  extraActions,
   overriddenComponents = {},
   initialQueryState = {
     size: 10,
     page: 1,
     sortBy: "bestmatch",
+    queryString: "",
+    // TODO: Toggle on/off based on queryString === ""
+    // filters: [["tags", "featured"]],
   },
   handleSelect = () => {},
 }) => {
@@ -82,7 +86,6 @@ export const VocabularyRemoteSearchAppLayout = ({
             <ResultsLoader>
               <Grid.Row>
                 <Grid.Column>
-                  <EmptyResults />
                   <Error />
                   <VocabularyRemoteSearchResults
                     source={source}
@@ -103,6 +106,7 @@ export const VocabularyRemoteSearchAppLayout = ({
         </MultiSourceSearchApp>
       </Modal.Content>
       <Modal.Actions>
+        {extraActions}
         <Button
           icon="plus"
           content={i18next.t("Add new")}
@@ -130,6 +134,7 @@ VocabularyRemoteSearchAppLayout.propTypes = {
   multiple: PropTypes.bool,
   addNew: PropTypes.func,
   onSubmit: PropTypes.func,
+  extraActions: PropTypes.node,
 };
 
 VocabularyRemoteSearchAppLayout.defaultProps = {

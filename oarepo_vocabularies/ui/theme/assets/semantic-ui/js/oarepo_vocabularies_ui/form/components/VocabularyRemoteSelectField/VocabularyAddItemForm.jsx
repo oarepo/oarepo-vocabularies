@@ -18,7 +18,12 @@ const SubmitButton = ({ formRef }) => {
   };
 
   return (
-    <Button onClick={() => handleSubmit()} type="submit" form="vocabulary-form">
+    <Button
+      primary
+      onClick={() => handleSubmit()}
+      type="submit"
+      form="vocabulary-form"
+    >
       {i18next.t("Submit")}
     </Button>
   );
