@@ -7,6 +7,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { InternalResultListItem } from "./InternalResultListItem";
 import { SearchSource } from "./constants";
 import { featuredFilterActive } from "./util";
+import { useFieldValue } from "./context";
 
 export const VocabularyRemoteResultsLoader = withState(
   ({ currentQueryState, currentResultsState: results, children }) => {
@@ -32,6 +33,7 @@ export const VocabularyRemoteSearchResults = withState(
     source,
   }) => {
     const notEnoughResults = currentQueryState.size > results.data.hits.length;
+    const { value: fieldValue, multiple } = useFieldValue();
     const canFindMore =
       source === SearchSource.INTERNAL &&
       !featuredFilterActive(currentQueryState);
@@ -42,6 +44,8 @@ export const VocabularyRemoteSearchResults = withState(
       }
     }, [results]);
 
+    const isSelected = (result) => {};
+
     return (
       <List verticalAlign="middle" selection size="small">
         {results.data.hits.map((result) => {
@@ -50,6 +54,7 @@ export const VocabularyRemoteSearchResults = withState(
               key={result.id}
               id={`VocabularyRemoteSelect.${source}.ResultsList.item`}
               result={result}
+              selected={isSelected(result)}
             >
               <InternalResultListItem
                 result={result}

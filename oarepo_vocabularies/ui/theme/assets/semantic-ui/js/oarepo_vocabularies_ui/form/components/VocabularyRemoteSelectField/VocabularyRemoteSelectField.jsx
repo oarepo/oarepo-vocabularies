@@ -11,6 +11,7 @@ import {
 import { useFieldData } from "@js/oarepo_ui";
 import _isEmpty from "lodash/isEmpty";
 import _remove from "lodash/remove";
+import { FieldValueProvider } from "./context";
 
 export const VocabularyRemoteSelectField = ({
   vocabulary,
@@ -59,36 +60,33 @@ export const VocabularyRemoteSelectField = ({
       className="vocabulary select remote"
       required={required ?? modelRequired}
     >
-      {label ?? modelLabel}
-      <label className="helptext">{helpText ?? modelHelpText}</label>
-      {!_isEmpty(fieldValue) && (
-        <Grid.Row className="rel-mb-1">
-          {(multiple && (
-            <VocabularyRemoteSelectValues
-              fieldValue={fieldValue}
-              removeItem={removeItem}
-            />
-          )) || (
-            <VocabularyRemoteSelectValue
-              value={fieldValue}
-              removeItem={removeItem}
-            />
-          )}
-        </Grid.Row>
-      )}
-      <VocabularyRemoteSelectModal
-        vocabulary={vocabulary}
-        value={fieldValue}
-        addItem={addItem}
-        removeItem={removeItem}
-        trigger={triggerButton}
-        multiple={multiple}
-        label={
-          label ??
-          getFieldData({ fieldPath, fieldRepresentation: "text" }).label
-        }
-        {...restProps}
-      />
+      <FieldValueProvider value={{ value: fieldValue, multiple }}>
+        {label ?? modelLabel}
+        <label className="helptext">{helpText ?? modelHelpText}</label>
+        {!_isEmpty(fieldValue) && (
+          <Grid.Row className="rel-mb-1">
+            {(multiple && (
+              <VocabularyRemoteSelectValues removeItem={removeItem} />
+            )) || (
+              <VocabularyRemoteSelectValue
+                value={fieldValue}
+                removeItem={removeItem}
+              />
+            )}
+          </Grid.Row>
+        )}
+        <VocabularyRemoteSelectModal
+          vocabulary={vocabulary}
+          addItem={addItem}
+          removeItem={removeItem}
+          trigger={triggerButton}
+          label={
+            label ??
+            getFieldData({ fieldPath, fieldRepresentation: "text" }).label
+          }
+          {...restProps}
+        />
+      </FieldValueProvider>
     </Form.Field>
   );
 };
@@ -96,8 +94,8 @@ export const VocabularyRemoteSelectField = ({
 VocabularyRemoteSelectField.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.oneOfType(PropTypes.string, PropTypes.node),
-  helpText: PropTypes.oneOfType(PropTypes.string, PropTypes.node),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  helpText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   multiple: PropTypes.bool,
   required: PropTypes.bool,
   triggerButton: PropTypes.node,

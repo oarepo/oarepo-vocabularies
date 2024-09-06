@@ -14,12 +14,12 @@ import {
   ExternalEmptyResults,
 } from "./ExternalEmptyResults";
 import VocabularyRemoteFeaturedResults from "./VocabularyRemoteFeaturedResults";
+import { useFieldValue } from "./context";
 
 export const VocabularyRemoteSearchAppLayout = ({
   addNew,
   onSubmit,
   vocabulary,
-  multiple,
   extraActions,
   overriddenComponents = {},
   initialQueryState = {
@@ -33,6 +33,7 @@ export const VocabularyRemoteSearchAppLayout = ({
 }) => {
   const [source, setSource] = useState(SearchSource.INTERNAL);
   const [queryState, setQueryState] = useState(initialQueryState);
+  const { multiple } = useFieldValue();
 
   const defaultOverridenComponents = {
     "EmptyResults.element": ExternalEmptyResultsElement,
@@ -139,7 +140,6 @@ VocabularyRemoteSearchAppLayout.propTypes = {
   overriddenComponents: PropTypes.object,
   initialQueryState: PropTypes.object,
   handleSelect: PropTypes.func,
-  multiple: PropTypes.bool,
   addNew: PropTypes.func,
   onSubmit: PropTypes.func,
   extraActions: PropTypes.node,
@@ -147,7 +147,6 @@ VocabularyRemoteSearchAppLayout.propTypes = {
 
 VocabularyRemoteSearchAppLayout.defaultProps = {
   overriddenComponents: {},
-  multiple: false,
   initialQueryState: {
     size: 10,
     page: 1,

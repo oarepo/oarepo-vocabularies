@@ -7,23 +7,20 @@ import PropTypes from "prop-types";
 import { VocabularyRemoteSearchAppLayout } from "./VocabularyRemoteSearchAppLayout";
 import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
-import {
-  VocabularyRemoteSelectValue,
-  VocabularyRemoteSelectValues,
-} from "./VocabularyRemoteSelectValues";
+import { VocabularyRemoteSelectValues } from "./VocabularyRemoteSelectValues";
+import { useFieldValue } from "./context";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
   trigger,
-  value,
   addItem,
   removeItem,
   label,
   overriddenComponents,
-  multiple = false,
   initialAction = ModalActions.SEARCH,
 }) => {
   const { isOpen, close, open } = useModal();
+  const { multiple } = useFieldValue();
   const [action, setAction] = React.useState(initialAction);
 
   const inSearchMode = action === ModalActions.SEARCH;
@@ -71,7 +68,6 @@ export const VocabularyRemoteSelectModal = ({
         {inSearchMode && (
           <VocabularyRemoteSearchAppLayout
             overriddenComponents={overriddenComponents}
-            multiple={multiple}
             vocabulary={vocabulary}
             handleSelect={handleSelect}
             addNew={addNew}
@@ -79,17 +75,7 @@ export const VocabularyRemoteSelectModal = ({
             extraActions={
               multiple && (
                 <Grid.Column className="rel-mb-1" floated="left">
-                  {(multiple && (
-                    <VocabularyRemoteSelectValues
-                      fieldValue={value}
-                      removeItem={removeItem}
-                    />
-                  )) || (
-                    <VocabularyRemoteSelectValue
-                      value={value}
-                      removeItem={removeItem}
-                    />
-                  )}
+                  <VocabularyRemoteSelectValues removeItem={removeItem} />
                 </Grid.Column>
               )
             }
@@ -110,9 +96,7 @@ export const VocabularyRemoteSelectModal = ({
 VocabularyRemoteSelectModal.propTypes = {
   trigger: PropTypes.object,
   label: PropTypes.string,
-  multiple: PropTypes.bool,
   initialAction: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   vocabulary: PropTypes.string.isRequired,
   addItem: PropTypes.func.isRequired,
   removeItem: PropTypes.func.isRequired,
@@ -122,7 +106,6 @@ VocabularyRemoteSelectModal.propTypes = {
 VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
-  multiple: false,
   overriddenComponents: {},
   trigger: (
     <Button

@@ -4,7 +4,12 @@ import { List, Icon, Label, Header } from "semantic-ui-react";
 import _join from "lodash/join";
 
 import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
-export const ExternalResultListItem = ({ result, handleSelect = () => {} }) => {
+
+export const ExternalResultListItem = ({
+  result,
+  handleSelect = () => {},
+  selected,
+}) => {
   // This is just a very basic knowledge-less component to display
   // pretty much anything coming from an external vocabulary API source.
   //
@@ -34,14 +39,16 @@ export const ExternalResultListItem = ({ result, handleSelect = () => {} }) => {
   const propValues = _join(Object.values(props), ", ");
 
   const onSelect = (result) => {
-    handleSelect(result);
+    if (!selected) {
+      handleSelect(result);
+    }
   };
 
   return (
     <List.Item
       onClick={() => onSelect(result)}
       className="search-external-result-item"
-      //   active={true}
+      active={selected}
     >
       <List.Content>
         <Header className="mb-5" size="small">
@@ -56,8 +63,10 @@ export const ExternalResultListItem = ({ result, handleSelect = () => {} }) => {
 ExternalResultListItem.propTypes = {
   result: PropTypes.object.isRequired,
   handleSelect: PropTypes.func,
+  selected: PropTypes.bool,
 };
 
 ExternalResultListItem.defaultProps = {
   handleSelect: () => {},
+  selected: false,
 };

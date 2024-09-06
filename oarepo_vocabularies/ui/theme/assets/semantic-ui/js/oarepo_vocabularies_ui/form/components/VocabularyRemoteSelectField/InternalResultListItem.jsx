@@ -2,13 +2,18 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { List, Icon, Label, Header } from "semantic-ui-react";
 
-export const InternalResultListItem = ({ result, handleSelect = () => {} }) => {
+export const InternalResultListItem = ({
+  result,
+  handleSelect = () => {},
+  selected,
+}) => {
   const { title, relatedURI } = result;
 
   return (
     <List.Item
-      onClick={() => handleSelect(result)}
+      onClick={() => !selected && handleSelect(result)}
       className="search-result-item"
+      active={selected}
     >
       <List.Content>
         <Header className="mb-5" size="small">
@@ -36,8 +41,10 @@ export const InternalResultListItem = ({ result, handleSelect = () => {} }) => {
 InternalResultListItem.propTypes = {
   result: PropTypes.object.isRequired,
   handleSelect: PropTypes.func,
+  selected: PropTypes.bool,
 };
 
 InternalResultListItem.defaultProps = {
   handleSelect: () => {},
+  selected: false,
 };
