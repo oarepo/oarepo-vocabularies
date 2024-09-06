@@ -1,17 +1,12 @@
 import * as React from "react";
-import _join from "lodash/join";
+import PropTypes from "prop-types";
 import { withState } from "react-searchkit";
 import { Segment, Icon, Header, Button } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_ui/i18next";
 import _isEmpty from "lodash/isEmpty";
 import { ShouldRender } from "@js/oarepo_ui";
 
-export const ExternalEmptyResultsElement = ({
-  queryString,
-  resetQuery,
-  extraContent,
-  userSelectionFilters,
-}) => (
+export const ExternalEmptyResultsElement = ({ queryString, extraContent }) => (
   <Segment placeholder textAlign="center">
     <Header icon>
       <Icon name="search" />
@@ -45,7 +40,10 @@ export const ExternalEmptyResults = withState(
   )
 );
 
-ExternalEmptyResultsElement.propTypes = {};
+ExternalEmptyResultsElement.propTypes = {
+  queryString: PropTypes.string,
+  extraContent: PropTypes.node,
+};
 
 ExternalEmptyResultsElement.defaultProps = {};
 

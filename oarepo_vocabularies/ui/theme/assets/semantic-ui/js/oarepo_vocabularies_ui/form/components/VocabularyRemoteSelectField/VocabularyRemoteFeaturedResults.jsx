@@ -3,10 +3,8 @@ import { withState } from "react-searchkit";
 import { Header, Container } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ShouldRender } from "@js/oarepo_ui";
-import _isEmpty from "lodash/isEmpty";
 import { SearchSource } from "./constants";
 import { featuredFilterActive } from "./util";
-import { update } from "lodash";
 
 export const VocabularyRemoteFeaturedResults = withState(
   ({

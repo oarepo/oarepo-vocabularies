@@ -1,6 +1,5 @@
 import React from "react";
 
-import _join from "lodash/join";
 import PropTypes from "prop-types";
 import { getIn, useFormikContext } from "formik";
 import { Form, Grid } from "semantic-ui-react";
@@ -92,6 +91,17 @@ export const VocabularyRemoteSelectField = ({
       />
     </Form.Field>
   );
+};
+
+VocabularyRemoteSelectField.propTypes = {
+  vocabulary: PropTypes.string.isRequired,
+  fieldPath: PropTypes.string.isRequired,
+  label: PropTypes.oneOfType(PropTypes.string, PropTypes.node),
+  helpText: PropTypes.oneOfType(PropTypes.string, PropTypes.node),
+  multiple: PropTypes.bool,
+  required: PropTypes.bool,
+  triggerButton: PropTypes.node,
+  overriddenComponents: PropTypes.object,
 };
 
 VocabularyRemoteSelectField.defaultProps = {

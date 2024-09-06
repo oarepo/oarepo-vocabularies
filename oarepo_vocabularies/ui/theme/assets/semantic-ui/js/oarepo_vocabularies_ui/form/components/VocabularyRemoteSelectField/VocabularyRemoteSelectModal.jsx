@@ -108,12 +108,11 @@ export const VocabularyRemoteSelectModal = ({
 };
 
 VocabularyRemoteSelectModal.propTypes = {
-  trigger: PropTypes.object.isRequired,
-  onChange: PropTypes.func,
+  trigger: PropTypes.object,
   label: PropTypes.string,
   multiple: PropTypes.bool,
   initialAction: PropTypes.string,
-  value: PropTypes.oneOf([PropTypes.object, PropTypes.array]),
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   vocabulary: PropTypes.string.isRequired,
   addItem: PropTypes.func.isRequired,
   removeItem: PropTypes.func.isRequired,
@@ -125,7 +124,6 @@ VocabularyRemoteSelectModal.defaultProps = {
   label: i18next.t("item"),
   multiple: false,
   overriddenComponents: {},
-  onChange: () => {},
   trigger: (
     <Button
       className="array-field-add-button"

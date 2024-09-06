@@ -8,7 +8,6 @@ import Overridable, { OverridableContext } from "react-overridable";
 import { CustomFields } from "react-invenio-forms";
 import { VocabularyFormFields } from "../VocabularyFormFields";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import _isEmpty from "lodash/isEmpty";
 
 const SubmitButton = ({ formRef }) => {
   const handleSubmit = () => {
@@ -27,6 +26,10 @@ const SubmitButton = ({ formRef }) => {
       {i18next.t("Submit")}
     </Button>
   );
+};
+
+SubmitButton.propTypes = {
+  formRef: PropTypes.any,
 };
 
 export const VocabularyAddItemForm = ({

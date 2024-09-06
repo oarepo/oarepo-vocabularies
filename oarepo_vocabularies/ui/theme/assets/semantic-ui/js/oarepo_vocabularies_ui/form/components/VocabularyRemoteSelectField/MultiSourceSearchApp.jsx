@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { ReactSearchKit, InvenioSearchApi } from "react-searchkit";
 import { OverridableContext } from "react-overridable";
 import { SearchSource } from "./constants";
@@ -59,5 +60,15 @@ export const MultiSourceSearchApp = React.memo(
     );
   }
 );
+
+MultiSourceSearchApp.propTypes = {
+  source: PropTypes.string.isRequired,
+  vocabulary: PropTypes.string.isRequired,
+  overriddenComponents: PropTypes.object,
+  queryState: PropTypes.object,
+  children: PropTypes.node,
+};
+
+MultiSourceSearchApp.defaultProps = {};
 
 export default MultiSourceSearchApp;

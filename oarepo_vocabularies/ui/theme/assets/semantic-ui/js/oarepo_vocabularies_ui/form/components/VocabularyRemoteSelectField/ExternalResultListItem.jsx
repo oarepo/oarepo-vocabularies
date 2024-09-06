@@ -11,7 +11,7 @@ export const ExternalResultListItem = ({ result, handleSelect = () => {} }) => {
   // Feel free to override it to fit your use-case using overridable id:
   // VocabularyRemoteSelect.ext.ResultsList.item
   //
-  const { id, relatedURI, title, props } = result;
+  const { relatedURI, title, props } = result;
 
   const uriLinks =
     relatedURI &&
@@ -34,7 +34,6 @@ export const ExternalResultListItem = ({ result, handleSelect = () => {} }) => {
   const propValues = _join(Object.values(props), ", ");
 
   const onSelect = (result) => {
-    // TODO: here you can convert the result to internal format
     handleSelect(result);
   };
 

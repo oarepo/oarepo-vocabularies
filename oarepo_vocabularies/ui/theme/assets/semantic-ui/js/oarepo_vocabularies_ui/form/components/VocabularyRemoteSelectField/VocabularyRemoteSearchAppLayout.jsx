@@ -5,7 +5,6 @@ import {
   SearchBar,
   EmptyResults,
   Error,
-  ResultsLoader,
   Pagination,
   onQueryChanged,
 } from "react-searchkit";

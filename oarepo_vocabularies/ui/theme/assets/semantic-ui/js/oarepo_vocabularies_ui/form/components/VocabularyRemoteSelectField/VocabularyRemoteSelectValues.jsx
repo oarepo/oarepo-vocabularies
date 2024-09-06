@@ -1,6 +1,6 @@
 import React from "react";
-
-import { Label, Button, Icon, Grid } from "semantic-ui-react";
+import PropTypes from "prop-types";
+import { Label, Button, Icon } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const VocabularyRemoteSelectValue = ({ value, removeItem }) => {
@@ -22,6 +22,11 @@ export const VocabularyRemoteSelectValue = ({ value, removeItem }) => {
   );
 };
 
+VocabularyRemoteSelectValue.propTypes = {
+  value: PropTypes.object.isRequired,
+  removeItem: PropTypes.func.isRequired,
+};
+
 export const VocabularyRemoteSelectValues = ({ fieldValue, removeItem }) => {
   return fieldValue.map((value) => (
     <VocabularyRemoteSelectValue
@@ -34,6 +39,11 @@ export const VocabularyRemoteSelectValues = ({ fieldValue, removeItem }) => {
 
 export default VocabularyRemoteSelectValues;
 
-VocabularyRemoteSelectValues.propTypes = {};
+VocabularyRemoteSelectValues.propTypes = {
+  fieldValue: PropTypes.array,
+  removeItem: PropTypes.func.isRequired,
+};
 
-VocabularyRemoteSelectValues.defaultProps = {};
+VocabularyRemoteSelectValues.defaultProps = {
+  fieldValue: [],
+};

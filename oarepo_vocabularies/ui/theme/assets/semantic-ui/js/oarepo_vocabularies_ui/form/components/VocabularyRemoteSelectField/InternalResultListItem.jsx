@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { List, Icon, Label, Header } from "semantic-ui-react";
 
 export const InternalResultListItem = ({ result, handleSelect = () => {} }) => {
-  const { id, title, relatedURI } = result;
+  const { title, relatedURI } = result;
 
   return (
     <List.Item
