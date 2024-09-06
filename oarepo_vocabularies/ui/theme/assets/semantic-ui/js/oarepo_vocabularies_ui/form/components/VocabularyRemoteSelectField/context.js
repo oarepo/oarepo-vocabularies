@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 
 export const FieldValueContext = React.createContext();
 
-export const FieldValueProvider = ({ children, value, multiple }) => {
+export const FieldValueProvider = ({ children, value }) => {
     return (
-        <FieldValueContext.Provider value={{ value, multiple }}>
+        <FieldValueContext.Provider value={value}>
             {children}
         </FieldValueContext.Provider>
     );
@@ -13,10 +13,8 @@ export const FieldValueProvider = ({ children, value, multiple }) => {
 
 FieldValueProvider.propTypes = {
     value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
-    multiple: PropTypes.bool,
     children: PropTypes.node
 }
-
 
 export const useFieldValue = () => {
     const context = React.useContext(FieldValueContext);
@@ -25,5 +23,5 @@ export const useFieldValue = () => {
             "useFieldValue must be used inside FieldValueProvider"
         );
     }
-    return context.value;
+    return context;
 }

@@ -36,7 +36,7 @@ export const VocabularyRemoteSelectField = ({
   const initialValue = multiple ? [] : {};
   const fieldValue = getIn(values, fieldPath, initialValue);
 
-  const addItem = React.useCallback((item) => {
+  const addValue = React.useCallback((item) => {
     if (!multiple) {
       setFieldValue(fieldPath, item);
     } else {
@@ -45,7 +45,7 @@ export const VocabularyRemoteSelectField = ({
     }
   });
 
-  const removeItem = React.useCallback((item) => {
+  const removeValue = React.useCallback((item) => {
     if (!multiple) {
       setFieldValue(fieldPath, initialValue);
     } else {
@@ -60,25 +60,20 @@ export const VocabularyRemoteSelectField = ({
       className="vocabulary select remote"
       required={required ?? modelRequired}
     >
-      <FieldValueProvider value={{ value: fieldValue, multiple }}>
+      <FieldValueProvider
+        value={{ value: fieldValue, multiple, addValue, removeValue }}
+      >
         {label ?? modelLabel}
         <label className="helptext">{helpText ?? modelHelpText}</label>
         {!_isEmpty(fieldValue) && (
           <Grid.Row className="rel-mb-1">
-            {(multiple && (
-              <VocabularyRemoteSelectValues removeItem={removeItem} />
-            )) || (
-              <VocabularyRemoteSelectValue
-                value={fieldValue}
-                removeItem={removeItem}
-              />
+            {(multiple && <VocabularyRemoteSelectValues />) || (
+              <VocabularyRemoteSelectValue />
             )}
           </Grid.Row>
         )}
         <VocabularyRemoteSelectModal
           vocabulary={vocabulary}
-          addItem={addItem}
-          removeItem={removeItem}
           trigger={triggerButton}
           label={
             label ??

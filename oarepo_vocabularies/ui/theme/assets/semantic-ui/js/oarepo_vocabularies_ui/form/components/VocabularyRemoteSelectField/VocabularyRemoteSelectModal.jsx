@@ -9,18 +9,17 @@ import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
 import { VocabularyRemoteSelectValues } from "./VocabularyRemoteSelectValues";
 import { useFieldValue } from "./context";
+import { remove } from "lodash";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
   trigger,
-  addItem,
-  removeItem,
   label,
   overriddenComponents,
   initialAction = ModalActions.SEARCH,
 }) => {
   const { isOpen, close, open } = useModal();
-  const { multiple } = useFieldValue();
+  const { multiple, addValue, removeValue } = useFieldValue();
   const [action, setAction] = React.useState(initialAction);
 
   const inSearchMode = action === ModalActions.SEARCH;
@@ -34,16 +33,20 @@ export const VocabularyRemoteSelectModal = ({
     setAction(ModalActions.SEARCH);
   });
 
-  const handleSelect = React.useCallback((value) => {
+  const handleSelect = React.useCallback((value, selected) => {
     if (!multiple) {
       close();
     }
-    addItem(value);
+    if (!selected) {
+      addValue(value);
+    } else {
+      removeValue(value);
+    }
   });
 
   const handleNewItem = React.useCallback((value) => {
     close();
-    addItem(value);
+    addValue(value);
   });
 
   const handleSubmit = () => {
@@ -75,7 +78,7 @@ export const VocabularyRemoteSelectModal = ({
             extraActions={
               multiple && (
                 <Grid.Column className="rel-mb-1" floated="left">
-                  <VocabularyRemoteSelectValues removeItem={removeItem} />
+                  <VocabularyRemoteSelectValues />
                 </Grid.Column>
               )
             }
@@ -98,8 +101,6 @@ VocabularyRemoteSelectModal.propTypes = {
   label: PropTypes.string,
   initialAction: PropTypes.string,
   vocabulary: PropTypes.string.isRequired,
-  addItem: PropTypes.func.isRequired,
-  removeItem: PropTypes.func.isRequired,
   overriddenComponents: PropTypes.object,
 };
 

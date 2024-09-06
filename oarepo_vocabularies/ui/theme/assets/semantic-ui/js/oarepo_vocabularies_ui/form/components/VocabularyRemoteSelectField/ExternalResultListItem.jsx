@@ -39,9 +39,7 @@ export const ExternalResultListItem = ({
   const propValues = _join(Object.values(props), ", ");
 
   const onSelect = (result) => {
-    if (!selected) {
-      handleSelect(result);
-    }
+    handleSelect(result, selected);
   };
 
   return (

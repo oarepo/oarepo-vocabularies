@@ -11,8 +11,8 @@ export const InternalResultListItem = ({
 
   return (
     <List.Item
-      onClick={() => !selected && handleSelect(result)}
-      className="search-result-item"
+      onClick={() => handleSelect(result, selected)}
+      className={`search-result-item ${selected ? "selected" : ""}`}
       active={selected}
     >
       <List.Content>

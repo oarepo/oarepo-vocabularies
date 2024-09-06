@@ -44,7 +44,13 @@ export const VocabularyRemoteSearchResults = withState(
       }
     }, [results]);
 
-    const isSelected = (result) => {};
+    const isSelected = (result) => {
+      console.log({ fieldValue, result });
+      if (multiple) {
+        return fieldValue.map((val) => val.id).includes(result.id);
+      }
+      return fieldValue.id === result.id;
+    };
 
     return (
       <List verticalAlign="middle" selection size="small">
@@ -58,6 +64,7 @@ export const VocabularyRemoteSearchResults = withState(
             >
               <InternalResultListItem
                 result={result}
+                selected={isSelected(result)}
                 handleSelect={handleSelect}
               />
             </Overridable>
