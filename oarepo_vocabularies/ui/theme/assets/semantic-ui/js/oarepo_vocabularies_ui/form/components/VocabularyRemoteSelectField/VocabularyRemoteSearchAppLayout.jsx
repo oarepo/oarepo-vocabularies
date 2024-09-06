@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Grid, Modal, Button } from "semantic-ui-react";
-import {
-  SearchBar,
-  EmptyResults,
-  Error,
-  Pagination,
-  onQueryChanged,
-} from "react-searchkit";
+import { SearchBar, EmptyResults, Error, Pagination } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import VocabularyRemoteSearchResults, {
   VocabularyRemoteResultsLoader,
@@ -20,7 +14,6 @@ import {
   ExternalEmptyResults,
 } from "./ExternalEmptyResults";
 import VocabularyRemoteFeaturedResults from "./VocabularyRemoteFeaturedResults";
-import { featuredFilterActive } from "./util";
 
 export const VocabularyRemoteSearchAppLayout = ({
   addNew,
@@ -52,7 +45,6 @@ export const VocabularyRemoteSearchAppLayout = ({
     }
     const newQueryState = { ...previousQueryState, filters: [], page: 1 };
     setQueryState(newQueryState);
-    onQueryChanged(newQueryState);
   };
 
   const resetSearch = () => {
@@ -65,7 +57,7 @@ export const VocabularyRemoteSearchAppLayout = ({
       <Modal.Content>
         <MultiSourceSearchApp
           // Setting key here is important to re-mount SearchKit app with new source
-          key={`${source}-${featuredFilterActive(queryState) ? "feat" : ""}`}
+          key={source}
           source={source}
           vocabulary={vocabulary}
           queryState={queryState}
