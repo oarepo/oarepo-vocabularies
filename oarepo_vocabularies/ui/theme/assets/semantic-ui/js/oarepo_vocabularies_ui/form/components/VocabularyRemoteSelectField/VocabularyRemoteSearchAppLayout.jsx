@@ -13,6 +13,10 @@ import VocabularyRemoteSearchResults from "./VocabularyRemoteSearchResults";
 import MultiSourceSearchApp from "./MultiSourceSearchApp";
 import { SearchSource } from "./constants";
 import { ExternalResultListItem } from "./ExternalResultListItem";
+import {
+  ExternalEmptyResultsElement,
+  ExternalEmptyResults,
+} from "./ExternalEmptyResults";
 
 export const VocabularyRemoteSearchAppLayout = ({
   addNew,
@@ -35,6 +39,7 @@ export const VocabularyRemoteSearchAppLayout = ({
   const [queryState, setQueryState] = useState(initialQueryState);
 
   const defaultOverridenComponents = {
+    "EmptyResults.element": ExternalEmptyResultsElement,
     "VocabularyRemoteSelect.ext.ResultsList.item": ExternalResultListItem,
   };
 
@@ -43,6 +48,11 @@ export const VocabularyRemoteSearchAppLayout = ({
       setSource(SearchSource.EXTERNAL);
     }
     setQueryState({ ...previousQueryState, page: 1 });
+  };
+
+  const resetSearch = () => {
+    setQueryState(initialQueryState);
+    setSource(SearchSource.INTERNAL);
   };
 
   return (
@@ -87,19 +97,18 @@ export const VocabularyRemoteSearchAppLayout = ({
               <Grid.Row>
                 <Grid.Column>
                   <Error />
+                  {source === SearchSource.EXTERNAL && (
+                    <>
+                      <EmptyResults />
+                      <ExternalEmptyResults resetSearch={resetSearch} />
+                    </>
+                  )}
                   <VocabularyRemoteSearchResults
                     source={source}
                     handleSelect={handleSelect}
                     findMore={findMore}
                   />
                 </Grid.Column>
-              </Grid.Row>
-              <Grid.Row columns="equal">
-                <Grid.Column
-                  floated="right"
-                  width={8}
-                  textAlign="right"
-                ></Grid.Column>
               </Grid.Row>
             </ResultsLoader>
           </Grid>
