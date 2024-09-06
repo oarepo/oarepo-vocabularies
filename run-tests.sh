@@ -28,4 +28,6 @@ pip install uritemplate
 
 invenio index destroy --force --yes-i-know || true
 
-pytest tests
+pytest -k "not test_cache and not test_complex_import" tests
+pytest -k "test_complex_import" tests
+pytest -k "test_cache" tests
