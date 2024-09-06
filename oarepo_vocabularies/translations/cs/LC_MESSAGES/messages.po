@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-27 12:40+0200\n"
-"PO-Revision-Date: 2023-11-21 16:03+0100\n"
+"PO-Revision-Date: 2024-09-06 12:05+0200\n"
 "Last-Translator: \n"
 "Language-Team: cs <LL@li.org>\n"
 "Language: cs\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
 "Generated-By: Babel 2.12.1\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.5\n"
 
 #: oarepo_vocabularies/services/search.py:63
 msgid "Best match"
@@ -320,3 +320,39 @@ msgstr "Ikona"
 
 msgid "URL for the icon describing the vocabulary item."
 msgstr "URL pro ikonu popisující položku slovníku."
+
+msgid "We couldn't find any matches for "
+msgstr "Nenašli jsme žádnou shodu pro"
+
+msgid "Start over"
+msgstr "Začít znovu"
+
+msgid "Submit"
+msgstr "Potvrdit"
+
+msgid "Back to search"
+msgstr "Zpět na vyhledávání"
+
+msgid "Frequently used"
+msgstr "Často používané"
+
+msgid "Search"
+msgstr "Hledat"
+
+msgid "Add new"
+msgstr "Přidat"
+
+msgid "Confirm"
+msgstr "Potvrdit"
+
+msgid "Find more records …"
+msgstr "Najít další záznamy …"
+
+msgid "item"
+msgstr "položka"
+
+msgid "Choose item"
+msgstr "Vybrat"
+
+msgid "Remove"
+msgstr "Odebrat"
