@@ -84,7 +84,10 @@ export const VocabularyRemoteSelectField = ({
         removeItem={removeItem}
         trigger={triggerButton}
         multiple={multiple}
-        label={getFieldData({ fieldPath, fieldRepresentation: "text" }).label}
+        label={
+          label ??
+          getFieldData({ fieldPath, fieldRepresentation: "text" }).label
+        }
         {...restProps}
       />
     </Form.Field>
