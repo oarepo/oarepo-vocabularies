@@ -13,19 +13,20 @@ export const InternalResultListItem = ({ result, handleSelect = () => {} }) => {
       <List.Content>
         <Header className="mb-5" size="small">
           {title}{" "}
-          {Object.entries(relatedURI).map(([name, value]) => (
-            <Label key={name} basic size="mini">
-              <a
-                onClick={(e) => e.stopPropagation()}
-                href={value}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon name="external alternate" />
-                {name}
-              </a>
-            </Label>
-          ))}
+          {relatedURI &&
+            Object.entries(relatedURI).map(([name, value]) => (
+              <Label key={name} basic size="mini">
+                <a
+                  onClick={(e) => e.stopPropagation()}
+                  href={value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon name="external alternate" />
+                  {name}
+                </a>
+              </Label>
+            ))}
         </Header>
       </List.Content>
     </List.Item>

@@ -1,10 +1,27 @@
 import React from "react";
 import Overridable from "react-overridable";
-import { withState } from "react-searchkit";
+import { withState, ResultsLoader } from "react-searchkit";
 import { List, Header } from "semantic-ui-react";
+import { ShouldRender } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { InternalResultListItem } from "./InternalResultListItem";
 import { SearchSource } from "./constants";
+import { featuredFilterActive } from "./util";
+
+export const VocabularyRemoteResultsLoader = withState(
+  ({ currentQueryState, currentResultsState: results, children }) => {
+    return (
+      <ShouldRender
+        condition={
+          currentQueryState.queryString !== "" ||
+          (results.data.total > 0 && featuredFilterActive(currentQueryState))
+        }
+      >
+        <ResultsLoader>{children}</ResultsLoader>
+      </ShouldRender>
+    );
+  }
+);
 
 export const VocabularyRemoteSearchResults = withState(
   ({
@@ -15,9 +32,12 @@ export const VocabularyRemoteSearchResults = withState(
     source,
   }) => {
     const notEnoughResults = currentQueryState.size > results.data.hits.length;
+    const canFindMore =
+      source === SearchSource.INTERNAL &&
+      !featuredFilterActive(currentQueryState);
 
     React.useEffect(() => {
-      if (notEnoughResults && results && results.data.hits.length === 0) {
+      if (notEnoughResults && results && results.data.total === 0) {
         findMore(currentQueryState);
       }
     }, [results]);
@@ -38,7 +58,7 @@ export const VocabularyRemoteSearchResults = withState(
             </Overridable>
           );
         })}
-        {notEnoughResults && source === SearchSource.INTERNAL && (
+        {notEnoughResults && canFindMore && (
           <List.Item
             className="search-result-item"
             key="_find-more"

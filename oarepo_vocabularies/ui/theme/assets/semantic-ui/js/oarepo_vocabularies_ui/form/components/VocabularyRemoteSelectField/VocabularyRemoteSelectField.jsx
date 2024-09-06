@@ -93,6 +93,5 @@ export const VocabularyRemoteSelectField = ({
 
 VocabularyRemoteSelectField.defaultProps = {
   multiple: false,
-  externalAuthority: false,
   overriddenComponents: {},
 };

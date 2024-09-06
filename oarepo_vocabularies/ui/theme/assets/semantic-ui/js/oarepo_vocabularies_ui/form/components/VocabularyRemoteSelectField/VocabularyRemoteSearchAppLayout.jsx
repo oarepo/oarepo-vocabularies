@@ -7,9 +7,12 @@ import {
   Error,
   ResultsLoader,
   Pagination,
+  onQueryChanged,
 } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import VocabularyRemoteSearchResults from "./VocabularyRemoteSearchResults";
+import VocabularyRemoteSearchResults, {
+  VocabularyRemoteResultsLoader,
+} from "./VocabularyRemoteSearchResults";
 import MultiSourceSearchApp from "./MultiSourceSearchApp";
 import { SearchSource } from "./constants";
 import { ExternalResultListItem } from "./ExternalResultListItem";
@@ -17,6 +20,8 @@ import {
   ExternalEmptyResultsElement,
   ExternalEmptyResults,
 } from "./ExternalEmptyResults";
+import VocabularyRemoteFeaturedResults from "./VocabularyRemoteFeaturedResults";
+import { featuredFilterActive } from "./util";
 
 export const VocabularyRemoteSearchAppLayout = ({
   addNew,
@@ -30,8 +35,7 @@ export const VocabularyRemoteSearchAppLayout = ({
     page: 1,
     sortBy: "bestmatch",
     queryString: "",
-    // TODO: Toggle on/off based on queryString === ""
-    // filters: [["tags", "featured"]],
+    filters: [],
   },
   handleSelect = () => {},
 }) => {
@@ -47,7 +51,9 @@ export const VocabularyRemoteSearchAppLayout = ({
     if (source === SearchSource.INTERNAL) {
       setSource(SearchSource.EXTERNAL);
     }
-    setQueryState({ ...previousQueryState, page: 1 });
+    const newQueryState = { ...previousQueryState, filters: [], page: 1 };
+    setQueryState(newQueryState);
+    onQueryChanged(newQueryState);
   };
 
   const resetSearch = () => {
@@ -60,7 +66,7 @@ export const VocabularyRemoteSearchAppLayout = ({
       <Modal.Content>
         <MultiSourceSearchApp
           // Setting key here is important to re-mount SearchKit app with new source
-          key={source}
+          key={`${source}-${featuredFilterActive(queryState) ? "feat" : ""}`}
           source={source}
           vocabulary={vocabulary}
           queryState={queryState}
@@ -75,6 +81,7 @@ export const VocabularyRemoteSearchAppLayout = ({
                 <SearchBar
                   placeholder={i18next.t("Search")}
                   autofocus
+                  clearable
                   actionProps={{
                     icon: "search",
                     content: null,
@@ -93,8 +100,9 @@ export const VocabularyRemoteSearchAppLayout = ({
                 />
               </Grid.Column>
             </Grid.Row>
-            <ResultsLoader>
-              <Grid.Row>
+            <VocabularyRemoteFeaturedResults source={source} />
+            <VocabularyRemoteResultsLoader>
+              <Grid.Row className="scrolling content">
                 <Grid.Column>
                   <Error />
                   {source === SearchSource.EXTERNAL && (
@@ -110,7 +118,7 @@ export const VocabularyRemoteSearchAppLayout = ({
                   />
                 </Grid.Column>
               </Grid.Row>
-            </ResultsLoader>
+            </VocabularyRemoteResultsLoader>
           </Grid>
         </MultiSourceSearchApp>
       </Modal.Content>
@@ -153,6 +161,7 @@ VocabularyRemoteSearchAppLayout.defaultProps = {
     size: 10,
     page: 1,
     sortBy: "bestmatch",
+    filters: [],
   },
   handleSelect: () => {},
 };
