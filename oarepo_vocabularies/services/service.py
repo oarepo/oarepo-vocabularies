@@ -1,4 +1,7 @@
+import functools
+
 from flask import current_app
+from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services import Link, LinksTemplate, RecordServiceConfig
 from invenio_records_resources.services.base import Service
 from invenio_records_resources.services.errors import PermissionDeniedError
@@ -10,6 +13,8 @@ from invenio_vocabularies.records.models import VocabularyType
 from invenio_vocabularies.services import (
     VocabulariesService as InvenioVocabulariesService,
 )
+
+from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 
 
 class VocabularyTypeService(Service):
@@ -78,6 +83,66 @@ class VocabularyTypeService(Service):
 
 
 class VocabulariesService(InvenioVocabulariesService):
+
+    def search(
+        self, identity, params=None, search_preference=None, type=None, **kwargs
+    ):
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
+        if specialized_service:
+            return specialized_service.search(
+                identity=identity, params=params, search_preference=search_preference, **kwargs)
+        return super().search(identity=identity, params=params,
+                              search_preference=search_preference, type=type, **kwargs)
+
+    def search_many(self, identity, params):
+        # we are skipping Invenio vocabularies service here and calling
+        # explicitly its parent class. The reason is that invenio vocabs
+        # always filter the search by a single vocabulary type. The search_many
+        # use case is an optimization where we want to fetch multiple items
+        # from multiple vocabulary types in a single query.
+        return super(InvenioVocabulariesService, self).search(identity, params)
+
+    def read_all(self, identity, fields, type, cache=True, extra_filter="", **kwargs):
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
+        if specialized_service:
+            return specialized_service.read_all(identity=identity,
+                                                fields=fields,
+                                                cache=cache,
+                                                extra_filter=extra_filter,
+                                                **kwargs)
+        return super().read_all(identity=identity, fields=fields, type=type,
+                                cache=cache, extra_filter=extra_filter, **kwargs)
+
+    def read_many(self, identity, type, ids, fields=None, **kwargs):
+        """Search for records matching the querystring filtered by ids."""
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
+        if specialized_service:
+            return specialized_service.read_many(identity=identity, ids=ids, fields=fields, **kwargs)
+        return super().read_many(identity=identity, type=type, ids=ids, fields=fields, **kwargs)
+
+    @unit_of_work()
+    def create(self, identity, data, uow=None, expand=False, **kwargs):
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(data.get("type"))
+        if specialized_service:
+            data.pop("type")
+            return specialized_service.create(identity=identity, data=data, uow=uow, expand=expand, **kwargs)
+        return super().create(identity=identity, data=data, uow=uow, expand=expand, **kwargs)
+
+    def read(self, identity, id_, expand=False, action="read", **kwargs):
+        """Retrieve a record."""
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
+        if specialized_service:
+            return specialized_service.read(identity=identity, id_=id_[1],
+                                            expand=expand, action=action, **kwargs)
+        return super().read(identity=identity, id_=id_, expand=expand, action=action, **kwargs)
+
+    def exists(self, identity, id_, **kwargs):
+        """Check if the record exists and user has permission."""
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
+        if specialized_service:
+            return specialized_service.exists(identity=identity, id_=id_[1], **kwargs)
+        return super().exists(identity=identity, id_=id_, **kwargs)
+
     def _create(
         self,
         record_cls,
@@ -113,6 +178,12 @@ class VocabulariesService(InvenioVocabulariesService):
         self, identity, id_, data, revision_id=None, uow=None, expand=False, **kwargs
     ):
         """Replace a record."""
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
+        if specialized_service:
+            return specialized_service.update(identity=identity, id_=id_[1],
+                                              data=data, revision_id=revision_id,
+                                              uow=uow, expand=expand, **kwargs)
+
         record = self.record_cls.pid.resolve(id_)
         self.require_permission(
             identity,
@@ -134,6 +205,15 @@ class VocabulariesService(InvenioVocabulariesService):
     @unit_of_work()
     def delete(self, identity, id_, revision_id=None, uow=None, **kwargs):
         """Delete a record."""
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
+        if specialized_service:
+            return specialized_service.delete(
+                identity=identity,
+                id_=id_[1],
+                revision_id=revision_id,
+                uow=uow, **kwargs)
+
+
         record = self.record_cls.pid.resolve(id_)
         self.require_permission(
             identity,
@@ -146,10 +226,4 @@ class VocabulariesService(InvenioVocabulariesService):
         vocabulary_type = vocabulary_type.replace("-", "_")
         return f"{operation}_{vocabulary_type}"
 
-    def search_many(self, identity, params):
-        # we are skipping Invenio vocabularies service here and calling
-        # explicitly its parent class. The reason is that invenio vocabs
-        # always filter the search by a single vocabulary type. The search_many
-        # use case is an optimization where we want to fetch multiple items
-        # from multiple vocabulary types in a single query.
-        return super(InvenioVocabulariesService, self).search(identity, params)
+
