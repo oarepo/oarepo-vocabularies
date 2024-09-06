@@ -9,7 +9,6 @@ import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
 import { VocabularyRemoteSelectValues } from "./VocabularyRemoteSelectValues";
 import { useFieldValue } from "./context";
-import { remove } from "lodash";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
