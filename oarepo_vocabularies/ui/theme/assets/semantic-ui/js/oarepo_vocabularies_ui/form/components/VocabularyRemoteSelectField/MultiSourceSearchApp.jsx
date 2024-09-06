@@ -15,6 +15,8 @@ export const MultiSourceSearchApp = React.memo(
   }) => {
     const sources = {
       [SearchSource.INTERNAL]: {
+        // TODO: implement suggestions API using axios like here:
+        // https://github.com/inveniosoftware/react-invenio-forms/blob/master/src/lib/forms/RemoteSelectField.js#L129
         searchApi: {
           axios: {
             headers: {
