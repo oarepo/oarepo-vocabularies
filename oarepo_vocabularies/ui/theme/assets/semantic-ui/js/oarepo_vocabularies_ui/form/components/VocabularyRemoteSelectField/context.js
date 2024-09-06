@@ -25,5 +25,5 @@ export const useFieldValue = () => {
             "useFieldValue must be used inside FieldValueProvider"
         );
     }
-    return context;
+    return context.value;
 }

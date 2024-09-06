@@ -87,6 +87,7 @@ export const VocabularyRemoteSearchAppLayout = ({
                     size: "mini",
                     showFirst: false,
                     showLast: false,
+                    siblingRangeCount: 0,
                   }}
                   showWhenOnlyOnePage={false}
                 />
