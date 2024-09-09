@@ -2,7 +2,7 @@ i18n:
   babel_output_translations: oarepo_vocabularies/translations
   babel_source_paths:
     - oarepo_vocabularies
-  i18next_output_translations: oarepo_vocabularies/theme/assets/semantic-ui/translations/oarepo_vocabularies
+  i18next_output_translations: oarepo_vocabularies/ui/theme/assets/semantic-ui/translations/oarepo_vocabularies_ui
   i18next_source_paths:
     - oarepo_vocabularies/ui/theme/assets/semantic-ui/js
   languages:

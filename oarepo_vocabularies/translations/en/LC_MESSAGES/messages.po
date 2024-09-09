@@ -324,6 +324,42 @@ msgstr ""
 msgid "URL for the icon describing the vocabulary item."
 msgstr ""
 
+msgid "We couldn't find any matches for "
+msgstr ""
+
+msgid "Start over"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Back to search"
+msgstr ""
+
+msgid "Frequently used"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Add new"
+msgstr ""
+
+msgid "Confirm"
+msgstr ""
+
+msgid "Find more records …"
+msgstr ""
+
+msgid "item"
+msgstr ""
+
+msgid "Choose item"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
 #~ msgid "Export"
 #~ msgstr "Export"
 
