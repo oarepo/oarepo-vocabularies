@@ -8,7 +8,6 @@ import {
   VocabularyRemoteSelectValue,
   VocabularyRemoteSelectValues,
 } from "./VocabularyRemoteSelectValues";
-import { useFieldData } from "@js/oarepo_ui";
 import _isEmpty from "lodash/isEmpty";
 import _remove from "lodash/remove";
 import { FieldValueProvider } from "./context";
@@ -22,16 +21,10 @@ export const VocabularyRemoteSelectField = ({
   required,
   triggerButton,
   overriddenComponents,
+  modalHeader,
   ...restProps
 }) => {
-  const { getFieldData } = useFieldData();
   const { values, setFieldValue } = useFormikContext();
-
-  const {
-    label: modelLabel,
-    helpText: modelHelpText,
-    required: modelRequired,
-  } = getFieldData({ fieldPath, icon: "drivers license" });
 
   const initialValue = multiple ? [] : {};
   const fieldValue = getIn(values, fieldPath, initialValue);
@@ -56,15 +49,12 @@ export const VocabularyRemoteSelectField = ({
   });
 
   return (
-    <Form.Field
-      className="vocabulary select remote"
-      required={required ?? modelRequired}
-    >
+    <Form.Field className="vocabulary select remote" required={required}>
       <FieldValueProvider
         value={{ value: fieldValue, multiple, addValue, removeValue }}
       >
-        {label ?? modelLabel}
-        <label className="helptext">{helpText ?? modelHelpText}</label>
+        {label}
+        <label className="helptext">{helpText}</label>
         {!_isEmpty(fieldValue) && (
           <Grid.Row className="rel-mb-1">
             {(multiple && <VocabularyRemoteSelectValues />) || (
@@ -75,10 +65,7 @@ export const VocabularyRemoteSelectField = ({
         <VocabularyRemoteSelectModal
           vocabulary={vocabulary}
           trigger={triggerButton}
-          label={
-            label ??
-            getFieldData({ fieldPath, fieldRepresentation: "text" }).label
-          }
+          label={modalHeader}
           {...restProps}
         />
       </FieldValueProvider>
@@ -91,6 +78,7 @@ VocabularyRemoteSelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   helpText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  modalHeader: PropTypes.string,
   multiple: PropTypes.bool,
   required: PropTypes.bool,
   triggerButton: PropTypes.node,
@@ -100,4 +88,5 @@ VocabularyRemoteSelectField.propTypes = {
 VocabularyRemoteSelectField.defaultProps = {
   multiple: false,
   overriddenComponents: {},
+  modalHeader: "",
 };
