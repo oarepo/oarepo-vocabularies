@@ -45,7 +45,6 @@ export const VocabularyRemoteSearchResults = withState(
     }, [results]);
 
     const isSelected = (result) => {
-      console.log({ fieldValue, result });
       if (multiple) {
         return fieldValue.map((val) => val.id).includes(result.id);
       }
