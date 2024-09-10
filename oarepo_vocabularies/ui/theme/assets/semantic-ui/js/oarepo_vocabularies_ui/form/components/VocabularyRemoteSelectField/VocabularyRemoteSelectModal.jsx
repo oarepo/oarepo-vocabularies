@@ -16,6 +16,7 @@ export const VocabularyRemoteSelectModal = ({
   label,
   overriddenComponents,
   initialAction = ModalActions.SEARCH,
+  ...rest
 }) => {
   const { isOpen, close, open } = useModal();
   const { multiple, addValue, removeValue } = useFieldValue();
@@ -61,7 +62,8 @@ export const VocabularyRemoteSelectModal = ({
         close();
       }}
       closeIcon
-      closeOnDimmerClick={false}
+      closeOnDimmerClick={true}
+      {...rest}
     >
       <>
         <Modal.Header as="h2" className="pt-10 pb-10">
