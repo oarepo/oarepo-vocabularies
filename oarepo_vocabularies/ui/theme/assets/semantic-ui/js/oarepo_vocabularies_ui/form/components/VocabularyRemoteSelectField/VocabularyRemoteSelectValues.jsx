@@ -9,7 +9,10 @@ export const VocabularyRemoteSelectValue = ({ value }) => {
   const { value: fieldValue, removeValue } = useFieldValue();
   const { id, title } = value ?? fieldValue;
 
-  const itemTitle = getTitleFromMultilingualObject(title) ?? id;
+  const itemTitle =
+    getTitleFromMultilingualObject(title) ?? id ?? typeof value === "string"
+      ? value
+      : i18next.t("Unknown item");
 
   return (
     <Label className="vocabulary-select-value mb-5">
