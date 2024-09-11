@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Icon, Modal, Grid } from "semantic-ui-react";
+import { Icon, Modal, Form, Grid } from "semantic-ui-react";
 import { useConfirmationModal as useModal } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _capitalize from "lodash/capitalize";
@@ -110,7 +110,7 @@ VocabularyRemoteSelectModal.defaultProps = {
   label: i18next.t("item"),
   overriddenComponents: {},
   trigger: (
-    <Button
+    <Form.Button
       className="array-field-add-button"
       type="button"
       icon
@@ -118,7 +118,7 @@ VocabularyRemoteSelectModal.defaultProps = {
     >
       <Icon name="add" />
       {i18next.t("Choose item")}
-    </Button>
+    </Form.Button>
   ),
 };
 export default VocabularyRemoteSelectModal;
