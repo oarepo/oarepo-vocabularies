@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Icon, Modal, Form, Grid } from "semantic-ui-react";
+import { Modal, Grid } from "semantic-ui-react";
 import { useConfirmationModal as useModal } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _capitalize from "lodash/capitalize";
