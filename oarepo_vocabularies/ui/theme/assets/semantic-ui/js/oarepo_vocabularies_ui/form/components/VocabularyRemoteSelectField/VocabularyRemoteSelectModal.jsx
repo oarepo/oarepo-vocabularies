@@ -9,6 +9,7 @@ import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
 import { VocabularyRemoteSelectValues } from "./VocabularyRemoteSelectValues";
 import { useFieldValue } from "./context";
+import { VocabularyRemoteSelectModalTrigger } from "./VocabularyRemoteSelectModalTrigger";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
@@ -109,16 +110,6 @@ VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
   overriddenComponents: {},
-  trigger: (
-    <Form.Button
-      className="array-field-add-button"
-      type="button"
-      icon
-      labelPosition="left"
-    >
-      <Icon name="add" />
-      {i18next.t("Choose item")}
-    </Form.Button>
-  ),
+  trigger: <VocabularyRemoteSelectModalTrigger />,
 };
 export default VocabularyRemoteSelectModal;
