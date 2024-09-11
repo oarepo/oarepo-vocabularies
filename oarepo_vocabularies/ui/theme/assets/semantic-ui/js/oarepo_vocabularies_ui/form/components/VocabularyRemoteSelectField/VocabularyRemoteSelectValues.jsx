@@ -7,11 +7,12 @@ import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
 export const VocabularyRemoteSelectValue = ({ value }) => {
   const { value: fieldValue, removeValue } = useFieldValue();
-  const { id, title } = value ?? fieldValue;
+  const _value = value ?? fieldValue;
+  const { title, id } = _value;
 
   const itemTitle =
-    getTitleFromMultilingualObject(title) ?? id ?? typeof value === "string"
-      ? value
+    getTitleFromMultilingualObject(title) ?? id ?? typeof _value === "string"
+      ? _value
       : i18next.t("Unknown item");
 
   return (
