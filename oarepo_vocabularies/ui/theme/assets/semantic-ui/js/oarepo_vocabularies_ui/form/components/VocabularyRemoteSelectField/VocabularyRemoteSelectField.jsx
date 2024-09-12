@@ -40,7 +40,7 @@ export const VocabularyRemoteSelectField = ({
 
   const removeValue = React.useCallback((item) => {
     if (!multiple) {
-      setFieldValue(fieldPath, initialValue);
+      setFieldValue(fieldPath, null);
     } else {
       const newValue = [...fieldValue];
       _remove(newValue, (value) => value.id === item.id);
