@@ -68,7 +68,7 @@ export const VocabularyRemoteSelectModal = ({
     >
       <>
         <Modal.Header as="h2" className="pt-10 pb-10">
-          {i18next.t(_capitalize(action))} {label.toLowerCase()}
+          {_capitalize(label)}
         </Modal.Header>
         {inSearchMode && (
           <VocabularyRemoteSearchAppLayout
