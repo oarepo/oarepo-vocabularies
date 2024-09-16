@@ -1,6 +1,7 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import { List, Icon, Label, Header } from "semantic-ui-react";
+import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
 export const InternalResultListItem = ({
   result,
@@ -17,7 +18,7 @@ export const InternalResultListItem = ({
     >
       <List.Content>
         <Header className="mb-5" size="small">
-          {title}{" "}
+          {getTitleFromMultilingualObject(title)}{" "}
           {relatedURI &&
             Object.entries(relatedURI).map(([name, value]) => (
               <Label key={name} basic size="mini">
