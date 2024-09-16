@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Icon, Modal, Grid } from "semantic-ui-react";
+import { Modal, Grid } from "semantic-ui-react";
 import { useConfirmationModal as useModal } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _capitalize from "lodash/capitalize";
@@ -9,6 +9,7 @@ import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
 import { VocabularyRemoteSelectValues } from "./VocabularyRemoteSelectValues";
 import { useFieldValue } from "./context";
+import { VocabularyRemoteSelectModalTrigger } from "./VocabularyRemoteSelectModalTrigger";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
@@ -67,7 +68,7 @@ export const VocabularyRemoteSelectModal = ({
     >
       <>
         <Modal.Header as="h2" className="pt-10 pb-10">
-          {i18next.t(_capitalize(action))} {label.toLowerCase()}
+          {_capitalize(label)}
         </Modal.Header>
         {inSearchMode && (
           <VocabularyRemoteSearchAppLayout
@@ -109,16 +110,6 @@ VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
   overriddenComponents: {},
-  trigger: (
-    <Button
-      className="array-field-add-button"
-      type="button"
-      icon
-      labelPosition="left"
-    >
-      <Icon name="add" />
-      {i18next.t("Choose item")}
-    </Button>
-  ),
+  trigger: <VocabularyRemoteSelectModalTrigger />,
 };
 export default VocabularyRemoteSelectModal;

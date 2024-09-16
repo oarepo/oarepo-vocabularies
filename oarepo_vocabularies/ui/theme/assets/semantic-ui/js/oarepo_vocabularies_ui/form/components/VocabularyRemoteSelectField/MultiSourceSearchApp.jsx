@@ -20,7 +20,7 @@ export const MultiSourceSearchApp = React.memo(
         searchApi: {
           axios: {
             headers: {
-              Accept: "application/vnd.inveniordm.v1+json",
+              Accept: "application/json",
             },
             url: `/api/vocabularies/${vocabulary}`,
           },

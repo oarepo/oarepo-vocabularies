@@ -7,9 +7,12 @@ import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
 export const VocabularyRemoteSelectValue = ({ value }) => {
   const { value: fieldValue, removeValue } = useFieldValue();
-  const { id, title } = value ?? fieldValue;
+  const _value = value ?? fieldValue;
+  const { title, id } = _value;
 
-  const itemTitle = getTitleFromMultilingualObject(title) ?? id;
+  const itemTitle =
+    getTitleFromMultilingualObject(title) ??
+    (id ?? typeof _value === "string" ? _value : i18next.t("Unknown item"));
 
   return (
     <Label className="vocabulary-select-value mb-5">
@@ -17,7 +20,7 @@ export const VocabularyRemoteSelectValue = ({ value }) => {
         {itemTitle}
         <Button
           className="transparent p-0 m-0 rel-pl-1"
-          onClick={() => removeValue(value)}
+          onClick={() => removeValue(_value)}
           type="button"
           aria-label={i18next.t("Remove")}
         >
