@@ -12,7 +12,6 @@ export const VocabularyTreeSelectField = ({
   multiple,
   optionsListName,
   helpText,
-  placeholder,
   root,
   optimized,
   showLeafsOnly,
@@ -108,7 +107,6 @@ export const VocabularyTreeSelectField = ({
           multiple={multiple}
           openState={openState}
           setOpenState={setOpenState}
-          placeholder={placeholder}
           allOptions={serializedOptions}
           root={root}
           value={value}
