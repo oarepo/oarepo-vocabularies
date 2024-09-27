@@ -47,6 +47,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
         value: item.id,
         key: key,
         data: item,
+        hierarchy: item.hierarchy,
         id: item.id,
         title: item.title,
         name: getTitleFromMultilingualObject(item?.title),

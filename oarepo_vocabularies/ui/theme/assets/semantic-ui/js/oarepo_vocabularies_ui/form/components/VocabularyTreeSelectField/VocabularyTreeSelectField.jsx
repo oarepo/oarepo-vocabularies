@@ -3,9 +3,9 @@ import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
-import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { vocabularyItemsToColumnOptions } from "./util";
 
 export const VocabularyTreeSelectField = ({
   fieldPath,
@@ -24,8 +24,7 @@ export const VocabularyTreeSelectField = ({
   const formik = useFormikContext();
   const { values, setFieldTouched } = useFormikContext();
   const value = getIn(values, fieldPath, multiple ? [] : {});
-  let { all: allOptions } =
-    vocabularies[optionsListName];
+  let { all: allOptions } = vocabularies[optionsListName];
 
   if (!allOptions) {
     console.error(
@@ -34,13 +33,15 @@ export const VocabularyTreeSelectField = ({
     );
   }
 
-  const serializedOptions = useMemo(
-    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
-    [allOptions, showLeafsOnly, filterFunction]
-  );
-
   const [openState, setOpenState] = useState(false);
   const [selectedState, setSelectedState] = useState([]);
+
+  const serializedOptions = vocabularyItemsToColumnOptions(
+    allOptions,
+    root,
+    showLeafsOnly,
+    filterFunction
+  );
 
   const handleOpen = (e) => {
     e.preventDefault();
@@ -109,12 +110,15 @@ export const VocabularyTreeSelectField = ({
           openState={openState}
           setOpenState={setOpenState}
           placeholder={placeholder}
-          allOptions={serializedOptions}
-          root={root}
+          options={serializedOptions}
           value={value}
+          root={root}
+          showLeafsOnly={showLeafsOnly}
+          filterFunction={filterFunction}
           handleSubmit={handleSubmit}
           selectedState={Array.isArray(selectedState) ? selectedState : []}
           setSelectedState={setSelectedState}
+          vocabularyType={optionsListName}
         />
       )}
     </React.Fragment>
