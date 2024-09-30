@@ -38,6 +38,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
       };
     } else {
       return {
+        ...item,
         text:
           hierarchy?.length > 1 ? (
             <Breadcrumb key={key} icon="left angle" sections={sections} />
@@ -46,8 +47,6 @@ export const serializeVocabularySuggestions = (suggestions) =>
           ),
         value: item.id,
         key: key,
-        data: item,
-        hierarchy: item.hierarchy,
         id: item.id,
         title: item.title,
         name: getTitleFromMultilingualObject(item?.title),
