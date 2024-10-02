@@ -28,11 +28,27 @@ import {
 } from "./util";
 import TreeSelectValues from "./TreeSelectValues";
 
-export const TreeSelectFieldModal = ({
-  multiple,
+export const TreeSelectFieldModal = (props) => {
+  console.log("modal", props)
+  const prev = React.useRef(props);
+  React.useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, {});
+    if (Object.keys(changedProps).length > 0) {
+      console.log('Changed props:', changedProps);
+    }
+    prev.current = props;
+  });
+
+  const {  multiple,
   placeholder,
   openState,
-  setOpenState,
+  onOpen,
+  onClose,
   options,
   value,
   root,
@@ -41,16 +57,19 @@ export const TreeSelectFieldModal = ({
   handleSubmit,
   selectedState,
   setSelectedState,
-  vocabularyType,
-}) => {
+  vocabularyType } = props
+
   const valueAncestors =
     options.find((o) => o.value === value.id)?.hierarchy?.ancestors || [];
 
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
   const [currentAncestors, setCurrentAncestors] = useState(valueAncestors);
   const [keybState, setKeybState] = useState([]);
-  const { suggestions: searchResults, onSearchChange } =
-    useVocabularySuggestions({ type: vocabularyType });
+  const {
+    suggestions: searchResults,
+      query: searchQuery,
+      executeSearch
+  } = useVocabularySuggestions({ type: vocabularyType });
 
   const _options =
     searchQuery !== ""
@@ -105,7 +124,7 @@ export const TreeSelectFieldModal = ({
     setKeybState(updatedKeybState);
   };
 
-  const handleSelect = (option, e) => {
+  const handleSelect = React.useCallback((option, e) => {
     e.preventDefault();
     if (!isSelectable(option)) {
       return;
@@ -140,7 +159,7 @@ export const TreeSelectFieldModal = ({
         setSelectedState([option]);
       }
     }
-  };
+  }, [multiple, handleSubmit, selectedState, setSelectedState]);
 
   const updateState = (
     prevState,
@@ -170,7 +189,7 @@ export const TreeSelectFieldModal = ({
     return state;
   };
 
-  const moveKey = (index, newIndex, back = false) => {
+  const moveKey = React.useCallback((index, newIndex, back = false) => {
     setKeybState((prev) => {
       const newState = [...prev];
       const newValue = back ? undefined : newIndex;
@@ -181,9 +200,9 @@ export const TreeSelectFieldModal = ({
       }
       return newState;
     });
-  };
+  }, [setKeybState]);
 
-  const handleArrowUp = (e, index, data) => {
+  const handleArrowUp = React.useCallback((e, index, data) => {
     const newIndex = keybState[index] - 1;
     if (newIndex >= 0) {
       openHierarchyNode(data[newIndex].value, index)();
@@ -192,7 +211,7 @@ export const TreeSelectFieldModal = ({
         handleSelect(data[newIndex], e);
       }
     }
-  };
+  }, [setKeybState, openHierarchyNode, moveKey, handleSelect]);
 
   const handleArrowDown = (e, index, data) => {
     const newIndex = keybState[index] + 1;
@@ -234,7 +253,7 @@ export const TreeSelectFieldModal = ({
     handleSelect(data[keybState[index]], e);
   };
 
-  const handleKey = (e, index) => {
+  const handleKey = React.useCallback((e, index) => {
     e.preventDefault();
     index = Math.max(keybState.length - 1, index);
     const data = columns[index];
@@ -261,12 +280,12 @@ export const TreeSelectFieldModal = ({
         handleEnterSpace(e, index, data);
         break;
     }
-  };
+  }, [columns]);
 
   return (
     <Modal
-      onClose={() => setOpenState(false)}
-      onOpen={() => setOpenState(true)}
+      onClose={onClose}
+      onOpen={onOpen}
       open={openState}
       className="tree-field"
     >
@@ -278,8 +297,7 @@ export const TreeSelectFieldModal = ({
               type="text"
               value={searchQuery}
               onChange={(e) => {
-                setSearchQuery(e.target.value);
-                onSearchChange(e, { searchQuery: e.target.value });
+                executeSearch(e.target.value);
               }}
               placeholder="Search..."
             />
@@ -337,7 +355,8 @@ TreeSelectFieldModal.propTypes = {
   multiple: PropTypes.bool,
   placeholder: PropTypes.string,
   openState: PropTypes.bool.isRequired,
-  setOpenState: PropTypes.func.isRequired,
+  onOpen: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
   value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   handleSubmit: PropTypes.func.isRequired,

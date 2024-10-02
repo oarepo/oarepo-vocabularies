@@ -1,11 +1,12 @@
-import React, { useMemo, useState } from "react";
-import { SelectField } from "react-invenio-forms";
-import { useFormConfig } from "@js/oarepo_ui";
-import { useFormikContext, getIn } from "formik";
+import React, {useState} from "react";
+import {SelectField} from "react-invenio-forms";
+import {useFormConfig} from "@js/oarepo_ui";
+import {getIn, useFormikContext} from "formik";
 import PropTypes from "prop-types";
-import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
-import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { vocabularyItemsToColumnOptions } from "./util";
+import {TreeSelectFieldModal} from "./TreeSelectFieldModal";
+import {i18next} from "@translations/oarepo_vocabularies_ui/i18next";
+import {vocabularyItemsToColumnOptions} from "./util";
+
 
 export const VocabularyTreeSelectField = ({
   fieldPath,
@@ -24,8 +25,9 @@ export const VocabularyTreeSelectField = ({
   const formik = useFormikContext();
   const { values, setFieldTouched } = useFormikContext();
   const value = getIn(values, fieldPath, multiple ? [] : {});
-  let { all: allOptions } = vocabularies[optionsListName];
+  const [openState, setOpenState] = useState(false);
 
+  const { all: allOptions } = vocabularies[optionsListName];
   if (!allOptions) {
     console.error(
       `Do not have options for ${optionsListName} inside:`,
@@ -33,46 +35,40 @@ export const VocabularyTreeSelectField = ({
     );
   }
 
-  const [openState, setOpenState] = useState(false);
-  const [selectedState, setSelectedState] = useState([]);
-
-  const serializedOptions = vocabularyItemsToColumnOptions(
+  const serializedOptions = React.useMemo(() => vocabularyItemsToColumnOptions(
     allOptions,
     root,
     showLeafsOnly,
     filterFunction
-  );
+  ), [allOptions, root, showLeafsOnly, filterFunction]);
 
-  const handleOpen = (e) => {
-    e.preventDefault();
+  function getInitialSelections () {
     if (multiple && Array.isArray(value)) {
-      const newSelectedState = value.reduce((acc, val) => {
-        const foundOption = serializedOptions.find(
-          (option) => option.value === val.id
-        );
-        if (foundOption) {
-          acc.push(foundOption);
-        }
-        return acc;
-      }, []);
-      setSelectedState(newSelectedState);
+      return value.map(v => serializedOptions.find(
+              (option) => option.value === v.id
+        )
+      ).filter(v => v);
     } else if (value) {
-      const foundOption = serializedOptions.find(
-        (option) => option.value === value.id
-      );
-      if (foundOption) {
-        setSelectedState([foundOption]);
+        return  serializedOptions.find(
+          (option) => option.value === value.id
+        ) || [];
       } else {
-        setSelectedState([]);
+        return [];
       }
-    } else {
-      setSelectedState([]);
-    }
+  }
 
+  const [selectedState, setSelectedState] = useState(getInitialSelections);
+
+  const handleOpen = React.useCallback((e=null) => {
+    e?.preventDefault();
     setOpenState(true);
-  };
+  }, []);
 
-  const handleSubmit = (newState) => {
+  const handleClose = React.useCallback((e = null) => {
+    setOpenState(false)
+  }, [])
+
+  const handleSubmit = React.useCallback((newState) => {
     const prepSelect = [
       ...newState.map((item) => {
         return {
@@ -81,9 +77,8 @@ export const VocabularyTreeSelectField = ({
       }),
     ];
     formik.setFieldValue(fieldPath, multiple ? prepSelect : prepSelect[0]);
-    setOpenState(false);
-    setSelectedState([]);
-  };
+    handleClose()
+  }, [fieldPath, multiple]);
 
   return (
     <React.Fragment>
@@ -111,12 +106,14 @@ export const VocabularyTreeSelectField = ({
           setOpenState={setOpenState}
           placeholder={placeholder}
           options={serializedOptions}
+          onOpen={handleOpen}
+          onClose={handleClose}
           value={value}
           root={root}
           showLeafsOnly={showLeafsOnly}
           filterFunction={filterFunction}
           handleSubmit={handleSubmit}
-          selectedState={Array.isArray(selectedState) ? selectedState : []}
+          selectedState={selectedState}
           setSelectedState={setSelectedState}
           vocabularyType={optionsListName}
         />
