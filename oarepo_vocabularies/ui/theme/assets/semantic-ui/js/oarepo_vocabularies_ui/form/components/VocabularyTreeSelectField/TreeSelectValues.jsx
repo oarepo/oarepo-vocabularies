@@ -31,7 +31,7 @@ export const TreeSelectValues = ({ selected, onRemove }) => {
 
 TreeSelectValues.propTypes = {
   onRemove: PropTypes.func,
-  selectedState: PropTypes.array,
+  selected: PropTypes.array,
 };
 
 export default TreeSelectValues;

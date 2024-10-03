@@ -136,6 +136,7 @@ VocabularyTreeSelectField.propTypes = {
   optimized: PropTypes.bool,
   root: PropTypes.string,
   showLeafsOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
   filterFunction: PropTypes.func,
 };
 

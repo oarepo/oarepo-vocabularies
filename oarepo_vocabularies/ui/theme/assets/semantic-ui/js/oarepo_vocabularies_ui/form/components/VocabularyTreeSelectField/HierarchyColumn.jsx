@@ -82,6 +82,7 @@ export const HierarchyColumn = ({
 };
 
 HierarchyColumn.propTypes = {
+  level: PropTypes.number,
   items: PropTypes.array,
   onSelect: PropTypes.func,
   onExpand: PropTypes.func,

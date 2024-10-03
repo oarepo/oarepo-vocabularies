@@ -11,6 +11,19 @@ export const isDescendant = (option, ancestorId) => {
     return option.hierarchy.ancestors.includes(ancestorId);
 };
 
+export const isColumnOptionHidden = (option, columnIndex, columns) => {
+    return (
+        !isSelectable(option) &&
+        (option.element_type === "leaf" ||
+            (option.element_type === "parent" &&
+                (columnIndex < columns.length - 1
+                    ? !columns[columnIndex + 1][1].some((child) =>
+                        isDescendant(child, option.value)
+                    )
+                    : true)))
+    );
+};
+
 export const sortByTitle = (options) =>
     options.sort((a, b) => {
         const titleComparison = a.hierarchy.ancestors?.[0]?.localeCompare(
@@ -43,7 +56,10 @@ export const vocabularyItemsToColumnOptions = (
 };
 
 export const isParent = (option, options) => {
-    return options.some((opt) => opt.hierarchy.ancestors.includes(option.value) && option.id !== opt.id);
+    return options.some(
+        (opt) =>
+            opt.hierarchy.ancestors.includes(option.value) && option.id !== opt.id
+    );
 };
 
 export const suggestionsToColumnOptions = (

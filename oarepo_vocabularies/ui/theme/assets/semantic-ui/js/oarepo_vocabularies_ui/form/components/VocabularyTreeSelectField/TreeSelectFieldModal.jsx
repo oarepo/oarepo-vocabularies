@@ -24,8 +24,8 @@ import { HierarchyColumn } from "./HierarchyColumn";
 import {
   sortByTitle,
   isSelectable,
-  isDescendant,
   suggestionsToColumnOptions,
+  isColumnOptionHidden,
 } from "./util";
 import TreeSelectValues from "./TreeSelectValues";
 
@@ -71,7 +71,10 @@ export const TreeSelectFieldModal = ({
           filterFunction
         )
       : options;
-  const hierarchyLevels = _groupBy(_options, "hierarchy.ancestors.length");
+  const hierarchyLevels = _groupBy(
+    _options.map((o) => ({ ...o, key: crypto.randomUUID() })),
+    "hierarchy.ancestors.length"
+  );
 
   const columns = useMemo(
     () =>
@@ -79,17 +82,8 @@ export const TreeSelectFieldModal = ({
         Number.parseInt(index)
       ).map(([_, column], columnIndex, _columns) =>
         sortByTitle(
-          _reject(
-            column,
-            (option) =>
-              !isSelectable(option) &&
-              (option.element_type === "leaf" ||
-                (option.element_type === "parent" &&
-                  (columnIndex < _columns.length - 1
-                    ? !_columns[columnIndex + 1][1].some((child) =>
-                        isDescendant(child, option.value)
-                      )
-                    : true)))
+          _reject(column, (option) =>
+            isColumnOptionHidden(option, columnIndex, _columns)
           )
         )
       ),
@@ -383,10 +377,8 @@ TreeSelectFieldModal.propTypes = {
   showLeafsOnly: PropTypes.bool,
   filterFunction: PropTypes.func,
   loadingMessage: PropTypes.string,
-  noResultsMessage: PropTypes.string,
 };
 
 TreeSelectFieldModal.defaultProps = {
-  noResultsMessage: i18next.t("No results found"),
   loadingMessage: i18next.t("Loading..."),
 };
