@@ -72,7 +72,7 @@ export const TreeSelectFieldModal = ({
         )
       : options;
   const hierarchyLevels = _groupBy(
-    _options.map((o) => ({ ...o, key: crypto.randomUUID() })),
+    _options,
     "hierarchy.ancestors.length"
   );
 
