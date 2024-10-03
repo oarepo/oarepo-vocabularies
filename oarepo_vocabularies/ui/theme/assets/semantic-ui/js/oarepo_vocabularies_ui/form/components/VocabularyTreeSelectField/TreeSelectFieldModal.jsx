@@ -12,6 +12,7 @@ import {
   ModalActions,
 } from "semantic-ui-react";
 import { useVocabularySuggestions } from "@js/oarepo_vocabularies";
+import { EmptyResultsElement } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _groupBy from "lodash/groupBy";
 import _toPairs from "lodash/toPairs";
@@ -28,41 +29,23 @@ import {
 } from "./util";
 import TreeSelectValues from "./TreeSelectValues";
 
-export const TreeSelectFieldModal = (props) => {
-  console.log("modal", props);
-  const prev = React.useRef(props);
-  React.useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log("Changed props:", changedProps);
-    }
-    prev.current = props;
-  });
-
-  const {
-    multiple,
-    placeholder,
-    openState,
-    onOpen,
-    onClose,
-    options,
-    value,
-    root,
-    showLeafsOnly,
-    filterFunction,
-    handleSubmit,
-    selectedState,
-    setSelectedState,
-    loadingMessage,
-    noResultsMessage,
-    vocabularyType,
-  } = props;
-
+export const TreeSelectFieldModal = ({
+  multiple,
+  placeholder,
+  openState,
+  onOpen,
+  onClose,
+  options,
+  value,
+  root,
+  showLeafsOnly,
+  filterFunction,
+  handleSubmit,
+  selectedState,
+  setSelectedState,
+  loadingMessage,
+  vocabularyType,
+}) => {
   const valueAncestors =
     options.find((o) => o.value === value.id)?.hierarchy?.ancestors || [];
 
@@ -73,16 +56,11 @@ export const TreeSelectFieldModal = (props) => {
     loading: suggestionsLoading,
     error: suggestionsError,
     query: searchQuery,
+    noResults,
     executeSearch,
   } = useVocabularySuggestions({ type: vocabularyType });
 
-  console.log({
-    searchQuery,
-    searchResults,
-    suggestionsLoading,
-    suggestionsError,
-    options,
-  });
+  const noSearchResults = suggestionsError || noResults;
 
   const _options =
     searchQuery !== ""
@@ -335,9 +313,18 @@ export const TreeSelectFieldModal = (props) => {
               {suggestionsLoading && (
                 <OptionsLoadingSkeleton loadingMessage={loadingMessage} />
               )}
-              {!suggestionsLoading &&
-                columns.map((items, level) => (
-                  <Container>
+              {noSearchResults && (
+                <Grid.Column stretched>
+                  <EmptyResultsElement
+                    queryString={searchQuery}
+                    resetQuery={() => executeSearch("")}
+                    extraContent=""
+                  />
+                </Grid.Column>
+              )}
+              {!suggestionsLoading && !noSearchResults && (
+                <Container>
+                  {columns.map((items, level) => (
                     <HierarchyColumn
                       items={items}
                       key={level}
@@ -351,8 +338,9 @@ export const TreeSelectFieldModal = (props) => {
                       multiple={multiple}
                       isLast={level < columnsCount - 1}
                     />
-                  </Container>
-                ))}
+                  ))}
+                </Container>
+              )}
             </Grid>
           </div>
         </Grid>

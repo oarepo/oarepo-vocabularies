@@ -1,12 +1,11 @@
-import React, {useState} from "react";
-import {SelectField} from "react-invenio-forms";
-import {useFormConfig} from "@js/oarepo_ui";
-import {getIn, useFormikContext} from "formik";
+import React, { useState } from "react";
+import { SelectField } from "react-invenio-forms";
+import { useFormConfig } from "@js/oarepo_ui";
+import { getIn, useFormikContext } from "formik";
 import PropTypes from "prop-types";
-import {TreeSelectFieldModal} from "./TreeSelectFieldModal";
-import {i18next} from "@translations/oarepo_vocabularies_ui/i18next";
-import {vocabularyItemsToColumnOptions} from "./util";
-
+import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { vocabularyItemsToColumnOptions } from "./util";
 
 export const VocabularyTreeSelectField = ({
   fieldPath,
@@ -35,50 +34,56 @@ export const VocabularyTreeSelectField = ({
     );
   }
 
-  const serializedOptions = React.useMemo(() => vocabularyItemsToColumnOptions(
-    allOptions,
-    root,
-    showLeafsOnly,
-    filterFunction
-  ), [allOptions, root, showLeafsOnly, filterFunction]);
+  const serializedOptions = React.useMemo(
+    () =>
+      vocabularyItemsToColumnOptions(
+        allOptions,
+        root,
+        showLeafsOnly,
+        filterFunction
+      ),
+    [allOptions, root, showLeafsOnly, filterFunction]
+  );
 
-  function getInitialSelections () {
+  function getInitialSelections() {
     if (multiple && Array.isArray(value)) {
-      return value.map(v => serializedOptions.find(
-              (option) => option.value === v.id
-        )
-      ).filter(v => v);
+      return value
+        .map((v) => serializedOptions.find((option) => option.value === v.id))
+        .filter((v) => v);
     } else if (value) {
-        return  serializedOptions.find(
-          (option) => option.value === value.id
-        ) || [];
-      } else {
-        return [];
-      }
+      return (
+        serializedOptions.find((option) => option.value === value.id) || []
+      );
+    } else {
+      return [];
+    }
   }
 
   const [selectedState, setSelectedState] = useState(getInitialSelections);
 
-  const handleOpen = React.useCallback((e=null) => {
+  const handleOpen = React.useCallback((e = null) => {
     e?.preventDefault();
     setOpenState(true);
   }, []);
 
   const handleClose = React.useCallback((e = null) => {
-    setOpenState(false)
-  }, [])
+    setOpenState(false);
+  }, []);
 
-  const handleSubmit = React.useCallback((newState) => {
-    const prepSelect = [
-      ...newState.map((item) => {
-        return {
-          id: item.value,
-        };
-      }),
-    ];
-    formik.setFieldValue(fieldPath, multiple ? prepSelect : prepSelect[0]);
-    handleClose()
-  }, [fieldPath, multiple]);
+  const handleSubmit = React.useCallback(
+    (newState) => {
+      const prepSelect = [
+        ...newState.map((item) => {
+          return {
+            id: item.value,
+          };
+        }),
+      ];
+      formik.setFieldValue(fieldPath, multiple ? prepSelect : prepSelect[0]);
+      handleClose();
+    },
+    [fieldPath, multiple]
+  );
 
   return (
     <React.Fragment>
