@@ -96,7 +96,7 @@ export const VocabularyTreeSelectField = ({
         openOnFocus={false}
         fieldPath={fieldPath}
         multiple={multiple}
-        options={serializedOptions}
+        options={serializedOptions.map(({value, text}) => ({key: value, value, text: text}))}
         onOpen={(e) => handleOpen(e)}
         value={multiple ? value.map((o) => o?.id) : value?.id}
         {...uiProps}
