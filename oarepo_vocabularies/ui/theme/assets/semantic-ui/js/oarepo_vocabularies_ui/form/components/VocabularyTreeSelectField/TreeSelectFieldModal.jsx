@@ -158,7 +158,7 @@ export const TreeSelectFieldModal = ({
   const handleSubmit = React.useCallback(() => {
     onSubmit(selected);
     close();
-  }, [onSubmit]);
+  }, [onSubmit, selected]);
 
   const updateState = (
     prevState,
