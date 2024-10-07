@@ -1,5 +1,6 @@
 import React from "react";
 import { RelatedSelectField } from "@js/oarepo_ui";
+import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
 import PropTypes from "prop-types";
 
 // for adding free text items

@@ -5,32 +5,32 @@ import PropTypes from "prop-types";
 import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { vocabularyItemsToColumnOptions } from "./util";
+import { VocabularyPickerField } from "../VocabularyPickerField";
 
 export const VocabularyTreeSelectField = ({
+  vocabulary,
   fieldPath,
-  multiple,
-  optionsListName,
+  label,
   helpText,
+  multiple,
+  required,
+  triggerButton,
   placeholder,
   root,
-  optimized,
-  triggerButton,
   showLeafsOnly,
   filterFunction,
-  ...uiProps
+  ...restProps
 }) => {
   const { formConfig } = useFormConfig();
   const { vocabularies } = formConfig;
-  const formik = useFormikContext();
-  const { values } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext();
+  const [selected, setSelected] = useState(getInitialSelections);
+
   const value = getIn(values, fieldPath, multiple ? [] : {});
 
-  const { all: allOptions } = vocabularies[optionsListName];
+  const { all: allOptions } = vocabularies[vocabulary];
   if (!allOptions) {
-    console.error(
-      `Do not have options for ${optionsListName} inside:`,
-      vocabularies
-    );
+    console.error(`Missing options for ${vocabulary} inside:`, vocabularies);
   }
 
   const serializedOptions = React.useMemo(
@@ -58,25 +58,38 @@ export const VocabularyTreeSelectField = ({
     }
   }
 
-  const [selectedState, setSelectedState] = useState(getInitialSelections);
+  const handleSelect = React.useCallback((newValue) => {
+    if (typeof newValue === "function") {
+      setSelected((prevValue) => newValue(prevValue));
+    } else {
+      setSelected(newValue);
+    }
+  });
 
   const handleSubmit = React.useCallback(
-    (newState) => {
-      const prepSelect = [
-        ...newState.map((item) => {
+    (currentValue) => {
+      const newValue = [
+        ...currentValue.map((item) => {
           return {
             id: item.value,
+            title: { [i18next.language]: item.name },
           };
         }),
       ];
-      formik.setFieldValue(fieldPath, multiple ? prepSelect : prepSelect[0]);
-      handleClose();
+      setFieldValue(fieldPath, multiple ? newValue : newValue[0]);
     },
     [fieldPath, multiple]
   );
 
   return (
-    <React.Fragment>
+    <VocabularyPickerField
+      className="tree select"
+      fieldPath={fieldPath}
+      label={label}
+      helpText={helpText}
+      multiple={multiple}
+      required={required}
+    >
       <TreeSelectFieldModal
         fieldPath={fieldPath}
         multiple={multiple}
@@ -87,20 +100,20 @@ export const VocabularyTreeSelectField = ({
         showLeafsOnly={showLeafsOnly}
         filterFunction={filterFunction}
         onSubmit={handleSubmit}
-        selectedState={selectedState}
-        setSelectedState={setSelectedState}
+        onSelect={handleSelect}
+        selected={selected}
         trigger={triggerButton}
-        vocabularyType={optionsListName}
-        {...uiProps}
+        vocabularyType={vocabulary}
+        {...restProps}
       />
-    </React.Fragment>
+    </VocabularyPickerField>
   );
 };
 
 VocabularyTreeSelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
-  optionsListName: PropTypes.string.isRequired,
+  vocabulary: PropTypes.string.isRequired,
   helpText: PropTypes.string,
   noResultsMessage: PropTypes.string,
   optimized: PropTypes.bool,
@@ -116,4 +129,5 @@ VocabularyTreeSelectField.defaultProps = {
   optimized: false,
   showLeafsOnly: false,
   filterFunction: undefined,
+  multiple: false,
 };

@@ -49,3 +49,41 @@ export const serializeVocabularySuggestions = (suggestions) =>
       };
     }
   });
+
+export const serializeVocabularyItems = (vocabularyItems) =>
+  vocabularyItems.map((vocabularyItem) => {
+    const {
+      hierarchy: { title: titlesArray },
+      text,
+    } = vocabularyItem;
+    const sections = [
+      ...titlesArray.map((title, index) => {
+        if (index === 0) {
+          return {
+            content: <span>{title}</span>,
+            key: crypto.randomUUID(),
+          };
+        } else {
+          return {
+            content: (
+              <span className="ui breadcrumb vocabulary-parent-item">
+                {title}
+              </span>
+            ),
+            key: crypto.randomUUID(),
+          };
+        }
+      }),
+    ];
+    return {
+      ...vocabularyItem,
+      text:
+        titlesArray.length === 1 ? (
+          <span>{text}</span>
+        ) : (
+          <Breadcrumb icon="left angle" sections={sections} />
+        ),
+      name: text,
+      icon: undefined,
+    };
+  });

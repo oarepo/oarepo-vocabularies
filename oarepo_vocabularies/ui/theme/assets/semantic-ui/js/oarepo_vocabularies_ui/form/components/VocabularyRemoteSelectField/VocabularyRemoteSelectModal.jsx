@@ -20,15 +20,8 @@ export const VocabularyRemoteSelectModal = ({
   ...rest
 }) => {
   const { isOpen, close, open } = useModal();
-  const {
-    value: fieldValue,
-    multiple,
-    addValue,
-    removeValue,
-  } = useFieldValue();
+  const { multiple, addValue, removeValue } = useFieldValue();
   const [action, setAction] = React.useState(initialAction);
-
-  console.log("MODAL value", { fieldValue });
 
   const inSearchMode = action === ModalActions.SEARCH;
   const inAddMode = action === ModalActions.ADD;
@@ -47,7 +40,6 @@ export const VocabularyRemoteSelectModal = ({
         close();
       }
       if (!selected) {
-        console.log("SELECT", { fieldValue });
         addValue(value);
       } else {
         removeValue(value);

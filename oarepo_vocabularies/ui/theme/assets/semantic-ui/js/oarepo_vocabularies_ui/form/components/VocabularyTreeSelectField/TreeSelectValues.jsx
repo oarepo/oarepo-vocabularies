@@ -8,12 +8,12 @@ export const TreeSelectValues = ({ selected, onRemove }) => {
     <Grid.Row className="gapped">
       {selected.map((item) => (
         <Label key={item.value}>
-          {" "}
           <Breadcrumb
             icon="left angle"
-            sections={item.hierarchy.title.map((t) =>
-              getTitleFromMultilingualObject(t)
-            )}
+            sections={item.hierarchy.title.map((t, level) => ({
+              key: `${t}-${level}`,
+              children: getTitleFromMultilingualObject(t),
+            }))}
           />
           <Button
             className="small transparent"

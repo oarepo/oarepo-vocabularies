@@ -26,21 +26,27 @@ export const VocabularyPickerField = ({
   const _initialValue = initialValue ?? multiple ? [] : {};
   const fieldValue = getIn(values, fieldPath, _initialValue);
 
+  // Ignore any invalid field values
+  const validatedValue = multiple
+    ? fieldValue.filter((val) => val.id)
+    : fieldValue.id
+    ? fieldValue
+    : {};
+
   const addValue = (item) => {
     if (!multiple) {
       setFieldValue(fieldPath, item);
     } else {
-      const newValue = [...fieldValue, item];
-      console.log({ multiple, item, fieldValue, newValue });
+      const newValue = [...validatedValue, item];
       setFieldValue(fieldPath, newValue);
     }
   };
 
   const removeValue = (item) => {
     if (!multiple) {
-      setFieldValue(fieldPath, null);
+      setFieldValue(fieldPath, {});
     } else {
-      const newValue = [...fieldValue];
+      const newValue = [...validatedValue];
       _remove(newValue, (value) => value.id === item.id);
       setFieldValue(fieldPath, newValue);
     }
@@ -53,11 +59,11 @@ export const VocabularyPickerField = ({
       {...uiProps}
     >
       <FieldValueProvider
-        value={{ value: fieldValue, multiple, addValue, removeValue }}
+        value={{ value: validatedValue, multiple, addValue, removeValue }}
       >
         {label}
         <label className="helptext">{helpText}</label>
-        {!_isEmpty(fieldValue) && (
+        {!_isEmpty(validatedValue) && (
           <Grid.Row className="rel-mb-1">
             {(multiple && <SelectedVocabularyValues />) || (
               <SelectedVocabularyValue />
