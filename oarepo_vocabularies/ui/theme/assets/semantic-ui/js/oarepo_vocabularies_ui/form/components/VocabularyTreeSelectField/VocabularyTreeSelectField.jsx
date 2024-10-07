@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
 import { getIn, useFormikContext } from "formik";
 import PropTypes from "prop-types";
@@ -15,6 +14,7 @@ export const VocabularyTreeSelectField = ({
   placeholder,
   root,
   optimized,
+  triggerButton,
   showLeafsOnly,
   filterFunction,
   ...uiProps
@@ -22,9 +22,8 @@ export const VocabularyTreeSelectField = ({
   const { formConfig } = useFormConfig();
   const { vocabularies } = formConfig;
   const formik = useFormikContext();
-  const { values, setFieldTouched } = useFormikContext();
+  const { values } = useFormikContext();
   const value = getIn(values, fieldPath, multiple ? [] : {});
-  const [openState, setOpenState] = useState(false);
 
   const { all: allOptions } = vocabularies[optionsListName];
   if (!allOptions) {
@@ -61,15 +60,6 @@ export const VocabularyTreeSelectField = ({
 
   const [selectedState, setSelectedState] = useState(getInitialSelections);
 
-  const handleOpen = React.useCallback((e = null) => {
-    e?.preventDefault();
-    setOpenState(true);
-  }, []);
-
-  const handleClose = React.useCallback((e = null) => {
-    setOpenState(false);
-  }, []);
-
   const handleSubmit = React.useCallback(
     (newState) => {
       const prepSelect = [
@@ -87,42 +77,22 @@ export const VocabularyTreeSelectField = ({
 
   return (
     <React.Fragment>
-      <SelectField
-        optimized={optimized}
-        onBlur={() => setFieldTouched(fieldPath)}
-        closeOnBlur
-        closeOnChange
-        open={false}
-        openOnFocus={false}
+      <TreeSelectFieldModal
         fieldPath={fieldPath}
         multiple={multiple}
-        options={serializedOptions.map(({value, text}) => ({key: value, value, text: text}))}
-        onOpen={(e) => handleOpen(e)}
-        value={multiple ? value.map((o) => o?.id) : value?.id}
+        placeholder={placeholder}
+        options={serializedOptions}
+        value={value}
+        root={root}
+        showLeafsOnly={showLeafsOnly}
+        filterFunction={filterFunction}
+        onSubmit={handleSubmit}
+        selectedState={selectedState}
+        setSelectedState={setSelectedState}
+        trigger={triggerButton}
+        vocabularyType={optionsListName}
         {...uiProps}
       />
-      <label className="helptext">{helpText}</label>
-
-      {openState && (
-        <TreeSelectFieldModal
-          fieldPath={fieldPath}
-          multiple={multiple}
-          openState={openState}
-          setOpenState={setOpenState}
-          placeholder={placeholder}
-          options={serializedOptions}
-          onOpen={handleOpen}
-          onClose={handleClose}
-          value={value}
-          root={root}
-          showLeafsOnly={showLeafsOnly}
-          filterFunction={filterFunction}
-          handleSubmit={handleSubmit}
-          selectedState={selectedState}
-          setSelectedState={setSelectedState}
-          vocabularyType={optionsListName}
-        />
-      )}
     </React.Fragment>
   );
 };
@@ -138,6 +108,7 @@ VocabularyTreeSelectField.propTypes = {
   showLeafsOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   filterFunction: PropTypes.func,
+  triggerButton: PropTypes.node,
 };
 
 VocabularyTreeSelectField.defaultProps = {

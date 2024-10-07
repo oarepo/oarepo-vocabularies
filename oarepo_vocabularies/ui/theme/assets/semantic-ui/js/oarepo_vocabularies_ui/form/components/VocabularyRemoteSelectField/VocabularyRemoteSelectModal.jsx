@@ -7,9 +7,9 @@ import PropTypes from "prop-types";
 import { VocabularyRemoteSearchAppLayout } from "./VocabularyRemoteSearchAppLayout";
 import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
-import { VocabularyRemoteSelectValues } from "./VocabularyRemoteSelectValues";
+import { SelectedVocabularyValues } from "../SelectedVocabularyValues";
 import { useFieldValue } from "./context";
-import { VocabularyRemoteSelectModalTrigger } from "./VocabularyRemoteSelectModalTrigger";
+import { VocabularyModalTrigger } from "../VocabularyModalTrigger";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
@@ -20,8 +20,15 @@ export const VocabularyRemoteSelectModal = ({
   ...rest
 }) => {
   const { isOpen, close, open } = useModal();
-  const { multiple, addValue, removeValue } = useFieldValue();
+  const {
+    value: fieldValue,
+    multiple,
+    addValue,
+    removeValue,
+  } = useFieldValue();
   const [action, setAction] = React.useState(initialAction);
+
+  console.log("MODAL value", { fieldValue });
 
   const inSearchMode = action === ModalActions.SEARCH;
   const inAddMode = action === ModalActions.ADD;
@@ -34,16 +41,19 @@ export const VocabularyRemoteSelectModal = ({
     setAction(ModalActions.SEARCH);
   });
 
-  const handleSelect = React.useCallback((value, selected) => {
-    if (!multiple) {
-      close();
-    }
-    if (!selected) {
-      addValue(value);
-    } else {
-      removeValue(value);
-    }
-  });
+  const handleSelect = React.useCallback(
+    (value, selected) => {
+      if (!multiple) {
+        close();
+      }
+      if (!selected) {
+        addValue(value, fieldValue);
+      } else {
+        removeValue(value);
+      }
+    },
+    [multiple]
+  );
 
   const handleNewItem = React.useCallback((value) => {
     close();
@@ -80,7 +90,7 @@ export const VocabularyRemoteSelectModal = ({
             extraActions={
               multiple && (
                 <Grid.Column className="rel-mb-1" floated="left">
-                  <VocabularyRemoteSelectValues />
+                  <SelectedVocabularyValues />
                 </Grid.Column>
               )
             }
@@ -110,6 +120,6 @@ VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
   overriddenComponents: {},
-  trigger: <VocabularyRemoteSelectModalTrigger />,
+  trigger: <VocabularyModalTrigger />,
 };
 export default VocabularyRemoteSelectModal;

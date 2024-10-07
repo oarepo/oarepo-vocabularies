@@ -18,7 +18,6 @@ import _groupBy from "lodash/groupBy";
 import _toPairs from "lodash/toPairs";
 import _sortBy from "lodash/sortBy";
 import _reject from "lodash/reject";
-
 import { OptionsLoadingSkeleton } from "./OptionsLoadingSkeleton";
 import { HierarchyColumn } from "./HierarchyColumn";
 import {
@@ -28,19 +27,18 @@ import {
   isColumnOptionHidden,
 } from "./util";
 import TreeSelectValues from "./TreeSelectValues";
+import { VocabularyModalTrigger } from "../VocabularyModalTrigger";
 
 export const TreeSelectFieldModal = ({
   multiple,
   placeholder,
-  openState,
-  onOpen,
-  onClose,
   options,
   value,
   root,
+  trigger,
   showLeafsOnly,
   filterFunction,
-  handleSubmit,
+  onSubmit,
   selectedState,
   setSelectedState,
   loadingMessage,
@@ -71,10 +69,7 @@ export const TreeSelectFieldModal = ({
           filterFunction
         )
       : options;
-  const hierarchyLevels = _groupBy(
-    _options,
-    "hierarchy.ancestors.length"
-  );
+  const hierarchyLevels = _groupBy(_options, "hierarchy.ancestors.length");
 
   const columns = useMemo(
     () =>
@@ -116,7 +111,7 @@ export const TreeSelectFieldModal = ({
       }
       if (!multiple) {
         setSelectedState([option]);
-        handleSubmit([option]);
+        onSubmit([option]);
       } else {
         const existingIndex = selectedState.findIndex(
           (i) => i.value === option?.value
@@ -145,7 +140,7 @@ export const TreeSelectFieldModal = ({
         }
       }
     },
-    [multiple, handleSubmit, selectedState, setSelectedState]
+    [multiple, onSubmit, selectedState, setSelectedState]
   );
 
   const updateState = (
@@ -279,12 +274,7 @@ export const TreeSelectFieldModal = ({
   );
 
   return (
-    <Modal
-      onClose={onClose}
-      onOpen={onOpen}
-      open={openState}
-      className="tree-field"
-    >
+    <Modal trigger={trigger} className="tree-field">
       <ModalHeader>
         <Grid.Row>
           <Header as="h3">{placeholder || "Choose Items"}</Header>
@@ -364,15 +354,13 @@ export const TreeSelectFieldModal = ({
 TreeSelectFieldModal.propTypes = {
   multiple: PropTypes.bool,
   placeholder: PropTypes.string,
-  openState: PropTypes.bool.isRequired,
-  onOpen: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
   value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  handleSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
   selectedState: PropTypes.array.isRequired,
   setSelectedState: PropTypes.func.isRequired,
   vocabularyType: PropTypes.string.isRequired,
+  trigger: PropTypes.node,
   root: PropTypes.string,
   showLeafsOnly: PropTypes.bool,
   filterFunction: PropTypes.func,
@@ -381,4 +369,5 @@ TreeSelectFieldModal.propTypes = {
 
 TreeSelectFieldModal.defaultProps = {
   loadingMessage: i18next.t("Loading..."),
+  trigger: <VocabularyModalTrigger />,
 };

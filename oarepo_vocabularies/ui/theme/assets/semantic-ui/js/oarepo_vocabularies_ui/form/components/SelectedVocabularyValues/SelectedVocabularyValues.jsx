@@ -2,10 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Label, Button, Icon } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { useFieldValue } from "./context";
+import { useFieldValue } from "../VocabularyRemoteSelectField/context";
 import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
-export const VocabularyRemoteSelectValue = ({ value }) => {
+export const SelectedVocabularyValue = ({ value }) => {
   const { value: fieldValue, removeValue } = useFieldValue();
   const _value = value ?? fieldValue;
   const { title, id } = _value;
@@ -31,19 +31,19 @@ export const VocabularyRemoteSelectValue = ({ value }) => {
   );
 };
 
-VocabularyRemoteSelectValue.propTypes = {
+SelectedVocabularyValue.propTypes = {
   value: PropTypes.object,
 };
 
-export const VocabularyRemoteSelectValues = () => {
+export const SelectedVocabularyValues = () => {
   const { value } = useFieldValue();
   return value.map((val) => (
-    <VocabularyRemoteSelectValue key={value.id} value={val} />
+    <SelectedVocabularyValue key={val.id} value={val} />
   ));
 };
 
-export default VocabularyRemoteSelectValues;
+export default SelectedVocabularyValues;
 
-VocabularyRemoteSelectValues.propTypes = {};
+SelectedVocabularyValues.propTypes = {};
 
-VocabularyRemoteSelectValues.defaultProps = {};
+SelectedVocabularyValues.defaultProps = {};
