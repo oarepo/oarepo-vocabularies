@@ -28,7 +28,7 @@ export const VocabularyPickerField = ({
   className,
   required,
   children,
-  onChange,
+  onChange = () => {},
   ...uiProps
 }) => {
   const { values, setFieldValue } = useFormikContext();
