@@ -47,12 +47,13 @@ export const VocabularyRemoteSelectModal = ({
         close();
       }
       if (!selected) {
-        addValue(value, fieldValue);
+        console.log("SELECT", { fieldValue });
+        addValue(value);
       } else {
         removeValue(value);
       }
     },
-    [multiple]
+    [multiple, addValue, removeValue]
   );
 
   const handleNewItem = React.useCallback((value) => {

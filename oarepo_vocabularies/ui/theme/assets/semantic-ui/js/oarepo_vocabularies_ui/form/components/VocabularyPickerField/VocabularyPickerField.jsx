@@ -26,14 +26,12 @@ export const VocabularyPickerField = ({
   const _initialValue = initialValue ?? multiple ? [] : {};
   const fieldValue = getIn(values, fieldPath, _initialValue);
 
-  console.log({ fieldValue });
-
-  const addValue = (item, fv) => {
+  const addValue = (item) => {
     if (!multiple) {
       setFieldValue(fieldPath, item);
     } else {
-      const newValue = [...fv, item];
-      console.log({ multiple, item, fv, newValue });
+      const newValue = [...fieldValue, item];
+      console.log({ multiple, item, fieldValue, newValue });
       setFieldValue(fieldPath, newValue);
     }
   };
