@@ -11,6 +11,14 @@ import {
   SelectedVocabularyValues,
 } from "../SelectedVocabularyValues";
 
+const sanitizeValue = (multiple, value) => {
+  if (multiple) {
+    return value.filter((val) => val.id);
+  } else {
+    return value.id ? value : {};
+  }
+};
+
 export const VocabularyPickerField = ({
   fieldPath,
   multiple,
@@ -28,17 +36,13 @@ export const VocabularyPickerField = ({
   const fieldValue = getIn(values, fieldPath, _initialValue);
 
   // Ignore any invalid field values
-  const validatedValue = multiple
-    ? fieldValue.filter((val) => val.id)
-    : fieldValue.id
-    ? fieldValue
-    : {};
+  const sanitizedValue = sanitizeValue(multiple, fieldValue);
 
   const addValue = (item) => {
     if (!multiple) {
       setFieldValue(fieldPath, item);
     } else {
-      const newValue = [...validatedValue, item];
+      const newValue = [...sanitizedValue, item];
       setFieldValue(fieldPath, newValue);
       onChange(newValue);
     }
@@ -48,7 +52,7 @@ export const VocabularyPickerField = ({
     if (!multiple) {
       setFieldValue(fieldPath, {});
     } else {
-      const newValue = [...validatedValue];
+      const newValue = [...sanitizedValue];
       _remove(newValue, (value) => value.id === item.id);
       setFieldValue(fieldPath, newValue);
       onChange(newValue);
@@ -62,11 +66,11 @@ export const VocabularyPickerField = ({
       {...uiProps}
     >
       <FieldValueProvider
-        value={{ value: validatedValue, multiple, addValue, removeValue }}
+        value={{ value: sanitizedValue, multiple, addValue, removeValue }}
       >
         {label}
         <label className="helptext">{helpText}</label>
-        {!_isEmpty(validatedValue) && (
+        {!_isEmpty(sanitizedValue) && (
           <Grid.Row className="rel-mb-1">
             {(multiple && <SelectedVocabularyValues />) || (
               <SelectedVocabularyValue />
@@ -79,7 +83,17 @@ export const VocabularyPickerField = ({
   );
 };
 
-VocabularyPickerField.propTypes = {};
+VocabularyPickerField.propTypes = {
+  fieldPath: PropTypes.string.isRequired,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  helpText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  multiple: PropTypes.bool,
+  required: PropTypes.bool,
+  initialValue: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  className: PropTypes.string,
+  children: PropTypes.node,
+  onChange: PropTypes.func,
+};
 
 VocabularyPickerField.defaultProps = {};
 

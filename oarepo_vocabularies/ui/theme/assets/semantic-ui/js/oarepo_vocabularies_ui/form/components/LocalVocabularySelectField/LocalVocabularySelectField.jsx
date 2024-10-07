@@ -3,10 +3,9 @@ import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
-import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
+import { Dropdown, Divider } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { search, serializeVocabularyItems } from "@js/oarepo_vocabularies";
-
 
 export const processVocabularyItems = (
   options,

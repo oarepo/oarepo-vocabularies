@@ -123,7 +123,8 @@ VocabularyTreeSelectField.propTypes = {
   multiple: PropTypes.bool,
   vocabulary: PropTypes.string.isRequired,
   helpText: PropTypes.string,
-  noResultsMessage: PropTypes.string,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  required: PropTypes.bool,
   optimized: PropTypes.bool,
   root: PropTypes.string,
   showLeafsOnly: PropTypes.bool,
@@ -133,9 +134,9 @@ VocabularyTreeSelectField.propTypes = {
 };
 
 VocabularyTreeSelectField.defaultProps = {
-  noResultsMessage: i18next.t("No results found."),
   optimized: false,
   showLeafsOnly: false,
   filterFunction: undefined,
   multiple: false,
+  required: false,
 };
