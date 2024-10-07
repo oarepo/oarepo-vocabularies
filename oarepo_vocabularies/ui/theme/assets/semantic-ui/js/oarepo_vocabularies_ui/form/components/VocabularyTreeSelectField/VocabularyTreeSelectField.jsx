@@ -24,7 +24,7 @@ export const VocabularyTreeSelectField = ({
   const { formConfig } = useFormConfig();
   const { vocabularies } = formConfig;
   const { values, setFieldValue } = useFormikContext();
-  const [selected, setSelected] = useState(getInitialSelections);
+  const [selected, setSelected] = useState(getCurrentSelections);
 
   const value = getIn(values, fieldPath, multiple ? [] : {});
 
@@ -41,17 +41,19 @@ export const VocabularyTreeSelectField = ({
         showLeafsOnly,
         filterFunction
       ),
-    [allOptions, root, showLeafsOnly, filterFunction]
+    [value, allOptions, root, showLeafsOnly, filterFunction]
   );
 
-  function getInitialSelections() {
-    if (multiple && Array.isArray(value)) {
-      return value
+  function getCurrentSelections(newValue = null) {
+    const _value = newValue || value;
+
+    if (multiple && Array.isArray(_value)) {
+      return _value
         .map((v) => serializedOptions.find((option) => option.value === v.id))
         .filter((v) => v);
-    } else if (value) {
+    } else if (_value) {
       return (
-        serializedOptions.find((option) => option.value === value.id) || []
+        serializedOptions.find((option) => option.value === _value.id) || []
       );
     } else {
       return [];
@@ -65,6 +67,11 @@ export const VocabularyTreeSelectField = ({
       setSelected(newValue);
     }
   });
+
+  const handleChange = (newValue) => {
+    const newSelected = getCurrentSelections(newValue);
+    setSelected(newSelected);
+  };
 
   const handleSubmit = React.useCallback(
     (currentValue) => {
@@ -89,6 +96,7 @@ export const VocabularyTreeSelectField = ({
       helpText={helpText}
       multiple={multiple}
       required={required}
+      onChange={handleChange}
     >
       <TreeSelectFieldModal
         fieldPath={fieldPath}

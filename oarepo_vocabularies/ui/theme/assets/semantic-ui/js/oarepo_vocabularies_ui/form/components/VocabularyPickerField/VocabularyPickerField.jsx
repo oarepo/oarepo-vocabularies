@@ -20,6 +20,7 @@ export const VocabularyPickerField = ({
   className,
   required,
   children,
+  onChange,
   ...uiProps
 }) => {
   const { values, setFieldValue } = useFormikContext();
@@ -39,6 +40,7 @@ export const VocabularyPickerField = ({
     } else {
       const newValue = [...validatedValue, item];
       setFieldValue(fieldPath, newValue);
+      onChange(newValue);
     }
   };
 
@@ -49,6 +51,7 @@ export const VocabularyPickerField = ({
       const newValue = [...validatedValue];
       _remove(newValue, (value) => value.id === item.id);
       setFieldValue(fieldPath, newValue);
+      onChange(newValue);
     }
   };
 

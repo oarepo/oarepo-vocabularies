@@ -14,7 +14,6 @@ export const SelectedVocabularyValue = ({ value }) => {
     getTitleFromMultilingualObject(title) ??
     (id ?? typeof _value === "string" ? _value : i18next.t("Unknown item"));
 
-  console.log(itemTitle, _value, typeof _value === "string");
   return (
     <Label className="vocabulary-select-value mb-5">
       <Label.Detail className="pr-0">
