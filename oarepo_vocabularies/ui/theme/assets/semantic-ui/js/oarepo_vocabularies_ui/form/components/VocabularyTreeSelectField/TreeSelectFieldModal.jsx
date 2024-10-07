@@ -155,6 +155,11 @@ export const TreeSelectFieldModal = ({
     [multiple, onSubmit, selected, onSelect]
   );
 
+  const handleSubmit = React.useCallback(() => {
+    onSubmit(selected);
+    close();
+  }, [onSubmit]);
+
   const updateState = (
     prevState,
     option,
@@ -356,7 +361,7 @@ export const TreeSelectFieldModal = ({
               labelPosition="right"
               floated="right"
               icon="checkmark"
-              onClick={() => onSubmit(selected)}
+              onClick={handleSubmit}
               secondary
             />
           </Grid.Row>
