@@ -10,3 +10,6 @@ export * from "./VocabularyFormFields";
 export * from "./VocabularyFormControlPanel";
 export * from "./VocabularyTreeSelectField";
 export * from "./VocabularyRemoteSelectField";
+export * from './VocabularyPickerField'
+export * from './VocabularyModalTrigger'
+export * from './SelectedVocabularyValues';

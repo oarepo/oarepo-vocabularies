@@ -3,47 +3,9 @@ import { SelectField } from "react-invenio-forms";
 import { useFormConfig } from "@js/oarepo_ui";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
-import { Dropdown, Divider, Breadcrumb } from "semantic-ui-react";
+import { Dropdown, Divider } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { search } from "@js/oarepo_vocabularies";
-
-export const serializeVocabularyItems = (vocabularyItems) =>
-  vocabularyItems.map((vocabularyItem) => {
-    const {
-      hierarchy: { title: titlesArray },
-      text,
-    } = vocabularyItem;
-    const sections = [
-      ...titlesArray.map((title, index) => {
-        if (index === 0) {
-          return {
-            content: <span>{title}</span>,
-            key: crypto.randomUUID(),
-          };
-        } else {
-          return {
-            content: (
-              <span className="ui breadcrumb vocabulary-parent-item">
-                {title}
-              </span>
-            ),
-            key: crypto.randomUUID(),
-          };
-        }
-      }),
-    ];
-    return {
-      ...vocabularyItem,
-      text:
-        titlesArray.length === 1 ? (
-          <span>{text}</span>
-        ) : (
-          <Breadcrumb icon="left angle" sections={sections} />
-        ),
-      name: text,
-      icon: undefined,
-    };
-  });
+import { search, serializeVocabularyItems } from "@js/oarepo_vocabularies";
 
 export const processVocabularyItems = (
   options,

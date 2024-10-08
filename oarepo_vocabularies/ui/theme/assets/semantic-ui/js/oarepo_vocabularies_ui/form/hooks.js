@@ -1,4 +1,5 @@
-import { useDepositApiClient } from "@js/oarepo_ui";
+import { useDepositApiClient, useSuggestionApi } from "@js/oarepo_ui";
+import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
 import _isEmpty from "lodash/isEmpty";
 
 export const useVocabularyApiClient = (newChildItemParentId) => {
@@ -12,7 +13,7 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     read,
   } = formik;
 
-  async function createOrUpdate() {
+  async function createOrUpdate () {
     const validationErrors = await validateForm();
     if (!_isEmpty(validationErrors)) return;
     setSubmitting(true);
@@ -59,4 +60,12 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
   }
 
   return { values, isSubmitting, createOrUpdate, formik, read };
+};
+
+export const useVocabularySuggestions = ({ type, ...rest }) => {
+  return useSuggestionApi({
+    suggestionAPIUrl: `/api/vocabularies/${type}`,
+    serializeSuggestions: serializeVocabularySuggestions,
+    ...rest,
+  });
 };

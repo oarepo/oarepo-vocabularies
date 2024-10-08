@@ -1,118 +1,99 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import {
-  Breadcrumb,
   Button,
   Header,
   Grid,
   Input,
-  Icon,
-  Checkbox,
-  Label,
   Container,
   Modal,
   ModalHeader,
   ModalContent,
   ModalActions,
-  List,
 } from "semantic-ui-react";
-import { processVocabularyItems } from "@js/oarepo_vocabularies";
+import { useVocabularySuggestions } from "@js/oarepo_vocabularies";
+import {
+  EmptyResultsElement,
+  useConfirmationModal as useModal,
+} from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import _has from "lodash/has";
 import _groupBy from "lodash/groupBy";
 import _toPairs from "lodash/toPairs";
 import _sortBy from "lodash/sortBy";
 import _reject from "lodash/reject";
-import _deburr from "lodash/deburr";
-
-const isSelectable = (option) => {
-  return _has(option, "selectable") ? !!option.selectable : true;
-};
-
-const isDescendant = (option, ancestorId) => {
-  return option.hierarchy.ancestors.includes(ancestorId);
-};
-
-const sortByTitle = (options) =>
-  options.sort((a, b) => {
-    const titleComparison = a.hierarchy.ancestors?.[0]?.localeCompare(
-      b.hierarchy.ancestors[0],
-      i18next.language,
-      { sensitivity: "base" }
-    );
-    if (titleComparison !== 0) {
-      return titleComparison;
-    } else {
-      return a.hierarchy.title[0].localeCompare(
-        b.hierarchy.title[0],
-        i18next.language,
-        { sensitivity: "base" }
-      );
-    }
-  });
+import { OptionsLoadingSkeleton } from "./OptionsLoadingSkeleton";
+import { HierarchyColumn } from "./HierarchyColumn";
+import {
+  sortByTitle,
+  isSelectable,
+  suggestionsToColumnOptions,
+  isColumnOptionHidden,
+} from "./util";
+import TreeSelectValues from "./TreeSelectValues";
+import { VocabularyModalTrigger } from "../VocabularyModalTrigger";
 
 export const TreeSelectFieldModal = ({
   multiple,
   placeholder,
-  root,
-  openState,
-  setOpenState,
-  allOptions,
+  options,
   value,
-  handleSubmit,
-  selectedState,
-  setSelectedState,
+  root,
+  trigger,
+  showLeafsOnly,
+  filterFunction,
+  onSubmit,
+  onSelect,
+  selected,
+  loadingMessage,
+  vocabularyType,
 }) => {
-  const [query, setQuery] = useState("");
-  const serializedOptions = useMemo(
-    () =>
-      processVocabularyItems(
-        root
-          ? allOptions.filter((option) => isDescendant(option, root))
-          : allOptions
-      ),
-    [allOptions]
-  );
+  const { isOpen, close, open } = useModal();
+
   const valueAncestors =
-    serializedOptions.find((o) => o.value === value.id)?.hierarchy?.ancestors ||
-    [];
-  const [parentsState, setParentsState] = useState(valueAncestors);
+    options.find((o) => o.value === value.id)?.hierarchy?.ancestors || [];
+
+  const [currentAncestors, setCurrentAncestors] = useState(valueAncestors);
   const [keybState, setKeybState] = useState([]);
+  const {
+    suggestions: searchResults,
+    loading: suggestionsLoading,
+    error: suggestionsError,
+    query: searchQuery,
+    noResults,
+    executeSearch,
+  } = useVocabularySuggestions({ type: vocabularyType });
 
-  const columnGroups = _groupBy(
-    serializedOptions.filter(
-      (o) =>
-        query === "" ||
-        _deburr(o.hierarchy.title[0].toLowerCase()).includes(
-          _deburr(query.toLowerCase())
+  const noSearchResults = suggestionsError || noResults;
+
+  const _options =
+    searchQuery !== ""
+      ? suggestionsToColumnOptions(
+          searchResults,
+          root,
+          showLeafsOnly,
+          filterFunction
         )
-    ),
-    "hierarchy.ancestors.length"
-  );
+      : options;
+  const hierarchyLevels = _groupBy(_options, "hierarchy.ancestors.length");
 
-  const columns = _sortBy(_toPairs(columnGroups), ([index, _]) =>
-    Number.parseInt(index)
-  ).map(([_, column], columnIndex, _columns) =>
-    sortByTitle(
-      _reject(
-        column,
-        (option) =>
-          !isSelectable(option) &&
-          (option.element_type === "leaf" ||
-            (option.element_type === "parent" &&
-              (columnIndex < _columns.length - 1
-                ? !_columns[columnIndex + 1][1].some((child) =>
-                    isDescendant(child, option.value)
-                  )
-                : true)))
-      )
-    )
+  const columns = useMemo(
+    () =>
+      _sortBy(_toPairs(hierarchyLevels), ([index, _]) =>
+        Number.parseInt(index)
+      ).map(([_, column], columnIndex, _columns) =>
+        sortByTitle(
+          _reject(column, (option) =>
+            isColumnOptionHidden(option, columnIndex, _columns)
+          )
+        )
+      ),
+    [hierarchyLevels, searchResults]
   );
 
   const columnsCount = columns.length;
 
   const openHierarchyNode = (parent, level) => () => {
-    let updatedParents = [...parentsState];
+    let updatedParents = [...currentAncestors];
     updatedParents.splice(level + 1);
     updatedParents[level] = parent;
 
@@ -123,45 +104,61 @@ export const TreeSelectFieldModal = ({
     updatedKeybState.splice(level + 1);
     updatedKeybState[level] = nextColumnIndex;
 
-    setParentsState(updatedParents);
+    setCurrentAncestors(updatedParents);
     setKeybState(updatedKeybState);
   };
-  const handleSelect = (option, e) => {
-    e.preventDefault();
-    if (!isSelectable(option)) {
-      return;
-    }
-    if (!multiple) {
-      setSelectedState([option]);
-      handleSubmit([option]);
-    } else {
-      const existingIndex = selectedState.findIndex(
-        (i) => i.value === option?.value
-      );
-      const existingParentIndex = selectedState.findIndex((i) =>
-        option?.hierarchy.ancestors.includes(i.value)
-      );
-      const childIndexes = selectedState.reduce(
-        (acc, curr, index) =>
-          curr.hierarchy?.ancestors.includes(option.value)
-            ? [...acc, index]
-            : acc,
-        []
-      );
 
-      if (existingIndex !== -1) {
-        setSelectedState((prevState) =>
-          prevState.filter((_, index) => index !== existingIndex)
-        );
-      } else if (multiple && selectedState.length !== 0) {
-        setSelectedState((prevState) =>
-          updateState(prevState, option, existingParentIndex, childIndexes)
-        );
-      } else {
-        setSelectedState([option]);
-      }
+  const selectAndClose = (option) => {
+    onSelect([option]);
+    onSubmit([option]);
+    close();
+  };
+
+  const selectOption = (option) => {
+    const existingIndex = selected.findIndex((i) => i.value === option?.value);
+    const existingParentIndex = selected.findIndex((i) =>
+      option?.hierarchy.ancestors.includes(i.value)
+    );
+    const childIndexes = selected.reduce(
+      (acc, curr, index) =>
+        curr.hierarchy?.ancestors.includes(option.value)
+          ? [...acc, index]
+          : acc,
+      []
+    );
+
+    if (existingIndex !== -1) {
+      onSelect((prevState) =>
+        prevState.filter((_, index) => index !== existingIndex)
+      );
+    } else if (multiple && selected.length !== 0) {
+      onSelect((prevState) =>
+        updateState(prevState, option, existingParentIndex, childIndexes)
+      );
+    } else {
+      onSelect([option]);
     }
   };
+
+  const handleSelect = React.useCallback(
+    (option, e) => {
+      e.preventDefault();
+      if (!isSelectable(option)) {
+        return;
+      }
+      if (!multiple) {
+        selectAndClose(option);
+      } else {
+        selectOption(option);
+      }
+    },
+    [multiple, onSubmit, selected, onSelect]
+  );
+
+  const handleSubmit = React.useCallback(() => {
+    onSubmit(selected);
+    close();
+  }, [onSubmit, selected]);
 
   const updateState = (
     prevState,
@@ -191,29 +188,35 @@ export const TreeSelectFieldModal = ({
     return state;
   };
 
-  const moveKey = (index, newIndex, back = false) => {
-    setKeybState((prev) => {
-      const newState = [...prev];
-      const newValue = back ? undefined : newIndex;
-      if (back) {
-        newState.splice(index, 1);
-      } else {
-        newState[index] = newValue;
-      }
-      return newState;
-    });
-  };
+  const moveKey = React.useCallback(
+    (index, newIndex, back = false) => {
+      setKeybState((prev) => {
+        const newState = [...prev];
+        const newValue = back ? undefined : newIndex;
+        if (back) {
+          newState.splice(index, 1);
+        } else {
+          newState[index] = newValue;
+        }
+        return newState;
+      });
+    },
+    [setKeybState]
+  );
 
-  const handleArrowUp = (e, index, data) => {
-    const newIndex = keybState[index] - 1;
-    if (newIndex >= 0) {
-      openHierarchyNode(data[newIndex].value, index)();
-      moveKey(index, newIndex, false);
-      if (e.shiftKey) {
-        handleSelect(data[newIndex], e);
+  const handleArrowUp = React.useCallback(
+    (e, index, data) => {
+      const newIndex = keybState[index] - 1;
+      if (newIndex >= 0) {
+        openHierarchyNode(data[newIndex].value, index)();
+        moveKey(index, newIndex, false);
+        if (e.shiftKey) {
+          handleSelect(data[newIndex], e);
+        }
       }
-    }
-  };
+    },
+    [setKeybState, openHierarchyNode, moveKey, handleSelect]
+  );
 
   const handleArrowDown = (e, index, data) => {
     const newIndex = keybState[index] + 1;
@@ -228,7 +231,7 @@ export const TreeSelectFieldModal = ({
 
   const handleArrowLeft = (index) => {
     if (index > 0) {
-      setParentsState((prev) => {
+      setCurrentAncestors((prev) => {
         const newState = [...prev];
         newState.splice(index, 1);
         return newState;
@@ -241,7 +244,7 @@ export const TreeSelectFieldModal = ({
     if (index < columnsCount - 1) {
       const nextColumnOptions = columns[index + 1];
       const nextColumnIndex = nextColumnOptions.findIndex(
-        (o) => o.hierarchy.ancestors[0] === parentsState[index]
+        (o) => o.hierarchy.ancestors[0] === currentAncestors[index]
       );
       if (nextColumnIndex !== -1) {
         const newIndex = nextColumnIndex;
@@ -255,109 +258,44 @@ export const TreeSelectFieldModal = ({
     handleSelect(data[keybState[index]], e);
   };
 
-  const handleKey = (e, index) => {
-    e.preventDefault();
-    index = Math.max(keybState.length - 1, index);
-    const data = columns[index];
+  const handleKey = React.useCallback(
+    (e, index) => {
+      e.preventDefault();
+      index = Math.max(keybState.length - 1, index);
+      const data = columns[index];
 
-    switch (e.key) {
-      case "ArrowUp":
-        handleArrowUp(e, index, data);
-        break;
+      switch (e.key) {
+        case "ArrowUp":
+          handleArrowUp(e, index, data);
+          break;
 
-      case "ArrowDown":
-        handleArrowDown(e, index, data);
-        break;
+        case "ArrowDown":
+          handleArrowDown(e, index, data);
+          break;
 
-      case "ArrowLeft":
-        handleArrowLeft(index);
-        break;
+        case "ArrowLeft":
+          handleArrowLeft(index);
+          break;
 
-      case "ArrowRight":
-        handleArrowRight(index);
-        break;
+        case "ArrowRight":
+          handleArrowRight(index);
+          break;
 
-      case "Enter":
-      case " ":
-        handleEnterSpace(e, index, data);
-        break;
-    }
-  };
-
-  const renderColumn = (column, index) => {
-    return (
-      <List key={index} className="tree-column">
-        {column.map((option) => {
-          if (
-            index === 0 ||
-            option.hierarchy.ancestors[0] === parentsState[index - 1]
-          ) {
-            return (
-              <List.Item
-                key={option.value}
-                className={
-                  option.value === parentsState[index] ||
-                  option.value === value.id
-                    ? "open spaced"
-                    : "spaced"
-                }
-              >
-                <List.Content
-                  onClick={(e) =>
-                    multiple || !isSelectable(option)
-                      ? openHierarchyNode(option.value, index)()
-                      : handleSelect(option, e)
-                  }
-                  onDoubleClick={(e) => {
-                    handleSelect(option, e);
-                  }}
-                  onKeyDown={(e) => {
-                    handleKey(e, index);
-                  }}
-                  tabIndex={0}
-                >
-                  {multiple && (
-                    <Checkbox
-                      checked={
-                        selectedState.findIndex(
-                          (item) => item.value === option.value
-                        ) !== -1
-                      }
-                      disabled={!isSelectable(option)}
-                      indeterminate={selectedState.some((item) =>
-                        item.hierarchy.ancestors.includes(option.value)
-                      )}
-                      onChange={(e) => {
-                        handleSelect(option, e);
-                      }}
-                    />
-                  )}
-                  {option.hierarchy.title[0]}
-                </List.Content>
-
-                {option.element_type === "parent" && (
-                  <Button
-                    className="transparent"
-                    onClick={openHierarchyNode(option.value, index)}
-                  >
-                    {index !== columnsCount - 1 && (
-                      <Icon name="angle right" color="black" />
-                    )}
-                  </Button>
-                )}
-              </List.Item>
-            );
-          }
-        })}
-      </List>
-    );
-  };
+        case "Enter":
+        case " ":
+          handleEnterSpace(e, index, data);
+          break;
+      }
+    },
+    [columns]
+  );
 
   return (
     <Modal
-      onClose={() => setOpenState(false)}
-      onOpen={() => setOpenState(true)}
-      open={openState}
+      trigger={trigger}
+      open={isOpen}
+      onOpen={open}
+      onClose={close}
       className="tree-field"
     >
       <ModalHeader>
@@ -366,8 +304,10 @@ export const TreeSelectFieldModal = ({
           <Grid.Column>
             <Input
               type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => {
+                executeSearch(e.target.value);
+              }}
               placeholder="Search..."
             />
           </Grid.Column>
@@ -377,13 +317,37 @@ export const TreeSelectFieldModal = ({
         <Grid>
           <div className="columns-container">
             <Grid columns={1}>
-              <Container>
-                {columns.map((column, level) => (
-                  <React.Fragment key={column[0]?.value}>
-                    {renderColumn(column, level)}
-                  </React.Fragment>
-                ))}
-              </Container>
+              {suggestionsLoading && (
+                <OptionsLoadingSkeleton loadingMessage={loadingMessage} />
+              )}
+              {noSearchResults && (
+                <Grid.Column stretched>
+                  <EmptyResultsElement
+                    queryString={searchQuery}
+                    resetQuery={() => executeSearch("")}
+                    extraContent=""
+                  />
+                </Grid.Column>
+              )}
+              {!suggestionsLoading && !noSearchResults && (
+                <Container>
+                  {columns.map((items, level) => (
+                    <HierarchyColumn
+                      items={items}
+                      key={level}
+                      level={level}
+                      onSelect={handleSelect}
+                      onExpand={openHierarchyNode}
+                      onKeyDown={handleKey}
+                      selected={selected}
+                      currentAncestors={currentAncestors}
+                      value={value}
+                      multiple={multiple}
+                      isLast={level < columnsCount - 1}
+                    />
+                  ))}
+                </Container>
+              )}
             </Grid>
           </div>
         </Grid>
@@ -391,28 +355,13 @@ export const TreeSelectFieldModal = ({
       {multiple && (
         <ModalActions>
           <Grid.Row className="gapped">
-            <Grid.Row className="gapped">
-              {selectedState.map((i) => (
-                <Label key={i.hierarchy.title}>
-                  {" "}
-                  <Breadcrumb icon="left angle" sections={i.hierarchy.title} />
-                  <Button
-                    className="small transparent"
-                    onClick={(e) => {
-                      handleSelect(i, e);
-                    }}
-                  >
-                    <Icon name="delete" />
-                  </Button>
-                </Label>
-              ))}
-            </Grid.Row>
+            <TreeSelectValues selected={selected} onRemove={handleSelect} />
             <Button
               content={i18next.t("Confirm")}
               labelPosition="right"
               floated="right"
               icon="checkmark"
-              onClick={() => handleSubmit(selectedState)}
+              onClick={handleSubmit}
               secondary
             />
           </Grid.Row>
@@ -425,12 +374,20 @@ export const TreeSelectFieldModal = ({
 TreeSelectFieldModal.propTypes = {
   multiple: PropTypes.bool,
   placeholder: PropTypes.string,
-  root: PropTypes.string,
-  openState: PropTypes.bool.isRequired,
-  setOpenState: PropTypes.func.isRequired,
-  allOptions: PropTypes.array.isRequired,
+  options: PropTypes.array.isRequired,
   value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  selectedState: PropTypes.array.isRequired,
-  setSelectedState: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  selected: PropTypes.array.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  vocabularyType: PropTypes.string.isRequired,
+  trigger: PropTypes.node,
+  root: PropTypes.string,
+  showLeafsOnly: PropTypes.bool,
+  filterFunction: PropTypes.func,
+  loadingMessage: PropTypes.string,
+};
+
+TreeSelectFieldModal.defaultProps = {
+  loadingMessage: i18next.t("Loading..."),
+  trigger: <VocabularyModalTrigger />,
 };
