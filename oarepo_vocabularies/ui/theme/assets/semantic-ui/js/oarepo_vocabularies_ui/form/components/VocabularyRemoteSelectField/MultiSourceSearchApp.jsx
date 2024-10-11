@@ -1,8 +1,55 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { ReactSearchKit, InvenioSearchApi } from "react-searchkit";
+import { ReactSearchKit, InvenioSearchApi, InvenioSuggestionApi } from "react-searchkit";
 import { OverridableContext } from "react-overridable";
 import { SearchSource } from "./constants";
+import Qs from "qs";
+import {serializeVocabularySuggestions} from "@js/oarepo_vocabularies";
+
+
+class SuggestionRequestSerializer {
+  constructor() {
+    this.serialize = this.serialize.bind(this);
+  }
+
+  /**
+   * Return a serialized version of the app state `query` for the API backend.
+   * @param {object} stateQuery the `query` state to serialize
+   */
+  serialize(stateQuery) {
+    const { suggestionString } = stateQuery;
+
+    const getParams = {};
+    if (suggestionString !== null) {
+      getParams["suggest"] = suggestionString;
+    }
+
+    return Qs.stringify(getParams, { arrayFormat: "repeat", encode: false });
+  }
+}
+
+class SuggestionResponseSerializer {
+  constructor() {
+    this.serialize = this.serialize.bind(this);
+  }
+
+  _serializeSuggestions = (responseHits) => {
+    return Array.from(
+      new Set(serializeVocabularySuggestions(responseHits))
+    );
+  };
+
+  /**
+   * Return a serialized version of the API backend response for the app state `suggestions`.
+   * @param {object} payload the backend response payload
+   */
+  serialize(payload) {
+    return {
+      suggestions: this._serializeSuggestions(payload.hits.hits || []),
+    };
+  }
+}
+
 
 export const MultiSourceSearchApp = React.memo(
   ({
@@ -15,8 +62,6 @@ export const MultiSourceSearchApp = React.memo(
   }) => {
     const sources = {
       [SearchSource.INTERNAL]: {
-        // TODO: implement suggestions API using axios like here:
-        // https://github.com/inveniosoftware/react-invenio-forms/blob/master/src/lib/forms/RemoteSelectField.js#L129
         searchApi: {
           axios: {
             headers: {
@@ -38,16 +83,30 @@ export const MultiSourceSearchApp = React.memo(
       },
     };
 
+    const suggestionApiConfig = {
+        invenio: {
+            requestSerializer: SuggestionRequestSerializer,
+            responseSerializer: SuggestionResponseSerializer,
+            suggestions: {
+                // Don't need these but they are still required by Invenio
+                queryField: '',
+                responseField: ''
+            }
+        }
+    }
+
     const searchConfig = {
       ...sources[source],
       ...{ initialQueryState: { ...queryState } },
     };
 
     const searchApi = new InvenioSearchApi(searchConfig.searchApi);
+    const suggestionApi = new InvenioSuggestionApi({...searchConfig.searchApi, ...suggestionApiConfig});
 
     return (
       <OverridableContext.Provider value={overriddenComponents}>
         <ReactSearchKit
+          suggestionApi={suggestionApi}
           searchApi={searchApi}
           urlHandlerApi={{ enabled: false }}
           initialQueryState={{

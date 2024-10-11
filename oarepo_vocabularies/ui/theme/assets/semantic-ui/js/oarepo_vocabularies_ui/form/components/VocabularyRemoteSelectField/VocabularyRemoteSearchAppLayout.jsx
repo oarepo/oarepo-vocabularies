@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Grid, Modal, Button } from "semantic-ui-react";
-import { SearchBar, EmptyResults, Error, Pagination } from "react-searchkit";
+import { AutocompleteSearchBar, EmptyResults, Error, Pagination } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import VocabularyRemoteSearchResults, {
   VocabularyRemoteResultsLoader,
@@ -38,6 +38,7 @@ export const VocabularyRemoteSearchAppLayout = ({
   const defaultOverridenComponents = {
     "EmptyResults.element": ExternalEmptyResultsElement,
     "VocabularyRemoteSelect.ext.ResultsList.item": ExternalResultListItem,
+    "AutocompleteSearchBar.suggestions": () => <></>
   };
 
   const findMore = (previousQueryState) => {
@@ -70,10 +71,11 @@ export const VocabularyRemoteSearchAppLayout = ({
           <Grid stackable>
             <Grid.Row verticalAlign="middle" columns={2}>
               <Grid.Column width={8} floated="left" verticalAlign="middle">
-                <SearchBar
+                <AutocompleteSearchBar
                   placeholder={i18next.t("Search")}
                   autofocus
                   clearable
+                  onInputChange={() => console.log("bla")}
                   actionProps={{
                     icon: "search",
                     content: null,

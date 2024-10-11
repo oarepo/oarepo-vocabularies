@@ -10,7 +10,9 @@ import { featuredFilterActive } from "./util";
 import { useFieldValue } from "./context";
 
 export const VocabularyRemoteResultsLoader = withState(
-  ({ currentQueryState, currentResultsState: results, children }) => {
+  ({ currentQueryState, currentResultsState: results, suggestions, children }) => {
+      console.log({ sugg: currentQueryState.suggestions })
+    // TODO: render suggestions results if there are any, otherwise render standard results loader
     return (
       <ShouldRender
         condition={
