@@ -27,7 +27,8 @@ export const VocabularyRemoteSelectModal = ({
   const inAddMode = action === ModalActions.ADD;
 
   const addNew = React.useCallback(() => {
-    setAction(ModalActions.ADD);
+    window.open(`/vocabularies/${vocabulary}/_new`, '_blank').focus()
+    // setAction(ModalActions.ADD);
   });
 
   const backToSearch = React.useCallback(() => {
@@ -89,13 +90,14 @@ export const VocabularyRemoteSelectModal = ({
             }
           />
         )}
-        {inAddMode && (
-          <VocabularyAddItemForm
-            overriddenComponents={overriddenComponents}
-            backToSearch={backToSearch}
-            onSubmit={handleNewItem}
-          />
-        )}
+        {/* TODO: implement this with full custom fields support. */}
+        {/*{inAddMode && (*/}
+        {/*  <VocabularyAddItemForm*/}
+        {/*    overriddenComponents={overriddenComponents}*/}
+        {/*    backToSearch={backToSearch}*/}
+        {/*    onSubmit={handleNewItem}*/}
+        {/*  />*/}
+        {/*)}*/}
       </>
     </Modal>
   );
