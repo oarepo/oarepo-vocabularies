@@ -15,14 +15,23 @@ export const VocabularyRemoteFeaturedResults = withState(
   }) => {
     const filterActive = featuredFilterActive(currentQueryState);
 
-    if (currentQueryState.queryString === "" && !filterActive) {
+    if (
+      currentQueryState.queryString === "" &&
+      (!currentQueryState.suggestionString ||
+        currentQueryState.suggestionString === "") &&
+      !filterActive
+    ) {
       updateQueryState({
         ...currentQueryState,
         filters: [["tags", "featured"]],
         page: 1,
       });
-    }
-    if (currentQueryState.queryString !== "" && filterActive) {
+    } else if (
+      (currentQueryState.queryString !== "" ||
+        currentQueryState.suggestionString !== "") &&
+      currentQueryState.suggestions.length > 0 &&
+      filterActive
+    ) {
       updateQueryState({
         ...currentQueryState,
         filters: [],
