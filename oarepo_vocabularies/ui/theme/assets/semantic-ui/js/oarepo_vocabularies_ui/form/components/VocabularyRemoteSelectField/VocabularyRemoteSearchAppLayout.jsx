@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Grid, Modal, Button } from "semantic-ui-react";
-import { AutocompleteSearchBar, EmptyResults, Error, Pagination } from "react-searchkit";
+import {
+  AutocompleteSearchBar,
+  EmptyResults,
+  Error,
+  Pagination,
+} from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import VocabularyRemoteSearchResults, {
   VocabularyRemoteResultsLoader,
@@ -34,11 +39,12 @@ export const VocabularyRemoteSearchAppLayout = ({
   const [source, setSource] = useState(SearchSource.INTERNAL);
   const [queryState, setQueryState] = useState(initialQueryState);
   const { multiple } = useFieldValue();
+  const searchbarContainer = React.useRef(null);
 
   const defaultOverridenComponents = {
     "EmptyResults.element": ExternalEmptyResultsElement,
     "VocabularyRemoteSelect.ext.ResultsList.item": ExternalResultListItem,
-    "AutocompleteSearchBar.suggestions": () => <></>
+    "AutocompleteSearchBar.suggestions": () => <></>,
   };
 
   const findMore = (previousQueryState) => {
@@ -53,6 +59,16 @@ export const VocabularyRemoteSearchAppLayout = ({
     setQueryState(initialQueryState);
     setSource(SearchSource.INTERNAL);
   };
+
+  React.useEffect(() => {
+    // There's currently no other more sane way to focus that component's input
+    if (searchbarContainer.current) {
+      const searchbarInput = searchbarContainer.current.querySelector("input");
+      if (searchbarInput) {
+        searchbarInput.focus();
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -71,17 +87,13 @@ export const VocabularyRemoteSearchAppLayout = ({
           <Grid stackable>
             <Grid.Row verticalAlign="middle" columns={2}>
               <Grid.Column width={8} floated="left" verticalAlign="middle">
-                <AutocompleteSearchBar
-                  placeholder={i18next.t("Search")}
-                  autofocus
-                  clearable
-                  onInputChange={() => console.log("bla")}
-                  actionProps={{
-                    icon: "search",
-                    content: null,
-                    className: "search",
-                  }}
-                />
+                <div ref={searchbarContainer}>
+                  <AutocompleteSearchBar
+                    placeholder={i18next.t("Search")}
+                    autofocus
+                    clearable
+                  />
+                </div>
               </Grid.Column>
               <Grid.Column>
                 <Pagination
