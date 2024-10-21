@@ -110,7 +110,8 @@ export const MultiSourceSearchApp = React.memo(
     return (
       <OverridableContext.Provider value={overriddenComponents}>
         <ReactSearchKit
-          suggestionApi={suggestionApi}
+          // Suggestions are supported only by Invenio API
+          suggestionApi={source === SearchSource.INTERNAL && suggestionApi}
           searchApi={searchApi}
           urlHandlerApi={{ enabled: false }}
           initialQueryState={{
