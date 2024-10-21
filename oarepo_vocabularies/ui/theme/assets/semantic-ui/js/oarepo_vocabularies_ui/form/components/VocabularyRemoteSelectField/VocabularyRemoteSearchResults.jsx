@@ -1,12 +1,12 @@
 import React from "react";
 import Overridable from "react-overridable";
 import { withState, ResultsLoader } from "react-searchkit";
-import { List, Header, Grid } from "semantic-ui-react";
+import { List, Header } from "semantic-ui-react";
 import { ShouldRender } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { InternalResultListItem } from "./InternalResultListItem";
 import { SearchSource } from "./constants";
-import { featuredFilterActive } from "./util";
+import { featuredFilterActive, inSuggestMode } from "./util";
 import { useFieldValue } from "./context";
 import { OptionsLoadingSkeleton } from "@js/oarepo_vocabularies";
 
@@ -24,13 +24,7 @@ export const VocabularyRemoteResultsLoader = withState(
         >
           <ResultsLoader>{children}</ResultsLoader>
         </ShouldRender>
-        <ShouldRender
-          condition={
-            currentQueryState.queryString === "" &&
-            currentQueryState.suggestionString !== "" &&
-            currentQueryState.suggestions.length > 0
-          }
-        >
+        <ShouldRender condition={inSuggestMode(currentQueryState)}>
           {children}
         </ShouldRender>
       </>
@@ -46,10 +40,9 @@ export const VocabularyRemoteSearchResults = withState(
     findMore,
     source,
   }) => {
-    const _results =
-      currentQueryState.suggestions.length > 0
-        ? currentQueryState.suggestions
-        : results.data.hits;
+    const _results = inSuggestMode(currentQueryState)
+      ? currentQueryState.suggestions
+      : results.data.hits;
     const notEnoughResults = currentQueryState.size > _results.length;
     const { value: fieldValue, multiple } = useFieldValue();
     const canFindMore =

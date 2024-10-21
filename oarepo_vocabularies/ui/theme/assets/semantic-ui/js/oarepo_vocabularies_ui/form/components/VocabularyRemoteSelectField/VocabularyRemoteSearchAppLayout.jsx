@@ -21,13 +21,16 @@ import {
 } from "./ExternalEmptyResults";
 import VocabularyRemoteFeaturedResults from "./VocabularyRemoteFeaturedResults";
 import { useFieldValue } from "./context";
+import { inSuggestMode } from "./util";
 
 const ContextAwarePagination = withState(
-  ({ currentQueryState, currentResultsState: results, ...paginationProps }) => {
-    const hasSuggestions = currentQueryState.suggestions?.length > 0;
-    // Suggestions are fixed one-page sized
-    console.log({ hasSuggestions });
-    return !hasSuggestions && <Pagination {...paginationProps}></Pagination>;
+  ({ currentQueryState, ...paginationProps }) => {
+    // Suggestions are always fixed to one-page size
+    return (
+      !inSuggestMode(currentQueryState) && (
+        <Pagination {...paginationProps}></Pagination>
+      )
+    );
   }
 );
 
