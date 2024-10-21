@@ -58,7 +58,7 @@ export const VocabularyRemoteSearchAppLayout = ({
   const defaultOverridenComponents = {
     "EmptyResults.element": ExternalEmptyResultsElement,
     "VocabularyRemoteSelect.ext.ResultsList.item": ExternalResultListItem,
-    "AutocompleteSearchBar.suggestions": () => <></>,
+    "AutocompleteSearchBar.suggestions": () => null,
   };
 
   const findMore = (previousQueryState) => {
