@@ -6,6 +6,7 @@ import {
   EmptyResults,
   Error,
   Pagination,
+  withState,
 } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import VocabularyRemoteSearchResults, {
@@ -20,6 +21,15 @@ import {
 } from "./ExternalEmptyResults";
 import VocabularyRemoteFeaturedResults from "./VocabularyRemoteFeaturedResults";
 import { useFieldValue } from "./context";
+
+const ContextAwarePagination = withState(
+  ({ currentQueryState, currentResultsState: results, ...paginationProps }) => {
+    const hasSuggestions = currentQueryState.suggestions?.length > 0;
+    // Suggestions are fixed one-page sized
+    console.log({ hasSuggestions });
+    return !hasSuggestions && <Pagination {...paginationProps}></Pagination>;
+  }
+);
 
 export const VocabularyRemoteSearchAppLayout = ({
   addNew,
@@ -96,7 +106,7 @@ export const VocabularyRemoteSearchAppLayout = ({
                 </div>
               </Grid.Column>
               <Grid.Column>
-                <Pagination
+                <ContextAwarePagination
                   options={{
                     size: "mini",
                     showFirst: false,
