@@ -1,11 +1,14 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { ReactSearchKit, InvenioSearchApi, InvenioSuggestionApi } from "react-searchkit";
+import {
+  ReactSearchKit,
+  InvenioSearchApi,
+  InvenioSuggestionApi,
+} from "react-searchkit";
 import { OverridableContext } from "react-overridable";
 import { SearchSource } from "./constants";
 import Qs from "qs";
-import {serializeVocabularySuggestions} from "@js/oarepo_vocabularies";
-
+import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
 
 class SuggestionRequestSerializer {
   constructor() {
@@ -22,6 +25,7 @@ class SuggestionRequestSerializer {
     const getParams = {};
     if (suggestionString !== null) {
       getParams["suggest"] = suggestionString;
+      getParams["size"] = 10;
     }
 
     return Qs.stringify(getParams, { arrayFormat: "repeat", encode: false });
@@ -34,9 +38,7 @@ class SuggestionResponseSerializer {
   }
 
   _serializeSuggestions = (responseHits) => {
-    return Array.from(
-      new Set(serializeVocabularySuggestions(responseHits))
-    );
+    return Array.from(new Set(serializeVocabularySuggestions(responseHits)));
   };
 
   /**
@@ -49,7 +51,6 @@ class SuggestionResponseSerializer {
     };
   }
 }
-
 
 export const MultiSourceSearchApp = React.memo(
   ({
@@ -84,16 +85,16 @@ export const MultiSourceSearchApp = React.memo(
     };
 
     const suggestionApiConfig = {
-        invenio: {
-            requestSerializer: SuggestionRequestSerializer,
-            responseSerializer: SuggestionResponseSerializer,
-            suggestions: {
-                // Don't need these but they are still required by Invenio
-                queryField: '',
-                responseField: ''
-            }
-        }
-    }
+      invenio: {
+        requestSerializer: SuggestionRequestSerializer,
+        responseSerializer: SuggestionResponseSerializer,
+        suggestions: {
+          // Don't need these but they are still required by Invenio
+          queryField: "",
+          responseField: "",
+        },
+      },
+    };
 
     const searchConfig = {
       ...sources[source],
@@ -101,7 +102,10 @@ export const MultiSourceSearchApp = React.memo(
     };
 
     const searchApi = new InvenioSearchApi(searchConfig.searchApi);
-    const suggestionApi = new InvenioSuggestionApi({...searchConfig.searchApi, ...suggestionApiConfig});
+    const suggestionApi = new InvenioSuggestionApi({
+      ...searchConfig.searchApi,
+      ...suggestionApiConfig,
+    });
 
     return (
       <OverridableContext.Provider value={overriddenComponents}>

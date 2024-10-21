@@ -1,7 +1,7 @@
 import React from "react";
 import Overridable from "react-overridable";
 import { withState, ResultsLoader } from "react-searchkit";
-import { List, Header } from "semantic-ui-react";
+import { List, Header, Grid } from "semantic-ui-react";
 import { ShouldRender } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { InternalResultListItem } from "./InternalResultListItem";
@@ -16,7 +16,6 @@ export const VocabularyRemoteResultsLoader = withState(
 
     return (
       <>
-        {results.loading && <OptionsLoadingSkeleton />}
         <ShouldRender
           condition={
             currentQueryState.queryString !== "" ||
@@ -79,6 +78,7 @@ export const VocabularyRemoteSearchResults = withState(
 
     return (
       <List verticalAlign="middle" selection size="small">
+        {results.loading && <OptionsLoadingSkeleton />}
         {_results.map((result) => {
           return (
             <Overridable
@@ -95,7 +95,7 @@ export const VocabularyRemoteSearchResults = withState(
             </Overridable>
           );
         })}
-        {notEnoughResults && canFindMore && (
+        {!results.loading && notEnoughResults && canFindMore && (
           <List.Item
             className="search-result-item"
             key="_find-more"
