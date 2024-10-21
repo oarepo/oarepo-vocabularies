@@ -15,6 +15,7 @@ import VocabularyRemoteSearchResults, {
 import MultiSourceSearchApp from "./MultiSourceSearchApp";
 import { SearchSource } from "./constants";
 import { ExternalResultListItem } from "./ExternalResultListItem";
+import { OptionsLoadingSkeleton } from "@js/oarepo_vocabularies";
 import {
   ExternalEmptyResultsElement,
   ExternalEmptyResults,
@@ -120,6 +121,7 @@ export const VocabularyRemoteSearchAppLayout = ({
                 />
               </Grid.Column>
             </Grid.Row>
+            <OptionsLoadingSkeleton />
             <VocabularyRemoteFeaturedResults source={source} />
             <VocabularyRemoteResultsLoader>
               <Grid.Row className="scrolling content">

@@ -8,23 +8,24 @@ import { InternalResultListItem } from "./InternalResultListItem";
 import { SearchSource } from "./constants";
 import { featuredFilterActive, inSuggestMode } from "./util";
 import { useFieldValue } from "./context";
-import { OptionsLoadingSkeleton } from "@js/oarepo_vocabularies";
 
 export const VocabularyRemoteResultsLoader = withState(
   ({ currentQueryState, currentResultsState: results, children }) => {
-    console.log({ currentQueryState, results });
-
     return (
       <>
         <ShouldRender
           condition={
-            currentQueryState.queryString !== "" ||
-            (results.data.total > 0 && featuredFilterActive(currentQueryState))
+            !results.loading &&
+            (currentQueryState.queryString !== "" ||
+              (results.data.total > 0 &&
+                featuredFilterActive(currentQueryState)))
           }
         >
           <ResultsLoader>{children}</ResultsLoader>
         </ShouldRender>
-        <ShouldRender condition={inSuggestMode(currentQueryState)}>
+        <ShouldRender
+          condition={!results.loading && inSuggestMode(currentQueryState)}
+        >
           {children}
         </ShouldRender>
       </>
@@ -71,7 +72,6 @@ export const VocabularyRemoteSearchResults = withState(
 
     return (
       <List verticalAlign="middle" selection size="small">
-        {results.loading && <OptionsLoadingSkeleton />}
         {_results.map((result) => {
           return (
             <Overridable
