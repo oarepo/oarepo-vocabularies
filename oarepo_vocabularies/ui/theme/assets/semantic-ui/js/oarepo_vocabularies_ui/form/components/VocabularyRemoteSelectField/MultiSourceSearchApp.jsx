@@ -98,7 +98,7 @@ export const MultiSourceSearchApp = React.memo(
 
     const searchConfig = {
       ...sources[source],
-      ...{ initialQueryState: { ...queryState } },
+      ...{ initialQueryState: queryState },
     };
 
     const searchApi = new InvenioSearchApi(searchConfig.searchApi);
@@ -114,10 +114,7 @@ export const MultiSourceSearchApp = React.memo(
           suggestionApi={source === SearchSource.INTERNAL ? suggestionApi : null}
           searchApi={searchApi}
           urlHandlerApi={{ enabled: false }}
-          initialQueryState={{
-            ...searchConfig.initialQueryState,
-            filters: [],
-          }}
+          initialQueryState={searchConfig.initialQueryState}
           {...rest}
         >
           {children}

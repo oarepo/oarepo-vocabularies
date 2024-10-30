@@ -46,7 +46,7 @@ export const VocabularyRemoteSearchAppLayout = ({
     page: 1,
     sortBy: "bestmatch",
     queryString: "",
-    filters: [],
+    filters: [["tags", "featured"]],
   },
   handleSelect = () => {},
 }) => {
@@ -181,7 +181,7 @@ VocabularyRemoteSearchAppLayout.defaultProps = {
     size: 10,
     page: 1,
     sortBy: "bestmatch",
-    filters: [],
+    filters: [["tags", "featured"]],
   },
   handleSelect: () => {},
 };

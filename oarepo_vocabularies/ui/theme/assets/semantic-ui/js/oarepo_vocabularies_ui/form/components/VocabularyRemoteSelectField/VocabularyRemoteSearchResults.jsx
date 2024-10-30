@@ -16,9 +16,8 @@ export const VocabularyRemoteResultsLoader = withState(
         <ShouldRender
           condition={
             !results.loading &&
-            (currentQueryState.queryString !== "" ||
-              (results.data.total > 0 &&
-                featuredFilterActive(currentQueryState)))
+            results.data.total > 0 &&
+            !inSuggestMode(currentQueryState)
           }
         >
           <ResultsLoader>{children}</ResultsLoader>
@@ -36,6 +35,7 @@ export const VocabularyRemoteResultsLoader = withState(
 export const VocabularyRemoteSearchResults = withState(
   ({
     currentResultsState: results,
+    updateQueryState,
     currentQueryState,
     handleSelect,
     findMore,
@@ -51,6 +51,16 @@ export const VocabularyRemoteSearchResults = withState(
       !inSuggestMode(currentQueryState) &&
       !featuredFilterActive(currentQueryState);
 
+    console.log("AAA", {
+      notEnoughResults,
+      _results,
+      canFindMore,
+      results,
+      sugg: inSuggestMode(currentQueryState),
+      feat: featuredFilterActive(currentQueryState),
+      source,
+    });
+
     React.useEffect(() => {
       if (
         notEnoughResults &&
@@ -60,7 +70,28 @@ export const VocabularyRemoteSearchResults = withState(
       ) {
         findMore(currentQueryState);
       }
-    }, [results]);
+      console.log({
+        notEnoughResults,
+        _results,
+        canFindMore,
+        results,
+        sugg: inSuggestMode(currentQueryState),
+        source,
+      });
+    }, [results, currentQueryState, _results, canFindMore, notEnoughResults]);
+
+    React.useEffect(() => {
+      if (
+        (currentQueryState.queryString !== "" ||
+          currentQueryState.suggestionString !== "") &&
+        featuredFilterActive(currentQueryState)
+      ) {
+        updateQueryState({
+          ...currentQueryState,
+          filters: [],
+        });
+      }
+    }, [currentQueryState]);
 
     const isSelected = (result) => {
       if (!fieldValue) {
@@ -105,8 +136,6 @@ export const VocabularyRemoteSearchResults = withState(
     );
   }
 );
-
-VocabularyRemoteSearchResults.propTypes = {};
 
 VocabularyRemoteSearchResults.defaultProps = {};
 

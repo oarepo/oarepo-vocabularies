@@ -7,41 +7,15 @@ import { SearchSource } from "./constants";
 import { featuredFilterActive } from "./util";
 
 export const VocabularyRemoteFeaturedResults = withState(
-  ({
-    currentQueryState,
-    currentResultsState: results,
-    source,
-    updateQueryState,
-  }) => {
+  ({ currentQueryState, currentResultsState: results, source }) => {
     const filterActive = featuredFilterActive(currentQueryState);
-
-    if (
-      currentQueryState.queryString === "" &&
-      (!currentQueryState.suggestionString ||
-        currentQueryState.suggestionString === "") &&
-      !filterActive
-    ) {
-      updateQueryState({
-        ...currentQueryState,
-        filters: [["tags", "featured"]],
-        page: 1,
-      });
-    } else if (
-      (currentQueryState.queryString !== "" ||
-        currentQueryState.suggestionString !== "") &&
-      currentQueryState.suggestions.length > 0 &&
-      filterActive
-    ) {
-      updateQueryState({
-        ...currentQueryState,
-        filters: [],
-      });
-    }
 
     return (
       <ShouldRender
         condition={
           currentQueryState.queryString === "" &&
+          (!currentQueryState.suggestionString ||
+            currentQueryState.suggestionString === "") &&
           source === SearchSource.INTERNAL &&
           filterActive &&
           results.data.total > 0
