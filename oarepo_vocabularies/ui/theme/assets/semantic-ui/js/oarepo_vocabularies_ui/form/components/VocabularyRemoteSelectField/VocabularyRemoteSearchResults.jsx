@@ -48,12 +48,14 @@ export const VocabularyRemoteSearchResults = withState(
     const { value: fieldValue, multiple } = useFieldValue();
     const canFindMore =
       source === SearchSource.INTERNAL &&
+      !inSuggestMode(currentQueryState) &&
       !featuredFilterActive(currentQueryState);
 
     React.useEffect(() => {
       if (
         notEnoughResults &&
         _results &&
+        canFindMore &&
         (results.data.total === 0 || _results.length === 0)
       ) {
         findMore(currentQueryState);

@@ -7,7 +7,6 @@ export const featuredFilterActive = (currentQueryState) => {
 }
 
 export function inSuggestMode (currentQueryState) {
-    return currentQueryState.suggestions?.length > 0 &&
-        currentQueryState.queryString === "" &&
+    return currentQueryState.queryString === "" &&
         currentQueryState.suggestionString !== ""
 }
