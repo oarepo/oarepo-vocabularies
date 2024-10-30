@@ -101,7 +101,7 @@ export const VocabularyRemoteSearchAppLayout = ({
           <Grid stackable>
             <Grid.Row verticalAlign="middle" columns={2}>
               <Grid.Column width={8} floated="left" verticalAlign="middle">
-                <div ref={searchbarContainer}>
+                <div className="ui form" ref={searchbarContainer}>
                   <AutocompleteSearchBar
                     placeholder={i18next.t("Search")}
                     autofocus
