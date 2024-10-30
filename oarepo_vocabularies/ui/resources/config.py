@@ -12,6 +12,7 @@ from oarepo_vocabularies.ui.resources.components.search import VocabularySearchC
 from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
     VocabularyRecordsComponent,
 )
+from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 
 
 class VocabularyFormDepositVocabularyOptionsComponent(
@@ -61,6 +62,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
         VocabularySearchComponent,
+        CustomFieldsComponent,
     ]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
