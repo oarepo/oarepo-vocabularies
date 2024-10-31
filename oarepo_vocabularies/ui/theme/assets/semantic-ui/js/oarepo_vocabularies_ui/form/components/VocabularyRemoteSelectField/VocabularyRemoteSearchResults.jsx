@@ -48,16 +48,6 @@ export const VocabularyRemoteSearchResults = withState(
       !inSuggestMode(currentQueryState) &&
       !featuredFilterActive(currentQueryState);
 
-    console.log("AAA", {
-      notEnoughResults,
-      _results,
-      canFindMore,
-      results,
-      sugg: inSuggestMode(currentQueryState),
-      feat: featuredFilterActive(currentQueryState),
-      source,
-    });
-
     React.useEffect(() => {
       if (
         notEnoughResults &&
@@ -68,7 +58,7 @@ export const VocabularyRemoteSearchResults = withState(
         findMore(currentQueryState);
       }
     }, [results, suggestionString, _results, canFindMore, notEnoughResults]);
-    console.log({ queryString, suggestionString });
+
     React.useEffect(() => {
       if (
         (queryString !== "" || suggestionString !== "") &&
