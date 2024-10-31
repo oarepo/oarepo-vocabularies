@@ -6,20 +6,24 @@ import { ShouldRender } from "@js/oarepo_ui";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { InternalResultListItem } from "./InternalResultListItem";
 import { SearchSource } from "./constants";
-import { featuredFilterActive } from "./util";
+import { featuredFilterActive, inSuggestMode } from "./util";
 import { useFieldValue } from "./context";
 
 export const VocabularyRemoteResultsLoader = withState(
   ({ currentQueryState, currentResultsState: results, children }) => {
     return (
-      <ShouldRender
-        condition={
-          currentQueryState.queryString !== "" ||
-          (results.data.total > 0 && featuredFilterActive(currentQueryState))
-        }
-      >
-        <ResultsLoader>{children}</ResultsLoader>
-      </ShouldRender>
+      <>
+        <ShouldRender
+          condition={!results.loading && !inSuggestMode(currentQueryState)}
+        >
+          <ResultsLoader>{children}</ResultsLoader>
+        </ShouldRender>
+        <ShouldRender
+          condition={!results.loading && inSuggestMode(currentQueryState)}
+        >
+          {children}
+        </ShouldRender>
+      </>
     );
   }
 );
@@ -27,22 +31,46 @@ export const VocabularyRemoteResultsLoader = withState(
 export const VocabularyRemoteSearchResults = withState(
   ({
     currentResultsState: results,
+    updateQueryState,
     currentQueryState,
     handleSelect,
     findMore,
     source,
   }) => {
-    const notEnoughResults = currentQueryState.size > results.data.hits.length;
+    const { suggestionString, queryString } = currentQueryState;
+    const _results = inSuggestMode(currentQueryState)
+      ? currentQueryState.suggestions
+      : results.data.hits;
+    const notEnoughResults = currentQueryState.size > _results.length;
     const { value: fieldValue, multiple } = useFieldValue();
     const canFindMore =
       source === SearchSource.INTERNAL &&
+      !inSuggestMode(currentQueryState) &&
       !featuredFilterActive(currentQueryState);
 
     React.useEffect(() => {
-      if (notEnoughResults && results && results.data.total === 0) {
+      if (
+        notEnoughResults &&
+        _results &&
+        canFindMore &&
+        (results.data.total === 0 || _results.length === 0)
+      ) {
         findMore(currentQueryState);
       }
-    }, [results]);
+    }, [results, suggestionString, _results, canFindMore, notEnoughResults]);
+
+    React.useEffect(() => {
+      if (
+        (queryString !== "" || suggestionString !== "") &&
+        featuredFilterActive(currentQueryState)
+      ) {
+        updateQueryState({
+          ...currentQueryState,
+          suggestionString: "",
+          filters: [],
+        });
+      }
+    }, [queryString, suggestionString, currentQueryState]);
 
     const isSelected = (result) => {
       if (!fieldValue) {
@@ -56,7 +84,7 @@ export const VocabularyRemoteSearchResults = withState(
 
     return (
       <List verticalAlign="middle" selection size="small">
-        {results.data.hits.map((result) => {
+        {_results.map((result) => {
           return (
             <Overridable
               key={result.id}
@@ -72,7 +100,7 @@ export const VocabularyRemoteSearchResults = withState(
             </Overridable>
           );
         })}
-        {notEnoughResults && canFindMore && (
+        {!results.loading && notEnoughResults && canFindMore && (
           <List.Item
             className="search-result-item"
             key="_find-more"
@@ -87,8 +115,6 @@ export const VocabularyRemoteSearchResults = withState(
     );
   }
 );
-
-VocabularyRemoteSearchResults.propTypes = {};
 
 VocabularyRemoteSearchResults.defaultProps = {};
 
