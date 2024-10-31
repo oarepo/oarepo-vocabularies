@@ -14,11 +14,7 @@ export const VocabularyRemoteResultsLoader = withState(
     return (
       <>
         <ShouldRender
-          condition={
-            !results.loading &&
-            results.data.total > 0 &&
-            !inSuggestMode(currentQueryState)
-          }
+          condition={!results.loading && !inSuggestMode(currentQueryState)}
         >
           <ResultsLoader>{children}</ResultsLoader>
         </ShouldRender>
@@ -41,6 +37,7 @@ export const VocabularyRemoteSearchResults = withState(
     findMore,
     source,
   }) => {
+    const { suggestionString, queryString } = currentQueryState;
     const _results = inSuggestMode(currentQueryState)
       ? currentQueryState.suggestions
       : results.data.hits;
@@ -70,28 +67,20 @@ export const VocabularyRemoteSearchResults = withState(
       ) {
         findMore(currentQueryState);
       }
-      console.log({
-        notEnoughResults,
-        _results,
-        canFindMore,
-        results,
-        sugg: inSuggestMode(currentQueryState),
-        source,
-      });
-    }, [results, currentQueryState, _results, canFindMore, notEnoughResults]);
-
+    }, [results, suggestionString, _results, canFindMore, notEnoughResults]);
+    console.log({ queryString, suggestionString });
     React.useEffect(() => {
       if (
-        (currentQueryState.queryString !== "" ||
-          currentQueryState.suggestionString !== "") &&
+        (queryString !== "" || suggestionString !== "") &&
         featuredFilterActive(currentQueryState)
       ) {
         updateQueryState({
           ...currentQueryState,
+          suggestionString: "",
           filters: [],
         });
       }
-    }, [currentQueryState]);
+    }, [queryString, suggestionString, currentQueryState]);
 
     const isSelected = (result) => {
       if (!fieldValue) {
