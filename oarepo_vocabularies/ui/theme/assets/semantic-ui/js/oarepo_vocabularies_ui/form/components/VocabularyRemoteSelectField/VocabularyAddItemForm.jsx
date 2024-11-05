@@ -5,7 +5,7 @@ import { VocabularyFormSchema } from "@js/oarepo_vocabularies";
 import { Grid, Ref, Sticky, Modal, Button } from "semantic-ui-react";
 import { buildUID } from "react-searchkit";
 import Overridable, { OverridableContext } from "react-overridable";
-import { CustomFields } from "react-invenio-forms";
+import { CustomFields, http } from "react-invenio-forms";
 import { VocabularyFormFields } from "../VocabularyFormFields";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
@@ -74,7 +74,6 @@ export const VocabularyAddItemForm = ({
                 </Sticky>
                 <Overridable
                   id={buildUID(overridableIdPrefix, "FormFields.container")}
-                  record={record}
                 >
                   <VocabularyFormFields />
                 </Overridable>
