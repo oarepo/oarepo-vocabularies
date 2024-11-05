@@ -319,9 +319,10 @@ export const TreeSelectFieldModal = ({
         <Grid>
           <div className="columns-container">
             <Grid columns={1}>
-              {suggestionsLoading && (
-                <OptionsLoadingSkeleton loadingMessage={loadingMessage} />
-              )}
+              <OptionsLoadingSkeleton
+                  loading={suggestionsLoading}
+                  loadingMessage={loadingMessage}
+              />
               {noSearchResults && (
                 <Grid.Column stretched>
                   <EmptyResultsElement
