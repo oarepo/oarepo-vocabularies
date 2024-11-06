@@ -1,6 +1,5 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { withState } from "react-searchkit";
 import { Dimmer, Loader } from "semantic-ui-react";
 
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
