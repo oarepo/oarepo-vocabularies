@@ -56,6 +56,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "detail": "/<vocabulary_type>/<pid_value>",
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
+    config_routes = {
+        'form_config': '/<vocabulary_type>/form',
+    }
 
     components = [
         PermissionsComponent,
@@ -66,6 +69,8 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     ]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
+    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
+
 
     ui_links_item = {
         "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
