@@ -95,6 +95,7 @@ export const VocabularyRemoteSelectModal = ({
             overriddenComponents={overriddenComponents}
             backToSearch={backToSearch}
             onSubmit={handleNewItem}
+            vocabulary={vocabulary}
           />
         )}
       </>

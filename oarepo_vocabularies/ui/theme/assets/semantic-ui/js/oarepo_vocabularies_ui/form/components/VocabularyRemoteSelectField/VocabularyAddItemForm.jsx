@@ -35,12 +35,23 @@ SubmitButton.propTypes = {
 export const VocabularyAddItemForm = ({
   backToSearch,
   onSubmit,
-  customFields,
+  vocabulary,
   overriddenComponents,
 }) => {
   const formFeedbackRef = React.useRef(null);
   const overridableIdPrefix = "VocabularyRemoteSelect";
   const formRef = React.useRef();
+  const [customFields, setCustomFields] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchVocabulariesFormConfig = async () => {
+      const response = await http.get(
+        `/configs/vocabularies/${vocabulary}/form`
+      );
+      setCustomFields(response.data.custom_fields.ui);
+    };
+    fetchVocabulariesFormConfig();
+  }, [vocabulary]);
 
   return (
     <OverridableContext.Provider value={overriddenComponents}>
@@ -80,9 +91,9 @@ export const VocabularyAddItemForm = ({
                 <Overridable
                   id={buildUID(overridableIdPrefix, "CustomFields.container")}
                 >
-                  {customFields && (
+                  {customFields?.length > 0 && (
                     <CustomFields
-                      config={customFields.ui}
+                      config={customFields}
                       templateLoaders={[
                         (widget) =>
                           import(`@templates/custom_fields/${widget}.js`),
@@ -110,9 +121,9 @@ export const VocabularyAddItemForm = ({
 
 VocabularyAddItemForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
-  customFields: PropTypes.object,
   backToSearch: PropTypes.func,
   overriddenComponents: PropTypes.object,
+  vocabulary: PropTypes.string.isRequired,
 };
 
 VocabularyAddItemForm.defaultProps = {};
