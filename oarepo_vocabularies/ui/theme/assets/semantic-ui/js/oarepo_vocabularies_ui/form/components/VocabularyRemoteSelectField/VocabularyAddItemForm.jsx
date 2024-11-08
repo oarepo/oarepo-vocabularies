@@ -4,8 +4,11 @@ import { BaseForm, FormFeedback } from "@js/oarepo_ui";
 import { VocabularyFormSchema } from "@js/oarepo_vocabularies";
 import { Grid, Ref, Sticky, Modal, Button } from "semantic-ui-react";
 import { buildUID } from "react-searchkit";
-import Overridable, { OverridableContext } from "react-overridable";
-import { CustomFields } from "react-invenio-forms";
+import Overridable, {
+  OverridableContext,
+  overrideStore,
+} from "react-overridable";
+import { CustomFields, http } from "react-invenio-forms";
 import { VocabularyFormFields } from "../VocabularyFormFields";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
@@ -35,15 +38,30 @@ SubmitButton.propTypes = {
 export const VocabularyAddItemForm = ({
   backToSearch,
   onSubmit,
-  customFields,
+  vocabulary,
   overriddenComponents,
 }) => {
   const formFeedbackRef = React.useRef(null);
-  const overridableIdPrefix = "VocabularyRemoteSelect";
+  const overridableIdPrefix = "Oarepovocabularies.Form";
   const formRef = React.useRef();
-
+  const [customFields, setCustomFields] = React.useState(null);
+  React.useEffect(() => {
+    const fetchVocabulariesFormConfig = async () => {
+      const response = await http.get(
+        `/configs/vocabularies/${vocabulary}/form`
+      );
+      setCustomFields(response.data.custom_fields.ui);
+    };
+    fetchVocabulariesFormConfig();
+  }, [vocabulary]);
+  const componentOverrides = React.useMemo(() => {
+    return {
+      ...overrideStore.getAll(),
+      ...overriddenComponents,
+    };
+  }, [overriddenComponents]);
   return (
-    <OverridableContext.Provider value={overriddenComponents}>
+    <OverridableContext.Provider value={componentOverrides}>
       <Modal.Content>
         <BaseForm
           id="vocabulary-form"
@@ -63,7 +81,7 @@ export const VocabularyAddItemForm = ({
                 id="main-content"
                 mobile={16}
                 tablet={16}
-                computer={11}
+                computer={16}
               >
                 <Sticky context={formFeedbackRef} offset={20}>
                   <Overridable
@@ -74,16 +92,15 @@ export const VocabularyAddItemForm = ({
                 </Sticky>
                 <Overridable
                   id={buildUID(overridableIdPrefix, "FormFields.container")}
-                  record={record}
                 >
                   <VocabularyFormFields />
                 </Overridable>
                 <Overridable
                   id={buildUID(overridableIdPrefix, "CustomFields.container")}
                 >
-                  {customFields && (
+                  {customFields?.length > 0 && (
                     <CustomFields
-                      config={customFields.ui}
+                      config={customFields}
                       templateLoaders={[
                         (widget) =>
                           import(`@templates/custom_fields/${widget}.js`),
@@ -111,9 +128,9 @@ export const VocabularyAddItemForm = ({
 
 VocabularyAddItemForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
-  customFields: PropTypes.object,
   backToSearch: PropTypes.func,
   overriddenComponents: PropTypes.object,
+  vocabulary: PropTypes.string.isRequired,
 };
 
 VocabularyAddItemForm.defaultProps = {};

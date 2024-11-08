@@ -17,6 +17,8 @@ export const VocabularyRemoteSelectModal = ({
   label,
   overriddenComponents,
   initialAction = ModalActions.SEARCH,
+  allowInlineVocabularyItemCreation,
+  vocabularyItemCreationFormUrl,
   ...rest
 }) => {
   const { isOpen, close, open } = useModal();
@@ -27,8 +29,8 @@ export const VocabularyRemoteSelectModal = ({
   const inAddMode = action === ModalActions.ADD;
 
   const addNew = React.useCallback(() => {
-    window.open(`/vocabularies/${vocabulary}/_new`, '_blank').focus()
-    // setAction(ModalActions.ADD);
+    // window.open(`/vocabularies/${vocabulary}/_new`, '_blank').focus()
+    setAction(ModalActions.ADD);
   });
 
   const backToSearch = React.useCallback(() => {
@@ -81,6 +83,10 @@ export const VocabularyRemoteSelectModal = ({
             handleSelect={handleSelect}
             addNew={addNew}
             onSubmit={handleSubmit}
+            allowInlineVocabularyItemCreation={
+              allowInlineVocabularyItemCreation
+            }
+            vocabularyItemCreationFormUrl={vocabularyItemCreationFormUrl}
             extraActions={
               multiple && (
                 <Grid.Column className="rel-mb-1" floated="left">
@@ -90,14 +96,14 @@ export const VocabularyRemoteSelectModal = ({
             }
           />
         )}
-        {/* TODO: implement this with full custom fields support. */}
-        {/*{inAddMode && (*/}
-        {/*  <VocabularyAddItemForm*/}
-        {/*    overriddenComponents={overriddenComponents}*/}
-        {/*    backToSearch={backToSearch}*/}
-        {/*    onSubmit={handleNewItem}*/}
-        {/*  />*/}
-        {/*)}*/}
+        {inAddMode && (
+          <VocabularyAddItemForm
+            overriddenComponents={overriddenComponents}
+            backToSearch={backToSearch}
+            onSubmit={handleNewItem}
+            vocabulary={vocabulary}
+          />
+        )}
       </>
     </Modal>
   );
@@ -109,12 +115,13 @@ VocabularyRemoteSelectModal.propTypes = {
   initialAction: PropTypes.string,
   vocabulary: PropTypes.string.isRequired,
   overriddenComponents: PropTypes.object,
+  allowInlineVocabularyItemCreation: PropTypes.bool,
+  vocabularyItemCreationFormUrl: PropTypes.string,
 };
 
 VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
-  overriddenComponents: {},
   trigger: <VocabularyModalTrigger />,
 };
 export default VocabularyRemoteSelectModal;
