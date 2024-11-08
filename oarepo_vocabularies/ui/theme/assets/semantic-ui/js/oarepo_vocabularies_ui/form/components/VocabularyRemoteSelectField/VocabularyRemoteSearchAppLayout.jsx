@@ -189,7 +189,7 @@ VocabularyRemoteSearchAppLayout.propTypes = {
   onSubmit: PropTypes.func,
   extraActions: PropTypes.node,
   allowInlineVocabularyItemCreation: PropTypes.bool,
-  vocabularyItemCreationFormUrl: PropTypes.bool,
+  vocabularyItemCreationFormUrl: PropTypes.string,
 };
 
 VocabularyRemoteSearchAppLayout.defaultProps = {
