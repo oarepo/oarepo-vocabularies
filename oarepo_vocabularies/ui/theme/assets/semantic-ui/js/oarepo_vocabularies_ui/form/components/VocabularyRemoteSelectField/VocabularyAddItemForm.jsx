@@ -4,7 +4,10 @@ import { BaseForm, FormFeedback } from "@js/oarepo_ui";
 import { VocabularyFormSchema } from "@js/oarepo_vocabularies";
 import { Grid, Ref, Sticky, Modal, Button } from "semantic-ui-react";
 import { buildUID } from "react-searchkit";
-import Overridable, { OverridableContext } from "react-overridable";
+import Overridable, {
+  OverridableContext,
+  overrideStore,
+} from "react-overridable";
 import { CustomFields, http } from "react-invenio-forms";
 import { VocabularyFormFields } from "../VocabularyFormFields";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
@@ -39,10 +42,9 @@ export const VocabularyAddItemForm = ({
   overriddenComponents,
 }) => {
   const formFeedbackRef = React.useRef(null);
-  const overridableIdPrefix = "VocabularyRemoteSelect";
+  const overridableIdPrefix = "Oarepovocabularies.Form";
   const formRef = React.useRef();
   const [customFields, setCustomFields] = React.useState(null);
-
   React.useEffect(() => {
     const fetchVocabulariesFormConfig = async () => {
       const response = await http.get(
@@ -52,9 +54,14 @@ export const VocabularyAddItemForm = ({
     };
     fetchVocabulariesFormConfig();
   }, [vocabulary]);
-
+  const componentOverrides = React.useMemo(() => {
+    return {
+      ...overrideStore.getAll(),
+      ...overriddenComponents,
+    };
+  }, [overriddenComponents]);
   return (
-    <OverridableContext.Provider value={overriddenComponents}>
+    <OverridableContext.Provider value={componentOverrides}>
       <Modal.Content>
         <BaseForm
           id="vocabulary-form"
@@ -74,7 +81,7 @@ export const VocabularyAddItemForm = ({
                 id="main-content"
                 mobile={16}
                 tablet={16}
-                computer={11}
+                computer={16}
               >
                 <Sticky context={formFeedbackRef} offset={20}>
                   <Overridable

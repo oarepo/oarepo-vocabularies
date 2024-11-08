@@ -15,8 +15,10 @@ export const VocabularyRemoteSelectModal = ({
   vocabulary,
   trigger,
   label,
-  overriddenComponents,
+  // overriddenComponents,
   initialAction = ModalActions.SEARCH,
+  allowInlineVocabularyItemCreation,
+  vocabularyItemCreationFormUrl,
   ...rest
 }) => {
   const { isOpen, close, open } = useModal();
@@ -76,11 +78,15 @@ export const VocabularyRemoteSelectModal = ({
         </Modal.Header>
         {inSearchMode && (
           <VocabularyRemoteSearchAppLayout
-            overriddenComponents={overriddenComponents}
+            // overriddenComponents={overriddenComponents}
             vocabulary={vocabulary}
             handleSelect={handleSelect}
             addNew={addNew}
             onSubmit={handleSubmit}
+            allowInlineVocabularyItemCreation={
+              allowInlineVocabularyItemCreation
+            }
+            vocabularyItemCreationFormUrl={vocabularyItemCreationFormUrl}
             extraActions={
               multiple && (
                 <Grid.Column className="rel-mb-1" floated="left">
@@ -92,7 +98,7 @@ export const VocabularyRemoteSelectModal = ({
         )}
         {inAddMode && (
           <VocabularyAddItemForm
-            overriddenComponents={overriddenComponents}
+            // overriddenComponents={overriddenComponents}
             backToSearch={backToSearch}
             onSubmit={handleNewItem}
             vocabulary={vocabulary}
@@ -109,6 +115,8 @@ VocabularyRemoteSelectModal.propTypes = {
   initialAction: PropTypes.string,
   vocabulary: PropTypes.string.isRequired,
   overriddenComponents: PropTypes.object,
+  allowInlineVocabularyItemCreation: PropTypes.bool,
+  vocabularyItemCreationFormUrl: PropTypes.string,
 };
 
 VocabularyRemoteSelectModal.defaultProps = {

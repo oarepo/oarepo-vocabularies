@@ -40,7 +40,7 @@ export const VocabularyRemoteSearchAppLayout = ({
   onSubmit,
   vocabulary,
   extraActions,
-  overriddenComponents = {},
+  overriddenComponents,
   initialQueryState = {
     size: 10,
     page: 1,
@@ -49,6 +49,8 @@ export const VocabularyRemoteSearchAppLayout = ({
     filters: [["tags", "featured"]],
   },
   handleSelect = () => {},
+  allowInlineVocabularyItemCreation,
+  vocabularyItemCreationFormUrl,
 }) => {
   const [source, setSource] = useState(SearchSource.INTERNAL);
   const [queryState, setQueryState] = useState(initialQueryState);
@@ -146,11 +148,24 @@ export const VocabularyRemoteSearchAppLayout = ({
       </Modal.Content>
       <Modal.Actions>
         {extraActions}
-        <Button
-          icon="plus"
-          content={i18next.t("Add new")}
-          onClick={() => addNew()}
-        />
+        {allowInlineVocabularyItemCreation && (
+          <Button
+            icon="plus"
+            content={i18next.t("Add new")}
+            onClick={() => addNew()}
+          />
+        )}
+        {!allowInlineVocabularyItemCreation &&
+          vocabularyItemCreationFormUrl && (
+            <Button
+              as="a"
+              href={vocabularyItemCreationFormUrl}
+              icon="plus"
+              content={i18next.t("Add new")}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          )}
         {multiple && (
           <Button
             type="submit"
@@ -173,6 +188,8 @@ VocabularyRemoteSearchAppLayout.propTypes = {
   addNew: PropTypes.func,
   onSubmit: PropTypes.func,
   extraActions: PropTypes.node,
+  allowInlineVocabularyItemCreation: PropTypes.bool,
+  vocabularyItemCreationFormUrl: PropTypes.bool,
 };
 
 VocabularyRemoteSearchAppLayout.defaultProps = {
