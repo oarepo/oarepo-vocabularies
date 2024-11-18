@@ -9,7 +9,7 @@ export const VocabularyModalTrigger = React.forwardRef((props, ref) => {
   return (
     <Form.Button
       ref={ref}
-      className="array-field-add-button"
+      className="array-field-add-button inline"
       type="button"
       icon
       labelPosition="left"

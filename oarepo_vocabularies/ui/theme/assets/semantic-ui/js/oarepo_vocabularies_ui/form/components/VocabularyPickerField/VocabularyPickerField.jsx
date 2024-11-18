@@ -40,10 +40,10 @@ export const VocabularyPickerField = ({
 
   const addValue = (item) => {
     if (!multiple) {
-      setFieldValue(fieldPath, item);
+      setFieldValue(fieldPath, item, true);
     } else {
       const newValue = [...sanitizedValue, item];
-      setFieldValue(fieldPath, newValue);
+      setFieldValue(fieldPath, newValue, true);
       onChange(newValue);
     }
   };
@@ -54,7 +54,7 @@ export const VocabularyPickerField = ({
     } else {
       const newValue = [...sanitizedValue];
       _remove(newValue, (value) => value.id === item.id);
-      setFieldValue(fieldPath, newValue);
+      setFieldValue(fieldPath, newValue, true);
       onChange(newValue);
     }
   };

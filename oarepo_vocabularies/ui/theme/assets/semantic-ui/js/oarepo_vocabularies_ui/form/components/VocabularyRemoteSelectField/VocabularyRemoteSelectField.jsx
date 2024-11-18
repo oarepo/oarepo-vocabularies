@@ -30,6 +30,7 @@ export const VocabularyRemoteSelectField = ({
         trigger={triggerButton}
         label={modalHeader}
         overriddenComponents={overriddenComponents}
+        fieldPath={fieldPath}
         {...restProps}
       />
     </VocabularyPickerField>
