@@ -52,8 +52,13 @@ class ModelRecord(Record):
             keys=["id", "title"],
             pid_field=Vocabulary.pid.with_type_ctx("languages"),
         ),
-    )
+        creator=PIDRelation(
+            "creator",
+            keys=["id", "title"],
+            pid_field=Vocabulary.pid.with_type_ctx("creator"),
+        ) 
 
+    )
 
 class ModelPermissionPolicy(RecordPermissionPolicy):
     can_create = [AnyUser(), SystemProcess()]
@@ -66,6 +71,7 @@ class ModelSchema(ma.Schema):
     title = ma.fields.String()
     authority = ma.fields.Raw()  # just a simulation ...
     ror_authority = ma.fields.Raw(data_key="ror-authority")
+    creator = ma.fields.Raw()
 
     class Meta:
         unknown = ma.INCLUDE

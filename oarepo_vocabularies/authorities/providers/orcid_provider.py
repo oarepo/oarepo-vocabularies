@@ -2,6 +2,7 @@ import logging
 from urllib.parse import quote_plus
 
 from bs4 import BeautifulSoup
+from flask import current_app
 import requests
 import simplejson as json
 import sys
@@ -456,13 +457,18 @@ class ORCIDClient(PublicAPI):
         METHOD: GET
         URL: https://pub.orcid.org/v3.0/[ORCID iD]/record
         """
+
+        # TODO: ORCID normalization?
+
         return self.read_record_public(orcid_id, 'record', access_token)
 
         
 class ORCIDProvider(AuthorityProvider):
     def __init__(self, institution_key, institution_secret, testing = False, timeout=None, **kwargs):
+        # TODO: url
         self.timeout = timeout or 10000
-        self.orcid_client = ORCIDClient(institution_key, institution_secret, testing, timeout, **kwargs)
+        self.orcid_client = ORCIDClient(current_app.config["ORCID_CLIENT_ID"], current_app.config["ORCID_CLIENT_SECRET"], testing, timeout, **kwargs)
+        
 
     def search(self, identity, params, **kwargs):
         params = params or {}
@@ -538,9 +544,10 @@ class ORCIDProvider(AuthorityProvider):
                 organization_name = organization.get("name", "")
                 try:
                     organization_id = organization.get("disambiguated-organization", {}).get("disambiguated-organization-identifier", "")
+                    id_source = organization.get("disambiguated-organization", {}).get("disambiguation-source", "")
                 except AttributeError:
                     organization_id = "N/A"
-                affiliations.append({"name": organization_name, "id": organization_id})          
+                affiliations.append({"name": organization_name, "id": f"{id_source}:{organization_id}"})        
 
         return {
             "$schema": "local://name-v1.0.0.json",
@@ -565,38 +572,42 @@ def read_secrets(file_path):
             secrets[key] = value
     return secrets
 
-# TODO: Add external identifiers into identifiers???    
 
 def main(client_id, client_secret):
 
     # test OrcidProvider class
     orcid_provider = ORCIDProvider(client_id, client_secret, testing=True)
-    search_results = orcid_provider.search(None, {"q": "John Doe"})
-
-    # print first 2 and last 2 results
-    for result in search_results[0][:2]:
-        print(result)
-    print("...")
-    for result in search_results[0][-2:]:
-        print(result)
-    print("Total results: ", search_results[1])
+    # search_results = orcid_provider.search(None, {"q": "John Doe"})
+# 
+    # # print first 2 and last 2 results
+    # for result in search_results[0][:2]:
+    #     print(result)
+    # print("...")
+    # for result in search_results[0][-2:]:
+    #     print(result)
+    # print("Total results: ", search_results[1])
 
 
     # print random result
-    print("Random result: ")
-    print(random.choice(search_results[0]))
-
+    # print("Random result: ")
+    # print(random.choice(search_results[0]))
+# 
     # print results where affiliations length > 1
     # do not use .get, because it will return None if key is not found
-    print("Results with more than 1 affiliation: ")
-    for result in search_results[0]:
-        try: 
-            if len(result["affiliations"]) > 1:
-                print(result)
-        except KeyError:
-            continue
-        except TypeError:
-            continue
+    # print("Results with more than 1 affiliation: ")
+    # for result in search_results[0]:
+    #     try: 
+    #         if len(result["affiliations"]) > 1:
+    #             print(result)
+    #     except KeyError:
+    #         continue
+    #     except TypeError:
+    #         continue
+
+    # test get on 0000-0002-7340-5813
+    orcid_id = '0000-0002-7340-5813'
+    record = orcid_provider.get(None, orcid_id)
+    print(record)   
 
 
     # create an instance of the ORCIDClient class, use sandbox
@@ -613,5 +624,5 @@ def main(client_id, client_secret):
 
 
 if __name__ == "__main__":
-    secrets = read_secrets('.secret')
+    secrets = read_secrets('/Users/pragerdom/work/oarepo-vocabularies/tests/.secret')
     main(secrets['CLIENT_ID'], secrets['CLIENT_SECRET'])
