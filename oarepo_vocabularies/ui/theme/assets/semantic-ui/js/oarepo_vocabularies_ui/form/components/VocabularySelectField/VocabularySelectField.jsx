@@ -13,9 +13,11 @@ export const VocabularySelectField = ({
   fieldPath,
   externalAuthority,
   multiple,
+  filterFunction,
   ...restProps
 }) => {
   const suggestionsConfig = {
+    // TODO: apply pre-filtering to query
     suggestionAPIUrl: `/api/vocabularies/${type}`,
   };
   if (externalAuthority) {
@@ -40,6 +42,7 @@ VocabularySelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   externalAuthority: PropTypes.bool,
   multiple: PropTypes.bool,
+  filterFunction: PropTypes.func,
 };
 
 VocabularySelectField.defaultProps = {
@@ -49,4 +52,5 @@ VocabularySelectField.defaultProps = {
     // TODO: remove after #BE-96 gets resolved
     Accept: "application/json",
   },
+  filterFunction: undefined,
 };
