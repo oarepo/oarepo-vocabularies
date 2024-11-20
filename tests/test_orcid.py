@@ -1,6 +1,8 @@
 
+import json
 import pytest
 import os
+import jsonschema
 from oarepo_vocabularies.authorities import (
     AuthorityProvider,
     ORCIDProvider
@@ -36,7 +38,7 @@ def test_orcid_provider_search_name(orcid_provider):
     items, total = results    
     assert total >= 1
     assert len(items) >= 1
-
+    
 def test_orcid_provider_search_empty(orcid_provider):
     query = ""
     results = orcid_provider.search(identity=None, params={"q": query})
@@ -64,3 +66,17 @@ def test_orcid_provider_pagination(orcid_provider):
         assert item["name"] != ""
         assert item["identifiers"][0]["identifier"] not in [it["identifiers"][0]["identifier"] for it in page2_items]
         
+def test_json_schema_validation(orcid_provider):
+    with open("schemas/name-v1.0.0.json") as f:
+        schema = json.load(f)
+    
+    items, _ = orcid_provider.search(identity=None, params={"q": "a"})
+    
+    for item in items:
+        if item is None:
+            continue
+        try:
+            jsonschema.validate(item, schema)
+        except jsonschema.ValidationError as e:
+            print(e)
+            assert False
