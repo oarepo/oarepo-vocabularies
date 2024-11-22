@@ -27,15 +27,13 @@ class ORCIDClient(PublicAPI):
         HEADER: Accept: application/orcid+json
         HEADER: Authorization: Bearer
         METHOD: GET
-        URL: https://pub.orcid.org/v3.0/[ORCID iD]/record
+        URL: https://pub.orcid.org/v3.0/[ORCID ID]/record
         """
 
         return self.read_record_public(orcid_id, 'record', access_token)
 
         
 class ORCIDProvider(AuthorityProvider):
-    IGNORED_AFFILIATIONS = ["path", "last-modified-date", "fundings", "peer-reviews", "works"]
-    
     def __init__(self, url=None, testing=False, **kwargs):
         try:
             client_id = current_app.config["ORCID_CLIENT_ID"]
@@ -86,25 +84,31 @@ class ORCIDProvider(AuthorityProvider):
         return self.to_vocabulary_item(record)
     
     @staticmethod
+    def dict_get(d, *args, default={}):
+        for path in args:
+            if not isinstance(d, dict) or path not in d:
+                return default
+            d = d[path]
+        return d
+    
+    @staticmethod
     def get_affiliations(activities_summary):
         affiliations = []
         
         for key, activity in activities_summary.items():
-            if key in ORCIDProvider.IGNORED_AFFILIATIONS:
-                continue
-            
             if key == "educations":
                 summary_type = "education-summary"
-                
-            if key == "employments":
+            elif key == "employments":
                 summary_type = "employment-summary"
+            else:
+                continue
                 
             for affiliation in activity.get(summary_type, []):
                 organization = affiliation.get("organization", {})
                 organization_name = organization.get("name", "")
                 try:
-                    organization_id = organization.get("disambiguated-organization", {}).get("disambiguated-organization-identifier", "")
-                    id_source = organization.get("disambiguated-organization", {}).get("disambiguation-source", "")
+                    organization_id = ORCIDProvider.dict_get(organization, "disambiguated-organization", "disambiguated-organization-identifier")
+                    id_source = ORCIDProvider.dict_get(organization, "disambiguated-organization", "disambiguation-source")
                     new_affiliation = {"name": organization_name, "id": f"{id_source}:{organization_id}"}
                 except AttributeError:
                     new_affiliation = {"name": organization_name, "id": "N/A"}
@@ -116,30 +120,28 @@ class ORCIDProvider(AuthorityProvider):
     
     @staticmethod
     def to_vocabulary_item(orcid_item):
-        orcid_id = idutils.normalize_orcid(orcid_item.get("orcid-identifier", {}).get("path", ""))
-
+        orcid_id = idutils.normalize_orcid(ORCIDProvider.dict_get(orcid_item, "orcid-identifier", "path", default=""))
+    
         # Personal information
-        person = orcid_item.get("person", {})
-
-        if person.get("name", {}).get("family-name") is None or person.get("name", {}).get("given-names") is None:
+        person = ORCIDProvider.dict_get(orcid_item, "person", default={})
+    
+        given_name = ORCIDProvider.dict_get(person, "name", "given-names", "value", default="")
+        family_name = ORCIDProvider.dict_get(person, "name", "family-name", "value", default="")
+        
+        if not given_name and not family_name:
             return None
         
-        given_name = person.get("name", {}).get("given-names", {}).get("value", "")
-        family_name = person.get("name", {}).get("family-name", {}).get("value", "")
         name = f"{given_name} {family_name}"
-
+    
         # Keywords (tags)
-        tags = []
-
-        keywords = person.get("keywords", {}).get("keyword", [])
-        for keyword in keywords:
-            tags.append(keyword.get("content", ""))
-            
+        keywords = ORCIDProvider.dict_get(person, "keywords", "keyword", default=[])
+        tags = [keyword.get("content", "") for keyword in keywords]
+    
         # Affiliations
-        activities_summary = orcid_item.get("activities-summary", {})
-
+        activities_summary = ORCIDProvider.dict_get(orcid_item, "activities-summary", default={})
+    
         affiliations = ORCIDProvider.get_affiliations(activities_summary)
-
+    
         return {
             "$schema": "local://name-v1.0.0.json",
             "tags": tags,

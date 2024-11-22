@@ -35,7 +35,7 @@ def test_orcid_client_from_provider(orcid_provider):
 def test_orcid_provider_search_name(orcid_provider):
     query = "Radek Cibulka"
     results = orcid_provider.search(identity=None, params={"q": query})
-    items, total = results    
+    items, total = results  
     assert total >= 1
     assert len(items) >= 1
     
