@@ -11,7 +11,10 @@ import {
   ModalContent,
   ModalActions,
 } from "semantic-ui-react";
-import { useVocabularySuggestions } from "@js/oarepo_vocabularies";
+import {
+  useVocabularySuggestions,
+  OptionsLoadingSkeleton,
+} from "@js/oarepo_vocabularies";
 import {
   EmptyResultsElement,
   useConfirmationModal as useModal,
@@ -21,7 +24,6 @@ import _groupBy from "lodash/groupBy";
 import _toPairs from "lodash/toPairs";
 import _sortBy from "lodash/sortBy";
 import _reject from "lodash/reject";
-import { OptionsLoadingSkeleton } from "./OptionsLoadingSkeleton";
 import { HierarchyColumn } from "./HierarchyColumn";
 import {
   sortByTitle,
@@ -317,9 +319,10 @@ export const TreeSelectFieldModal = ({
         <Grid>
           <div className="columns-container">
             <Grid columns={1}>
-              {suggestionsLoading && (
-                <OptionsLoadingSkeleton loadingMessage={loadingMessage} />
-              )}
+              <OptionsLoadingSkeleton
+                  loading={suggestionsLoading}
+                  loadingMessage={loadingMessage}
+              />
               {noSearchResults && (
                 <Grid.Column stretched>
                   <EmptyResultsElement

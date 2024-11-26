@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Grid, Modal, Button } from "semantic-ui-react";
-import { SearchBar, EmptyResults, Error, Pagination } from "react-searchkit";
+import {
+  AutocompleteSearchBar,
+  EmptyResults,
+  Error,
+  Pagination,
+  withState,
+} from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import VocabularyRemoteSearchResults, {
   VocabularyRemoteResultsLoader,
@@ -15,6 +21,19 @@ import {
 } from "./ExternalEmptyResults";
 import VocabularyRemoteFeaturedResults from "./VocabularyRemoteFeaturedResults";
 import { useFieldValue } from "./context";
+import { inSuggestMode } from "./util";
+import ResultsLoadingSkeleton from "./ResultsLoadingSkeleton";
+
+const ContextAwarePagination = withState(
+  ({ currentQueryState, ...paginationProps }) => {
+    // Suggestions are always fixed to one-page size
+    return (
+      !inSuggestMode(currentQueryState) && (
+        <Pagination {...paginationProps}></Pagination>
+      )
+    );
+  }
+);
 
 export const VocabularyRemoteSearchAppLayout = ({
   addNew,
@@ -27,17 +46,19 @@ export const VocabularyRemoteSearchAppLayout = ({
     page: 1,
     sortBy: "bestmatch",
     queryString: "",
-    filters: [],
+    filters: [["tags", "featured"]],
   },
   handleSelect = () => {},
 }) => {
   const [source, setSource] = useState(SearchSource.INTERNAL);
   const [queryState, setQueryState] = useState(initialQueryState);
   const { multiple } = useFieldValue();
+  const searchbarContainer = React.useRef(null);
 
   const defaultOverridenComponents = {
     "EmptyResults.element": ExternalEmptyResultsElement,
     "VocabularyRemoteSelect.ext.ResultsList.item": ExternalResultListItem,
+    "AutocompleteSearchBar.suggestions": () => null,
   };
 
   const findMore = (previousQueryState) => {
@@ -52,6 +73,16 @@ export const VocabularyRemoteSearchAppLayout = ({
     setQueryState(initialQueryState);
     setSource(SearchSource.INTERNAL);
   };
+
+  React.useEffect(() => {
+    // There's currently no other more sane way to focus that component's input
+    if (searchbarContainer.current) {
+      const searchbarInput = searchbarContainer.current.querySelector("input");
+      if (searchbarInput) {
+        searchbarInput.focus();
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -70,19 +101,16 @@ export const VocabularyRemoteSearchAppLayout = ({
           <Grid stackable>
             <Grid.Row verticalAlign="middle" columns={2}>
               <Grid.Column width={8} floated="left" verticalAlign="middle">
-                <SearchBar
-                  placeholder={i18next.t("Search")}
-                  autofocus
-                  clearable
-                  actionProps={{
-                    icon: "search",
-                    content: null,
-                    className: "search",
-                  }}
-                />
+                <div className="ui form" ref={searchbarContainer}>
+                  <AutocompleteSearchBar
+                    placeholder={i18next.t("Search")}
+                    autofocus
+                    clearable
+                  />
+                </div>
               </Grid.Column>
               <Grid.Column>
-                <Pagination
+                <ContextAwarePagination
                   options={{
                     size: "mini",
                     showFirst: false,
@@ -93,6 +121,7 @@ export const VocabularyRemoteSearchAppLayout = ({
                 />
               </Grid.Column>
             </Grid.Row>
+            <ResultsLoadingSkeleton />
             <VocabularyRemoteFeaturedResults source={source} />
             <VocabularyRemoteResultsLoader>
               <Grid.Row className="scrolling content">
@@ -152,7 +181,7 @@ VocabularyRemoteSearchAppLayout.defaultProps = {
     size: 10,
     page: 1,
     sortBy: "bestmatch",
-    filters: [],
+    filters: [["tags", "featured"]],
   },
   handleSelect: () => {},
 };

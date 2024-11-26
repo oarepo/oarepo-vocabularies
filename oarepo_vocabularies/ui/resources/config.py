@@ -12,6 +12,7 @@ from oarepo_vocabularies.ui.resources.components.search import VocabularySearchC
 from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
     VocabularyRecordsComponent,
 )
+from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 
 
 class VocabularyFormDepositVocabularyOptionsComponent(
@@ -55,15 +56,21 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "detail": "/<vocabulary_type>/<pid_value>",
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
+    config_routes = {
+        'form_config': '/<vocabulary_type>/form',
+    }
 
     components = [
         PermissionsComponent,
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
         VocabularySearchComponent,
+        CustomFieldsComponent,
     ]
 
     request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
+    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
+
 
     ui_links_item = {
         "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
