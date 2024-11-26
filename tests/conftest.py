@@ -12,6 +12,7 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -20,7 +21,7 @@ from flask import g
 from invenio_records_permissions.generators import AnyUser, SystemProcess
 from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
 
-from oarepo_vocabularies.authorities.providers.ror import RORClientV2
+from oarepo_vocabularies.authorities.providers.ror_provider import RORClientV2
 from oarepo_vocabularies.authorities import (
     AuthorityProvider,
     RORProviderV2,
@@ -247,6 +248,9 @@ def app_config(app_config):
     app_config["THEME_HEADER_TEMPLATE"] = (
         "oarepo_vocabularies_ui/test_header_template.html"
     )
+
+    app_config["ORCID_CLIENT_ID"] = os.environ["INVENIO_ORCID_CLIENT_ID"]
+    app_config["ORCID_CLIENT_SECRET"] = os.environ["INVENIO_ORCID_CLIENT_SECRET"]
 
     return app_config
 
