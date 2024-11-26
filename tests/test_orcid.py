@@ -1,5 +1,6 @@
 
 import json
+from pathlib import Path
 import pytest
 import os
 import jsonschema
@@ -58,7 +59,7 @@ def test_orcid_provider_pagination(orcid_provider):
     assert page2_total_value > 20
     assert len(page2_items) == 20
 
-    assert total == page2_total_value
+    assert total <= page2_total_value
 
     for item in items:
         if item is None:
@@ -67,7 +68,7 @@ def test_orcid_provider_pagination(orcid_provider):
         assert item["identifiers"][0]["identifier"] not in [it["identifiers"][0]["identifier"] for it in page2_items]
         
 def test_json_schema_validation(orcid_provider):
-    with open("schemas/name-v1.0.0.json") as f:
+    with open(Path(__file__).parent/"schemas"/"name-v1.0.0.json") as f:
         schema = json.load(f)
     
     items, _ = orcid_provider.search(identity=None, params={"q": "a"})

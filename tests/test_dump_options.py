@@ -32,6 +32,10 @@ def test_dump_options(
                 "definition": {"name": {"en": "authority"}, "authority": "AuthService"},
                 "url": "/api/vocabularies/authority",
             },
+            'creator': {
+                'definition': {},
+                'url': '/api/vocabularies/creator'
+            },
             "ror-authority": {
                 "definition": {
                     "authority": "RORProviderV2",
