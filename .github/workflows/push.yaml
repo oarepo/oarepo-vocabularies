@@ -9,6 +9,7 @@ permissions:
 jobs:
   build12:
     uses: ./.github/workflows/build.yaml
+    secrets: inherit
     with:
       oarepo: "12"
 
