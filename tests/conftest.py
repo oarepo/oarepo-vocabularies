@@ -251,6 +251,8 @@ def app_config(app_config):
 
     app_config["ORCID_CLIENT_ID"] = os.environ["INVENIO_ORCID_CLIENT_ID"]
     app_config["ORCID_CLIENT_SECRET"] = os.environ["INVENIO_ORCID_CLIENT_SECRET"]
+    app_config["OPENAIRE_CLIENT_ID"] = os.environ["INVENIO_OPENAIRE_CLIENT_ID"]
+    app_config["OPENAIRE_CLIENT_SECRET"] = os.environ["INVENIO_OPENAIRE_CLIENT_SECRET"]
 
     return app_config
 

@@ -36,6 +36,10 @@ def test_dump_options(
                 'definition': {},
                 'url': '/api/vocabularies/creator'
             },
+            "award" : {
+                "definition" : {},
+                "url" : "/api/vocabularies/award"
+            },
             "ror-authority": {
                 "definition": {
                     "authority": "RORProviderV2",
