@@ -1,8 +1,10 @@
 
 from .base import AuthorityProvider
-from .ror import RORProviderV2
+from .ror_provider import RORProviderV2
+from .orcid_provider import ORCIDProvider
 
 __all__ = (
     "AuthorityProvider",
     "RORProviderV2",
+    "ORCIDProvider"
 )

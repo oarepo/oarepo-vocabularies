@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "local://name-v1.0.0.json",
+  "description": "Names vocabulary.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for a vocabulary item.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scheme": {
+      "description": "Identifier of the name scheme.",
+      "$ref": "#/definitions/scheme"
+    },
+    "name": { "type": "string" },
+    "given_name": { "type": "string" },
+    "family_name": { "type": "string" },
+    "identifiers": {
+      "description": "Identifiers for the person.",
+      "type": "array",
+      "items": { "$ref": "#/definitions/identifiers_with_scheme" },
+      "uniqueItems": true
+    },
+    "affiliations": {
+      "description": "Affiliations of the person.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/definitions/identifier"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "uniqueItems": true
+    }
+  },
+  "definitions": {
+    "scheme": {
+      "description": "A scheme.",
+      "type": "string"
+    },
+    "identifier": {
+      "description": "An identifier.",
+      "type": "string"
+    },
+    "identifiers_with_scheme": {
+      "description": "Identifiers object with identifier value and scheme in separate keys.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {
+          "$ref": "#/definitions/identifier"
+        },
+        "scheme": {
+          "$ref": "#/definitions/scheme"
+        }
+      }
+    }
+  }
+}
