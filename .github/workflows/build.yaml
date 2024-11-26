@@ -11,13 +11,14 @@ on:
 
 env:
   OAREPO_VERSION: ${{ inputs.oarepo }}
+  INVENIO_ORCID_CLIENT_ID: ${{secrets.INVENIO_ORCID_CLIENT_ID}}
+  INVENIO_ORCID_CLIENT_SECRET: ${{secrets.INVENIO_ORCID_CLIENT_SECRET}}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-
       - name: Show oarepo version
         run: |
           echo "OAREPO_VERSION: >>>$OAREPO_VERSION<<<"
@@ -56,11 +57,10 @@ jobs:
         with:
           redis-version: ${{ matrix.redis-version }}
 
-
       - name: Run tests
         run: |
           ./run-tests.sh
-      
+
       - name: Freeze packages
         run: |
           pip freeze > requirements.txt
