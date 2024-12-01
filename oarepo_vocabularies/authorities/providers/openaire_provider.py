@@ -2,7 +2,6 @@ import base64
 import logging
 import os
 from flask import current_app
-import idutils
 import requests
 
 from oarepo_vocabularies.authorities.providers.base import AuthorityProvider
@@ -242,7 +241,7 @@ class OpenAIREProvider(AuthorityProvider):
             except AttributeError:
                 organizations.append({})
         
-        result = {
+        return {
             "$schema": "local://awards/award-v1.0.0.json",
             "tags": tags,
             "identifiers": identifiers,
@@ -254,6 +253,3 @@ class OpenAIREProvider(AuthorityProvider):
             "subjects": subjects,
             "organizations": organizations
         }
-        
-        #print(result)
-        return result
