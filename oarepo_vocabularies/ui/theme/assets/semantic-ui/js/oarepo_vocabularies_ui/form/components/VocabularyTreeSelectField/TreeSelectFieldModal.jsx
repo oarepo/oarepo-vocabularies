@@ -98,7 +98,7 @@ export const TreeSelectFieldModal = ({
   function _onClose () {
     close()
     setKeybState([])
-    setCurrentAncestors(setCurrentAncestors)
+    setCurrentAncestors(valueAncestors)
     onClose()
   }
 
