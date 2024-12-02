@@ -80,9 +80,7 @@ class OpenAIREProvider(AuthorityProvider):
     _cached_token = None
     
     def __init__(self, url=None, testing=False, **kwargs):
-        client_id = current_app.config["OPENAIRE_CLIENT_ID"]
-        client_secret = current_app.config["OPENAIRE_CLIENT_SECRET"]
-        self.openaire_client = OpenAIREClient(client_id, client_secret, url, testing, **kwargs)
+        self.openaire_client = OpenAIREClient(current_app.config["OPENAIRE_CLIENT_ID"], current_app.config["OPENAIRE_CLIENT_SECRET"], url, testing, **kwargs)
     
     def get_access_token(self):
         if self._cached_token is None:

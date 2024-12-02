@@ -8,8 +8,6 @@ from oarepo_vocabularies.authorities.providers import AuthorityProvider
 from orcid import PublicAPI as PublicAPI
 
 
-
-
 logger = logging.getLogger("oarepo-vocabularies.providers.orcid")
 
 class ORCIDClient(PublicAPI):
@@ -35,9 +33,7 @@ class ORCIDClient(PublicAPI):
         
 class ORCIDProvider(AuthorityProvider):
     def __init__(self, url=None, testing=False, **kwargs):
-        client_id = current_app.config["ORCID_CLIENT_ID"]
-        client_secret = current_app.config["ORCID_CLIENT_SECRET"]
-        self.orcid_client = ORCIDClient(client_id, client_secret, testing, **kwargs)
+        self.orcid_client = ORCIDClient(current_app.config["ORCID_CLIENT_ID"], current_app.config["ORCID_CLIENT_SECRET"], testing, **kwargs)
         
 
     def search(self, identity, params, **kwargs):

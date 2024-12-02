@@ -1,27 +1,27 @@
 import json
+import os
 from pathlib import Path
+from flask import Flask
 import pytest
 import jsonschema
 from oarepo_vocabularies.authorities import (
     AuthorityProvider,
     OpenAIREProvider
 )
-from requests.exceptions import HTTPError
 
-from oarepo_vocabularies.authorities.providers.openaire_provider import OpenAIREProvider, OpenAIREClient
-
+from oarepo_vocabularies.authorities.providers.openaire_provider import OpenAIREProvider
 
 @pytest.fixture
-def openaire_provider():
+def openaire_provider(app):
     provider_object = OpenAIREProvider(url=None, testing=False)
     assert isinstance(provider_object, AuthorityProvider)
     return provider_object
 
-def test_create_token(openaire_provider):
+def test_create_token(app, openaire_provider):
     token = openaire_provider.get_access_token()
     assert token is not None
     
-def test_openaire_client_from_provider(openaire_provider):
+def test_openaire_client_from_provider(app, openaire_provider):
     assert openaire_provider.openaire_client
     
     search_query = "health"
@@ -32,21 +32,21 @@ def test_openaire_client_from_provider(openaire_provider):
     assert "response" in result
     assert "results" in result["response"]
     
-def test_openaire_provider_search_name(openaire_provider):
+def test_openaire_provider_search_name(app, openaire_provider):
     query = "Czech"
     results = openaire_provider.search(identity=None, params={"q": query})
     items, total = results  
     assert total >= 1
     assert len(items) >= 1
     
-def test_openaire_provider_search_empty(openaire_provider):
+def test_openaire_provider_search_empty(app, openaire_provider):
     query = ""
     results = openaire_provider.search(identity=None, params={"q": query})
     items, total = results
     assert total == 0
     assert len(items) == 0
     
-def test_openaire_provider_pagination(openaire_provider):
+def test_openaire_provider_pagination(app, openaire_provider):
     query = "a"
     results = openaire_provider.search(identity=None, params={"q": query})
     items, total = results
@@ -74,13 +74,13 @@ def test_openaire_provider_pagination(openaire_provider):
         assert "subjects" in item
         assert "organizations" in item  
 
-def test_openaire_provider_get(openaire_provider):
+def test_openaire_provider_get(app, openaire_provider):
     item_id = "corda_______::89677d86a305a5b985427b92a81bc038"
     item = openaire_provider.get(None, item_id)
     assert item is not None
     assert "title" in item
 
-def test_json_schema_validation(openaire_provider):
+def test_json_schema_validation(app, openaire_provider):
     with open(Path(__file__).parent/"schemas"/"award-v1.0.0.json") as f:
         schema = json.load(f)
     
