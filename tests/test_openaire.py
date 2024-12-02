@@ -18,14 +18,14 @@ def openaire_provider():
     return provider_object
 
 def test_create_token(openaire_provider):
-    token = openaire_provider.openaire_client.get_token()
+    token = openaire_provider.get_access_token()
     assert token is not None
     
 def test_openaire_client_from_provider(openaire_provider):
     assert openaire_provider.openaire_client
     
     search_query = "health"
-    access_token = openaire_provider.openaire_client.get_token()
+    access_token = openaire_provider.get_access_token()
     assert access_token is not None
     result = openaire_provider.openaire_client.quick_search(access_token, search_query)
     assert result is not None

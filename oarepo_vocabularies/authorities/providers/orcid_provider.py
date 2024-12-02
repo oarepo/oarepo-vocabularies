@@ -35,14 +35,8 @@ class ORCIDClient(PublicAPI):
         
 class ORCIDProvider(AuthorityProvider):
     def __init__(self, url=None, testing=False, **kwargs):
-        try:
-            client_id = current_app.config["ORCID_CLIENT_ID"]
-            client_secret = current_app.config["ORCID_CLIENT_SECRET"]
-        except RuntimeError:
-            client_id = os.environ["INVENIO_ORCID_CLIENT_ID"]
-            client_secret = os.environ["INVENIO_ORCID_CLIENT_SECRET"]
-        except KeyError:
-            raise KeyError("ORCID_CLIENT_ID and ORCID_CLIENT_SECRET must be set in the configuration or as environment variables.")
+        client_id = current_app.config["ORCID_CLIENT_ID"]
+        client_secret = current_app.config["ORCID_CLIENT_SECRET"]
         self.orcid_client = ORCIDClient(client_id, client_secret, testing, **kwargs)
         
 

@@ -17,7 +17,7 @@ class OpenAIREClient(object):
         self.testing = testing 
         self.timeout = timeout or 10000
         
-    def get_token(self):
+    def _get_token(self):
         url = "https://aai.openaire.eu/oidc/token"
         credentials = f"{self.client_id}:{self.client_secret}"
         encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
@@ -35,9 +35,9 @@ class OpenAIREClient(object):
             response.raise_for_status() 
             return response.json().get("access_token")
         except requests.exceptions.HTTPError as http_err:
-            print(f"HTTP error occurred: {http_err}")
+            logger.error(f"HTTP error occurred: {http_err}")
         except Exception as err:
-            print(f"Other error occurred: {err}")
+            logger.error(f"Other error occurred: {err}")
     
     def quick_search(self, access_token, search_query="", page=1, page_size=20 ):
         url = "https://api.openaire.eu/search/projects?format=json"
@@ -58,8 +58,8 @@ class OpenAIREClient(object):
         
         response = requests.get(url, headers=headers, params=params)
         if response.status_code != 200:
-            print(f"Error response: {response.status_code}")
-            print(f"Response content: {response.text}")
+            logger.error(f"Error response: {response.status_code}")
+            logger.error(f"Response content: {response.text}")
         response.raise_for_status()
         return response.json()
     
@@ -77,20 +77,21 @@ class OpenAIREClient(object):
     
 class OpenAIREProvider(AuthorityProvider):
     
+    _cached_token = None
+    
     def __init__(self, url=None, testing=False, **kwargs):
-        try:
-            client_id = current_app.config["OPENAIRE_CLIENT_ID"]
-            client_secret = current_app.config["OPENAIRE_CLIENT_SECRET"]
-        except RuntimeError:
-            client_id = os.environ["INVENIO_OPENAIRE_CLIENT_ID"]
-            client_secret = os.environ["INVENIO_OPENAIRE_CLIENT_SECRET"]
-        except KeyError:
-            raise KeyError("OPENAIRE_CLIENT_ID and OPENAIRE_CLIENT_SECRET must be set in the configuration or as environment variables.")
+        client_id = current_app.config["OPENAIRE_CLIENT_ID"]
+        client_secret = current_app.config["OPENAIRE_CLIENT_SECRET"]
         self.openaire_client = OpenAIREClient(client_id, client_secret, url, testing, **kwargs)
+    
+    def get_access_token(self):
+        if self._cached_token is None:
+            self._cached_token = self.openaire_client._get_token()
+        return self._cached_token
         
     def search(self, identity, params, **kwargs):
         params = params or {}
-        access_token = self.openaire_client.get_token()
+        access_token = self.get_access_token()
         
         response = self.openaire_client.quick_search(
             access_token=access_token,
@@ -114,7 +115,7 @@ class OpenAIREProvider(AuthorityProvider):
     
     def get(self, identity, item_id, **kwargs):
         
-        access_token = self.openaire_client.get_token()
+        access_token = self.get_access_token()
         
         record = self.openaire_client.get_record(item_id, access_token)
         
