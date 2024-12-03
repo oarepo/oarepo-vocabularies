@@ -48,6 +48,7 @@ export const VocabularyRemoteSearchAppLayout = ({
     queryString: "",
     filters: [["tags", "featured"]],
   },
+  allowAdditions,
   handleSelect = () => {},
 }) => {
   const [source, setSource] = useState(SearchSource.INTERNAL);
@@ -146,11 +147,11 @@ export const VocabularyRemoteSearchAppLayout = ({
       </Modal.Content>
       <Modal.Actions>
         {extraActions}
-        <Button
+        {allowAdditions && <Button
           icon="plus"
           content={i18next.t("Add new")}
           onClick={() => addNew()}
-        />
+        />}
         {multiple && (
           <Button
             type="submit"
@@ -173,6 +174,7 @@ VocabularyRemoteSearchAppLayout.propTypes = {
   addNew: PropTypes.func,
   onSubmit: PropTypes.func,
   extraActions: PropTypes.node,
+  allowAdditions: PropTypes.bool
 };
 
 VocabularyRemoteSearchAppLayout.defaultProps = {
@@ -184,6 +186,7 @@ VocabularyRemoteSearchAppLayout.defaultProps = {
     filters: [["tags", "featured"]],
   },
   handleSelect: () => {},
+  allowAdditions: true
 };
 
 export default VocabularyRemoteSearchAppLayout;

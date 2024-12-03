@@ -19,6 +19,7 @@ export const VocabularyRemoteSelectModal = ({
   overriddenComponents,
   initialAction = ModalActions.SEARCH,
   fieldPath,
+  allowAdditions,
   ...rest
 }) => {
   const { isOpen, close, open } = useModal();
@@ -81,6 +82,7 @@ export const VocabularyRemoteSelectModal = ({
           </Modal.Header>
           {inSearchMode && (
             <VocabularyRemoteSearchAppLayout
+              allowAdditions={allowAdditions}
               overriddenComponents={overriddenComponents}
               vocabulary={vocabulary}
               handleSelect={handleSelect}
@@ -106,7 +108,7 @@ export const VocabularyRemoteSelectModal = ({
         </>
       </Modal>
       {fieldError && typeof fieldError == "string" && (
-        <Label className="inline  " pointing="left" prompt>
+        <Label className="inline" pointing="left" prompt>
           {fieldError}
         </Label>
       )}
@@ -121,6 +123,7 @@ VocabularyRemoteSelectModal.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   overriddenComponents: PropTypes.object,
   fieldPath: PropTypes.string.isRequired,
+  allowAdditions: PropTypes.bool
 };
 
 VocabularyRemoteSelectModal.defaultProps = {
@@ -128,5 +131,6 @@ VocabularyRemoteSelectModal.defaultProps = {
   label: i18next.t("item"),
   overriddenComponents: {},
   trigger: <VocabularyModalTrigger />,
+  allowAdditions: true,
 };
 export default VocabularyRemoteSelectModal;
