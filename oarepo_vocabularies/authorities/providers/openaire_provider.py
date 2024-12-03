@@ -161,9 +161,9 @@ class OpenAIREProvider(AuthorityProvider):
         entity = metadata.get("oaf:entity", {})
         project = entity.get("oaf:project", {})
         
-        if isinstance(project.get("rels"), dict):
-            relations = project.get("rels", {}).get("rel", []) 
-            
+        rels = project.get("rels")
+        if isinstance(rels, dict):
+                relations = rels.get("rel", []) 
         else:
             relations = []
             
