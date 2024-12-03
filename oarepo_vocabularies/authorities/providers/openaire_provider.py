@@ -161,17 +161,16 @@ class OpenAIREProvider(AuthorityProvider):
         entity = metadata.get("oaf:entity", {})
         project = entity.get("oaf:project", {})
         
-        try:
-            relations = project.get("rels", {}).get("rel", [])
-        except KeyError:
-            relations = {}
-        except AttributeError:
-            relations = {}
-        
+        if isinstance(project.get("rels"), dict):
+            relations = project.get("rels", {}).get("rel", []) 
+            
+        else:
+            relations = []
+            
         # If there is only one relation, convert it to a list
         if not isinstance(relations, list):
             relations = [relations]
-        
+            
         # Tags (keywords)
         keywords = project.get("keywords", "")
         
@@ -202,15 +201,11 @@ class OpenAIREProvider(AuthorityProvider):
         
         # Funder and according program
         funding = project.get("fundingtree", [])
-        try:
-            funder = {
-                "id": OpenAIREProvider.dict_get(funding, "funder", "id", "$"),
-                "name": OpenAIREProvider.dict_get(funding, "funder", "name", "$"),
-            }
-        except IndexError:
-            funder = {}
-        except KeyError:
-            funder = {}
+        
+        funder = {
+            "id": OpenAIREProvider.dict_get(funding, "funder", "id", "$"),
+            "name": OpenAIREProvider.dict_get(funding, "funder", "name", "$"),
+        }
         
         program = OpenAIREProvider.get_program_from_funding(funding)
         
@@ -230,15 +225,14 @@ class OpenAIREProvider(AuthorityProvider):
                 
         organizations = []
         for relation in relations:
-            try:
-                relation_to = relation.get("to", "")
-                organizations.append({
-                    "scheme": relation_to.get("@scheme", ""),
-                    "id": relation_to.get("$", ""),
-                    "organization": relation.get("legalname", {}).get("$", "")
-                })
-            except AttributeError:
-                organizations.append({})
+            
+            relation_to = relation.get("to", "")
+            organizations.append({
+                "scheme": relation_to.get("@scheme", ""),
+                "id": relation_to.get("$", ""),
+                "organization": relation.get("legalname", {}).get("$", "")
+            })
+
         
         return {
             "$schema": "local://awards/award-v1.0.0.json",
