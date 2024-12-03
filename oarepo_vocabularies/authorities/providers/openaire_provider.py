@@ -218,12 +218,14 @@ class OpenAIREProvider(AuthorityProvider):
             subject_list = [subject_list]
         
         for subject in subject_list:
-            subjects.append({
-                "id": subject.get("@classid", ""),
-                "subject": subject.get("$", "")
-            })
+            if subject is not None:
+                subjects.append({
+                    "id": subject.get("@classid", ""),
+                    "subject": subject.get("$", "")
+                })
                 
         organizations = []
+        
         for relation in relations:
             
             relation_to = relation.get("to", "")
