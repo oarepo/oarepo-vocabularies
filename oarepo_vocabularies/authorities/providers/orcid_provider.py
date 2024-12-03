@@ -1,7 +1,6 @@
 import logging
 
 from flask import current_app
-import os
 import idutils
 from oarepo_vocabularies.authorities.providers import AuthorityProvider
 

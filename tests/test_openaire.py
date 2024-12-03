@@ -1,7 +1,5 @@
 import json
-import os
 from pathlib import Path
-from flask import Flask
 import pytest
 import jsonschema
 from oarepo_vocabularies.authorities import (

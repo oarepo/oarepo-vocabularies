@@ -1,6 +1,5 @@
 import base64
 import logging
-import os
 from flask import current_app
 import requests
 
@@ -134,23 +133,31 @@ class OpenAIREProvider(AuthorityProvider):
     @staticmethod
     def get_program_from_funding(funding_tree):
         """ Explicitly search for the first program in the funding tree """
-        if funding_tree == []:
+        
+        if not funding_tree:
             return "N/A"
-        if isinstance(funding_tree, list):
-            funder_info = funding_tree[0].items()        
-        else:
-            funder_info = funding_tree.items()
-            
+        
+        funder_info = funding_tree[0].items() if isinstance(funding_tree, list) else funding_tree.items()
+        
         for _, value in funder_info:
-            if isinstance(value, dict):
-                if "parent" in value and value["parent"] is not None:
-                    for _, value in value["parent"].items():
-                        if "class" in value:
-                            return value["class"]["$"]
-                if "class" in value:
-                    return value["class"]["$"]
-                
+            program = OpenAIREProvider._extract_program(value)
+            if program:
+                return program
+        
         return "N/A"
+
+    @staticmethod
+    def _extract_program(value):
+        """ Helper function to extract program from a value """
+        if isinstance(value, dict):
+            if "parent" in value and value["parent"] is not None:
+                program = OpenAIREProvider._extract_program(value["parent"])
+                if program:
+                    return program.get("class", {}).get("$", "N/A")
+            
+            return value.get("class", {}).get("$", "N/A")
+        
+        return None
     
     @staticmethod
     def to_vocabulary_item(record):
@@ -218,7 +225,7 @@ class OpenAIREProvider(AuthorityProvider):
             subject_list = [subject_list]
         
         for subject in subject_list:
-            if subject is not None:
+            if isinstance(subject, dict):
                 subjects.append({
                     "id": subject.get("@classid", ""),
                     "subject": subject.get("$", "")
