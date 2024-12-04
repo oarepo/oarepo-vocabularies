@@ -153,7 +153,7 @@ class OpenAIREProvider(AuthorityProvider):
     def _extract_program(value):
         """Helper function to extract program from a value"""
         if isinstance(value, dict):
-            if "parent" in value and value["parent"] is not None:
+            if "parent" in value and value["parent"]:
                 program = OpenAIREProvider._extract_program(value["parent"])
                 if program:
                     return program.get("class", {}).get("$", "N/A")
@@ -229,11 +229,11 @@ class OpenAIREProvider(AuthorityProvider):
 
         subject_list = project.get("subject", [])
 
-        if not isinstance(subject_list, list) and subject_list is not None:
+        if not isinstance(subject_list, list) and subject_list:
             subject_list = [subject_list]
 
         for subject in subject_list:
-            if isinstance(subject, dict):
+            if subject and isinstance(subject, dict):
                 subjects.append(
                     {"id": subject.get("@classid", ""), "subject": subject.get("$", "")}
                 )
