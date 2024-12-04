@@ -210,8 +210,8 @@ class OpenAIREProvider(AuthorityProvider):
         funding = project.get("fundingtree", [])
         
         funder = {
-            "id": OpenAIREProvider.dict_get(funding, "funder", "id", "$"),
-            "name": OpenAIREProvider.dict_get(funding, "funder", "name", "$"),
+            "id": OpenAIREProvider.dict_get(funding, "funder", "id", "$") or "",
+            "name": OpenAIREProvider.dict_get(funding, "funder", "name", "$") or "",
         }
         
         program = OpenAIREProvider.get_program_from_funding(funding)

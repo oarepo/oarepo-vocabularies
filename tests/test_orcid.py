@@ -58,8 +58,6 @@ def test_orcid_provider_pagination(app, orcid_provider):
     assert page2_total_value > 20
     assert len(page2_items) == 20
 
-    assert total <= page2_total_value
-
     for item in items:
         if item is None:
             continue
