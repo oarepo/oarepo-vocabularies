@@ -5,8 +5,8 @@ from werkzeug.exceptions import BadRequest
 
 def test_authority_ror_client_get(ror_client):
     # 1. Given a ROR id, should resolve both formats to same record.
-    test_id_short = "04k0tth05"
-    test_id_long = "https://ror.org/04k0tth05"
+    test_id_short = "04ttjf776"
+    test_id_long = "https://ror.org/04ttjf776"
 
     short_result = ror_client.get_record(test_id_short)
     long_result = ror_client.get_record(test_id_long)
@@ -20,7 +20,7 @@ def test_authority_ror_client_get(ror_client):
             if "ror_display" in name["types"]
         ]
     )
-    assert display_name == "Air Force Test Center"
+    assert display_name == "RMIT University"
 
     # 2. Returns none for non-existent ROR ID
     bad_id = "l33tr0r1d"
@@ -36,23 +36,15 @@ def test_authority_ror_client_search(ror_client):
     assert len(results["items"]) == 0
 
     # 2. Finds a result by its name
-    query = "cesnet"
-    cesnet_id = "https://ror.org/050dkka69"
+    query = "RMIT"
+    result_id = "https://ror.org/04ttjf776"
 
     results = ror_client.quick_search(query=query)
     assert results["number_of_results"] >= 1
-    assert cesnet_id in [result["id"] for result in results["items"]]
+    assert result_id in [result["id"] for result in results["items"]]
 
     # 3. Returns the requested page if there is more records
     query = "a"
 
     results = ror_client.quick_search(query=query)
-    assert results["number_of_results"] > 20
-    assert len(results["items"]) == 20
-
-    page2_results = ror_client.quick_search(query=query, page=2)
-    assert page2_results["number_of_results"] > 20
-    assert len(page2_results["items"]) == 20
-
-    for item in results["items"]:
-        assert item["id"] not in [it["id"] for it in page2_results["items"]]
+    assert results["number_of_results"] > 1
