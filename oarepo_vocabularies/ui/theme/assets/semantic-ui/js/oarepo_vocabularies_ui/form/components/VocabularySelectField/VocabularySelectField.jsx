@@ -13,6 +13,7 @@ export const VocabularySelectField = ({
   fieldPath,
   externalAuthority,
   multiple,
+  filterFunction,
   ...restProps
 }) => {
   const suggestionsConfig = {
@@ -21,12 +22,18 @@ export const VocabularySelectField = ({
   if (externalAuthority) {
     suggestionsConfig.externalSuggestionApi = `${suggestionsConfig.suggestionAPIUrl}/authoritative`;
   }
+
+  function _serializeSuggestions(suggestions) {
+    // We need to do post-filtering here (it seems impossible to add pre-filter to suggestion API query)
+    return serializeVocabularySuggestions(suggestions).filter(opt => filterFunction(opt));
+  }
+
   return (
     <RelatedSelectField
       fieldPath={fieldPath}
       {...suggestionsConfig}
       selectOnBlur={false}
-      serializeSuggestions={serializeVocabularySuggestions}
+      serializeSuggestions={_serializeSuggestions}
       multiple={multiple}
       deburr
       serializeAddedValue={serializeAddedValue}
@@ -40,6 +47,7 @@ VocabularySelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   externalAuthority: PropTypes.bool,
   multiple: PropTypes.bool,
+  filterFunction: PropTypes.func,
 };
 
 VocabularySelectField.defaultProps = {
@@ -49,4 +57,5 @@ VocabularySelectField.defaultProps = {
     // TODO: remove after #BE-96 gets resolved
     Accept: "application/json",
   },
+  filterFunction: opt => opt,
 };
