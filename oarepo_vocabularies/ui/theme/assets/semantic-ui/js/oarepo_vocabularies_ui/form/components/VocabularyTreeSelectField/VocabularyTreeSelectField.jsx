@@ -73,6 +73,10 @@ export const VocabularyTreeSelectField = ({
     setSelected(newSelected);
   };
 
+  const handleModalClose = () => {
+    setSelected(getCurrentSelections())
+  }
+
   const handleSubmit = React.useCallback(
     (currentValue) => {
       const newValue = [
@@ -104,6 +108,7 @@ export const VocabularyTreeSelectField = ({
         placeholder={placeholder}
         options={serializedOptions}
         value={value}
+        onClose={handleModalClose}
         root={root}
         showLeafsOnly={showLeafsOnly}
         filterFunction={filterFunction}
