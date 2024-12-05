@@ -45,6 +45,7 @@ export const TreeSelectFieldModal = ({
   filterFunction,
   onSubmit,
   onSelect,
+  onClose,
   selected,
   loadingMessage,
   vocabularyType,
@@ -93,6 +94,13 @@ export const TreeSelectFieldModal = ({
   );
 
   const columnsCount = columns.length;
+
+  function _onClose () {
+    close()
+    setKeybState([])
+    setCurrentAncestors(valueAncestors)
+    onClose()
+  }
 
   const openHierarchyNode = (parent, level) => () => {
     let updatedParents = [...currentAncestors];
@@ -297,7 +305,8 @@ export const TreeSelectFieldModal = ({
       trigger={trigger}
       open={isOpen}
       onOpen={open}
-      onClose={close}
+      onClose={_onClose}
+      closeOnDimmerClick={false}
       className="tree-field"
     >
       <ModalHeader>
@@ -382,6 +391,7 @@ TreeSelectFieldModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   selected: PropTypes.array.isRequired,
   onSelect: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   vocabularyType: PropTypes.string.isRequired,
   trigger: PropTypes.node,
   root: PropTypes.string,
