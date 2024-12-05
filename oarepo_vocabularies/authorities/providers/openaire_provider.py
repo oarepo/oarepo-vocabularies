@@ -164,7 +164,6 @@ class OpenAIREProvider(AuthorityProvider):
 
     @staticmethod
     def to_vocabulary_item(record):
-
         # Parse the record
         header = record.get("header", {})
         metadata = record.get("metadata", {})
