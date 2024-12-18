@@ -6,6 +6,7 @@ import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { vocabularyItemsToColumnOptions } from "./util";
 import { VocabularyPickerField } from "../VocabularyPickerField";
+import { useModalTrigger } from "../../hooks";
 
 export const VocabularyTreeSelectField = ({
   vocabulary,
@@ -27,6 +28,12 @@ export const VocabularyTreeSelectField = ({
   const [selected, setSelected] = useState(getCurrentSelections);
 
   const value = getIn(values, fieldPath, multiple ? [] : {});
+
+  console.log({ value, fieldPath });
+  const _trigger = useModalTrigger({
+    value,
+    trigger: triggerButton,
+  });
 
   const { all: allOptions } = vocabularies[vocabulary];
   if (!allOptions) {
@@ -74,8 +81,8 @@ export const VocabularyTreeSelectField = ({
   };
 
   const handleModalClose = () => {
-    setSelected(getCurrentSelections())
-  }
+    setSelected(getCurrentSelections());
+  };
 
   const handleSubmit = React.useCallback(
     (currentValue) => {
@@ -115,7 +122,7 @@ export const VocabularyTreeSelectField = ({
         onSubmit={handleSubmit}
         onSelect={handleSelect}
         selected={selected}
-        trigger={triggerButton}
+        trigger={_trigger}
         vocabularyType={vocabulary}
         {...restProps}
       />

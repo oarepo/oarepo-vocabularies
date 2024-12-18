@@ -32,7 +32,6 @@ import {
   isColumnOptionHidden,
 } from "./util";
 import TreeSelectValues from "./TreeSelectValues";
-import { VocabularyModalTrigger } from "../VocabularyModalTrigger";
 
 export const TreeSelectFieldModal = ({
   multiple,
@@ -95,11 +94,11 @@ export const TreeSelectFieldModal = ({
 
   const columnsCount = columns.length;
 
-  function _onClose () {
-    close()
-    setKeybState([])
-    setCurrentAncestors(valueAncestors)
-    onClose()
+  function _onClose() {
+    close();
+    setKeybState([]);
+    setCurrentAncestors(valueAncestors);
+    onClose();
   }
 
   const openHierarchyNode = (parent, level) => () => {
@@ -329,8 +328,8 @@ export const TreeSelectFieldModal = ({
           <div className="columns-container">
             <Grid columns={1}>
               <OptionsLoadingSkeleton
-                  loading={suggestionsLoading}
-                  loadingMessage={loadingMessage}
+                loading={suggestionsLoading}
+                loadingMessage={loadingMessage}
               />
               {noSearchResults && (
                 <Grid.Column stretched>
@@ -402,5 +401,4 @@ TreeSelectFieldModal.propTypes = {
 
 TreeSelectFieldModal.defaultProps = {
   loadingMessage: i18next.t("Loading..."),
-  trigger: <VocabularyModalTrigger />,
 };
