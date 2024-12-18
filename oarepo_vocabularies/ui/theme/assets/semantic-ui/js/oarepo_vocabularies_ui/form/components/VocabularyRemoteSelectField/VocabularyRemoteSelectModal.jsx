@@ -122,6 +122,17 @@ export const VocabularyRemoteSelectModal = ({
   );
 };
 
+VocabularyRemoteSelectModal.propTypes = {
+  vocabulary: PropTypes.string,
+  trigger: PropTypes.node,
+  triggerLabel: PropTypes.string,
+  label: PropTypes.string,
+  overriddenComponents: PropTypes.object,
+  initialAction: PropTypes.string,
+  fieldPath: PropTypes.string,
+  allowAdditions: PropTypes.bool,
+};
+
 VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
