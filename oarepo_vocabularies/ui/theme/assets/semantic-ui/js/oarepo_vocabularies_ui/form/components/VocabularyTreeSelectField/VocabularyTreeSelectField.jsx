@@ -29,7 +29,6 @@ export const VocabularyTreeSelectField = ({
 
   const value = getIn(values, fieldPath, multiple ? [] : {});
 
-  console.log({ value, fieldPath });
   const _trigger = useModalTrigger({
     value,
     trigger: triggerButton,
