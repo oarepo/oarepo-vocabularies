@@ -4,7 +4,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import PropTypes from "prop-types";
 
 export const VocabularyModalTrigger = React.forwardRef((props, ref) => {
-  const { label, ...rest } = props;
+  const { icon = "add", label, ...rest } = props;
 
   return (
     <Form.Button
@@ -15,17 +15,19 @@ export const VocabularyModalTrigger = React.forwardRef((props, ref) => {
       labelPosition="left"
       {...rest}
     >
-      <Icon name="add" />
+      <Icon name={icon} />
       {label}
     </Form.Button>
   );
 });
 
 VocabularyModalTrigger.propTypes = {
+  icon: PropTypes.string,
   label: PropTypes.string,
 };
 
 VocabularyModalTrigger.defaultProps = {
+  icon: "add",
   label: i18next.t("Choose item"),
 };
 export default VocabularyModalTrigger;

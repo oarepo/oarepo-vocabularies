@@ -9,12 +9,13 @@ import VocabularyAddItemForm from "./VocabularyAddItemForm";
 import { ModalActions } from "./constants";
 import { SelectedVocabularyValues } from "../SelectedVocabularyValues";
 import { useFieldValue } from "./context";
-import { VocabularyModalTrigger } from "../VocabularyModalTrigger";
 import { useFormikContext, getIn } from "formik";
+import { useModalTrigger } from "../../hooks";
 
 export const VocabularyRemoteSelectModal = ({
   vocabulary,
   trigger,
+  triggerLabel,
   label,
   overriddenComponents,
   initialAction = ModalActions.SEARCH,
@@ -23,9 +24,14 @@ export const VocabularyRemoteSelectModal = ({
   ...rest
 }) => {
   const { isOpen, close, open } = useModal();
-  const { multiple, addValue, removeValue } = useFieldValue();
+  const { multiple, addValue, removeValue, value } = useFieldValue();
   const [action, setAction] = React.useState(initialAction);
   const { errors } = useFormikContext();
+  const _trigger = useModalTrigger({
+    value,
+    defaultLabel: triggerLabel,
+    trigger,
+  });
   const fieldError = getIn(errors, fieldPath, null);
 
   const inSearchMode = action === ModalActions.SEARCH;
@@ -68,7 +74,7 @@ export const VocabularyRemoteSelectModal = ({
       <Modal
         onOpen={() => open()}
         open={isOpen}
-        trigger={trigger}
+        trigger={_trigger}
         onClose={() => {
           close();
         }}
@@ -117,20 +123,20 @@ export const VocabularyRemoteSelectModal = ({
 };
 
 VocabularyRemoteSelectModal.propTypes = {
-  trigger: PropTypes.object,
+  vocabulary: PropTypes.string,
+  trigger: PropTypes.node,
+  triggerLabel: PropTypes.string,
   label: PropTypes.string,
-  initialAction: PropTypes.string,
-  vocabulary: PropTypes.string.isRequired,
   overriddenComponents: PropTypes.object,
-  fieldPath: PropTypes.string.isRequired,
-  allowAdditions: PropTypes.bool
+  initialAction: PropTypes.string,
+  fieldPath: PropTypes.string,
+  allowAdditions: PropTypes.bool,
 };
 
 VocabularyRemoteSelectModal.defaultProps = {
   initialAction: ModalActions.SEARCH,
   label: i18next.t("item"),
   overriddenComponents: {},
-  trigger: <VocabularyModalTrigger />,
   allowAdditions: true,
 };
 export default VocabularyRemoteSelectModal;
