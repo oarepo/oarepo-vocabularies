@@ -301,6 +301,7 @@ export const TreeSelectFieldModal = ({
 
   return (
     <Modal
+      closeIcon
       trigger={trigger}
       open={isOpen}
       onOpen={open}
