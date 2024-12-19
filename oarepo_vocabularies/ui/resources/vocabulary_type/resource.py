@@ -18,7 +18,7 @@ class VocabularyTypeUIResource(UIResource):
         list_route_without_slash = list_route[:-1]
         return [
             route("GET", list_route, self.list),
-            route("GET", list_route_without_slash, self.list_without_slash),
+            route("GET", list_route_without_slash, self.list, endpoint="list-route-without-slash"),
         ]
 
     def list(self):
@@ -52,7 +52,7 @@ class VocabularyTypeUIResource(UIResource):
         return _catalog.render(
             self.config.templates["list"], list_data=serialized_list_data
         )
-
+    """
     def list_without_slash(self):
         split_path = request.full_path.split("?", maxsplit=1)
         path_with_slash = split_path[0] + "/"
@@ -60,3 +60,4 @@ class VocabularyTypeUIResource(UIResource):
             return redirect(path_with_slash, code=302)
         else:
             return redirect(path_with_slash + "?" + split_path[1], code=302)
+    """
