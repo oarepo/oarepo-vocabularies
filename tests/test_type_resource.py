@@ -46,15 +46,9 @@ def test_accept_header(
     hits_licences = [hit for hit in hits if hit["id"] == "licences"][0]
     assert hits_licences["count"] == 0
 
+
 def test_ui_endpoint_without_slash(
-        app,
-        client,
-        db,
-        identity,
-        vocab_cf,
-        lang_data_many,
-        empty_licences,
-        search_clear,
+    app, client, db, identity, vocab_cf, lang_data_many, fake_manifest
 ):
     resp_1 = client.get("/vocabularies/")
     resp_2 = client.get("/vocabularies")
