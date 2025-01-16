@@ -12,6 +12,7 @@ export const VocabularyRemoteSelectField = ({
   multiple,
   required,
   triggerButton,
+  triggerLabel,
   overriddenComponents,
   modalHeader,
   ...restProps
@@ -28,6 +29,7 @@ export const VocabularyRemoteSelectField = ({
       <VocabularyRemoteSelectModal
         vocabulary={vocabulary}
         trigger={triggerButton}
+        triggerLabel={triggerLabel}
         label={modalHeader}
         overriddenComponents={overriddenComponents}
         fieldPath={fieldPath}
@@ -46,6 +48,7 @@ VocabularyRemoteSelectField.propTypes = {
   multiple: PropTypes.bool,
   required: PropTypes.bool,
   triggerButton: PropTypes.node,
+  triggerLabel: PropTypes.string,
   overriddenComponents: PropTypes.object,
 };
 
