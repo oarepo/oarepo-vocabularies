@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { SelectField } from "react-invenio-forms";
-import { useFormConfig, search } from "@js/oarepo_ui";
+import { useFormConfig, search } from "@js/oarepo_ui/forms";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
