@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 import _join from "lodash/join";
 import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
@@ -83,7 +83,10 @@ export const serializeVocabularyItems = (vocabularyItems) =>
         ) : (
           <Breadcrumb icon="left angle" sections={sections} />
         ),
-      name: text,
+      name:
+        "title" in vocabularyItem
+          ? getTitleFromMultilingualObject(vocabularyItem.title)
+          : text,
       icon: undefined,
     };
   });
