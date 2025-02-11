@@ -70,7 +70,10 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
 
         form_config["vocabularies"] = form_config_vocabularies
         self._prefetch_vocabularies_to_form_config(
-            form_config_vocabularies, vocabularies_to_prefetch, identity
+            form_config_vocabularies,
+            vocabularies_to_prefetch,
+            identity,
+            vocabulary_config,
         )
 
         for vocabularies in form_config["vocabularies"].values():
@@ -94,22 +97,39 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         return used_vocabularies
 
     def _prefetch_vocabularies_to_form_config(
-        self, form_config_vocabularies, vocabularies_to_prefetch, identity
+        self,
+        form_config_vocabularies,
+        vocabularies_to_prefetch,
+        identity,
+        vocabulary_config,
     ):
-        prefetched_vocabularies: Dict[str, Dict[str, Any]]
-        prefetched_vocabularies = current_ui_vocabulary_cache.get(
-            vocabularies_to_prefetch
+        prefetched_vocabularies: Dict[str, Dict[str, Any]] = (
+            current_ui_vocabulary_cache.get(vocabularies_to_prefetch)
         )
+
+        def get_sort_key(item):
+            ancestors = item.get("hierarchy", {}).get("ancestors", [])
+            return ancestors[-1] if ancestors else ""
+
         for vocabulary_type, items in prefetched_vocabularies.items():
+            by_type = form_config_vocabularies[vocabulary_type]
+
+            returned_items = []
             for item_id, item in items.items():
-                by_type = form_config_vocabularies[vocabulary_type]
                 returned_item = {
                     "value": item_id,
                     **item,
                 }
-                by_type["all"].append(returned_item)
-                if "featured" in returned_item.get("tags", []):
-                    by_type["featured"].append(returned_item)
+                returned_items.append(returned_item)
+
+            if vocabulary_config[vocabulary_type].get("hierarchical", None):
+                returned_items = sorted(returned_items, key=get_sort_key)
+
+            by_type["all"] = returned_items
+
+            by_type["featured"] = [
+                item for item in returned_items if "featured" in item.get("tags", [])
+            ]
 
     @staticmethod
     def create_form_config_vocabularies(
@@ -131,9 +151,9 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                 form_config_vocabularies[vocabulary_type]["featured"] = []
             else:
                 # TODO: use vocabulary service config and prefix???
-                form_config_vocabularies[vocabulary_type][
-                    "url"
-                ] = f"/api/vocabularies/{vocabulary_type}"
+                form_config_vocabularies[vocabulary_type]["url"] = (
+                    f"/api/vocabularies/{vocabulary_type}"
+                )
         return vocabularies_to_prefetch, form_config_vocabularies
 
 
