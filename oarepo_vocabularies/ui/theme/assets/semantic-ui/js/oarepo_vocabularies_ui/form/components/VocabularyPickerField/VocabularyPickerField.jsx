@@ -31,7 +31,7 @@ export const VocabularyPickerField = ({
   onChange = () => {},
   ...uiProps
 }) => {
-  const { values, setFieldValue } = useFormikContext();
+  const { values, setFieldValue, validateField } = useFormikContext();
   const _initialValue = initialValue ?? multiple ? [] : {};
   const fieldValue = getIn(values, fieldPath, _initialValue);
 
@@ -40,10 +40,12 @@ export const VocabularyPickerField = ({
 
   const addValue = (item) => {
     if (!multiple) {
-      setFieldValue(fieldPath, item, true);
+      setFieldValue(fieldPath, item);
+      validateField(fieldPath);
     } else {
       const newValue = [...sanitizedValue, item];
-      setFieldValue(fieldPath, newValue, true);
+      setFieldValue(fieldPath, newValue);
+      validateField(fieldPath);
       onChange(newValue);
     }
   };
@@ -54,7 +56,8 @@ export const VocabularyPickerField = ({
     } else {
       const newValue = [...sanitizedValue];
       _remove(newValue, (value) => value.id === item.id);
-      setFieldValue(fieldPath, newValue, true);
+      setFieldValue(fieldPath, newValue);
+      validateField(fieldPath);
       onChange(newValue);
     }
   };
