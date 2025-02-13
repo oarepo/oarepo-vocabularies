@@ -27,6 +27,7 @@ sh forked_install.sh invenio-records-resources
 pip uninstall -y uritemplate
 pip install uritemplate
 
+
 invenio index destroy --force --yes-i-know || true
 
 pytest -k "not test_cache and not test_complex_import" tests
