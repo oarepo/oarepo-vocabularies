@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useFormConfig } from "@js/oarepo_ui";
 import { getIn, useFormikContext } from "formik";
 import PropTypes from "prop-types";
@@ -25,7 +25,12 @@ export const VocabularyTreeSelectField = ({
   const { formConfig } = useFormConfig();
   const { vocabularies } = formConfig;
   const { values, setFieldValue } = useFormikContext();
-  const value = getIn(values, fieldPath, multiple ? [] : {});
+  // it looks clunky, but unfortunately, when this field is empty, the getIn,
+  // creates new object or array every time, and it causes constant rerendering
+
+  const emptyArray = useMemo(() => [], []);
+  const emptyObject = useMemo(() => ({}), []);
+  const value = getIn(values, fieldPath, multiple ? emptyArray : emptyObject);
 
   const { all: allOptions } = vocabularies[vocabulary];
   if (!allOptions) {
