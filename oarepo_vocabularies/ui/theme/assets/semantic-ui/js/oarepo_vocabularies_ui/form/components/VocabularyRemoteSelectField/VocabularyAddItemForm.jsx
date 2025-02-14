@@ -1,10 +1,10 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { BaseForm, FormFeedback } from "@js/oarepo_ui";
+import { BaseForm, FormFeedback, loadAppComponents } from "@js/oarepo_ui";
 import { VocabularyFormSchema } from "@js/oarepo_vocabularies";
 import { Grid, Ref, Sticky, Modal, Button } from "semantic-ui-react";
 import { buildUID } from "react-searchkit";
-import Overridable, { OverridableContext } from "react-overridable";
+import Overridable, { OverridableContext, overrideStore } from "react-overridable";
 import { CustomFields } from "react-invenio-forms";
 import { VocabularyFormFields } from "../VocabularyFormFields";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
@@ -32,6 +32,12 @@ SubmitButton.propTypes = {
   formRef: PropTypes.any,
 };
 
+export const componentIds = [
+  "Errors.container",
+  "FormFields.container",
+  "CustomFields.container",
+];
+
 export const VocabularyAddItemForm = ({
   backToSearch,
   onSubmit,
@@ -39,11 +45,21 @@ export const VocabularyAddItemForm = ({
   overriddenComponents,
 }) => {
   const formFeedbackRef = React.useRef(null);
-  const overridableIdPrefix = "VocabularyRemoteSelect";
+  // TODO: this better has to come from some formConfig API request
+  // To keep the form ui consistent, we use the same ID as the main create vocabulary item form
+  const overridableIdPrefix = "Oarepovocabularies.Form";
   const formRef = React.useRef();
+  const [loadedComponents, setLoadedComponents] = React.useState(overriddenComponents);
 
-  return (
-    <OverridableContext.Provider value={overriddenComponents}>
+  React.useEffect(() => {
+    loadAppComponents({
+      overridableIdPrefix,
+      componentIds,
+      overriddenComponents,
+    }).then(() => setLoadedComponents(overrideStore.getAll()))
+  }, [])
+
+  return <OverridableContext.Provider value={loadedComponents}>
       <Modal.Content>
         <BaseForm
           id="vocabulary-form"
@@ -106,7 +122,6 @@ export const VocabularyAddItemForm = ({
         <SubmitButton onSubmit={onSubmit} formRef={formRef} />
       </Modal.Actions>
     </OverridableContext.Provider>
-  );
 };
 
 VocabularyAddItemForm.propTypes = {
