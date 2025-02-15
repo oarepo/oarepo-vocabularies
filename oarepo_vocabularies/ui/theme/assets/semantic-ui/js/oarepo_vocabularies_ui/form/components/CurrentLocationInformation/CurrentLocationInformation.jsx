@@ -7,8 +7,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import {
   ErrorElement,
   useFormConfig,
-  OARepoDepositApiClient,
-  OARepoDepositSerializer,
+  httpApplicationJson,
 } from "@js/oarepo_ui";
 import PropTypes from "prop-types";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
@@ -25,15 +24,11 @@ const NewTopLevelItemMessage = () => (
 const NewChildItemMessage = ({ record, newChildItemParentId }) => {
   const {
     record: { type },
-    formConfig: { createUrl },
   } = useFormConfig();
 
-  // We just need to read the parent vocabulary to get the title
-  const recordSerializer = new OARepoDepositSerializer(["errors", "expanded"], ["__key"]);
-  const apiClient = new OARepoDepositApiClient(createUrl, recordSerializer);
-
   async function read(recordUrl) {
-    return await apiClient.readDraft({ self: recordUrl });
+    const res = await httpApplicationJson.get(recordUrl);
+    return res.data;
   }
 
   const { data, isLoading, error } = useQuery({
