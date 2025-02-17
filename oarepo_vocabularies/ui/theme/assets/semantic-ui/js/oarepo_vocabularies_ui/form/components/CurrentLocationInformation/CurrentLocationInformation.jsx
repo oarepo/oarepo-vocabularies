@@ -8,6 +8,7 @@ import {
   ErrorElement,
   useFormConfig,
   httpApplicationJson,
+  getTitleFromMultilingualObject,
 } from "@js/oarepo_ui";
 import PropTypes from "prop-types";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
@@ -43,8 +44,7 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
       </Dimmer>
     );
 
-  const localizedVocabularyTitle = !_isEmpty(data) ? 
-    data.title[i18next.language] || data.title[i18next.options.fallbackLng] || Object.values(data.title).shift() : "";
+  const localizedVocabularyTitle = !_isEmpty(data) ? getTitleFromMultilingualObject(data.title) : "";
 
   return (
     <React.Fragment>
