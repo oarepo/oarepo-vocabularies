@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { getIn, useFormikContext } from "formik";
 import _isEmpty from "lodash/isEmpty";
 import _remove from "lodash/remove";
-
 import { Form, Grid } from "semantic-ui-react";
 import { FieldValueProvider } from "../VocabularyRemoteSelectField/context";
 import {
@@ -31,7 +30,7 @@ export const VocabularyPickerField = ({
   onChange = () => {},
   ...uiProps
 }) => {
-  const { values, setFieldValue, validateField } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext();
   const _initialValue = initialValue ?? multiple ? [] : {};
   const fieldValue = getIn(values, fieldPath, _initialValue);
 
@@ -40,12 +39,10 @@ export const VocabularyPickerField = ({
 
   const addValue = (item) => {
     if (!multiple) {
-      setFieldValue(fieldPath, item);
-      validateField(fieldPath);
+      setFieldValue(fieldPath, item, true);
     } else {
       const newValue = [...sanitizedValue, item];
-      setFieldValue(fieldPath, newValue);
-      validateField(fieldPath);
+      setFieldValue(fieldPath, newValue, true);
       onChange(newValue);
     }
   };
@@ -56,8 +53,7 @@ export const VocabularyPickerField = ({
     } else {
       const newValue = [...sanitizedValue];
       _remove(newValue, (value) => value.id === item.id);
-      setFieldValue(fieldPath, newValue);
-      validateField(fieldPath);
+      setFieldValue(fieldPath, newValue, true);
       onChange(newValue);
     }
   };
