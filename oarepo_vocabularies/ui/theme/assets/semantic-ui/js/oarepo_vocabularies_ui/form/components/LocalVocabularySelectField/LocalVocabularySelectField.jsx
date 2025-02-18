@@ -120,7 +120,9 @@ export const LocalVocabularySelectField = ({
       formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
     } else {
       let vocabularyItem = allOptions.find((o) => o.value === data.value);
-      vocabularyItem = { ...vocabularyItem, id: vocabularyItem?.value };
+      vocabularyItem = data.value
+        ? { ...vocabularyItem, id: vocabularyItem?.value }
+        : {};
       formikProps.form.setFieldValue(fieldPath, vocabularyItem);
     }
   };
