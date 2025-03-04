@@ -2,12 +2,13 @@
 
 import React from "react";
 import _reverse from "lodash/reverse";
+import _isEmpty from "lodash/isEmpty";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import {
   ErrorElement,
-  I18nString,
   useFormConfig,
-  useDepositApiClient,
+  httpApplicationJson,
+  getTitleFromMultilingualObject,
 } from "@js/oarepo_ui";
 import PropTypes from "prop-types";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
@@ -21,20 +22,21 @@ const breadcrumbSerialization = (array) =>
 const NewTopLevelItemMessage = () => (
   <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
 );
-const NewChildItemMessage = ({ newChildItemParentId }) => {
+const NewChildItemMessage = ({ record, newChildItemParentId }) => {
   const {
     record: { type },
   } = useFormConfig();
 
-  const {
-    read,
-    values: { id },
-  } = useDepositApiClient();
+  async function read(recordUrl) {
+    const res = await httpApplicationJson.get(recordUrl);
+    return res.data;
+  }
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
     queryFn: () => read(`/api/vocabularies/${type}/${newChildItemParentId}`),
   });
+
   if (isLoading)
     return (
       <Dimmer active inverted>
@@ -42,15 +44,14 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
       </Dimmer>
     );
 
+  const localizedVocabularyTitle = !_isEmpty(data) ? getTitleFromMultilingualObject(data.title) : "";
+
   return (
     <React.Fragment>
       {!isLoading && data && (
         <VocabularyBreadcrumbMessage
           header={
-            <div className="header">
-              {i18next.t("newChildItemMessage")}{" "}
-              <I18nString value={data.title} />
-            </div>
+            `${i18next.t("newChildItemMessage")} ${localizedVocabularyTitle}`
           }
           content={
             <VocabularyBreadcrumb
@@ -60,7 +61,7 @@ const NewChildItemMessage = ({ newChildItemParentId }) => {
                 ),
                 {
                   key: "new",
-                  content: id ?? i18next.t("newItem"),
+                  content: !_isEmpty(record?.id) ? record.id : i18next.t("newItem"),
                   active: true,
                 },
               ]}
@@ -103,7 +104,7 @@ export const CurrentLocationInformation = ({
   if (!editMode && !newChildItemParentId) {
     return <NewTopLevelItemMessage />;
   } else if (!editMode) {
-    return <NewChildItemMessage newChildItemParentId={newChildItemParentId} />;
+    return <NewChildItemMessage record={record} newChildItemParentId={newChildItemParentId} />;
   } else {
     return <EditMessage record={record} />;
   }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useFormConfig } from "@js/oarepo_ui";
 import { getIn, useFormikContext } from "formik";
 import PropTypes from "prop-types";
@@ -25,20 +25,65 @@ export const VocabularyTreeSelectField = ({
   const { formConfig } = useFormConfig();
   const { vocabularies } = formConfig;
   const { values, setFieldValue } = useFormikContext();
-  const [selected, setSelected] = useState(getCurrentSelections);
+  // it looks clunky, but unfortunately, when this field is empty, the getIn,
+  // creates new object or array every time, and it causes constant rerendering
 
-  const value = getIn(values, fieldPath, multiple ? [] : {});
-
-  const _trigger = useModalTrigger({
-    value,
-    trigger: triggerButton,
-  });
+  const emptyArray = useMemo(() => [], []);
+  const emptyObject = useMemo(() => ({}), []);
+  const value = getIn(values, fieldPath, multiple ? emptyArray : emptyObject);
 
   const { all: allOptions } = vocabularies[vocabulary];
   if (!allOptions) {
     console.error(`Missing options for ${vocabulary} inside:`, vocabularies);
   }
+  const handleSubmit = React.useCallback(
+    (currentValue) => {
+      const newValue = currentValue.map((item) => ({
+        id: item.value,
+        title: { [i18next.language]: item.name },
+      }));
+      setFieldValue(fieldPath, multiple ? newValue : newValue[0]);
+    },
+    [fieldPath, multiple, setFieldValue]
+  );
 
+  return (
+    <MemoizedVocabularyTreeSelectPresentation
+      fieldPath={fieldPath}
+      label={label}
+      helpText={helpText}
+      multiple={multiple}
+      required={required}
+      triggerButton={triggerButton}
+      placeholder={placeholder}
+      root={root}
+      showLeafsOnly={showLeafsOnly}
+      filterFunction={filterFunction}
+      value={value}
+      allOptions={allOptions}
+      onSubmit={handleSubmit}
+      vocabulary={vocabulary}
+      {...restProps}
+    />
+  );
+};
+const VocabularyTreeSelectPresentation = ({
+  fieldPath,
+  label,
+  helpText,
+  multiple,
+  required,
+  triggerButton,
+  placeholder,
+  root,
+  showLeafsOnly,
+  filterFunction,
+  value,
+  allOptions,
+  onSubmit,
+  vocabulary,
+  ...restProps
+}) => {
   const serializedOptions = React.useMemo(
     () =>
       vocabularyItemsToColumnOptions(
@@ -47,8 +92,14 @@ export const VocabularyTreeSelectField = ({
         showLeafsOnly,
         filterFunction
       ),
-    [value, allOptions, root, showLeafsOnly, filterFunction]
+    [allOptions, root, showLeafsOnly, filterFunction]
   );
+  const [selected, setSelected] = useState(() => getCurrentSelections());
+
+  const _trigger = useModalTrigger({
+    value,
+    trigger: triggerButton,
+  });
 
   function getCurrentSelections(newValue = null) {
     const _value = newValue || value;
@@ -61,9 +112,8 @@ export const VocabularyTreeSelectField = ({
       return (
         serializedOptions.find((option) => option.value === _value.id) || []
       );
-    } else {
-      return [];
     }
+    return [];
   }
 
   const handleSelect = React.useCallback((newValue) => {
@@ -72,31 +122,16 @@ export const VocabularyTreeSelectField = ({
     } else {
       setSelected(newValue);
     }
-  });
+  }, []);
 
-  const handleChange = (newValue) => {
+  const handleChange = React.useCallback((newValue) => {
     const newSelected = getCurrentSelections(newValue);
     setSelected(newSelected);
-  };
+  }, []);
 
-  const handleModalClose = () => {
+  const handleModalClose = React.useCallback(() => {
     setSelected(getCurrentSelections());
-  };
-
-  const handleSubmit = React.useCallback(
-    (currentValue) => {
-      const newValue = [
-        ...currentValue.map((item) => {
-          return {
-            id: item.value,
-            title: { [i18next.language]: item.name },
-          };
-        }),
-      ];
-      setFieldValue(fieldPath, multiple ? newValue : newValue[0]);
-    },
-    [fieldPath, multiple]
-  );
+  }, [value, serializedOptions]);
 
   return (
     <VocabularyPickerField
@@ -118,7 +153,7 @@ export const VocabularyTreeSelectField = ({
         root={root}
         showLeafsOnly={showLeafsOnly}
         filterFunction={filterFunction}
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
         onSelect={handleSelect}
         selected={selected}
         trigger={_trigger}
@@ -129,6 +164,42 @@ export const VocabularyTreeSelectField = ({
   );
 };
 
+VocabularyTreeSelectPresentation.propTypes = {
+  fieldPath: PropTypes.string.isRequired,
+  multiple: PropTypes.bool,
+  vocabulary: PropTypes.string.isRequired,
+  helpText: PropTypes.string,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  required: PropTypes.bool,
+  root: PropTypes.string,
+  showLeafsOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
+  filterFunction: PropTypes.func,
+  triggerButton: PropTypes.node,
+  value: PropTypes.array,
+  allOptions: PropTypes.array,
+  onSubmit: PropTypes.func,
+};
+
+VocabularyTreeSelectPresentation.defaultProps = {
+  showLeafsOnly: false,
+  filterFunction: undefined,
+  multiple: false,
+  required: false,
+};
+
+const MemoizedVocabularyTreeSelectPresentation = React.memo(
+  VocabularyTreeSelectPresentation,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.value === nextProps.value &&
+      prevProps.allOptions === nextProps.allOptions &&
+      prevProps.root === nextProps.root &&
+      prevProps.showLeafsOnly === nextProps.showLeafsOnly &&
+      prevProps.filterFunction === nextProps.filterFunction
+    );
+  }
+);
 VocabularyTreeSelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
@@ -136,7 +207,6 @@ VocabularyTreeSelectField.propTypes = {
   helpText: PropTypes.string,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   required: PropTypes.bool,
-  optimized: PropTypes.bool,
   root: PropTypes.string,
   showLeafsOnly: PropTypes.bool,
   placeholder: PropTypes.string,
@@ -145,7 +215,6 @@ VocabularyTreeSelectField.propTypes = {
 };
 
 VocabularyTreeSelectField.defaultProps = {
-  optimized: false,
   showLeafsOnly: false,
   filterFunction: undefined,
   multiple: false,

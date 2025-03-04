@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { getIn, useFormikContext } from "formik";
 import _isEmpty from "lodash/isEmpty";
 import _remove from "lodash/remove";
-
 import { Form, Grid } from "semantic-ui-react";
 import { FieldValueProvider } from "../VocabularyRemoteSelectField/context";
 import {

@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { SelectField } from "react-invenio-forms";
-import { useFormConfig } from "@js/oarepo_ui";
+import { useFormConfig, search } from "@js/oarepo_ui/forms";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { search, serializeVocabularyItems } from "@js/oarepo_vocabularies";
+import { serializeVocabularyItems } from "@js/oarepo_vocabularies";
 
 export const processVocabularyItems = (
   options,
@@ -120,7 +120,9 @@ export const LocalVocabularySelectField = ({
       formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
     } else {
       let vocabularyItem = allOptions.find((o) => o.value === data.value);
-      vocabularyItem = { ...vocabularyItem, id: vocabularyItem?.value };
+      vocabularyItem = data.value
+        ? { ...vocabularyItem, id: vocabularyItem?.value }
+        : {};
       formikProps.form.setFieldValue(fieldPath, vocabularyItem);
     }
   };
