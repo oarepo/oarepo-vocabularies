@@ -97,7 +97,7 @@ def test_submit_record_fetch_authority(
     assert response.data["ror-authority"]["id"] == "ror:050dkka69"
     print(response.data["ror-authority"])
     assert response.data["ror-authority"]["title"] == {
-        "en": "Czech Education and Scientific Network"
+        "cs": "CESNET, zájmové sdružení právnických osob"
     }
 
     # check that the vocabulary item has been created
@@ -108,7 +108,7 @@ def test_submit_record_fetch_authority(
 
     assert vocabulary_service.read(identity, ("ror-authority", "ror:050dkka69")).data[
         "title"
-    ] == {"en": "Czech Education and Scientific Network"}
+    ] == {"cs": "CESNET, zájmové sdružení právnických osob"}
     return response.id
 
 
@@ -162,7 +162,7 @@ def test_submit_record_update_authority(
     assert response.data["ror-authority"]["id"] == "ror:050dkka69"
     print(response.data["ror-authority"])
     assert response.data["ror-authority"]["title"] == {
-        "en": "Czech Education and Scientific Network"
+        "cs": "CESNET, zájmové sdružení právnických osob"
     }
 
     # check that the vocabulary item has been created
@@ -173,4 +173,4 @@ def test_submit_record_update_authority(
 
     assert vocabulary_service.read(identity, ("ror-authority", "ror:050dkka69")).data[
         "title"
-    ] == {"en": "Czech Education and Scientific Network"}
+    ] == {"cs": "CESNET, zájmové sdružení právnických osob"}

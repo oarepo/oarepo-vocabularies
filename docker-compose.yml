@@ -1,17 +1,15 @@
 version: '2.2'
-name: test_services
 services:
   search:
-    image: bitnami/opensearch:2
-    restart: 'unless-stopped'
+    image: opensearchproject/opensearch:latest
+    restart: "unless-stopped"
     environment:
       # settings only for development. DO NOT use in production!
       - bootstrap.memory_lock=true
-      - 'OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m'
-      - 'DISABLE_INSTALL_DEMO_CONFIG=true'
-      - 'DISABLE_SECURITY_PLUGIN=true'
-      - 'discovery.type=single-node'
-      - 'OPENSEARCH_PLUGINS=analysis-icu'
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+      - "discovery.type=single-node"
     ulimits:
       memlock:
         soft: -1
@@ -20,30 +18,12 @@ services:
         soft: 65536
         hard: 65536
     mem_limit: 2g
-    expose:
-      - 9200
-      - 9600
     ports:
-      - '127.0.0.1:9200:9200'
+      - "127.0.0.1:9200:9200"
+      - "127.0.0.1:9600:9600"
   cache:
     image: redis:7
     restart: "unless-stopped"
     read_only: true
     ports:
-      - '127.0.0.1:6379:6379'
-  s3:
-    image: minio/minio:latest
-    restart: "unless-stopped"
-    environment:
-      MINIO_ROOT_USER: "tests"
-      MINIO_ROOT_PASSWORD: "teststests"
-    command: server /data --console-address :9001
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-    ports:
-      - "127.0.0.1:19000:9000"
-      - "127.0.0.1:19001:9001"
-    
+      - "127.0.0.1:6379:6379"

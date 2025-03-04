@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "local://awards/award-v1.0.0.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for a vocabulary item.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "identifiers": {
+      "description": "Alternate identifiers for the award.",
+      "type": "array",
+      "items": {
+        "description": "Identifiers object with identifier value and scheme in separate keys.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "identifier": {
+            "description": "An identifier.",
+            "type": "string"
+          },
+          "scheme": {
+            "description": "A scheme.",
+            "type": "string"
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "number": {
+      "type": "string"
+    },
+    "title": {
+      "type": "object",
+      "description": "Title of vocabulary item. Keys are locale codes.",
+      "patternProperties": {
+        "^[a-z]{2}$": {
+          "type": "string"
+        }
+      }
+    },
+    "funder": {
+      "description": "Award's funder.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "An identifier.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "acronym": {
+      "type": "string"
+    },
+    "program": {
+      "type": "string"
+    },
+    "subjects": {
+      "description": "Award's subjects.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "An identifier.",
+            "type": "string"
+          },
+          "subject": {
+            "description": "Human readable label.",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "organizations": {
+      "description": "Award's organizations.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scheme": {
+            "description": "An identifier.",
+            "type": "string"
+          },
+          "id": {
+            "description": "An identifier.",
+            "type": "string"
+          },
+          "organization": {
+            "description": "Human readable label.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

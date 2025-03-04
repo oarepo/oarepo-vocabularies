@@ -56,7 +56,12 @@ class ModelRecord(Record):
             "creator",
             keys=["id", "title"],
             pid_field=Vocabulary.pid.with_type_ctx("creator"),
-        ) 
+        ), 
+        award=PIDRelation(
+            "award",
+            keys=["id", "title"],
+            pid_field=Vocabulary.pid.with_type_ctx("award"),
+        )
 
     )
 
@@ -72,6 +77,7 @@ class ModelSchema(ma.Schema):
     authority = ma.fields.Raw()  # just a simulation ...
     ror_authority = ma.fields.Raw(data_key="ror-authority")
     creator = ma.fields.Raw()
+    award = ma.fields.Raw()
 
     class Meta:
         unknown = ma.INCLUDE

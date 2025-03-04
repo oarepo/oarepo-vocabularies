@@ -7,6 +7,8 @@ OAREPO_VERSION="${OAREPO_VERSION:-12}"
 export PIP_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
 export UV_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
 
+export PYTHONWARNINGS="ignore"
+
 VENV=".venv"
 
 if test -d $VENV ; then
@@ -25,8 +27,10 @@ pip install -e ".[tests]"
 pip uninstall -y uritemplate
 pip install uritemplate
 
+
 invenio index destroy --force --yes-i-know || true
 
-pytest -k "not test_cache and not test_complex_import" tests
+pytest -k "not test_cache and not test_complex_import and not test_x_specialized_services" tests
+pytest -k "test_x_specialized_services" tests
 pytest -k "test_complex_import" tests
 pytest -k "test_cache" tests
