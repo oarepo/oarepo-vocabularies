@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import _toPairs from "lodash/toPairs";
 import _chunk from "lodash/chunk";
 import _reverse from "lodash/reverse";
 import { Item, Table, Grid, Breadcrumb } from "semantic-ui-react";
-import { withState, buildUID } from "react-searchkit";
+import { withState, AppContext } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { I18nString } from "@js/oarepo_ui";
+import { extractVocabularyTypeFromCurrentURL } from "../../../utils";
 
-const VocabularyItemPropsTable = (props) => {
+export const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
   const tables = _chunk(_toPairs(props), 2).slice(0, 4);
 
@@ -36,21 +37,19 @@ const VocabularyItemPropsTable = (props) => {
 };
 
 export const VocabularyResultsListItemComponent = ({ result, appName }) => {
-  const {
-    title = "No title",
-    id,
-    props: itemProps,
-    hierarchy: { ancestors, title: ancestorTitles, ancestors_or_self },
-    links,
-  } = result;
-  const ancestorTitlesWithId = ancestorTitles.map((ancestorTitle, index) => ({
-    ...ancestorTitle,
-    id: ancestors_or_self[index],
-  }));
+  const { buildUID } = useContext(AppContext);
+
+  const { title = "No title", id, props: itemProps, hierarchy, links } = result;
+  const ancestorTitlesWithId = hierarchy?.ancestorTitles?.map(
+    (ancestorTitle, index) => ({
+      ...ancestorTitle,
+      id: hierarchy?.ancestors_or_self[index],
+    })
+  );
   const { self_html, vocabulary_html } = links;
   return (
     <Overridable
-      id={buildUID("RecordsResultsListItem.layout", "", appName)}
+      id={buildUID(`ResultsListItem.layout`)}
       result={result}
       title={title}
     >
@@ -61,7 +60,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
               <I18nString value={title} />
             </a>
           </Item.Header>
-          {ancestors.length > 0 && (
+          {hierarchy?.ancestors?.length > 0 && (
             <div>
               <Breadcrumb>
                 {_reverse(ancestorTitlesWithId).map(
@@ -104,9 +103,12 @@ VocabularyResultsListItemComponent.defaultProps = {
 };
 
 export const VocabularyResultsListItem = (props) => {
+  const { buildUID } = useContext(AppContext);
+
   return (
+    // not possible to use dynamic results list item, because not all vocabularies have "type" property so using URL instead
     <Overridable
-      id={buildUID("VocabularyResultsListItem", "", props.appName)}
+      id={buildUID(`ResultsList.item.${extractVocabularyTypeFromCurrentURL()}`)}
       {...props}
     >
       <VocabularyResultsListItemComponent {...props} />
