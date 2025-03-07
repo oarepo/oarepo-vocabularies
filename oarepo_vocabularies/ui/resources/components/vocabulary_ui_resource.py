@@ -35,6 +35,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
         )
         search_config = partial(self.config.search_app_config, **search_options)
         extra_context.setdefault("search_app_config", search_config)
+        extra_context["vocabularyType"] = vocabulary_type
         extra_context["vocabularyProps"] = self.config.vocabulary_props_config(
             vocabulary_type
         )

@@ -1,0 +1,12 @@
+{# def identifiers=[] #}
+
+{% if identifiers and identifiers|length > 0 %}
+  <div>
+    {% for identifier in identifiers %}
+      <span title="{{ identifier.scheme }}">{{ identifier.identifier }}</span>
+      <button class="ui icon button transparent copy-btn inline" data-clipboard-text="{{identifier.identifier}}">
+        <i class="copy icon"></i>
+      </button>
+    {% endfor %}
+  </div>
+{% endif %}

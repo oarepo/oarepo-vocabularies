@@ -14,7 +14,7 @@ export const FundersResultsListItem = ({ result }) => {
       <Item key={id}>
         <Item.Content>
           <Item.Header as="h3">
-            <a href={`/vocabularies/names/${id}`}>{name}</a> ({country})
+            <a href={`/vocabularies/funders/${id}`}>{name}</a> ({country})
           </Item.Header>
           <Item.Meta>
             <VocabularyItemIdentifiers identifiers={identifiers} />

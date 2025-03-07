@@ -1,18 +1,28 @@
-{#def metadata, ui, record, d, extra_context #}
-
+{#def metadata, record, d, extra_context, hierarchical=False #}
+{% set vocabularyType = extra_context.get("vocabularyType", "")%}
 <div class="vocabularies-main">
-  <VocabulariesBreadcrumb extra_context={extra_context} metadata={metadata} />
-  <div class="flex align-items-center rel-mt-1">
-    {% if record.icon %}
-      <img class="ui image rel-mr-1" src={{record.icon}}>
-    {% endif %}
-    <h1 class="ui header display-inline mt-0" >{{metadata.title.capitalize() if metadata.title else _("Missing title")}}</h1>
-  </div>
+  <VocabulariesBreadcrumb extra_context={extra_context} metadata={metadata} hierarchical={hierarchical}/>
+  <VocabularyTitle metadata={metadata} record={record} />
   <dl class="ui very basic table">
     <dt>{{ _('vocabulary.vocabulary') }}</dt>
     <dd>
-      <a href="/vocabularies/{{metadata.type}}">{{ _("vocabulary." + metadata.type) }}</a>
+      <a href="/vocabularies/{{vocabularyType}}">{{ _("vocabulary." + vocabularyType) }}</a>
     </dd>
+    {% if metadata.identifiers %}
+      <dt>{{_("vocabulary.identifiers")}}</dt>
+      <dd>
+        <VocabularyItemIdentifiers identifiers={metadata.identifiers} />
+      </dd>
+    {% endif %}
+    {% if metadata.affiliations %}
+    <dt>{{_("vocabulary.affiliations")}}</dt>
+    <dd>
+      {% for affiliation in metadata.affiliations %}
+        <span>{{affiliation}}</span>
+        {% if not loop.last %}, {% endif %}
+      {% endfor %}
+    </dd>
+  {% endif %}
     {% for l in (metadata.nonpreferredLabels or []) %} {% if l.en %}
     <dt>{{_("vocabulary.nonpreferredLabels_en")}}</dt>
     <dd>{{l.en}}</dd>
@@ -46,11 +56,8 @@
     </dd>
     {% endif %}
   </dl>
-  <div class="ui center aligned container">
-    
-  </div>
 
-  {% set custom_field_name="VOCABULARIES_CF_UI." + record.type %}
+  {% set custom_field_name="VOCABULARIES_CF_UI." + vocabularyType %}
   <div class="ui vocabulary_cf">
   <ICustomFields custom_fields={custom_field_name} d={d} />
   </div>
