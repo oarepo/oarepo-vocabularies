@@ -63,7 +63,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
           {hierarchy?.ancestors?.length > 0 && (
             <div>
               <Breadcrumb>
-                {_reverse(ancestorTitlesWithId).map(
+                {_reverse(ancestorTitlesWithId)?.map(
                   (ancestorTitleWithId, index) => (
                     <React.Fragment key={ancestorTitleWithId.id}>
                       <Breadcrumb.Section

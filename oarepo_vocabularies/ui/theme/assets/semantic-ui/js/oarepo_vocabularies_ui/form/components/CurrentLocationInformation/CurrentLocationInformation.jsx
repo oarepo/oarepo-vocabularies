@@ -78,6 +78,11 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
   );
 };
 
+NewChildItemMessage.propTypes = {
+  record: PropTypes.object,
+  newChildItemParentId: PropTypes.string,
+};
+
 const EditMessage = ({ record }) => {
   const {
     hierarchy: { level, ancestors_or_self },
