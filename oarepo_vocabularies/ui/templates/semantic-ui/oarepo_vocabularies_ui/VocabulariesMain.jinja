@@ -8,6 +8,19 @@
     <dd>
       <a href="/vocabularies/{{vocabularyType}}">{{ _("vocabulary." + vocabularyType) }}</a>
     </dd>
+    {{ catalog.render_first_existing(
+      [
+          "VocabularyExtraInfo." + extra_context.vocabularyType,
+          "EmptyComponent"
+      ],
+      metadata=metadata,
+      ui=ui,
+      url_prefix=url_prefix,
+      record=record,
+      extra_context=extra_context,
+      d=d,
+      hierarchical=hierarchical
+    ) }}
     {% if metadata.identifiers %}
       <dt>{{_("vocabulary.identifiers")}}</dt>
       <dd>
@@ -18,8 +31,7 @@
     <dt>{{_("vocabulary.affiliations")}}</dt>
     <dd>
       {% for affiliation in metadata.affiliations %}
-        <span>{{affiliation}}</span>
-        {% if not loop.last %}, {% endif %}
+        <span>{{affiliation.name}}</span>{% if not loop.last %}, {% endif %}
       {% endfor %}
     </dd>
   {% endif %}

@@ -40,19 +40,21 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
   if (isLoading)
     return (
       <Dimmer active inverted>
-        <Loader inverted>Loading</Loader>
+        <Loader inverted>{i18next("Loading")}</Loader>
       </Dimmer>
     );
 
-  const localizedVocabularyTitle = !_isEmpty(data) ? getTitleFromMultilingualObject(data.title) : "";
+  const localizedVocabularyTitle = !_isEmpty(data)
+    ? getTitleFromMultilingualObject(data.title)
+    : "";
 
   return (
     <React.Fragment>
       {!isLoading && data && (
         <VocabularyBreadcrumbMessage
-          header={
-            `${i18next.t("newChildItemMessage")} ${localizedVocabularyTitle}`
-          }
+          header={`${i18next.t(
+            "newChildItemMessage"
+          )} ${localizedVocabularyTitle}`}
           content={
             <VocabularyBreadcrumb
               sections={[
@@ -61,7 +63,9 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
                 ),
                 {
                   key: "new",
-                  content: !_isEmpty(record?.id) ? record.id : i18next.t("newItem"),
+                  content: !_isEmpty(record?.id)
+                    ? record.id
+                    : i18next.t("newItem"),
                   active: true,
                 },
               ]}
@@ -101,10 +105,18 @@ export const CurrentLocationInformation = ({
   editMode,
 }) => {
   const { record } = useFormConfig();
+
+  if (!record?.hierarchy?.level) return null;
+
   if (!editMode && !newChildItemParentId) {
     return <NewTopLevelItemMessage />;
   } else if (!editMode) {
-    return <NewChildItemMessage record={record} newChildItemParentId={newChildItemParentId} />;
+    return (
+      <NewChildItemMessage
+        record={record}
+        newChildItemParentId={newChildItemParentId}
+      />
+    );
   } else {
     return <EditMessage record={record} />;
   }

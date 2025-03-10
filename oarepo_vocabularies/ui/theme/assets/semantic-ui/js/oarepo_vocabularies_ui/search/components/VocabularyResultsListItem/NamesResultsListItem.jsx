@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
-import { Item, Label } from "semantic-ui-react";
+import { Item } from "semantic-ui-react";
 import Overridable from "react-overridable";
 import { AppContext } from "react-searchkit";
 import { VocabularyItemPropsTable } from "./VocabularyResultsListItem";
 import { VocabularyItemIdentifiers } from "./VocabularyItemIdentifiers";
+import { VocabularyItemAffiliations } from "./VocabularyItemAffiliations";
 
 export const NamesResultsListItem = ({ result }) => {
   const { buildUID } = useContext(AppContext);
@@ -18,13 +19,7 @@ export const NamesResultsListItem = ({ result }) => {
           </Item.Header>
           <Item.Meta>
             <VocabularyItemIdentifiers identifiers={identifiers} />
-            {affiliations?.length > 0 && (
-              <Label.Group>
-                {affiliations.map(({ name }, index) => (
-                  <Label key={name}>{name}</Label>
-                ))}
-              </Label.Group>
-            )}
+            <VocabularyItemAffiliations affiliations={affiliations} />
           </Item.Meta>
           <Item.Description>
             {itemProps && (

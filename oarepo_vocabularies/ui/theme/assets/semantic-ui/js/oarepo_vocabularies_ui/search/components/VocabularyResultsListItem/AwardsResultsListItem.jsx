@@ -39,12 +39,10 @@ AwardsResultsListItem.propTypes = {
     id: PropTypes.string.isRequired,
     number: PropTypes.string.isRequired,
     title: PropTypes.object.isRequired,
-    funder: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
-      })
-    ),
+    funder: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
     props: PropTypes.object,
   }).isRequired,
 };
