@@ -1,5 +1,9 @@
 import * as React from "react";
-import { useDepositApiClient, useSuggestionApi } from "@js/oarepo_ui";
+import {
+  useDepositApiClient,
+  useSuggestionApi,
+  useFormConfig,
+} from "@js/oarepo_ui";
 import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
 import { VocabularyModalTrigger } from "./components/VocabularyModalTrigger";
 import _isEmpty from "lodash/isEmpty";
@@ -16,8 +20,10 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     setFieldError,
     read,
   } = formik;
-
-  async function createOrUpdate () {
+  const {
+    formConfig: { vocabularyType },
+  } = useFormConfig();
+  async function createOrUpdate() {
     const validationErrors = await validateForm();
     if (!_isEmpty(validationErrors)) return;
     setSubmitting(true);
@@ -38,18 +44,16 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
         response = await apiClient.saveDraft(values);
       }
 
-      window.location.href = response.links.self_html;
+      window.location.href =
+        response.links.self_html ||
+        `/vocabularies/${vocabularyType}/${response.id}`;
 
       return response;
     } catch (error) {
-      if (
-        error &&
-        error.status === 400 &&
-        error.message === "A validation error occurred."
-      ) {
-        error.errors?.forEach((err) =>
-          setFieldError(err.field, err.messages.join(" "))
-        );
+      if (error && error?.response?.data?.errors?.length > 0) {
+        error.response.data.errors?.forEach((err) => {
+          setFieldError(err.field, err.messages.join(" "));
+        });
       } else {
         setFieldError(
           "httpErrors",

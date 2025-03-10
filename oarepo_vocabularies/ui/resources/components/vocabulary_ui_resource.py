@@ -35,6 +35,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
         )
         search_config = partial(self.config.search_app_config, **search_options)
         extra_context.setdefault("search_app_config", search_config)
+        extra_context["vocabularyType"] = vocabulary_type
         extra_context["vocabularyProps"] = self.config.vocabulary_props_config(
             vocabulary_type
         )
@@ -48,6 +49,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
             "updateUrl",
             api_record["links"].get("self", None),
         )
+        form_config["vocabularyType"] = vocabulary_type
 
     def before_ui_create(self, *, form_config, view_args, **kwargs):
         vocabulary_type = view_args["vocabulary_type"]
@@ -58,3 +60,4 @@ class VocabularyRecordsComponent(UIResourceComponent):
         form_config["createUrl"] = (
             f"/api{api_service.config.url_prefix}{vocabulary_type}"
         )
+        form_config["vocabularyType"] = vocabulary_type

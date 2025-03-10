@@ -3,12 +3,12 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { invalidUrlMessage } from "@js/oarepo_ui";
 
 export const VocabularyFormSchema = Yup.object().shape({
-  _title: Yup.array().of(
-    Yup.object().shape({
-      lang: Yup.string().required(i18next.t("required")),
-      name: Yup.string().required(i18next.t("required")),
-    })
-  ),
+  // _title: Yup.array().of(
+  //   Yup.object().shape({
+  //     lang: Yup.string().required(i18next.t("required")),
+  //     name: Yup.string().required(i18next.t("required")),
+  //   })
+  // ),
   icon: Yup.string().url(invalidUrlMessage),
   props: Yup.object()
     .shape({
@@ -22,5 +22,5 @@ export const VocabularyFormSchema = Yup.object().shape({
       ),
     })
     .nullable(),
-  id: Yup.string().required(i18next.t("required")),
+  // id: Yup.string().required(i18next.t("required")),
 });
