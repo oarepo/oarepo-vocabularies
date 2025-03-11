@@ -8,7 +8,7 @@ import { Item, Table, Grid, Breadcrumb } from "semantic-ui-react";
 import { withState, AppContext } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { I18nString } from "@js/oarepo_ui";
-import { extractVocabularyTypeFromCurrentURL } from "../../../utils";
+import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 
 export const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
@@ -40,13 +40,14 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
   const { buildUID } = useContext(AppContext);
 
   const { title = "No title", id, props: itemProps, hierarchy, links } = result;
-  const ancestorTitlesWithId = hierarchy?.ancestorTitles?.map(
+  const ancestorTitlesWithId = hierarchy?.title?.map(
     (ancestorTitle, index) => ({
       ...ancestorTitle,
       id: hierarchy?.ancestors_or_self[index],
     })
   );
   const { self_html, vocabulary_html } = links;
+
   return (
     <Overridable
       id={buildUID(`ResultsListItem.layout`)}
@@ -104,13 +105,11 @@ VocabularyResultsListItemComponent.defaultProps = {
 
 export const VocabularyResultsListItem = (props) => {
   const { buildUID } = useContext(AppContext);
+  const { vocabularyType } = useContext(SearchConfigurationContext);
 
   return (
     // not possible to use dynamic results list item, because not all vocabularies have "type" property so using URL instead
-    <Overridable
-      id={buildUID(`ResultsList.item.${extractVocabularyTypeFromCurrentURL()}`)}
-      {...props}
-    >
+    <Overridable id={buildUID(`ResultsList.item.${vocabularyType}`)} {...props}>
       <VocabularyResultsListItemComponent {...props} />
     </Overridable>
   );

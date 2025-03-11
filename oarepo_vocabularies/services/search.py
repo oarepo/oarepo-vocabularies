@@ -134,7 +134,7 @@ class VocabularySearchOptions(I18nSearchOptions):
 
     query_parser_cls = VocabularyQueryParser
 
-    extra_sort_options = {
+    sort_options = {
         "bestmatch": dict(
             title=_("Best match"),
             fields=["_score"],  # ES defaults to desc on `_score` field

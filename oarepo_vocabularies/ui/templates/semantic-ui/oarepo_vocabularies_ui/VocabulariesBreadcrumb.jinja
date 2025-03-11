@@ -6,10 +6,7 @@
         "hierarchical": hierarchical,
         "ancestorsOrSelf": metadata.hierarchy.ancestors_or_self|reverse|list,
         "titles": metadata.hierarchy.title|reverse|list,
-        "vocabularyType": metadata.type,
     } %}
-
-
     {% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf|length>1 %}
     <div class="ui breadcrumb">
         {% for index in range(0, breadcrumbData.ancestorsOrSelf|length) %}
@@ -18,7 +15,7 @@
             {% if loop.last %}
                 <div class="active section">{{ title }}</div>
             {% else %}
-                <a class="section" href="/vocabularies/{{ breadcrumbData.vocabularyType }}/{{ ancestor }}">{{ title }}</a>
+                <a class="section" href="/vocabularies/{{ extra_context.vocabularyType }}/{{ ancestor }}">{{ title }}</a>
                 <div class="divider"> / </div>
             {% endif %}
         {% endfor %}

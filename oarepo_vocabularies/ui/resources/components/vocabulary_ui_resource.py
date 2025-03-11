@@ -19,6 +19,8 @@ class VocabularyRecordsComponent(UIResourceComponent):
                 None, {"type": vocabulary_type, "api": "/api"}
             ),
         )
+        search_options.setdefault("overrides", {})
+        search_options["overrides"]["vocabularyType"] = vocabulary_type
 
     def before_ui_detail(
         self, *, extra_context, identity, view_args, api_record, **kwargs
