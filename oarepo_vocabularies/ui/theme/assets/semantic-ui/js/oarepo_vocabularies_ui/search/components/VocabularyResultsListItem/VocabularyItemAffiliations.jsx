@@ -12,7 +12,7 @@ export const VocabularyItemAffiliations = ({ affiliations }) => {
       {i18next.t("Affiliations:")}{" "}
       {affiliations.map((affiliation, index) => (
         <span key={index}>
-          {affiliation}
+          {affiliation.name}
           {index < affiliations.length - 1 ? ", " : ""}
         </span>
       ))}
