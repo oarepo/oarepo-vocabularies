@@ -8,7 +8,7 @@ import _has from "lodash/has";
 
 export const FormAppLayout = () => {
   const formikProps = {
-    validationSchema: VocabularyFormSchema,
+    // validationSchema: VocabularyFormSchema,
   };
   const { formConfig } = useFormConfig();
 

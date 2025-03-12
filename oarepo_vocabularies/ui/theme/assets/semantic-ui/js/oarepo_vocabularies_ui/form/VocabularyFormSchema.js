@@ -9,18 +9,18 @@ export const VocabularyFormSchema = Yup.object().shape({
   //     name: Yup.string().required(i18next.t("required")),
   //   })
   // ),
-  icon: Yup.string().url(invalidUrlMessage),
-  props: Yup.object()
-    .shape({
-      ICO: Yup.string()
-        .length(8, ({ length }) =>
-          i18next.t("invalidLengthError", { length: length })
-        )
-        .matches(/^\d+$/, i18next.t("notANumberError")),
-      RID: Yup.string().length(5, ({ length }) =>
-        i18next.t("invalidLengthError", { length: length })
-      ),
-    })
-    .nullable(),
+  // icon: Yup.string().url(invalidUrlMessage),
+  // props: Yup.object()
+  //   .shape({
+  //     ICO: Yup.string()
+  //       .length(8, ({ length }) =>
+  //         i18next.t("invalidLengthError", { length: length })
+  //       )
+  //       .matches(/^\d+$/, i18next.t("notANumberError")),
+  //     RID: Yup.string().length(5, ({ length }) =>
+  //       i18next.t("invalidLengthError", { length: length })
+  //     ),
+  //   })
+  //   .nullable(),
   // id: Yup.string().required(i18next.t("required")),
 });

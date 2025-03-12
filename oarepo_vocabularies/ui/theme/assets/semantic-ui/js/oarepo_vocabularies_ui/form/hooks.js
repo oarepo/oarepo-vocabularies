@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  useDepositApiClient,
-  useSuggestionApi,
-  useFormConfig,
-} from "@js/oarepo_ui";
+import { useDepositApiClient, useSuggestionApi } from "@js/oarepo_ui";
 import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
 import { VocabularyModalTrigger } from "./components/VocabularyModalTrigger";
 import _isEmpty from "lodash/isEmpty";
@@ -20,9 +16,9 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     setFieldError,
     read,
   } = formik;
-  const {
-    formConfig: { vocabularyType },
-  } = useFormConfig();
+
+  const recordId = values.id || crypto.randomUUID();
+  const valuesWithUUID = { ...values, id: recordId };
   async function createOrUpdate() {
     const validationErrors = await validateForm();
     if (!_isEmpty(validationErrors)) return;
@@ -34,19 +30,21 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
       if (createUrl) {
         if (newChildItemParentId) {
           response = await apiClient.createDraft({
-            ...values,
+            ...valuesWithUUID,
             hierarchy: { parent: newChildItemParentId },
           });
         } else {
-          response = await apiClient.createDraft(values);
+          response = await apiClient.createDraft({
+            ...valuesWithUUID,
+          });
         }
       } else {
-        response = await apiClient.saveDraft(values);
+        response = await apiClient.saveDraft({
+          ...valuesWithUUID,
+        });
       }
 
-      window.location.href =
-        response.links.self_html ||
-        `/vocabularies/${vocabularyType}/${response.id}`;
+      window.location.href = response.links.self_html;
 
       return response;
     } catch (error) {

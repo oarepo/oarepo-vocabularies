@@ -31,6 +31,14 @@ class InvenioVocabulariesAppExtension:
             )(),
         )
 
+        self.awards_resource = obj_or_import_string(
+            app.config["OAREPO_VOCABULARIES_AWARDS_UI_RESOURCE"]
+        )(
+            config=obj_or_import_string(
+                app.config["OAREPO_VOCABULARIES_AWARDS_UI_RESOURCE_CONFIG"]
+            )(),
+        )
+
         self.type_resource = obj_or_import_string(
             app.config["VOCABULARY_TYPE_UI_RESOURCE"]
         )(

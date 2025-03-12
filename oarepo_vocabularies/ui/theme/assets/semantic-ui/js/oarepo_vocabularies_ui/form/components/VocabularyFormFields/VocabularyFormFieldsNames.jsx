@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TextField, FieldLabel, RemoteSelectField } from "react-invenio-forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import {
@@ -6,6 +6,8 @@ import {
   personIdentifiersSchema,
 } from "@nr/forms/components/IdentifiersField";
 import { getIn, useFormikContext } from "formik";
+import { useFormConfig } from "@js/oarepo_ui/forms";
+import _has from "lodash/has";
 
 const serializeAffiliations = (affiliations) =>
   affiliations.map((affiliation) => ({
@@ -15,7 +17,22 @@ const serializeAffiliations = (affiliations) =>
   }));
 
 export const VocabularyFormFieldsNames = () => {
-  const { values } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext();
+  const { formConfig } = useFormConfig();
+  const editMode = _has(formConfig, "updateUrl");
+
+  const { scheme, identifier } = getIn(values, "identifiers.0", "");
+  useEffect(() => {
+    if (editMode) {
+      return;
+    }
+    if (scheme && identifier) {
+      setFieldValue("id", `${scheme}:${identifier}`);
+    }
+    if (!scheme && !identifier) {
+      setFieldValue("id", "");
+    }
+  }, [scheme, identifier, setFieldValue, editMode]);
   const affiliationsFieldPath = "affiliations";
   return (
     <React.Fragment>
@@ -86,6 +103,9 @@ export const VocabularyFormFieldsNames = () => {
         label={
           <FieldLabel htmlFor="id" icon="pencil" label={i18next.t("ID")} />
         }
+        placeholder={i18next.t(
+          "Use first identifier and its scheme as id (scheme:identifier). Otherwise random id will be assigned."
+        )}
         required
       />
     </React.Fragment>
