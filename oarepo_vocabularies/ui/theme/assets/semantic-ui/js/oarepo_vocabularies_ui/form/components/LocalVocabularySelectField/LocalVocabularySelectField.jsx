@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
 import { SelectField } from "react-invenio-forms";
-import { useFormConfig, search } from "@js/oarepo_ui/forms";
+import { useFormConfig, search, useFieldData } from "@js/oarepo_ui/forms";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
-import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { serializeVocabularyItems } from "@js/oarepo_vocabularies";
 
 export const processVocabularyItems = (
@@ -67,11 +66,20 @@ export const LocalVocabularySelectField = ({
   optionsListName,
   usedOptions = [],
   helpText,
-  showLeafsOnly,
-  optimized,
-  filterFunction,
+  showLeafsOnly = false,
+  optimized = true,
+  filterFunction = undefined,
+  icon = "tag",
+  clearable = true,
   ...uiProps
 }) => {
+  const { getFieldData } = useFieldData();
+
+  const fieldData = getFieldData({
+    fieldPath: fieldPath,
+    icon: icon,
+  });
+
   const {
     formConfig: { vocabularies },
   } = useFormConfig();
@@ -129,7 +137,6 @@ export const LocalVocabularySelectField = ({
 
   const { values, setFieldTouched } = useFormikContext();
   const value = getIn(values, fieldPath, multiple ? [] : {});
-
   return (
     <React.Fragment>
       <SelectField
@@ -140,12 +147,14 @@ export const LocalVocabularySelectField = ({
         search={search}
         control={InnerDropdown}
         fieldPath={fieldPath}
-        multiple={multiple}
+        multiple={fieldData.detail === "array"}
         featured={serializedFeaturedOptions}
         options={serializedOptions}
         usedOptions={usedOptions}
         onChange={handleChange}
         value={multiple ? value.map((o) => o?.id) : value?.id}
+        clearable={clearable}
+        {...fieldData}
         {...uiProps}
       />
       <label className="helptext">{helpText}</label>
@@ -158,16 +167,10 @@ LocalVocabularySelectField.propTypes = {
   multiple: PropTypes.bool,
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
-  noResultsMessage: PropTypes.string,
   usedOptions: PropTypes.array,
   showLeafsOnly: PropTypes.bool,
   optimized: PropTypes.bool,
   filterFunction: PropTypes.func,
-};
-
-LocalVocabularySelectField.defaultProps = {
-  noResultsMessage: i18next.t("No results found."),
-  showLeafsOnly: false,
-  optimized: false,
-  filterFunction: undefined,
+  icon: PropTypes.string,
+  clearable: PropTypes.bool,
 };
