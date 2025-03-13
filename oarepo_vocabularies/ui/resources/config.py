@@ -88,7 +88,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     ]
 
     # request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
-    request_vocabulary_type_args = CommunityValidationSchema
+    request_vocabulary_type_args = VocabularyTypeValidationSchema
 
     request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
 
