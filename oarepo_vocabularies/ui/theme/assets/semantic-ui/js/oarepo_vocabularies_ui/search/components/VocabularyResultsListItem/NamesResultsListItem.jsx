@@ -3,31 +3,29 @@ import PropTypes from "prop-types";
 import { Item } from "semantic-ui-react";
 import Overridable from "react-overridable";
 import { AppContext } from "react-searchkit";
-import { VocabularyItemPropsTable } from "./VocabularyResultsListItem";
 import { VocabularyItemIdentifiers } from "./VocabularyItemIdentifiers";
 import { VocabularyItemAffiliations } from "./VocabularyItemAffiliations";
 
 export const NamesResultsListItem = ({ result }) => {
   const { buildUID } = useContext(AppContext);
-  const { id, name, identifiers, affiliations, props: itemProps } = result;
+  const {
+    id,
+    name,
+    identifiers,
+    affiliations,
+    links: { self_html },
+  } = result;
   return (
     <Overridable id={buildUID(`NamesResultsListItem.layout`)} result={result}>
       <Item key={id}>
         <Item.Content>
           <Item.Header as="h3">
-            <a href={`/vocabularies/names/${id}`}>{name}</a>
+            <a href={self_html}>{name}</a>
           </Item.Header>
           <Item.Meta>
             <VocabularyItemIdentifiers identifiers={identifiers} />
             <VocabularyItemAffiliations affiliations={affiliations} />
           </Item.Meta>
-          <Item.Description>
-            {itemProps && (
-              <Item.Description>
-                <VocabularyItemPropsTable {...itemProps} />
-              </Item.Description>
-            )}
-          </Item.Description>
         </Item.Content>
       </Item>
     </Overridable>
@@ -51,7 +49,7 @@ NamesResultsListItem.propTypes = {
     ),
     links: PropTypes.shape({
       self: PropTypes.string,
+      self_html: PropTypes.string,
     }),
-    props: PropTypes.object,
   }).isRequired,
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { TextField, FieldLabel, RemoteSelectField } from "react-invenio-forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import {
@@ -6,8 +6,9 @@ import {
   personIdentifiersSchema,
 } from "@nr/forms/components/IdentifiersField";
 import { getIn, useFormikContext } from "formik";
-import { useFormConfig } from "@js/oarepo_ui/forms";
-import _has from "lodash/has";
+import PropTypes from "prop-types";
+import { Trans } from "react-i18next";
+import { useSetIdBasedOnIdentifier } from "./hooks";
 
 const serializeAffiliations = (affiliations) =>
   affiliations.map((affiliation) => ({
@@ -16,23 +17,9 @@ const serializeAffiliations = (affiliations) =>
     key: affiliation.id,
   }));
 
-export const VocabularyFormFieldsNames = () => {
-  const { values, setFieldValue } = useFormikContext();
-  const { formConfig } = useFormConfig();
-  const editMode = _has(formConfig, "updateUrl");
-
-  const { scheme, identifier } = getIn(values, "identifiers.0", "");
-  useEffect(() => {
-    if (editMode) {
-      return;
-    }
-    if (scheme && identifier) {
-      setFieldValue("id", `${scheme}:${identifier}`);
-    }
-    if (!scheme && !identifier) {
-      setFieldValue("id", "");
-    }
-  }, [scheme, identifier, setFieldValue, editMode]);
+export const VocabularyFormFieldsNames = ({ editMode }) => {
+  const { values } = useFormikContext();
+  useSetIdBasedOnIdentifier(editMode);
   const affiliationsFieldPath = "affiliations";
   return (
     <React.Fragment>
@@ -45,6 +32,7 @@ export const VocabularyFormFieldsNames = () => {
             label={i18next.t("Family name")}
           />
         }
+        placeholder={i18next.t("Family name")}
         required
       />
       <TextField
@@ -56,6 +44,7 @@ export const VocabularyFormFieldsNames = () => {
             label={i18next.t("First name")}
           />
         }
+        placeholder={i18next.t("First name")}
         required
       />
       <IdentifiersField
@@ -98,16 +87,33 @@ export const VocabularyFormFieldsNames = () => {
           (val) => val.id || val.text || val.name
         )}
       />
+      <Trans i18next={i18next}>
+        <span className="helpText">
+          If you cannot find an appropriate affiliation, you can create one{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="/vocabularies/affiliations/_new"
+          >
+            here
+          </a>
+          .
+        </span>
+      </Trans>
       <TextField
         fieldPath="id"
         label={
           <FieldLabel htmlFor="id" icon="pencil" label={i18next.t("ID")} />
         }
         placeholder={i18next.t(
-          "Use first identifier and its scheme as id (scheme:identifier). Otherwise random id will be assigned."
+          "Use personal identifier eg orcid:0000-0001-9718-6515. If you dont provide ID, random ID will be assigned."
         )}
         required
       />
     </React.Fragment>
   );
+};
+
+VocabularyFormFieldsNames.propTypes = {
+  editMode: PropTypes.bool,
 };

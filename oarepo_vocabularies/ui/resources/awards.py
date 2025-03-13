@@ -50,7 +50,6 @@ class InvenioVocabulariesAwardsUIResource(InvenioVocabulariesUIResource):
         except Exception as e:
             import traceback
 
-            print("bla", flush=True)
             traceback.print_exc()
             raise e
 
