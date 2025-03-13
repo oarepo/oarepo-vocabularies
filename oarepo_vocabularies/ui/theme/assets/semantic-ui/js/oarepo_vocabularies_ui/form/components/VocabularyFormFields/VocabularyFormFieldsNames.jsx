@@ -95,9 +95,8 @@ export const VocabularyFormFieldsNames = ({ editMode }) => {
             rel="noopener noreferrer"
             href="/vocabularies/affiliations/_new"
           >
-            here
+            here.
           </a>
-          .
         </span>
       </Trans>
       <TextField

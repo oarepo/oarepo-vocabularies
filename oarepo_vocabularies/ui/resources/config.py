@@ -14,6 +14,10 @@ from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
 )
 from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 
+from invenio_vocabularies.records.models import VocabularyType
+
+from invenio_pages.records.errors import PageNotFoundError
+
 
 class VocabularyFormDepositVocabularyOptionsComponent(
     DepositVocabularyOptionsComponent
@@ -30,6 +34,18 @@ class VocabularyFormDepositVocabularyOptionsComponent(
             form_config["vocabularies"]["languages"] = [
                 {"text": "English", "value": "en"}
             ]
+
+
+class VocabularyTypeValidationSchema(ma.Schema):
+    vocabulary_type = ma.fields.String()
+
+    def load(self, data, *args, **kwargs):
+        vocabulary_type = data.get("vocabulary_type")
+        try:
+            VocabularyType.query.filter_by(id=vocabulary_type).one()
+            return {"vocabulary_type": vocabulary_type}
+        except Exception:
+            raise PageNotFoundError(f"Vocabulary type {vocabulary_type} not found")
 
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
@@ -57,9 +73,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
     config_routes = {
-        'form_config': '/<vocabulary_type>/form',
+        "form_config": "/<vocabulary_type>/form",
     }
-
+    error_handlers = {
+        **RecordsUIResourceConfig.error_handlers,
+        PageNotFoundError: "vocabulary_type_not_found",
+    }
     components = [
         PermissionsComponent,
         VocabularyRecordsComponent,
@@ -68,9 +87,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         CustomFieldsComponent,
     ]
 
-    request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
-    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
+    # request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
+    request_vocabulary_type_args = CommunityValidationSchema
 
+    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
 
     ui_links_item = {
         "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),

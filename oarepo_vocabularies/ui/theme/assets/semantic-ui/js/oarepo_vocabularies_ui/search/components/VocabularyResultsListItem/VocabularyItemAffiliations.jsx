@@ -11,7 +11,7 @@ export const VocabularyItemAffiliations = ({ affiliations }) => {
     <div>
       {i18next.t("Affiliations:")}{" "}
       {affiliations.map((affiliation, index) => (
-        <span key={index}>
+        <span key={affiliation.name}>
           {affiliation.name}
           {index < affiliations.length - 1 ? ", " : ""}
         </span>

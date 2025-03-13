@@ -29,7 +29,7 @@ export const VocabularyItemIdentifiers = ({ identifiers }) => {
     <div>
       {i18next.t("Identifiers:")}{" "}
       {itemIdentifiers.map((identifier, index) => (
-        <span key={index}>
+        <span key={identifier}>
           {identifier}
           {index < itemIdentifiers.length - 1 ? ", " : ""}
         </span>

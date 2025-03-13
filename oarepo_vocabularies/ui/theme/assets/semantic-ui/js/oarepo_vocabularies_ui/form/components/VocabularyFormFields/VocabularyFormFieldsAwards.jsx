@@ -88,9 +88,8 @@ export const VocabularyFormFieldsAwards = ({ editMode }) => {
             rel="noopener noreferrer"
             href="/vocabularies/funders/_new"
           >
-            here
+            here.
           </a>
-          .
         </span>
       </Trans>
       <TextField
@@ -121,7 +120,7 @@ export const VocabularyFormFieldsAwards = ({ editMode }) => {
         }
         required
         placeholder={i18next.t(
-          "Use format: FunderID:Award Number i.e. AV0:754657.If you dont provide ID, random ID will be assigned."
+          "Use format: FunderID:Award Number i.e. AV0:754657. If you dont provide ID, random ID will be assigned."
         )}
       />
     </React.Fragment>

@@ -40,6 +40,9 @@ export const VocabularyFormFields = () => {
           label={
             <FieldLabel htmlFor="id" icon="pencil" label={i18next.t("ID")} />
           }
+          placeholder={i18next.t(
+            "If you dont provide ID, random ID will be assigned."
+          )}
           required
         />
         <MultiInput
