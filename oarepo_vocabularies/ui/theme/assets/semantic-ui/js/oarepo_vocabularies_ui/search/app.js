@@ -6,10 +6,13 @@ import {
 import {
   VocabularyResultsListItemWithState,
   VocabularyButtonSidebar,
+  NamesResultsListItem,
+  AwardsResultsListItem,
+  FundersResultsListItem,
+  AffiliationsResultsListItem,
 } from "./components";
 import { parametrize } from "react-overridable";
-const [searchAppConfig, ...otherSearchAppConfigs] = parseSearchAppConfigs();
-const { overridableIdPrefix } = searchAppConfig;
+const [{ overridableIdPrefix }] = parseSearchAppConfigs();
 
 const ResultsListItemWithConfig = parametrize(
   VocabularyResultsListItemWithState,
@@ -19,11 +22,17 @@ const ResultsListItemWithConfig = parametrize(
 const SearchAppLayoutWithConfig = parametrize(SearchAppLayout, {
   hasButtonSidebar: true,
 });
-
+// cannot use dynamic resultlistitem, because not all vocabularies have "type" property so using URL instead
 export const componentOverrides = {
   [`${overridableIdPrefix}.ResultsList.item`]: ResultsListItemWithConfig,
+  [`${overridableIdPrefix}.ResultsList.item.names`]: NamesResultsListItem,
+  [`${overridableIdPrefix}.ResultsList.item.awards`]: AwardsResultsListItem,
+  [`${overridableIdPrefix}.ResultsList.item.funders`]: FundersResultsListItem,
+  [`${overridableIdPrefix}.ResultsList.item.affiliations`]:
+    AffiliationsResultsListItem,
   [`${overridableIdPrefix}.SearchApp.buttonSidebarContainer`]:
     VocabularyButtonSidebar,
+
   [`${overridableIdPrefix}.SearchApp.layout`]: SearchAppLayoutWithConfig,
 };
 createSearchAppsInit({ componentOverrides });

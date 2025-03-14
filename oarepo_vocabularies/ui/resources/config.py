@@ -14,6 +14,10 @@ from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
 )
 from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 
+from invenio_vocabularies.records.models import VocabularyType
+
+from oarepo_vocabularies.errors import VocabularyTypeDoesNotExist
+
 
 class VocabularyFormDepositVocabularyOptionsComponent(
     DepositVocabularyOptionsComponent
@@ -30,6 +34,35 @@ class VocabularyFormDepositVocabularyOptionsComponent(
             form_config["vocabularies"]["languages"] = [
                 {"text": "English", "value": "en"}
             ]
+
+
+class VocabularyTypeValidationSchema(ma.Schema):
+    vocabulary_type = ma.fields.String()
+
+    def load(self, data, *args, **kwargs):
+        vocabulary_type = data.get("vocabulary_type")
+        # TODO: this will not be needed once specialized vocabs get their own resource
+        allowed_specialized_vocabularies = current_app.config.get(
+            "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", []
+        )
+
+        try:
+            if (
+                VocabularyType.query.filter_by(id=vocabulary_type).one_or_none()
+                or vocabulary_type in allowed_specialized_vocabularies.values()
+            ):
+                return {"vocabulary_type": vocabulary_type}
+            else:
+                raise VocabularyTypeDoesNotExist(
+                    f"Vocabulary type {vocabulary_type} does not exist."
+                )
+
+        except VocabularyTypeDoesNotExist as e:
+            raise e
+        except Exception:
+            raise VocabularyTypeDoesNotExist(
+                f"Vocabulary type {vocabulary_type} does not exist."
+            )
 
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
@@ -57,9 +90,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
     }
     config_routes = {
-        'form_config': '/<vocabulary_type>/form',
+        "form_config": "/<vocabulary_type>/form",
     }
-
+    error_handlers = {
+        **RecordsUIResourceConfig.error_handlers,
+        VocabularyTypeDoesNotExist: "vocabulary_type_does_not_exist",
+    }
     components = [
         PermissionsComponent,
         VocabularyRecordsComponent,
@@ -68,9 +104,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         CustomFieldsComponent,
     ]
 
-    request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
-    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
+    # request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
+    request_vocabulary_type_args = VocabularyTypeValidationSchema
 
+    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
 
     ui_links_item = {
         "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),

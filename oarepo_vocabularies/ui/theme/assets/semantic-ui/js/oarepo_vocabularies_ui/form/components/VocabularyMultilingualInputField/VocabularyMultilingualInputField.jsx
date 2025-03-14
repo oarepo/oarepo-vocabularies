@@ -20,6 +20,7 @@ export const VocabularyMultilingualInputField = ({
   newItemInitialValue,
   textFieldLabel,
   displayFirstInputRemoveButton,
+  helpText,
 }) => {
   const placeholderFieldPath = useMemo(() => {
     return fieldPath
@@ -57,6 +58,7 @@ export const VocabularyMultilingualInputField = ({
       }
       required={required}
       addButtonClassName="array-field-add-button"
+      helpText={helpText}
     >
       {({ indexPath, arrayHelpers, array }) => {
         const fieldPathPrefix = `${placeholderFieldPath}.${indexPath}`;
@@ -98,6 +100,7 @@ VocabularyMultilingualInputField.propTypes = {
   textFieldLabel: PropTypes.string,
   emptyNewInput: PropTypes.object,
   displayFirstInputRemoveButton: PropTypes.bool,
+  helpText: PropTypes.string,
 };
 
 VocabularyMultilingualInputField.defaultProps = {

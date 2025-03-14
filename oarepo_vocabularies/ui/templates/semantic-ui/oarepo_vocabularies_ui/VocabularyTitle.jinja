@@ -1,0 +1,8 @@
+{#def metadata, record #}
+{% set title = metadata.title or metadata.name %}
+<div class="flex align-items-center rel-mt-1">
+    {% if record.icon %}
+      <img class="ui image rel-mr-1" src={{record.icon}}>
+    {% endif %}
+    <h1 class="ui header display-inline mt-0" >{{title.capitalize() if title else _("Missing title")}}</h1>
+</div>
