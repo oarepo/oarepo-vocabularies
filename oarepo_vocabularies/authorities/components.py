@@ -7,8 +7,8 @@ from oarepo_runtime.services.relations.errors import (
     MultipleInvalidRelationErrors,
 )
 
-from oarepo_vocabularies.authorities.proxies import authorities
 from oarepo_vocabularies.authorities.providers import AuthorityProvider
+from oarepo_vocabularies.authorities.proxies import authorities
 from oarepo_vocabularies.records.api import find_vocabulary_relations
 
 
@@ -68,6 +68,11 @@ class AuthorityComponent(ServiceComponent):
                     location=result.path,
                 )
             item_id = value["id"]
+            try:
+                vocabulary_service.read(system_identity, (vocabulary_type, item_id))
+                return
+            except:
+                pass
             try:
                 fetched_item = authority_service.get(
                     identity, item_id, uow=self.uow, value=value
