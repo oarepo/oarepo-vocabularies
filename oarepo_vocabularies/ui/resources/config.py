@@ -16,7 +16,7 @@ from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 
 from invenio_vocabularies.records.models import VocabularyType
 
-from invenio_pages.records.errors import PageNotFoundError
+from oarepo_vocabularies.errors import VocabularyTypeDoesNotExist
 
 
 class VocabularyFormDepositVocabularyOptionsComponent(
@@ -53,15 +53,15 @@ class VocabularyTypeValidationSchema(ma.Schema):
             ):
                 return {"vocabulary_type": vocabulary_type}
             else:
-                raise PageNotFoundError(
-                    f"Vocabulary type {vocabulary_type} not found or not allowed."
+                raise VocabularyTypeDoesNotExist(
+                    f"Vocabulary type {vocabulary_type} does not exist."
                 )
 
-        except PageNotFoundError as e:
+        except VocabularyTypeDoesNotExist as e:
             raise e
         except Exception:
-            raise PageNotFoundError(
-                f"Vocabulary type {vocabulary_type} not found or not allowed."
+            raise VocabularyTypeDoesNotExist(
+                f"Vocabulary type {vocabulary_type} does not exist."
             )
 
 
@@ -94,7 +94,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
     error_handlers = {
         **RecordsUIResourceConfig.error_handlers,
-        PageNotFoundError: "vocabulary_type_not_found",
+        VocabularyTypeDoesNotExist: "vocabulary_type_does_not_exist",
     }
     components = [
         PermissionsComponent,

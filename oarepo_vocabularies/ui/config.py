@@ -13,10 +13,3 @@ VOCABULARY_TYPE_UI_RESOURCE_CONFIG = "oarepo_vocabularies.ui.resources.vocabular
 OAREPO_UI_LESS_COMPONENTS = [
     "dl_table",
 ]
-
-OAREPO_VOCABULARIES_AWARDS_UI_RESOURCE = (
-    "oarepo_vocabularies.ui.resources.awards:InvenioVocabulariesAwardsUIResource"
-)
-OAREPO_VOCABULARIES_AWARDS_UI_RESOURCE_CONFIG = (
-    "oarepo_vocabularies.ui.resources.awards:InvenioVocabulariesAwardsUIResourceConfig"
-)

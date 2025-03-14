@@ -523,3 +523,10 @@ msgstr "Granty"
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:6
 msgid "vocabulary.funders"
 msgstr "Poskytovatelé financí"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:15
+#, python-format
+msgid ""
+"\n"
+"      The vocabulary type you are trying to access does not exist in repository (%(sitename)s)."
+msgstr ""

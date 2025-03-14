@@ -1,3 +1,4 @@
+{#def message #}
 {% extends "oarepo_ui/detail.html" %}
 
 {% block record_main_content %}
@@ -6,13 +7,12 @@
   <h1 class="ui header inline-block">
     <i class="icon lightning" aria-hidden="true"></i>
     <div class="content pl-0 rel-pr-1">
-      {{ _('Vocabulary type does not exist.') }}
-    </div>
+      {{message}}
+    </div>  
   </h1>
-
   <p>
     {%- trans sitename=config.THEME_SITENAME %}
-      The vocabulary type you are trying to access does not exist in {{ sitename }}.
+      The vocabulary type you are trying to access does not exist in repository ({{ sitename }}).
     {%- endtrans %}
   </p>
 </div>

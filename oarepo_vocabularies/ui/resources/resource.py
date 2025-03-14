@@ -89,12 +89,12 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         )
         return tpl.expand(identity, pagination)
 
-    def vocabulary_type_not_found(self, error, *args, **kwargs):
+    def vocabulary_type_does_not_exist(self, error, *args, **kwargs):
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(
                 "no_vocabulary_type",
                 identity=g.identity,
                 default_macro="NoVocabularyType",
             ),
-            pid=getattr(error, "vocabulary_type", None),
+            message=str(error),
         )

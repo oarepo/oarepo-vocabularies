@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-03-14 13:13+0100\n"
+"POT-Creation-Date: 2025-03-14 13:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,15 +92,15 @@ msgstr ""
 msgid "Find more records with this vocabulary term"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:9
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:10
 msgid "Vocabulary type does not exist."
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:14
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:15
 #, python-format
 msgid ""
 "\n"
-"      The vocabulary type you are trying to access does not exist in %(sitename)s."
+"      The vocabulary type you are trying to access does not exist in repository (%(sitename)s)."
 msgstr ""
 
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesDetail.jinja:3

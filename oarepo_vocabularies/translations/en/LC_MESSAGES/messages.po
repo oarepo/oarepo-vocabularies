@@ -523,6 +523,13 @@ msgstr "Awards"
 msgid "vocabulary.funders"
 msgstr "Funders"
 
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:15
+#, python-format
+msgid ""
+"\n"
+"      The vocabulary type you are trying to access does not exist in repository (%(sitename)s)."
+msgstr ""
+
 #~ msgid "Export"
 #~ msgstr "Export"
 
