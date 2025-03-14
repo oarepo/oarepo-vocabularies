@@ -511,3 +511,15 @@ msgid ""
 "If you cannot find an appropriate affiliation, you can create one "
 "<3>here.</3>"
 msgstr "Pokud nemůžete najít vhodnou afiliaci, můžete ji vytvořit <3>zde.</3>"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:3
+msgid "vocabulary.names"
+msgstr "Jména"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:5
+msgid "vocabulary.awards"
+msgstr "Granty"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:6
+msgid "vocabulary.funders"
+msgstr "Poskytovatelé financí"

@@ -511,6 +511,18 @@ msgid ""
 "<3>here.</3>"
 msgstr ""
 
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:3
+msgid "vocabulary.names"
+msgstr "Names"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:5
+msgid "vocabulary.awards"
+msgstr "Awards"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:6
+msgid "vocabulary.funders"
+msgstr "Funders"
+
 #~ msgid "Export"
 #~ msgstr "Export"
 

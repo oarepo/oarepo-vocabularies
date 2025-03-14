@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-03-14 12:43+0100\n"
+"POT-Creation-Date: 2025-03-14 13:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,23 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:3
+msgid "vocabulary.names"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:4
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:31
+msgid "vocabulary.affiliations"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:5
+msgid "vocabulary.awards"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:6
+msgid "vocabulary.funders"
+msgstr ""
 
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:139
 msgid "Best match"
@@ -133,10 +150,6 @@ msgstr ""
 
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:25
 msgid "vocabulary.identifiers"
-msgstr ""
-
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:31
-msgid "vocabulary.affiliations"
 msgstr ""
 
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:39
@@ -390,8 +403,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"If you cannot find an appropriate affiliation, you can create one "
-"<3>here.</3>"
+"<0>If you cannot find an appropriate affiliation, you can create one "
+"<2>here.</2></0>"
 msgstr ""
 
 msgid "Choose item"
