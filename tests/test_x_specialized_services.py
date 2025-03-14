@@ -25,16 +25,16 @@ def test_names_crud(app, db, cache, vocab_cf, search_clear):
     )
 
     full_rec = {
-        "created": rec.created,
-        "updated": rec.updated,
         "id": "test",
-        "links": {"self": "https://127.0.0.1:5000/api/names/test"},
+        "links": {
+            "self": "https://127.0.0.1:5000/api/names/test",
+            "self_html": "https://127.0.0.1:5000/vocabularies/names/test",
+        },
         "revision_id": 2,
         "name": "Svoboda, Mirek",
         "given_name": "Mirek",
         "family_name": "Svoboda",
     }
-
     assert full_rec.items() <= rec.data.items()
 
     current_service_registry.get("names").indexer.refresh()
