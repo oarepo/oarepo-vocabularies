@@ -4,7 +4,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import {
   IdentifiersField,
   organizationIdentifiersSchema,
-} from "@nr/forms/components/IdentifiersField";
+} from "@js/oarepo_ui/forms";
 import { VocabularyMultilingualInputField } from "../VocabularyMultilingualInputField";
 import PropTypes from "prop-types";
 import { useSetIdBasedOnIdentifier } from "./hooks";
@@ -29,7 +29,8 @@ export const VocabularyFormFieldsFunders = ({ editMode }) => {
         fieldPath="title"
         textFieldLabel={i18next.t("Title")}
         labelIcon="pencil"
-        displayFirstInputRemoveButton={false}
+        displayFirstInputRemoveButton={true}
+        required
         newItemInitialValue={{}}
         helpText={i18next.t(
           "Here you can provide the funder name in multiple languages. You can also include the one provided in the 'Name' field with appropriate language selected."

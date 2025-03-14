@@ -4,9 +4,7 @@
   <div>
     {% for identifier in identifiers %}
       <span title="{{ identifier.scheme }}">{{ identifier.identifier }}</span>
-      <i class="copy outline link teal icon copy-btn" role="button"
-      title="{{_('Click to copy') ~ ': ' ~ identifier.identifier}}"
-      data-clipboard-text="{{identifier.identifier}}"></i>
+      <ClipboardCopyButton copyText={identifier.identifier} />
     {% endfor %}
   </div>
 {% endif %}

@@ -4,7 +4,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import {
   IdentifiersField,
   organizationIdentifiersSchema,
-} from "@nr/forms/components/IdentifiersField";
+} from "@js/oarepo_ui/forms";
 import { VocabularyMultilingualInputField } from "../VocabularyMultilingualInputField";
 import PropTypes from "prop-types";
 import { useSetIdBasedOnIdentifier } from "./hooks";

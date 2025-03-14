@@ -41,11 +41,28 @@ class VocabularyTypeValidationSchema(ma.Schema):
 
     def load(self, data, *args, **kwargs):
         vocabulary_type = data.get("vocabulary_type")
+        # TODO: this will not be needed once specialized vocabs get their own resource
+        allowed_specialized_vocabularies = current_app.config.get(
+            "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", []
+        )
+
         try:
-            VocabularyType.query.filter_by(id=vocabulary_type).one()
-            return {"vocabulary_type": vocabulary_type}
+            if (
+                VocabularyType.query.filter_by(id=vocabulary_type).one_or_none()
+                or vocabulary_type in allowed_specialized_vocabularies.values()
+            ):
+                return {"vocabulary_type": vocabulary_type}
+            else:
+                raise PageNotFoundError(
+                    f"Vocabulary type {vocabulary_type} not found or not allowed."
+                )
+
+        except PageNotFoundError as e:
+            raise e
         except Exception:
-            raise PageNotFoundError(f"Vocabulary type {vocabulary_type} not found")
+            raise PageNotFoundError(
+                f"Vocabulary type {vocabulary_type} not found or not allowed."
+            )
 
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):

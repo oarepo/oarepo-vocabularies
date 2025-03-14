@@ -80,7 +80,7 @@ export const VocabularyFormFieldsAwards = ({ editMode }) => {
           }
         }}
       />
-      <Trans i18next={i18next}>
+      <Trans i18n={i18next}>
         <span className="helpText">
           If you cannot find an appropriate funder, you can create one{" "}
           <a

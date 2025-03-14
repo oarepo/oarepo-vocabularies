@@ -360,6 +360,157 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:9
+msgid "Vocabulary type does not exist."
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:14
+#, python-format
+msgid ""
+"\n"
+"      The vocabulary type you are trying to access does not exist in %(sitename)s."
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:25
+msgid "Identifiers"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:31
+msgid "Affiliations"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabularyExtraInfo.awards.jinja:3
+msgid "vocabulary.number"
+msgstr "Number"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabularyExtraInfo.awards.jinja:9
+msgid "Funders"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabularyExtraInfo.awards.jinja:15
+msgid "vocabulary.program"
+msgstr "Programme"
+
+msgid "Loading..."
+msgstr ""
+
+msgid "Unknown item"
+msgstr ""
+
+msgid "If you dont provide ID, random ID will be assigned."
+msgstr ""
+
+msgid "Affiliation name"
+msgstr ""
+
+msgid ""
+"Here you can provide the affiliation name in multiple languages. You can "
+"also include the one provided in the 'Name' field with appropriate language "
+"selected."
+msgstr ""
+
+msgid "Identifiers"
+msgstr ""
+
+msgid "Acronym"
+msgstr ""
+
+msgid "ULAKBIM"
+msgstr ""
+
+msgid ""
+"Use personal identifier eg ror:05pq4yn02. If you dont provide ID, random ID "
+"will be assigned."
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Award number i.e. 754657"
+msgstr ""
+
+msgid "You can provide award name in multiple languages."
+msgstr ""
+
+msgid "Search for a funder by name"
+msgstr ""
+
+msgid "Funder"
+msgstr ""
+
+msgid "Search for funder..."
+msgstr ""
+
+msgid "Programme"
+msgstr ""
+
+msgid ""
+"Use format: FunderID:Award Number i.e. AV0:754657. If you dont provide ID, "
+"random ID will be assigned."
+msgstr ""
+
+msgid ""
+"<0>If you cannot find an appropriate funder, you can create one "
+"<2>here.</2></0>"
+msgstr ""
+
+msgid "Funder name"
+msgstr ""
+
+msgid "Name of the funder"
+msgstr ""
+
+msgid ""
+"Here you can provide the funder name in multiple languages. You can also "
+"include the one provided in the 'Name' field with appropriate language "
+"selected."
+msgstr ""
+
+msgid "Family name"
+msgstr ""
+
+msgid "First name"
+msgstr ""
+
+msgid "Search for affiliations.."
+msgstr ""
+
+msgid "Affiliations"
+msgstr ""
+
+msgid ""
+"Use personal identifier eg orcid:0000-0001-9718-6515. If you dont provide "
+"ID, random ID will be assigned."
+msgstr ""
+
+msgid ""
+"<0>If you cannot find an appropriate affiliation, you can create one "
+"<2>here.</2></0>"
+msgstr ""
+
+msgid "Affiliations:"
+msgstr ""
+
+msgid "Identifiers:"
+msgstr ""
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:25
+msgid "vocabulary.identifiers"
+msgstr "Identifiers"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:31
+msgid "vocabulary.affiliations"
+msgstr "Affiliations"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabularyExtraInfo.awards.jinja:9
+msgid "vocabulary.funder"
+msgstr "Funders"
+
+msgid ""
+"If you cannot find an appropriate affiliation, you can create one "
+"<3>here.</3>"
+msgstr ""
+
 #~ msgid "Export"
 #~ msgstr "Export"
 

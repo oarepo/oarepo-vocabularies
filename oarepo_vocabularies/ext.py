@@ -106,10 +106,7 @@ def finalize_app(app) -> None:
     """Finalize app."""
     awards_service = app.extensions["invenio-vocabularies"].awards_service
     awards_service.config.url_prefix = "/awards/"
-    # awards_service.config.search.sort_options["title"] = dict(
-    #     title=("Title"),
-    #     fields=["title.en"],
-    # )
+
     awards_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/awards/{id}"
     )

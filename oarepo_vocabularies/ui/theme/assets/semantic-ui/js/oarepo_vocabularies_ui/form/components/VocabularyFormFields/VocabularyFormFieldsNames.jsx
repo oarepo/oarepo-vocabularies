@@ -1,10 +1,7 @@
 import React from "react";
 import { TextField, FieldLabel, RemoteSelectField } from "react-invenio-forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import {
-  IdentifiersField,
-  personIdentifiersSchema,
-} from "@nr/forms/components/IdentifiersField";
+import { IdentifiersField, personIdentifiersSchema } from "@js/oarepo_ui/forms";
 import { getIn, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import { Trans } from "react-i18next";
@@ -12,9 +9,9 @@ import { useSetIdBasedOnIdentifier } from "./hooks";
 
 const serializeAffiliations = (affiliations) =>
   affiliations.map((affiliation) => ({
-    value: affiliation.id,
+    value: affiliation.name,
     text: affiliation.name,
-    key: affiliation.id,
+    key: affiliation.name,
   }));
 
 export const VocabularyFormFieldsNames = ({ editMode }) => {
@@ -75,7 +72,6 @@ export const VocabularyFormFieldsNames = ({ editMode }) => {
         multiple
         onValueChange={({ formikProps }, selectedSuggestions) => {
           const formikSuggestions = selectedSuggestions.map((suggestion) => ({
-            id: suggestion.value,
             name: suggestion.text,
           }));
           formikProps.form.setFieldValue(
@@ -87,7 +83,7 @@ export const VocabularyFormFieldsNames = ({ editMode }) => {
           (val) => val.id || val.text || val.name
         )}
       />
-      <Trans i18next={i18next}>
+      <Trans i18n={i18next}>
         <span className="helpText">
           If you cannot find an appropriate affiliation, you can create one{" "}
           <a

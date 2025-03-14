@@ -356,3 +356,158 @@ msgstr "Vybrat"
 
 msgid "Remove"
 msgstr "Odebrat"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:9
+msgid "Vocabulary type does not exist."
+msgstr "Typ slovníku neexistuje."
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:14
+#, python-format
+msgid ""
+"\n"
+"      The vocabulary type you are trying to access does not exist in %(sitename)s."
+msgstr ""
+"      Typ slovníku, ke kterému se pokoušíte přistoupit, neexistuje v "
+"%(sitename)s."
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:25
+msgid "vocabulary.identifiers"
+msgstr "Identifikátory"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:31
+msgid "vocabulary.affiliations"
+msgstr "Afiliace"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabularyExtraInfo.awards.jinja:3
+msgid "vocabulary.number"
+msgstr "Číslo"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabularyExtraInfo.awards.jinja:9
+msgid "vocabulary.funder"
+msgstr "Poskytovatele financí"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabularyExtraInfo.awards.jinja:15
+msgid "vocabulary.program"
+msgstr "Program"
+
+msgid "Loading..."
+msgstr "Načítání..."
+
+msgid "Unknown item"
+msgstr "Neznámá položka"
+
+msgid "If you dont provide ID, random ID will be assigned."
+msgstr "Pokud nezadáte ID, bude přiřazeno náhodné ID."
+
+msgid "Affiliation name"
+msgstr "Název afiliace"
+
+msgid ""
+"Here you can provide the affiliation name in multiple languages. You can "
+"also include the one provided in the 'Name' field with appropriate language "
+"selected."
+msgstr ""
+"Zde můžete zadat název afiliace v několika jazycích. Můžete také zahrnout "
+"ten, který je uveden v poli 'Název' s vybraným příslušným jazykem."
+
+msgid "Identifiers"
+msgstr "Identifikátory"
+
+msgid "Acronym"
+msgstr "Akronym"
+
+msgid "ULAKBIM"
+msgstr "ULAKBIM"
+
+msgid ""
+"Use personal identifier eg ror:05pq4yn02. If you dont provide ID, random ID "
+"will be assigned."
+msgstr ""
+"Použijte osobní identifikátor, např. ror:05pq4yn02. Pokud nezadáte ID, bude "
+"přiřazeno náhodné ID."
+
+msgid "Number"
+msgstr "Číslo"
+
+msgid "Award number i.e. 754657"
+msgstr "Číslo grantu, např. 754657"
+
+msgid "You can provide award name in multiple languages."
+msgstr "Název grantu můžete zadat v několika jazycích."
+
+msgid "Search for a funder by name"
+msgstr "Hledat poskytovatele financi podle jména"
+
+msgid "Funder"
+msgstr "Poskytovatel financi"
+
+msgid "Search for funder..."
+msgstr "Hledat poskytovatele..."
+
+msgid "Programme"
+msgstr "Program"
+
+msgid ""
+"Use format: FunderID:Award Number i.e. AV0:754657. If you dont provide ID, "
+"random ID will be assigned."
+msgstr ""
+"Použijte formát: IDPoskytovatele:ČísloGrantu, např. AV0:754657. Pokud "
+"nezadáte ID, bude přiřazeno náhodné ID."
+
+msgid ""
+"<0>If you cannot find an appropriate funder, you can create one "
+"<2>here.</2></0>"
+msgstr ""
+"<0>Pokud nemůžete najít vhodného poskytovatele financi, můžete jej vytvořit "
+"<2>zde.</2></0>"
+
+msgid "Funder name"
+msgstr "Jméno poskytovatele financi"
+
+msgid "Name of the funder"
+msgstr "Název poskytovatele financi"
+
+msgid ""
+"Here you can provide the funder name in multiple languages. You can also "
+"include the one provided in the 'Name' field with appropriate language "
+"selected."
+msgstr ""
+"Zde můžete zadat jméno poskytovatele financi v několika jazycích. Můžete "
+"také zahrnout ten, který je uveden v poli 'Název' s vybraným příslušným "
+"jazykem."
+
+msgid "Family name"
+msgstr "Příjmení"
+
+msgid "First name"
+msgstr "Jméno"
+
+msgid "Search for affiliations.."
+msgstr "Hledat afiliace..."
+
+msgid "Affiliations"
+msgstr "Afiliace"
+
+msgid ""
+"Use personal identifier eg orcid:0000-0001-9718-6515. If you dont provide "
+"ID, random ID will be assigned."
+msgstr ""
+"Použijte osobní identifikátor, např. orcid:0000-0001-9718-6515. Pokud "
+"nezadáte ID, bude přiřazeno náhodné ID."
+
+msgid ""
+"<0>If you cannot find an appropriate affiliation, you can create one "
+"<2>here.</2></0>"
+msgstr ""
+"<0>Pokud nemůžete najít vhodnou afiliaci, můžete ji vytvořit <2>zde.</2></0>"
+
+msgid "Affiliations:"
+msgstr "Afiliace:"
+
+msgid "Identifiers:"
+msgstr "Identifikátory:"
+
+msgid ""
+"If you cannot find an appropriate affiliation, you can create one "
+"<3>here.</3>"
+msgstr "Pokud nemůžete najít vhodnou afiliaci, můžete ji vytvořit <3>zde.</3>"
