@@ -25,6 +25,8 @@ def test_names_crud(app, db, cache, vocab_cf, search_clear):
     )
 
     full_rec = {
+        "created": rec.created,
+        "updated": rec.updated,
         "id": "test",
         "links": {"self": "https://127.0.0.1:5000/api/names/test"},
         "revision_id": 2,
@@ -85,7 +87,6 @@ def test_names_fixtures_load(app, db, cache, vocab_cf, search_clear):
 def test_serialization_api_vnd(
     app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client
 ):
-
     callback = StatsKeepingDataStreamCallback(log_error_entry=True)
     load_fixtures(Path(__file__).parent / "names-data", callback=callback)
 
@@ -96,7 +97,6 @@ def test_serialization_api_vnd(
             "Accept-Language": "cs",
         },
     ) as response:
-
         assert response.status_code == 200
         hits = response.json["hits"]["hits"]
         assert len(hits) == 1
