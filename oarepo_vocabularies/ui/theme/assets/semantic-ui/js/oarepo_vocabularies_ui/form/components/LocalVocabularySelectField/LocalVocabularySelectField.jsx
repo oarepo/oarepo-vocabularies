@@ -71,14 +71,23 @@ export const LocalVocabularySelectField = ({
   filterFunction = undefined,
   icon = "tag",
   clearable = true,
+  label,
+  required,
   ...uiProps
 }) => {
   const { getFieldData } = useFieldData();
 
-  const fieldData = getFieldData({
-    fieldPath: fieldPath,
-    icon: icon,
-  });
+  const fieldData = {
+    ...getFieldData({
+      fieldPath: fieldPath,
+      icon: icon,
+    }),
+    ...(label && { label }),
+    ...(required && { required }),
+    ...(helpText && { helpText }),
+  };
+
+  const { helpText: help, ...restFieldData } = fieldData;
 
   const {
     formConfig: { vocabularies },
@@ -116,9 +125,10 @@ export const LocalVocabularySelectField = ({
       processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
     [featuredOptions, showLeafsOnly, filterFunction]
   );
+  const hasMultipleItems = multiple || fieldData.detail === "array";
 
   const handleChange = ({ data, formikProps }) => {
-    if (multiple) {
+    if (hasMultipleItems) {
       let vocabularyItems = allOptions.filter((o) =>
         data.value.includes(o.value)
       );
@@ -136,7 +146,7 @@ export const LocalVocabularySelectField = ({
   };
 
   const { values, setFieldTouched } = useFormikContext();
-  const value = getIn(values, fieldPath, multiple ? [] : {});
+  const value = getIn(values, fieldPath, hasMultipleItems ? [] : {});
   return (
     <React.Fragment>
       <SelectField
@@ -147,17 +157,17 @@ export const LocalVocabularySelectField = ({
         search={search}
         control={InnerDropdown}
         fieldPath={fieldPath}
-        multiple={fieldData.detail === "array"}
+        multiple={hasMultipleItems}
         featured={serializedFeaturedOptions}
         options={serializedOptions}
         usedOptions={usedOptions}
         onChange={handleChange}
-        value={multiple ? value.map((o) => o?.id) : value?.id}
+        value={hasMultipleItems ? value.map((o) => o?.id) : value?.id}
         clearable={clearable}
-        {...fieldData}
+        {...restFieldData}
         {...uiProps}
       />
-      <label className="helptext">{helpText}</label>
+      <label className="helptext">{help}</label>
     </React.Fragment>
   );
 };
@@ -167,6 +177,8 @@ LocalVocabularySelectField.propTypes = {
   multiple: PropTypes.bool,
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
+  label: PropTypes.string,
+  required: PropTypes.bool,
   usedOptions: PropTypes.array,
   showLeafsOnly: PropTypes.bool,
   optimized: PropTypes.bool,

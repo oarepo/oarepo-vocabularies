@@ -7,12 +7,14 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { vocabularyItemsToColumnOptions } from "./util";
 import { VocabularyPickerField } from "../VocabularyPickerField";
 import { useModalTrigger } from "../../hooks";
+import { useFieldData } from "@js/oarepo_ui/forms";
 
 export const VocabularyTreeSelectField = ({
   vocabulary,
   fieldPath,
   label,
   helpText,
+  icon = "tag",
   multiple,
   required,
   triggerButton,
@@ -28,9 +30,26 @@ export const VocabularyTreeSelectField = ({
   // it looks clunky, but unfortunately, when this field is empty, the getIn,
   // creates new object or array every time, and it causes constant rerendering
 
+  const { getFieldData } = useFieldData();
+
+  const fieldData = {
+    ...getFieldData({
+      fieldPath: fieldPath,
+      icon: icon,
+    }),
+    ...(label && { label }),
+    ...(required && { required }),
+    ...(helpText && { helpText }),
+  };
+  const hasMultipleItems = multiple || fieldData.detail === "array";
+
   const emptyArray = useMemo(() => [], []);
   const emptyObject = useMemo(() => ({}), []);
-  const value = getIn(values, fieldPath, multiple ? emptyArray : emptyObject);
+  const value = getIn(
+    values,
+    fieldPath,
+    hasMultipleItems ? emptyArray : emptyObject
+  );
 
   const { all: allOptions } = vocabularies[vocabulary];
   if (!allOptions) {
@@ -42,9 +61,9 @@ export const VocabularyTreeSelectField = ({
         id: item.value,
         title: { [i18next.language]: item.name },
       }));
-      setFieldValue(fieldPath, multiple ? newValue : newValue[0]);
+      setFieldValue(fieldPath, hasMultipleItems ? newValue : newValue[0]);
     },
-    [fieldPath, multiple, setFieldValue]
+    [fieldPath, hasMultipleItems, setFieldValue]
   );
 
   return (
@@ -52,7 +71,7 @@ export const VocabularyTreeSelectField = ({
       fieldPath={fieldPath}
       label={label}
       helpText={helpText}
-      multiple={multiple}
+      multiple={hasMultipleItems}
       required={required}
       triggerButton={triggerButton}
       placeholder={placeholder}
@@ -63,6 +82,7 @@ export const VocabularyTreeSelectField = ({
       allOptions={allOptions}
       onSubmit={handleSubmit}
       vocabulary={vocabulary}
+      {...fieldData}
       {...restProps}
     />
   );
@@ -201,6 +221,7 @@ const MemoizedVocabularyTreeSelectPresentation = React.memo(
   }
 );
 VocabularyTreeSelectField.propTypes = {
+  icon: PropTypes.string,
   fieldPath: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
   vocabulary: PropTypes.string.isRequired,
