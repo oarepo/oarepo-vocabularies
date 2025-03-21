@@ -66,6 +66,7 @@ export const LocalVocabularySelectField = ({
   optionsListName,
   usedOptions = [],
   helpText,
+  placeholder,
   showLeafsOnly = false,
   optimized = true,
   filterFunction = undefined,
@@ -85,8 +86,10 @@ export const LocalVocabularySelectField = ({
     ...(label && { label }),
     ...(required && { required }),
     ...(helpText && { helpText }),
+    ...(placeholder && { placeholder }),
   };
 
+  // Remove helpText from fieldData to avoid passing it to the SelectField
   const { helpText: help, ...restFieldData } = fieldData;
 
   const {
@@ -178,6 +181,7 @@ LocalVocabularySelectField.propTypes = {
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
   label: PropTypes.string,
+  placeholder: PropTypes.string,
   required: PropTypes.bool,
   usedOptions: PropTypes.array,
   showLeafsOnly: PropTypes.bool,
