@@ -6,19 +6,19 @@ import { getIn, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import { Trans } from "react-i18next";
 
-export const VocabularyFormFieldsAwards = ({ editMode }) => {
+export const VocabularyFormFieldsAwards = ({ isUpdateForm }) => {
   const { values, setFieldValue } = useFormikContext();
 
   const funder = getIn(values, "funder", {});
   const awardNumber = getIn(values, "number", "");
   useEffect(() => {
-    if (editMode) {
+    if (isUpdateForm) {
       return;
     }
     if (funder?.id && awardNumber) {
       setFieldValue("id", `${funder.id}:${awardNumber}`);
     }
-  }, [funder.id, awardNumber, setFieldValue, editMode]);
+  }, [funder.id, awardNumber, setFieldValue, isUpdateForm]);
   return (
     <React.Fragment>
       <TextField
@@ -128,5 +128,5 @@ export const VocabularyFormFieldsAwards = ({ editMode }) => {
 };
 
 VocabularyFormFieldsAwards.propTypes = {
-  editMode: PropTypes.bool,
+  isUpdateForm: PropTypes.bool,
 };

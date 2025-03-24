@@ -15,7 +15,7 @@ export const VocabularyFormFields = () => {
   const { vocabularyProps, overridableIdPrefix, vocabularyType } = formConfig;
 
   const hasPropFields = _has(vocabularyProps, "props");
-  const editMode = _has(formConfig, "updateUrl");
+  const isUpdateForm = _has(formConfig, "updateUrl");
   return (
     <Overridable
       id={buildUID(
@@ -25,7 +25,7 @@ export const VocabularyFormFields = () => {
       vocabularyProps={vocabularyProps}
       vocabularyType={vocabularyType}
       hasPropFields={hasPropFields}
-      editMode={editMode}
+      isUpdateForm={isUpdateForm}
     >
       <React.Fragment>
         <VocabularyMultilingualInputField

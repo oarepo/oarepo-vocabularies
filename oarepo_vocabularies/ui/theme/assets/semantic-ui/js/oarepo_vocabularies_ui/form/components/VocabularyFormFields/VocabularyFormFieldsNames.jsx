@@ -14,9 +14,9 @@ const serializeAffiliations = (affiliations) =>
     key: affiliation.name,
   }));
 
-export const VocabularyFormFieldsNames = ({ editMode }) => {
+export const VocabularyFormFieldsNames = ({ isUpdateForm }) => {
   const { values } = useFormikContext();
-  useSetIdBasedOnIdentifier(editMode);
+  useSetIdBasedOnIdentifier(isUpdateForm);
   const affiliationsFieldPath = "affiliations";
   return (
     <React.Fragment>
@@ -110,5 +110,5 @@ export const VocabularyFormFieldsNames = ({ editMode }) => {
 };
 
 VocabularyFormFieldsNames.propTypes = {
-  editMode: PropTypes.bool,
+  isUpdateForm: PropTypes.bool,
 };

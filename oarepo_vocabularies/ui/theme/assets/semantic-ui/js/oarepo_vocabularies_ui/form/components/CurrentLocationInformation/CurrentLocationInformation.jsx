@@ -107,15 +107,15 @@ const EditMessage = ({ record }) => {
 
 export const CurrentLocationInformation = ({
   newChildItemParentId,
-  editMode,
+  isUpdateForm,
 }) => {
   const { record } = useFormConfig();
 
   if (!record?.hierarchy?.level) return null;
 
-  if (!editMode && !newChildItemParentId) {
+  if (!isUpdateForm && !newChildItemParentId) {
     return <NewTopLevelItemMessage />;
-  } else if (!editMode) {
+  } else if (!isUpdateForm) {
     return (
       <NewChildItemMessage
         record={record}
@@ -142,7 +142,7 @@ EditMessage.propTypes = {
 
 CurrentLocationInformation.propTypes = {
   newChildItemParentId: PropTypes.string,
-  editMode: PropTypes.bool,
+  isUpdateForm: PropTypes.bool,
   record: PropTypes.shape({
     hierarchy: PropTypes.shape({
       level: PropTypes.number.isRequired,

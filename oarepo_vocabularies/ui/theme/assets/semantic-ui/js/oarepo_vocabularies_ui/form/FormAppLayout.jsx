@@ -11,7 +11,7 @@ export const FormAppLayout = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-  const editMode = _has(formConfig, "updateUrl");
+  const isUpdateForm = _has(formConfig, "updateUrl");
 
   return (
     <Container fluid>
@@ -19,7 +19,7 @@ export const FormAppLayout = () => {
         <Grid.Row className="rel-mb-2">
           <Grid.Column width={16}>
             <CurrentLocationInformation
-              editMode={editMode}
+              isUpdateForm={isUpdateForm}
               newChildItemParentId={newChildItemParentId}
             />
           </Grid.Column>

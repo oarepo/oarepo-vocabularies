@@ -9,8 +9,8 @@ import { VocabularyMultilingualInputField } from "../VocabularyMultilingualInput
 import PropTypes from "prop-types";
 import { useSetIdBasedOnIdentifier } from "./hooks";
 
-export const VocabularyFormFieldsFunders = ({ editMode }) => {
-  useSetIdBasedOnIdentifier(editMode);
+export const VocabularyFormFieldsFunders = ({ isUpdateForm }) => {
+  useSetIdBasedOnIdentifier(isUpdateForm);
   return (
     <React.Fragment>
       <TextField
@@ -59,5 +59,5 @@ export const VocabularyFormFieldsFunders = ({ editMode }) => {
 };
 
 VocabularyFormFieldsFunders.propTypes = {
-  editMode: PropTypes.bool,
+  isUpdateForm: PropTypes.bool,
 };
