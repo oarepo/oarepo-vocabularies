@@ -48,12 +48,14 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     def edit(self):
         return super().edit()
 
-    def _get_record(self, resource_requestctx, allow_draft=False):
+    def _get_record(self, resourcerequestctx, allow_draft=False, include_deleted=False):
+        pid_value = resource_requestctx.view_args["pid_value"]
+        vocabulary_type = resource_requestctx.view_args["vocabulary_type"]
         return self.api_service.read(
             g.identity,
             (
-                resource_requestctx.view_args["vocabulary_type"],
-                resource_requestctx.view_args["pid_value"],
+                vocabulary_type,
+                pid_value,
             ),
         )
 
