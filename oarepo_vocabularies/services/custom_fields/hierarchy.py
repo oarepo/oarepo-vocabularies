@@ -20,7 +20,7 @@ class HierarchyLevelCF(HierarchyCF, IntegerCF):
 
 class HierarchyTitleCF(HierarchyCF, BaseCF):
     def update(self, record, parent):
-        titles = [record["title"]]
+        titles = [record["title"]] if "title" in record and record["title"] else []
         if parent:
             titles.extend(parent["hierarchy"]["title"])
         record.hierarchy["title"] = titles

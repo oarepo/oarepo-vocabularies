@@ -40,19 +40,21 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
   if (isLoading)
     return (
       <Dimmer active inverted>
-        <Loader inverted>Loading</Loader>
+        <Loader inverted>{i18next("Loading")}</Loader>
       </Dimmer>
     );
 
-  const localizedVocabularyTitle = !_isEmpty(data) ? getTitleFromMultilingualObject(data.title) : "";
+  const localizedVocabularyTitle = !_isEmpty(data)
+    ? getTitleFromMultilingualObject(data.title)
+    : "";
 
   return (
     <React.Fragment>
       {!isLoading && data && (
         <VocabularyBreadcrumbMessage
-          header={
-            `${i18next.t("newChildItemMessage")} ${localizedVocabularyTitle}`
-          }
+          header={`${i18next.t(
+            "newChildItemMessage"
+          )} ${localizedVocabularyTitle}`}
           content={
             <VocabularyBreadcrumb
               sections={[
@@ -61,7 +63,9 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
                 ),
                 {
                   key: "new",
-                  content: !_isEmpty(record?.id) ? record.id : i18next.t("newItem"),
+                  content: !_isEmpty(record?.id)
+                    ? record.id
+                    : i18next.t("newItem"),
                   active: true,
                 },
               ]}
@@ -72,6 +76,11 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
       {error?.message && <ErrorElement error={error} />}
     </React.Fragment>
   );
+};
+
+NewChildItemMessage.propTypes = {
+  record: PropTypes.object,
+  newChildItemParentId: PropTypes.string,
 };
 
 const EditMessage = ({ record }) => {
@@ -98,13 +107,21 @@ const EditMessage = ({ record }) => {
 
 export const CurrentLocationInformation = ({
   newChildItemParentId,
-  editMode,
+  isUpdateForm,
 }) => {
   const { record } = useFormConfig();
-  if (!editMode && !newChildItemParentId) {
+
+  if (!record?.hierarchy?.level) return null;
+
+  if (!isUpdateForm && !newChildItemParentId) {
     return <NewTopLevelItemMessage />;
-  } else if (!editMode) {
-    return <NewChildItemMessage record={record} newChildItemParentId={newChildItemParentId} />;
+  } else if (!isUpdateForm) {
+    return (
+      <NewChildItemMessage
+        record={record}
+        newChildItemParentId={newChildItemParentId}
+      />
+    );
   } else {
     return <EditMessage record={record} />;
   }
@@ -125,7 +142,7 @@ EditMessage.propTypes = {
 
 CurrentLocationInformation.propTypes = {
   newChildItemParentId: PropTypes.string,
-  editMode: PropTypes.bool,
+  isUpdateForm: PropTypes.bool,
   record: PropTypes.shape({
     hierarchy: PropTypes.shape({
       level: PropTypes.number.isRequired,

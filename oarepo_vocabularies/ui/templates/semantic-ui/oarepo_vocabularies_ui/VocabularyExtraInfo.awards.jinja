@@ -1,0 +1,19 @@
+{#def metadata, record, d, extra_context, hierarchical=False #}
+{% if record.number%}
+<dt>{{_("vocabulary.number")}}</dt>
+<dd>
+    {{record.number}}
+</dd>
+{% endif %}
+{% if record.funder%}
+<dt>{{_("vocabulary.funder")}}</dt>
+<dd>
+    {{record.funder.name}}
+</dd>
+{% endif %}
+{% if record.program%}
+<dt>{{_("vocabulary.program")}}</dt>
+<dd>
+    {{record.program}}
+</dd>
+{% endif %}

@@ -1,0 +1,10 @@
+{# def identifiers=[] #}
+
+{% if identifiers and identifiers|length > 0 %}
+  <div>
+    {% for identifier in identifiers %}
+      <span title="{{ identifier.scheme }}">{{ identifier.identifier }}</span>
+      <ClipboardCopyButton copyText={identifier.identifier} />
+    {% endfor %}
+  </div>
+{% endif %}
