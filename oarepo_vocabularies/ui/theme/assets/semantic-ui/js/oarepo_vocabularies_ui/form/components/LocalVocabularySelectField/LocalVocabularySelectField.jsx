@@ -62,6 +62,7 @@ InnerDropdown.propTypes = {
 };
 export const LocalVocabularySelectField = ({
   fieldPath,
+  fieldRepresentation,
   multiple,
   optionsListName,
   usedOptions = [],
@@ -80,8 +81,9 @@ export const LocalVocabularySelectField = ({
 
   const fieldData = {
     ...getFieldData({
-      fieldPath: fieldPath,
-      icon: icon,
+      fieldPath,
+      icon,
+      fieldRepresentation,
     }),
     ...(label && { label }),
     ...(required && { required }),
@@ -177,10 +179,11 @@ export const LocalVocabularySelectField = ({
 
 LocalVocabularySelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
+  fieldRepresentation: PropTypes.string,
   multiple: PropTypes.bool,
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
-  label: PropTypes.string,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   placeholder: PropTypes.string,
   required: PropTypes.bool,
   usedOptions: PropTypes.array,
