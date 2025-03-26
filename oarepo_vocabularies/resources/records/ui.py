@@ -2,7 +2,7 @@ from flask_resources import BaseListSchema
 from flask_resources.serializers import JSONSerializer
 from oarepo_runtime.resources import LocalizedUIJSONSerializer
 
-from oarepo_vocabularies.services.ui_schema import VocabularyUISchema
+from oarepo_vocabularies.resources.config import VocabularySchemaSelector
 
 
 class VocabularyUIJSONSerializer(LocalizedUIJSONSerializer):
@@ -12,7 +12,7 @@ class VocabularyUIJSONSerializer(LocalizedUIJSONSerializer):
         """Initialise Serializer."""
         super().__init__(
             format_serializer_cls=JSONSerializer,
-            object_schema_cls=VocabularyUISchema,
+            object_schema_cls=VocabularySchemaSelector,
             list_schema_cls=BaseListSchema,
             schema_context={"object_key": "ui"},
         )

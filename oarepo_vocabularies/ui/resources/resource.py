@@ -7,6 +7,8 @@ from invenio_records_resources.resources.records.resource import (
 )
 from invenio_records_resources.services import LinksTemplate
 from oarepo_ui.resources.resource import RecordsUIResource
+from oarepo_ui.proxies import current_oarepo_ui
+
 
 request_vocabulary_args = request_parser(
     from_conf("request_vocabulary_type_args"), location="view_args"
@@ -46,12 +48,14 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     def edit(self):
         return super().edit()
 
-    def _get_record(self, resource_requestctx, allow_draft=False):
+    def _get_record(self, resourcerequestctx, allow_draft=False, include_deleted=False):
+        pid_value = resource_requestctx.view_args["pid_value"]
+        vocabulary_type = resource_requestctx.view_args["vocabulary_type"]
         return self.api_service.read(
             g.identity,
             (
-                resource_requestctx.view_args["vocabulary_type"],
-                resource_requestctx.view_args["pid_value"],
+                vocabulary_type,
+                pid_value,
             ),
         )
 
@@ -86,3 +90,13 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             },
         )
         return tpl.expand(identity, pagination)
+
+    def vocabulary_type_does_not_exist(self, error, *args, **kwargs):
+        return current_oarepo_ui.catalog.render(
+            self.get_jinjax_macro(
+                "no_vocabulary_type",
+                identity=g.identity,
+                default_macro="NoVocabularyType",
+            ),
+            message=str(error),
+        )

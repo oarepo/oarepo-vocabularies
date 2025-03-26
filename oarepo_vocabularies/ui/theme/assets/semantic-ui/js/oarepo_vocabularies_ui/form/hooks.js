@@ -17,7 +17,9 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
     read,
   } = formik;
 
-  async function createOrUpdate () {
+  const recordId = values.id || crypto.randomUUID();
+  const valuesWithUUID = { ...values, id: recordId };
+  async function createOrUpdate() {
     const validationErrors = await validateForm();
     if (!_isEmpty(validationErrors)) return;
     setSubmitting(true);
@@ -28,28 +30,28 @@ export const useVocabularyApiClient = (newChildItemParentId) => {
       if (createUrl) {
         if (newChildItemParentId) {
           response = await apiClient.createDraft({
-            ...values,
+            ...valuesWithUUID,
             hierarchy: { parent: newChildItemParentId },
           });
         } else {
-          response = await apiClient.createDraft(values);
+          response = await apiClient.createDraft({
+            ...valuesWithUUID,
+          });
         }
       } else {
-        response = await apiClient.saveDraft(values);
+        response = await apiClient.saveDraft({
+          ...valuesWithUUID,
+        });
       }
 
       window.location.href = response.links.self_html;
 
       return response;
     } catch (error) {
-      if (
-        error &&
-        error.status === 400 &&
-        error.message === "A validation error occurred."
-      ) {
-        error.errors?.forEach((err) =>
-          setFieldError(err.field, err.messages.join(" "))
-        );
+      if (error && error?.response?.data?.errors?.length > 0) {
+        error.response.data.errors?.forEach((err) => {
+          setFieldError(err.field, err.messages.join(" "));
+        });
       } else {
         setFieldError(
           "httpErrors",

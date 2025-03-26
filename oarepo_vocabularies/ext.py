@@ -4,6 +4,10 @@ from functools import cached_property
 from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.proxies import current_service_registry
 
+from invenio_records_resources.services.records.links import (
+    RecordLink,
+)
+
 
 class OARepoVocabularies(object):
     """OARepo extension of Invenio-Vocabularies."""
@@ -81,7 +85,6 @@ class OARepoVocabularies(object):
     def specialized_services(self):
         return self.app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {})
 
-
     def init_resource(self, app):
         """Initialize resources."""
         self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
@@ -97,3 +100,32 @@ class OARepoVocabularies(object):
             "INVENIO_VOCABULARY_TYPE_METADATA", {}
         )
         return vocabulary_type_metadata.get(vocabulary_name, {})
+
+
+def finalize_app(app) -> None:
+    """Finalize app."""
+    awards_service = app.extensions["invenio-vocabularies"].awards_service
+    awards_service.config.url_prefix = "/awards/"
+
+    awards_service.config.links_item["self_html"] = RecordLink(
+        "{+ui}/vocabularies/awards/{id}"
+    )
+
+    affiliations_service = app.extensions["invenio-vocabularies"].affiliations_service
+    affiliations_service.config.links_item["self_html"] = RecordLink(
+        "{+ui}/vocabularies/affiliations/{id}"
+    )
+
+    funders_service = app.extensions["invenio-vocabularies"].funders_service
+    funders_service.config.links_item["self_html"] = RecordLink(
+        "{+ui}/vocabularies/funders/{id}"
+    )
+
+    names_service = app.extensions["invenio-vocabularies"].names_service
+    names_service.config.search.sort_options["name"] = dict(
+        title=("Name"),
+        fields=["name_sort"],
+    )
+    names_service.config.links_item["self_html"] = RecordLink(
+        "{+ui}/vocabularies/names/{id}"
+    )
