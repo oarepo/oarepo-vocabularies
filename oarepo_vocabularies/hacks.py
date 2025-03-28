@@ -34,3 +34,16 @@ def patch_invenio_vocabulary_service(app):
     i18n_required_strings.required = True
     FunderSchema.title = i18n_required_strings
     FunderSchema._declared_fields["title"] = i18n_required_strings
+
+    from invenio_vocabularies.contrib.funders.facets import FundersLabels
+    from invenio_vocabularies.services.facets import lazy_get_label
+
+    def vocab_to_label(self, vocab):
+        """Returns the label string for a vocabulary entry."""
+        if "title" not in vocab:
+            title = vocab.get("id")
+        else:
+            title = lazy_get_label(vocab["title"])
+        return f"{title} ({vocab['country']})"
+
+    FundersLabels._vocab_to_label = vocab_to_label
