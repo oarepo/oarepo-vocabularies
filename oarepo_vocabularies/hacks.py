@@ -1,3 +1,5 @@
+import copy
+
 from invenio_records_resources.proxies import current_service_registry
 
 from oarepo_vocabularies.services.service import VocabulariesService
@@ -24,3 +26,11 @@ def patch_invenio_vocabulary_service(app):
     with app.app_context():
         if "vocabularies" in current_service_registry._services:
             current_service_registry._services["vocabularies"] = new_service
+
+    from invenio_vocabularies.contrib.funders.schema import FunderSchema
+    from invenio_vocabularies.services.schema import i18n_strings
+
+    i18n_required_strings = copy.copy(i18n_strings)
+    i18n_required_strings.required = True
+    FunderSchema.title = i18n_required_strings
+    FunderSchema._declared_fields["title"] = i18n_required_strings
