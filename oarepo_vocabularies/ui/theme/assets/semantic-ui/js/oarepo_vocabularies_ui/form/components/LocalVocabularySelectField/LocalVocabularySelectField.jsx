@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
 import { SelectField } from "react-invenio-forms";
-import { useFormConfig, search } from "@js/oarepo_ui/forms";
+import { useFormConfig, search, useFieldData } from "@js/oarepo_ui/forms";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
-import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { serializeVocabularyItems } from "@js/oarepo_vocabularies";
 
 export const processVocabularyItems = (
@@ -63,15 +62,38 @@ InnerDropdown.propTypes = {
 };
 export const LocalVocabularySelectField = ({
   fieldPath,
+  fieldRepresentation,
   multiple,
   optionsListName,
   usedOptions = [],
   helpText,
-  showLeafsOnly,
-  optimized,
-  filterFunction,
+  placeholder,
+  showLeafsOnly = false,
+  optimized = true,
+  filterFunction = undefined,
+  icon = "tag",
+  clearable = true,
+  label,
+  required,
   ...uiProps
 }) => {
+  const { getFieldData } = useFieldData();
+
+  const fieldData = {
+    ...getFieldData({
+      fieldPath,
+      icon,
+      fieldRepresentation,
+    }),
+    ...(label && { label }),
+    ...(required && { required }),
+    ...(helpText && { helpText }),
+    ...(placeholder && { placeholder }),
+  };
+
+  // Remove helpText from fieldData to avoid passing it to the SelectField
+  const { helpText: help, ...restFieldData } = fieldData;
+
   const {
     formConfig: { vocabularies },
   } = useFormConfig();
@@ -108,9 +130,10 @@ export const LocalVocabularySelectField = ({
       processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
     [featuredOptions, showLeafsOnly, filterFunction]
   );
+  const hasMultipleItems = multiple || fieldData.detail === "array";
 
   const handleChange = ({ data, formikProps }) => {
-    if (multiple) {
+    if (hasMultipleItems) {
       let vocabularyItems = allOptions.filter((o) =>
         data.value.includes(o.value)
       );
@@ -128,8 +151,7 @@ export const LocalVocabularySelectField = ({
   };
 
   const { values, setFieldTouched } = useFormikContext();
-  const value = getIn(values, fieldPath, multiple ? [] : {});
-
+  const value = getIn(values, fieldPath, hasMultipleItems ? [] : {});
   return (
     <React.Fragment>
       <SelectField
@@ -140,34 +162,34 @@ export const LocalVocabularySelectField = ({
         search={search}
         control={InnerDropdown}
         fieldPath={fieldPath}
-        multiple={multiple}
+        multiple={hasMultipleItems}
         featured={serializedFeaturedOptions}
         options={serializedOptions}
         usedOptions={usedOptions}
         onChange={handleChange}
-        value={multiple ? value.map((o) => o?.id) : value?.id}
+        value={hasMultipleItems ? value.map((o) => o?.id) : value?.id}
+        clearable={clearable}
+        {...restFieldData}
         {...uiProps}
       />
-      <label className="helptext">{helpText}</label>
+      <label className="helptext">{help}</label>
     </React.Fragment>
   );
 };
 
 LocalVocabularySelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
+  fieldRepresentation: PropTypes.string,
   multiple: PropTypes.bool,
   optionsListName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
-  noResultsMessage: PropTypes.string,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  placeholder: PropTypes.string,
+  required: PropTypes.bool,
   usedOptions: PropTypes.array,
   showLeafsOnly: PropTypes.bool,
   optimized: PropTypes.bool,
   filterFunction: PropTypes.func,
-};
-
-LocalVocabularySelectField.defaultProps = {
-  noResultsMessage: i18next.t("No results found."),
-  showLeafsOnly: false,
-  optimized: false,
-  filterFunction: undefined,
+  icon: PropTypes.string,
+  clearable: PropTypes.bool,
 };
