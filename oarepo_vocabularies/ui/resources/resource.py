@@ -6,9 +6,8 @@ from invenio_records_resources.resources.records.resource import (
     request_view_args,
 )
 from invenio_records_resources.services import LinksTemplate
-from oarepo_ui.resources.resource import RecordsUIResource
 from oarepo_ui.proxies import current_oarepo_ui
-
+from oarepo_ui.resources.resource import RecordsUIResource
 
 request_vocabulary_args = request_parser(
     from_conf("request_vocabulary_type_args"), location="view_args"
@@ -100,3 +99,10 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ),
             message=str(error),
         )
+
+    def _exportable_handlers(self):
+        """Get the list of exportable handlers.
+
+        returns: list of exportable handlers (mimetype, handler)
+        """
+        return []
