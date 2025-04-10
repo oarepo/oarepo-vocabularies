@@ -7,6 +7,7 @@ from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.records.links import (
     RecordLink,
 )
+from oarepo_vocabularies.services.search import VocabularyIdsParam
 
 
 class OARepoVocabularies(object):
@@ -110,16 +111,28 @@ def finalize_app(app) -> None:
     awards_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/awards/{id}"
     )
+    awards_service.config.search.params_interpreters_cls = [
+        *awards_service.config.search.params_interpreters_cls,
+        VocabularyIdsParam,
+    ]
 
     affiliations_service = app.extensions["invenio-vocabularies"].affiliations_service
     affiliations_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/affiliations/{id}"
     )
+    affiliations_service.config.search.params_interpreters_cls = [
+        *affiliations_service.config.search.params_interpreters_cls,
+        VocabularyIdsParam,
+    ]
 
     funders_service = app.extensions["invenio-vocabularies"].funders_service
     funders_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/funders/{id}"
     )
+    funders_service.config.search.params_interpreters_cls = [
+        *funders_service.config.search.params_interpreters_cls,
+        VocabularyIdsParam,
+    ]
 
     names_service = app.extensions["invenio-vocabularies"].names_service
     names_service.config.search.sort_options["name"] = dict(
@@ -129,3 +142,7 @@ def finalize_app(app) -> None:
     names_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/names/{id}"
     )
+    names_service.config.search.params_interpreters_cls = [
+        *names_service.config.search.params_interpreters_cls,
+        VocabularyIdsParam,
+    ]
