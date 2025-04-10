@@ -31,6 +31,7 @@ class VocabularyPrefetchSchema(marshmallow.Schema):
     hierarchy = marshmallow.fields.Nested(
         DepositI18nHierarchySchema(), data_key="hierarchy"
     )
+    name = marshmallow.fields.String()
     props = marshmallow.fields.Dict(
         keys=marshmallow.fields.String(), values=marshmallow.fields.String()
     )
@@ -166,18 +167,23 @@ class VocabularyCache:
         self.count_from_cache += len(cached)
         self.count_prefetched += len(uncached_small)
         self.count_fetched += len(uncached)
+        from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 
         if uncached_small:
             self._fill_from_small_vocabularies_cache(language, uncached_small, cached)
-
         if uncached:
+            specialized_service = current_oarepo_vocabularies.get_specialized_service(
+                uncached[0][0]
+            )
             for item, serialized_item in self._serialize_items(
                 locale,
-                vocabulary_service.search_many(
+                specialized_service.search(system_identity, params={"ids": uncached})
+                if specialized_service
+                else vocabulary_service.search_many(
                     system_identity, params={"ids": uncached}
                 ),
             ):
-                typed_id = (item["type"], item["id"])
+                typed_id = (item.get("type", uncached[0][0]), item["id"])
                 cached[typed_id] = serialized_item
                 self.lru_terms_cache[(language, typed_id)] = serialized_item
 
