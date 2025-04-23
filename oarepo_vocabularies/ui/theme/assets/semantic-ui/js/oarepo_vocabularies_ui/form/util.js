@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Breadcrumb } from "semantic-ui-react";
+import { Breadcrumb, Popup, Icon } from "semantic-ui-react";
 import _join from "lodash/join";
 import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
@@ -75,13 +75,43 @@ export const serializeVocabularyItems = (vocabularyItems) =>
         }
       }),
     ];
+    const { description, ...vocabularyItemWoDescription } = vocabularyItem;
     return {
-      ...vocabularyItem,
+      ...vocabularyItemWoDescription,
       text:
         titlesArray.length === 1 ? (
-          <span>{text}</span>
+          <div>
+            <span>{text}</span>
+            {description && (
+              <Popup
+                content={description}
+                trigger={<Icon name="circle info" />}
+              />
+            )}
+            {description && (
+              <div>
+                <Icon name="circle info" />
+                <span>{description}</span>
+              </div>
+            )}
+          </div>
         ) : (
-          <Breadcrumb icon="left angle" sections={sections} />
+          <div>
+            <Breadcrumb icon="left angle" sections={sections} />
+            {description && (
+              <Popup
+                position="top center"
+                content={description}
+                trigger={<Icon className="ml-5" name="circle info" />}
+              />
+            )}
+            {/* {description && (
+              <div className="mt-5">
+                <Icon name="circle info" />
+                <span>{description}</span>
+              </div>
+            )} */}
+          </div>
         ),
       name:
         "title" in vocabularyItem
