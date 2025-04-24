@@ -67,7 +67,7 @@ class VocabularyWriter(ServiceWriter):
         return super().write(stream_batch, *args, **kwargs)
 
     def _get_stream_entry_id(self, entry):
-        _id = super()._get_stream_entry_id(entry)
+        _id = entry.entry.get("id", None)
         if _id:
             return (self.vocabulary, _id)
         return None
