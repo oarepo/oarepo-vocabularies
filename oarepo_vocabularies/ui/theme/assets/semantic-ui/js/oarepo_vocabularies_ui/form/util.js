@@ -75,12 +75,14 @@ export const serializeVocabularyItems = (vocabularyItems) =>
         }
       }),
     ];
-    const { description, ...vocabularyItemWoDescription } = vocabularyItem;
+    // the dropdown uses "description" prop to show the description, but it
+    // does not look very nice, so we remove it from the vocabulary item and use it how it suits us
+    const { description, ...vocabularyItemWithoutDescription } = vocabularyItem;
     return {
-      ...vocabularyItemWoDescription,
+      ...vocabularyItemWithoutDescription,
       text:
         titlesArray.length === 1 ? (
-          <div>
+          <React.Fragment>
             <span>{text}</span>
             {description && (
               <Popup
@@ -88,15 +90,9 @@ export const serializeVocabularyItems = (vocabularyItems) =>
                 trigger={<Icon name="circle info" />}
               />
             )}
-            {description && (
-              <div>
-                <Icon name="circle info" />
-                <span>{description}</span>
-              </div>
-            )}
-          </div>
+          </React.Fragment>
         ) : (
-          <div>
+          <React.Fragment>
             <Breadcrumb icon="left angle" sections={sections} />
             {description && (
               <Popup
@@ -105,13 +101,7 @@ export const serializeVocabularyItems = (vocabularyItems) =>
                 trigger={<Icon className="ml-5" name="circle info" />}
               />
             )}
-            {/* {description && (
-              <div className="mt-5">
-                <Icon name="circle info" />
-                <span>{description}</span>
-              </div>
-            )} */}
-          </div>
+          </React.Fragment>
         ),
       name:
         "title" in vocabularyItem
