@@ -80,6 +80,7 @@ def test_dump_options(
                         "element_type": "parent",
                         "props": {"akey": "avalue"},
                         "tags": ["recommended"],
+                        "description": "English description",
                         "icon": "file-o",
                     },
                     {

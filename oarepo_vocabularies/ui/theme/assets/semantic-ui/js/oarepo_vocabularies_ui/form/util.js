@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Breadcrumb } from "semantic-ui-react";
+import { Breadcrumb, Popup, Icon } from "semantic-ui-react";
 import _join from "lodash/join";
 import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
 
@@ -75,13 +75,33 @@ export const serializeVocabularyItems = (vocabularyItems) =>
         }
       }),
     ];
+    // the dropdown uses "description" prop to show the description, but it
+    // does not look very nice, so we remove it from the vocabulary item and use it how it suits us
+    const { description, ...vocabularyItemWithoutDescription } = vocabularyItem;
     return {
-      ...vocabularyItem,
+      ...vocabularyItemWithoutDescription,
       text:
         titlesArray.length === 1 ? (
-          <span>{text}</span>
+          <React.Fragment>
+            <span>{text}</span>
+            {description && (
+              <Popup
+                content={description}
+                trigger={<Icon name="circle info" />}
+              />
+            )}
+          </React.Fragment>
         ) : (
-          <Breadcrumb icon="left angle" sections={sections} />
+          <React.Fragment>
+            <Breadcrumb icon="left angle" sections={sections} />
+            {description && (
+              <Popup
+                position="top center"
+                content={description}
+                trigger={<Icon className="ml-5" name="circle info" />}
+              />
+            )}
+          </React.Fragment>
         ),
       name:
         "title" in vocabularyItem
