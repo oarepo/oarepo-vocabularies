@@ -3,10 +3,11 @@ from functools import cached_property
 
 from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.proxies import current_service_registry
-
 from invenio_records_resources.services.records.links import (
     RecordLink,
 )
+
+from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
 
 
 class OARepoVocabularies(object):
