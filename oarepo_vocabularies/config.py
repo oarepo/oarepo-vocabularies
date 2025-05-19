@@ -1,6 +1,9 @@
 from invenio_records_resources.services.custom_fields.text import KeywordCF
 
 from oarepo_vocabularies.fixtures import (
+    AffiliationsWriter,
+    AwardsWriter,
+    NamesWriter,
     VocabularyReader,
     VocabularyWriter,
     vocabularies_generator,
@@ -75,7 +78,12 @@ DATASTREAMS_CONFIG_GENERATOR_VOCABULARIES = vocabularies_generator
 
 DATASTREAMS_READERS = {"vocabulary": VocabularyReader}
 
-DATASTREAMS_WRITERS = {"vocabulary": VocabularyWriter}
+DATASTREAMS_WRITERS = {
+    "vocabulary": VocabularyWriter,
+    "awards": AwardsWriter,
+    "names": NamesWriter,
+    "affiliations": AffiliationsWriter,
+}
 
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
