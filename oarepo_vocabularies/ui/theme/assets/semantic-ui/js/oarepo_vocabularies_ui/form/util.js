@@ -44,7 +44,10 @@ export const serializeVocabularySuggestions = (suggestions) =>
         value: item.id,
         key: key,
         id: item.id,
-        title: item.title,
+        // really funky issue with SUI where if title is a string, the dropdown crashes. And as
+        // we are using vnd serialization now, you get title as a string
+        title:
+          typeof item?.title === "string" ? { cs: item?.title } : item?.title,
         name: getTitleFromMultilingualObject(item?.title),
       };
     }
