@@ -1,6 +1,6 @@
 from collections import defaultdict
 from functools import partial
-
+from flask import current_app
 from invenio_records_resources.services.records.params import (
     FilterParam,
     ParamInterpreter,
@@ -107,10 +107,19 @@ class VocabularyIdsParam(ParamInterpreter):
         for vt, vid in ids:
             by_type[vt].append(vid)
         search_filters = []
+        specialized_vocabulary_services = current_app.config.get(
+            "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}
+        )
         for vt, vids in by_type.items():
-            search_filters.append(
-                Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})])
-            )
+            if (
+                specialized_vocabulary_services
+                and vt in specialized_vocabulary_services
+            ):
+                search_filters.append(Bool(must=[Terms(**{ID_FIELD: vids})]))
+            else:
+                search_filters.append(
+                    Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})])
+                )
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
 
