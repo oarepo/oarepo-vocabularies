@@ -2,6 +2,7 @@ import * as React from "react";
 import { Breadcrumb, Popup, Icon } from "semantic-ui-react";
 import _join from "lodash/join";
 import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
+import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const serializeVocabularySuggestions = (suggestions) =>
   suggestions.map((item) => {
@@ -47,7 +48,9 @@ export const serializeVocabularySuggestions = (suggestions) =>
         // really funky issue with SUI where if title is a string, the dropdown crashes. And as
         // we are using vnd serialization now, you get title as a string
         title:
-          typeof item?.title === "string" ? { cs: item?.title } : item?.title,
+          typeof item?.title === "string"
+            ? { [i18next.language]: item?.title }
+            : item?.title,
         name: getTitleFromMultilingualObject(item?.title),
       };
     }
