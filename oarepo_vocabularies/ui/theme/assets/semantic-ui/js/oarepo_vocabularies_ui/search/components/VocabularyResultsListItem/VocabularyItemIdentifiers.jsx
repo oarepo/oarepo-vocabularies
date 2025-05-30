@@ -31,8 +31,8 @@ export const VocabularyItemIdentifiers = ({ identifiers }) => {
           ) : (
             <span title={item.scheme}>{item.identifier}</span>
           )}
-          {index < itemIdentifiers.length - 1 ? ", " : ""}
           <ClipboardCopyButton copyText={item.identifier} />
+          {index < itemIdentifiers.length - 1 ? ", " : ""}
         </span>
       ))}
     </div>

@@ -1,4 +1,4 @@
-{#def list_data #}
+{#def list_data, specialized_vocabularies_list_data={} #}
 {%- set title = _("Vocabulary types") %}
 
 {%- extends config.BASE_TEMPLATE %}
@@ -37,8 +37,20 @@
             <td>{{ item.pid_type }}</td>
           </tr>
         {% endfor %}
+        
+        {% if specialized_vocabularies_list_data %}
+          {% for item in specialized_vocabularies_list_data["hits"]["hits"] %}
+            <tr>
+              <td><a href={{ item.self_html }}>{{ item.name or item.id }}</a></td>
+              <td>{{ item.count }}</td>
+              <td>{{ item.get('description', '') }}</td>
+              <td>{{ item.id }}</td>
+              <td>{{ item.get('pid_type', '') }}</td>
+            </tr>
+          {% endfor %}
+        {% endif %}
       </tbody>
     </table>
-  <div>
+  </div>
 </div>
 {%- endblock page_body %}

@@ -1,5 +1,6 @@
 import functools
 from functools import cached_property
+from flask import current_app
 
 from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.proxies import current_service_registry
@@ -8,6 +9,7 @@ from invenio_records_resources.services.records.links import (
 )
 
 from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
+from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 
 
 class OARepoVocabularies(object):
@@ -67,6 +69,11 @@ class OARepoVocabularies(object):
             "INVENIO_VOCABULARY_TYPE_METADATA", config.INVENIO_VOCABULARY_TYPE_METADATA
         )
 
+        app.config.setdefault(
+            "INVENIO_SPECIALIZED_VOCABULARIES_METADATA",
+            config.INVENIO_SPECIALIZED_VOCABULARIES_METADATA,
+        )
+
         if "OAREPO_PERMISSIONS_PRESETS" not in app.config:
             app.config["OAREPO_PERMISSIONS_PRESETS"] = {}
 
@@ -103,23 +110,80 @@ class OARepoVocabularies(object):
         return vocabulary_type_metadata.get(vocabulary_name, {})
 
 
+def get_vocabulary_permission_classes():
+    """
+    Extract vocabulary permission classes from app config.
+    """
+    permission_classes = []
+
+    vocab_presets = current_app.config.get("VOCABULARIES_PERMISSIONS_PRESETS", [])
+
+    all_presets = current_app.config.get("OAREPO_PERMISSIONS_PRESETS", {})
+
+    for preset_name in vocab_presets:
+        if preset_name in all_presets:
+            permission_classes.append(all_presets[preset_name])
+
+    return permission_classes
+
+
+def create_vocabulary_permission_policy_class():
+    # Unfortunately, not possible to reuse fully the permission policy class
+    # generator from oarepo-runtime because you need to create entire service config
+    # and inherit from the permission mixin
+    """
+    Returns a class that contains all permissions from the vocabulary presets.
+
+    Uses the preset classes returned by get_vocabulary_permission_classes() and merges
+    their permissions into a single permission policy class.
+
+    Returns:
+        A permission policy class combining all presets' permissions
+    """
+    preset_classes = get_vocabulary_permission_classes()
+
+    if not preset_classes:
+        return None
+
+    permissions = {}
+    for preset_class in preset_classes:
+        for (
+            permission_name,
+            permission_needs,
+        ) in PermissionsPresetsConfigMixin._get_permissions_from_preset(preset_class):
+            target = permissions.setdefault(permission_name, [])
+            for need in permission_needs:
+                if need not in target:
+                    target.append(need)
+
+    return type("VocabularyPermissionsPolicy", tuple(preset_classes), permissions)
+
+
 def finalize_app(app) -> None:
     """Finalize app."""
     awards_service = app.extensions["invenio-vocabularies"].awards_service
     awards_service.config.url_prefix = "/awards/"
-
     awards_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/awards/{id}"
+    )
+    awards_service.config.permission_policy_cls = (
+        create_vocabulary_permission_policy_class()
     )
 
     affiliations_service = app.extensions["invenio-vocabularies"].affiliations_service
     affiliations_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/affiliations/{id}"
     )
+    affiliations_service.config.permission_policy_cls = (
+        create_vocabulary_permission_policy_class()
+    )
 
     funders_service = app.extensions["invenio-vocabularies"].funders_service
     funders_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/funders/{id}"
+    )
+    funders_service.config.permission_policy_cls = (
+        create_vocabulary_permission_policy_class()
     )
 
     names_service = app.extensions["invenio-vocabularies"].names_service
@@ -129,4 +193,7 @@ def finalize_app(app) -> None:
     )
     names_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/names/{id}"
+    )
+    names_service.config.permission_policy_cls = (
+        create_vocabulary_permission_policy_class()
     )
