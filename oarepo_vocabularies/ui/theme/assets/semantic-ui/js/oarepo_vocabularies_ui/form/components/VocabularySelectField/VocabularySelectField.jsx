@@ -25,7 +25,9 @@ export const VocabularySelectField = ({
 
   function _serializeSuggestions(suggestions) {
     // We need to do post-filtering here (it seems impossible to add pre-filter to suggestion API query)
-    return serializeVocabularySuggestions(suggestions).filter(opt => filterFunction(opt));
+    return serializeVocabularySuggestions(suggestions).filter((opt) =>
+      filterFunction(opt)
+    );
   }
 
   return (
@@ -53,9 +55,5 @@ VocabularySelectField.propTypes = {
 VocabularySelectField.defaultProps = {
   multiple: false,
   externalAuthority: false,
-  suggestionAPIHeaders: {
-    // TODO: remove after #BE-96 gets resolved
-    Accept: "application/json",
-  },
-  filterFunction: opt => opt,
+  filterFunction: (opt) => opt,
 };
