@@ -85,7 +85,7 @@ DATASTREAMS_WRITERS = {
     "affiliations": AffiliationsWriter,
 }
 
-INVENIO_SPECIALIZED_VOCABULARIES_METADATA = {
+OAREPO_SPECIALIZED_VOCABULARIES_METADATA = {
     "awards": {
         "name": {"en": "Awards", "cs": "Granty"},
         "description": {"en": "Vocabulary of awards.", "cs": "Slovník grantů."},

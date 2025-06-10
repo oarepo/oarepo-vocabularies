@@ -70,8 +70,8 @@ class OARepoVocabularies(object):
         )
 
         app.config.setdefault(
-            "INVENIO_SPECIALIZED_VOCABULARIES_METADATA",
-            config.INVENIO_SPECIALIZED_VOCABULARIES_METADATA,
+            "OAREPO_SPECIALIZED_VOCABULARIES_METADATA",
+            config.OAREPO_SPECIALIZED_VOCABULARIES_METADATA,
         )
 
         if "OAREPO_PERMISSIONS_PRESETS" not in app.config:

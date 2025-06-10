@@ -31,8 +31,6 @@ class VocabularyTypeUIResource(UIResource):
         """Returns vocabulary types page."""
         list_data = self.service.search(g.identity).to_dict()
 
-        specialized_vocabularies_list_data = {"hits": {"total": 0, "hits": []}}
-
         for specialized_service_type in current_app.config.get(
             "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}
         ).values():
@@ -44,26 +42,24 @@ class VocabularyTypeUIResource(UIResource):
                 g.identity
             ).to_dict()
 
-            specialized_vocabularies_list_data["hits"]["hits"].append(
+            list_data["hits"]["hits"].append(
                 {
                     "count": specialized_vocabulary_data["hits"]["total"],
                     "self_html": f"/vocabularies/{specialized_service_type}",
                     "id": specialized_service_type,
                     "name": current_app.config.get(
-                        "INVENIO_SPECIALIZED_VOCABULARIES_METADATA", {}
+                        "OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {}
                     )
                     .get(specialized_service_type, {})
                     .get("name", {}),
                     "description": current_app.config.get(
-                        "INVENIO_SPECIALIZED_VOCABULARIES_METADATA", {}
+                        "OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {}
                     )
                     .get(specialized_service_type, {})
                     .get("description", {}),
                 }
             )
-        specialized_vocabularies_list_data = self.config.ui_serializer.dump_list(
-            specialized_vocabularies_list_data
-        )
+
         config_metadata = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
         for item in list_data["hits"]["hits"]:
             for id in config_metadata.keys():
@@ -91,5 +87,4 @@ class VocabularyTypeUIResource(UIResource):
         return _catalog.render(
             self.config.templates["list"],
             list_data=serialized_list_data,
-            specialized_vocabularies_list_data=specialized_vocabularies_list_data,
         )
