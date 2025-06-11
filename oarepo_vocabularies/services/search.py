@@ -113,6 +113,23 @@ class VocabularyIdsParam(ParamInterpreter):
             )
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
+class SpecializedVocabularyIdsParam(ParamInterpreter):
+
+    def __init__(self, config, vocabulary_type = None):
+        super().__init__(config)
+
+        self.vocabulary_type = vocabulary_type
+
+    def apply(self, identity, search, params):
+        ids = params.pop("ids", None)
+        if not ids:
+            return search
+
+        if not all(id_tuple[0] == self.vocabulary_type for id_tuple in ids):
+            raise ValueError(f"All ids must have vocabulary type '{self.vocabulary_type}'")
+
+        return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))
+
 
 class VocabularySearchOptions(I18nSearchOptions):
     SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
