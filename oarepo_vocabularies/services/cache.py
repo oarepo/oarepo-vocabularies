@@ -178,7 +178,7 @@ class VocabularyCache:
                     system_identity, params={"ids": uncached}, type=type
                 ),
             ):
-                if hasattr(item, "type"):
+                if "type" in item:
                     typed_id = (item["type"], item["id"])
                 else:
                     typed_id = (type, item["id"])
