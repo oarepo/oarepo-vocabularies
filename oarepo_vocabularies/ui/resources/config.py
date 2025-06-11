@@ -1,7 +1,13 @@
 import marshmallow as ma
 from flask import current_app
+from flask_resources import (
+    resource_requestctx,
+)
 from invenio_records_resources.services import Link, pagination_links
-from oarepo_ui.resources.components import PermissionsComponent
+from oarepo_ui.resources.components import (
+    PermissionsComponent,
+    AllowedHtmlTagsComponent,
+)
 from oarepo_ui.resources.config import RecordsUIResourceConfig
 from oarepo_ui.resources.links import UIRecordLink
 
@@ -102,6 +108,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         VocabularyFormDepositVocabularyOptionsComponent,
         VocabularySearchComponent,
         CustomFieldsComponent,
+        AllowedHtmlTagsComponent,
     ]
 
     # request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
@@ -134,3 +141,39 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         return current_app.config.get("VOCABULARIES_CF_UI", {}).get(
             view_args["vocabulary_type"], []
         )
+
+    def _get_specialized_service_config(self, vocabulary_type):
+        """
+        Get specialized service for a vocabulary type if available.
+        Returns None if no specialized service exists.
+        """
+        if (
+            vocabulary_type
+            and vocabulary_type
+            in current_app.config.get(
+                "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}
+            ).values()
+        ):
+            from oarepo_vocabularies.proxies import current_oarepo_vocabularies
+
+            return current_oarepo_vocabularies.get_specialized_service(vocabulary_type)
+        return None
+
+    # adapt to search options of each specialized service if available
+    def search_available_sort_options(self, api_config, identity):
+        vocabulary_type = resource_requestctx.view_args.get("vocabulary_type")
+        specialized_service = self._get_specialized_service_config(vocabulary_type)
+
+        if specialized_service:
+            return specialized_service.config.search.sort_options
+
+        return api_config.search.sort_options
+
+    def search_active_sort_options(self, api_config, identity):
+        vocabulary_type = resource_requestctx.view_args.get("vocabulary_type")
+        specialized_service = self._get_specialized_service_config(vocabulary_type)
+
+        if specialized_service:
+            return list(specialized_service.config.search.sort_options.keys())
+
+        return list(api_config.search.sort_options.keys())

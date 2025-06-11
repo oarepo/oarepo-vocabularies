@@ -1,7 +1,8 @@
-from flask import current_app, g, redirect, request
+from flask import current_app, g
 from flask_resources import route
 from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources import UIResource
+from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 
 
 class VocabularyTypeUIResource(UIResource):
@@ -30,6 +31,35 @@ class VocabularyTypeUIResource(UIResource):
         """Returns vocabulary types page."""
         list_data = self.service.search(g.identity).to_dict()
 
+        for specialized_service_type in current_app.config.get(
+            "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}
+        ).values():
+            specialized_service = current_oarepo_vocabularies.get_specialized_service(
+                specialized_service_type
+            )
+
+            specialized_vocabulary_data = specialized_service.search(
+                g.identity
+            ).to_dict()
+
+            list_data["hits"]["hits"].append(
+                {
+                    "count": specialized_vocabulary_data["hits"]["total"],
+                    "self_html": f"/vocabularies/{specialized_service_type}",
+                    "id": specialized_service_type,
+                    "name": current_app.config.get(
+                        "OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {}
+                    )
+                    .get(specialized_service_type, {})
+                    .get("name", {}),
+                    "description": current_app.config.get(
+                        "OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {}
+                    )
+                    .get(specialized_service_type, {})
+                    .get("description", {}),
+                }
+            )
+
         config_metadata = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
         for item in list_data["hits"]["hits"]:
             for id in config_metadata.keys():
@@ -55,5 +85,6 @@ class VocabularyTypeUIResource(UIResource):
         _catalog = current_oarepo_ui.catalog
 
         return _catalog.render(
-            self.config.templates["list"], list_data=serialized_list_data
+            self.config.templates["list"],
+            list_data=serialized_list_data,
         )

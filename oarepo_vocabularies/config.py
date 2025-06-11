@@ -85,5 +85,30 @@ DATASTREAMS_WRITERS = {
     "affiliations": AffiliationsWriter,
 }
 
+OAREPO_SPECIALIZED_VOCABULARIES_METADATA = {
+    "awards": {
+        "name": {"en": "Awards", "cs": "Granty"},
+        "description": {"en": "Vocabulary of awards.", "cs": "Slovník grantů."},
+    },
+    "affiliations": {
+        "name": {"en": "Affiliations", "cs": "Instituce"},
+        "description": {
+            "en": "Vocabulary of affiliations.",
+            "cs": "Slovník institucí.",
+        },
+    },
+    "names": {
+        "name": {"en": "Names", "cs": "Jména"},
+        "description": {"en": "Vocabulary of names.", "cs": "Slovník jmen."},
+    },
+    "funders": {
+        "name": {"en": "Funders", "cs": "Poskytovatelé financí"},
+        "description": {
+            "en": "Vocabulary of funders.",
+            "cs": "Slovník poskytovatelů financí.",
+        },
+    },
+}
+
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
