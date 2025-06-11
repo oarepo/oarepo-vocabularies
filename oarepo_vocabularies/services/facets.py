@@ -37,5 +37,5 @@ class CachedVocabularyLabels(VocabularyLabels):
         if not ids:
             return {}
         cache = current_ui_vocabulary_cache
-        resolved = cache.resolve([(self.vocabulary, _id) for _id in ids])
+        resolved = cache.resolve([(self.vocabulary, _id) for _id in ids], self.vocabulary)
         return {_id: self._get_title(resolved, _id) for _id in ids}

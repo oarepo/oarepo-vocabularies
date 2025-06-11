@@ -152,7 +152,7 @@ class VocabularyCache:
 
         return ret
 
-    def resolve(self, ids):
+    def resolve(self, ids, type=None):
         """
         Resolves vocabulary ids to their localized records.
 
@@ -175,10 +175,13 @@ class VocabularyCache:
             for item, serialized_item in self._serialize_items(
                 locale,
                 vocabulary_service.search_many(
-                    system_identity, params={"ids": uncached}
+                    system_identity, params={"ids": uncached}, type=type
                 ),
             ):
-                typed_id = (item["type"], item["id"])
+                if "type" in item:
+                    typed_id = (item["type"], item["id"])
+                else:
+                    typed_id = (type, item["id"])
                 cached[typed_id] = serialized_item
                 self.lru_terms_cache[(language, typed_id)] = serialized_item
 
