@@ -1,5 +1,5 @@
 import React from "react";
-import { RelatedSelectField } from "@js/oarepo_ui";
+import { RelatedSelectField, useFieldData } from "@js/oarepo_ui/forms";
 import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
 import PropTypes from "prop-types";
 
@@ -14,6 +14,12 @@ export const VocabularySelectField = ({
   externalAuthority,
   multiple,
   filterFunction,
+  icon,
+  label,
+  required,
+  helpText,
+  placeholder,
+  fieldRepresentation,
   ...restProps
 }) => {
   const suggestionsConfig = {
@@ -22,6 +28,20 @@ export const VocabularySelectField = ({
   if (externalAuthority) {
     suggestionsConfig.externalSuggestionApi = `${suggestionsConfig.suggestionAPIUrl}/authoritative`;
   }
+
+  const { getFieldData } = useFieldData();
+
+  const fieldData = {
+    ...getFieldData({
+      fieldPath,
+      icon,
+      fieldRepresentation,
+    }),
+    ...(label && { label }),
+    ...(required && { required }),
+    ...(helpText && { helpText }),
+    ...(placeholder && { placeholder }),
+  };
 
   function _serializeSuggestions(suggestions) {
     // We need to do post-filtering here (it seems impossible to add pre-filter to suggestion API query)
@@ -39,6 +59,7 @@ export const VocabularySelectField = ({
       multiple={multiple}
       deburr
       serializeAddedValue={serializeAddedValue}
+      {...fieldData}
       {...restProps}
     />
   );
@@ -50,6 +71,12 @@ VocabularySelectField.propTypes = {
   externalAuthority: PropTypes.bool,
   multiple: PropTypes.bool,
   filterFunction: PropTypes.func,
+  icon: PropTypes.string,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  required: PropTypes.bool,
+  helpText: PropTypes.string,
+  placeholder: PropTypes.string,
+  fieldRepresentation: PropTypes.string,
 };
 
 VocabularySelectField.defaultProps = {
