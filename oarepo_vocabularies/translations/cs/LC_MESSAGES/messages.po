@@ -530,3 +530,9 @@ msgid ""
 "\n"
 "      The vocabulary type you are trying to access does not exist in repository (%(sitename)s)."
 msgstr ""
+
+msgid "Choose Items"
+msgstr "Vyberte položky"
+
+msgid "Search..."
+msgstr "Hledat..."

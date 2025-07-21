@@ -311,7 +311,7 @@ export const TreeSelectFieldModal = ({
     >
       <ModalHeader>
         <Grid.Row>
-          <Header as="h3">{placeholder || "Choose Items"}</Header>
+          <Header as="h3">{placeholder || i18next.t("Choose Items")}</Header>
           <Grid.Column>
             <Input
               type="text"
@@ -319,7 +319,7 @@ export const TreeSelectFieldModal = ({
               onChange={(e) => {
                 executeSearch(e.target.value);
               }}
-              placeholder="Search..."
+              placeholder={i18next.t("Search...")}
             />
           </Grid.Column>
         </Grid.Row>
