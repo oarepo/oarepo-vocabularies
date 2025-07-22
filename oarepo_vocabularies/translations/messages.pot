@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-03-14 13:38+0100\n"
+"POT-Creation-Date: 2025-07-21 11:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
+
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/errors.py:7
+msgid "Vocabulary type does not exist."
+msgstr ""
 
 #: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/for_translations_only.py:3
 msgid "vocabulary.names"
@@ -34,19 +38,19 @@ msgstr ""
 msgid "vocabulary.funders"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:139
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:156
 msgid "Best match"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:143
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:160
 msgid "Title"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:147
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:164
 msgid "Newest"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:151
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/services/search.py:168
 msgid "Oldest"
 msgstr ""
 
@@ -92,11 +96,7 @@ msgstr ""
 msgid "Find more records with this vocabulary term"
 msgstr ""
 
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:10
-msgid "Vocabulary type does not exist."
-msgstr ""
-
-#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:15
+#: /home/dusanst/Projects/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/NoVocabularyType.jinja:14
 #, python-format
 msgid ""
 "\n"
@@ -283,9 +283,6 @@ msgstr ""
 msgid "Item will be displayed on top of form input options"
 msgstr ""
 
-msgid "No results found."
-msgstr ""
-
 msgid "Loading..."
 msgstr ""
 
@@ -444,6 +441,12 @@ msgid "Find more records …"
 msgstr ""
 
 msgid "item"
+msgstr ""
+
+msgid "Choose Items"
+msgstr ""
+
+msgid "Search..."
 msgstr ""
 
 msgid "Affiliations:"
