@@ -1,27 +1,48 @@
 import React from "react";
 import { Button } from "semantic-ui-react";
-import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { useVocabularyApiClient } from "@js/oarepo_vocabularies";
+import { connect } from "react-redux";
+import { useFormikContext } from "formik";
+import { createOrUpdate } from "../../state/deposit/actions";
+import { DRAFT_SAVE_STARTED } from "@js/invenio_rdm_records/src/deposit/state/types";
 
-export const PublishButton = ({ newChildItemParentId }) => {
-  const { isSubmitting, createOrUpdate } =
-    useVocabularyApiClient(newChildItemParentId);
-  return (
-    <Button
-      fluid
-      disabled={isSubmitting}
-      loading={isSubmitting}
-      color="green"
-      onClick={() => createOrUpdate()}
-      icon="save"
-      labelPosition="left"
-      content={i18next.t("save")}
-      type="button"
-    />
-  );
-};
+const PublishButtonComponent = React.memo(
+  ({ publishAction, actionState, newChildItemParentId, ...uiProps }) => {
+    const { values, setSubmitting, isSubmitting } = useFormikContext();
+    const handlePublish = () => {
+      setSubmitting(true);
+      publishAction({ draft: values, newChildItemParentId }).finally(() => {
+        setSubmitting(false);
+      });
+    };
+    return (
+      <Button
+        fluid
+        disabled={isSubmitting}
+        loading={isSubmitting && actionState === DRAFT_SAVE_STARTED}
+        color="green"
+        onClick={handlePublish}
+        icon="save"
+        labelPosition="left"
+        content={i18next.t("save")}
+        type="submit"
+        {...uiProps}
+      />
+    );
+  }
+);
 
-PublishButton.propTypes = {
-  newChildItemParentId: PropTypes.string,
-};
+const mapDispatchToProps = (dispatch) => ({
+  publishAction: (values) => dispatch(createOrUpdate(values)),
+});
+
+const mapStateToProps = (state) => ({
+  actionState: state.deposit.actionState,
+});
+
+export const PublishButton = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PublishButtonComponent);
+
+export default PublishButton;
