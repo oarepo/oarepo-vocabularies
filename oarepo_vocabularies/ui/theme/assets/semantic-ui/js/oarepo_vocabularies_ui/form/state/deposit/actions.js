@@ -1,13 +1,8 @@
 import {
-  DRAFT_DELETE_FAILED,
-  DRAFT_DELETE_STARTED,
   DRAFT_HAS_VALIDATION_ERRORS,
-  DRAFT_PREVIEW_FAILED,
-  DRAFT_PREVIEW_STARTED,
   DRAFT_SAVE_FAILED,
   DRAFT_SAVE_STARTED,
   DRAFT_SAVE_SUCCEEDED,
-  SET_COMMUNITY,
 } from "@js/invenio_rdm_records/src/deposit/state/types";
 
 export const createOrUpdate = ({
@@ -17,8 +12,6 @@ export const createOrUpdate = ({
   ...saveArgs
 }) => {
   return async (dispatch, getState, config) => {
-    console.log(config, "config");
-
     dispatch({
       type: DRAFT_SAVE_STARTED,
     });
@@ -48,13 +41,11 @@ export const createOrUpdate = ({
         );
       }
 
-      console.log(draftToSave, "draftToSave");
-
       dispatch({
         type: DRAFT_SAVE_SUCCEEDED,
         payload: { data: response.data, formFeedbackMessage: successMessage },
       });
-      
+      window.location.href = response.data.links.self_html;
       return response;
     } catch (error) {
       console.error("Draft save failed:", error);
