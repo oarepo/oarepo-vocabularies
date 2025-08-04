@@ -12,7 +12,7 @@ const { formConfig } = parseFormAppConfig();
 const { overridableIdPrefix } = formConfig;
 
 export const componentOverrides = {
-  // [`${overridableIdPrefix}.FormApp.layout`]: FormAppLayout,
+  [`${overridableIdPrefix}.FormApp.layout`]: FormAppLayout,
   [`${overridableIdPrefix}.FormFields.container`]: VocabularyFormFields,
   [`${overridableIdPrefix}.FormFields.container.awards`]:
     VocabularyFormFieldsAwards,

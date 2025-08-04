@@ -2,26 +2,23 @@ import React from "react";
 import { Button } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { connect } from "react-redux";
-import { useFormikContext } from "formik";
 import { createOrUpdate } from "../../state/deposit/actions";
 import { DRAFT_SAVE_STARTED } from "@js/invenio_rdm_records/src/deposit/state/types";
+import { useDepositFormAction } from "@js/oarepo_ui/forms";
 
 const PublishButtonComponent = React.memo(
   ({ publishAction, actionState, newChildItemParentId, ...uiProps }) => {
-    const { values, setSubmitting, isSubmitting } = useFormikContext();
-    const handlePublish = () => {
-      setSubmitting(true);
-      publishAction({ draft: values, newChildItemParentId }).finally(() => {
-        setSubmitting(false);
-      });
-    };
+    const { handleAction: handlePublish, isSubmitting } = useDepositFormAction({
+      action: publishAction,
+      params: { newChildItemParentId },
+    });
     return (
       <Button
         fluid
         disabled={isSubmitting}
         loading={isSubmitting && actionState === DRAFT_SAVE_STARTED}
         color="green"
-        onClick={handlePublish}
+        onClick={() => handlePublish()}
         icon="save"
         labelPosition="left"
         content={i18next.t("save")}
@@ -33,7 +30,7 @@ const PublishButtonComponent = React.memo(
 );
 
 const mapDispatchToProps = (dispatch) => ({
-  publishAction: (values) => dispatch(createOrUpdate(values)),
+  publishAction: (values, params) => dispatch(createOrUpdate(values, params)),
 });
 
 const mapStateToProps = (state) => ({
