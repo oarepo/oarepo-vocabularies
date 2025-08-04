@@ -51,9 +51,10 @@ export const VocabularyTreeSelectField = ({
     hasMultipleItems ? emptyArray : emptyObject
   );
 
-  const { all: allOptions } = vocabularies[vocabulary];
+  const allOptions = vocabularies?.[vocabulary]?.all;
   if (!allOptions) {
     console.error(`Missing options for ${vocabulary} inside:`, vocabularies);
+    return null;
   }
   const handleSubmit = React.useCallback(
     (currentValue) => {
