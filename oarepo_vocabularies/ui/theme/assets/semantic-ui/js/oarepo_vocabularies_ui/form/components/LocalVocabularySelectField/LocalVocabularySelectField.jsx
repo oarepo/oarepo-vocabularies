@@ -64,7 +64,7 @@ export const LocalVocabularySelectField = ({
   fieldPath,
   fieldRepresentation,
   multiple,
-  optionsListName,
+  vocabularyName,
   usedOptions = [],
   helpText,
   placeholder,
@@ -102,20 +102,28 @@ export const LocalVocabularySelectField = ({
     console.error("Do not have vocabularies in formConfig");
   }
 
-  if (!vocabularies[optionsListName]) {
+  if (!vocabularies[vocabularyName]) {
     console.error(
       "Vocabulary with name ",
-      optionsListName,
+      vocabularyName,
       " not found in formConfig"
+    );
+    return (
+      <div className="rel-mt-2 rel-mb-2">
+        <strong>
+          Vocabulary not found: `Vocabulary with name ${vocabularyName} not
+          found in formConfig`
+        </strong>
+      </div>
     );
   }
 
   const { all: allOptions, featured: featuredOptions } =
-    vocabularies[optionsListName];
+    vocabularies[vocabularyName];
 
   if (!allOptions) {
     console.error(
-      `Do not have options for ${optionsListName} inside:`,
+      `Do not have options for ${vocabularyName} inside:`,
       vocabularies
     );
   }
@@ -181,7 +189,7 @@ LocalVocabularySelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   fieldRepresentation: PropTypes.string,
   multiple: PropTypes.bool,
-  optionsListName: PropTypes.string.isRequired,
+  vocabularyName: PropTypes.string.isRequired,
   helpText: PropTypes.string,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   placeholder: PropTypes.string,

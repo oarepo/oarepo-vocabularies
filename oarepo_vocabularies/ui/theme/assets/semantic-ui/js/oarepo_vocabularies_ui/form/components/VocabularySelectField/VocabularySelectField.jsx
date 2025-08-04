@@ -9,7 +9,7 @@ const serializeAddedValue = (value) => {
 };
 
 export const VocabularySelectField = ({
-  type,
+  vocabularyName,
   fieldPath,
   externalAuthority,
   multiple,
@@ -23,7 +23,7 @@ export const VocabularySelectField = ({
   ...restProps
 }) => {
   const suggestionsConfig = {
-    suggestionAPIUrl: `/api/vocabularies/${type}`,
+    suggestionAPIUrl: `/api/vocabularies/${vocabularyName}`,
   };
   if (externalAuthority) {
     suggestionsConfig.externalSuggestionApi = `${suggestionsConfig.suggestionAPIUrl}/authoritative`;
@@ -42,12 +42,12 @@ export const VocabularySelectField = ({
     ...(helpText && { helpText }),
     ...(placeholder && { placeholder }),
   };
+  const hasMultipleItems = multiple || fieldData.detail === "array";
 
   function _serializeSuggestions(suggestions) {
     // We need to do post-filtering here (it seems impossible to add pre-filter to suggestion API query)
-    return serializeVocabularySuggestions(suggestions).filter((opt) =>
-      filterFunction(opt)
-    );
+
+    return filterFunction(serializeVocabularySuggestions(suggestions));
   }
 
   return (
@@ -56,7 +56,7 @@ export const VocabularySelectField = ({
       {...suggestionsConfig}
       selectOnBlur={false}
       serializeSuggestions={_serializeSuggestions}
-      multiple={multiple}
+      multiple={hasMultipleItems}
       deburr
       serializeAddedValue={serializeAddedValue}
       {...fieldData}
@@ -66,7 +66,7 @@ export const VocabularySelectField = ({
 };
 
 VocabularySelectField.propTypes = {
-  type: PropTypes.string.isRequired,
+  vocabularyName: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
   externalAuthority: PropTypes.bool,
   multiple: PropTypes.bool,
