@@ -85,9 +85,9 @@ export function serializeVocabularyItems(vocabularyItems) {
 
         return {
           id: vocabularyItem.id || vocabularyItem.value,
-          value: vocabularyItem.value || vocabularyItem.id,
+          value: vocabularyItem.id || vocabularyItem.value,
           text: title,
-          key: vocabularyItem.value || vocabularyItem.id,
+          key: vocabularyItem.id || vocabularyItem.value,
           content:
             titlesArray.length <= 1 ? (
               <span>{title}</span>
