@@ -63,9 +63,7 @@ export function serializeVocabularyItems(vocabularyItems) {
       //  Check if this makes sense?
       .filter((vocabularyItem) => vocabularyItem.id)
       .map((vocabularyItem) => {
-        const text =
-          getTitleFromMultilingualObject(vocabularyItem.title) ||
-          vocabularyItem.text;
+        const title = getTitleFromMultilingualObject(vocabularyItem.title);
         const titlesArray = vocabularyItem?.hierarchy?.title || [];
         const sections = titlesArray.map((title, index) => {
           if (index === 0) {
@@ -88,11 +86,11 @@ export function serializeVocabularyItems(vocabularyItems) {
         return {
           id: vocabularyItem.id || vocabularyItem.value,
           value: vocabularyItem.value || vocabularyItem.id,
-          text: text,
+          text: title,
           key: vocabularyItem.value || vocabularyItem.id,
           content:
             titlesArray.length <= 1 ? (
-              <span>{text}</span>
+              <span>{title}</span>
             ) : (
               <Breadcrumb icon="left angle" sections={sections} />
             ),
