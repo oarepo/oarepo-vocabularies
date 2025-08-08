@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, forwardRef } from "react";
 import { SelectField } from "react-invenio-forms";
 import { useFormConfig, search, useFieldData } from "@js/oarepo_ui/forms";
 import { useFormikContext, getIn } from "formik";
@@ -15,6 +15,7 @@ const InnerDropdown = ({
 }) => {
   const _filterUsed = (opts) =>
     opts.filter((o) => !usedOptions.includes(o.value) || o.value === value);
+
   const allOptions = _filterUsed([
     ...(featured.length
       ? [
@@ -26,7 +27,7 @@ const InnerDropdown = ({
           },
         ]
       : []),
-    ...options.filter((o) => !featured.map((o) => o.value).includes(o.value)),
+    ...options.filter((o) => !featured.map((f) => f.value).includes(o.value)),
   ]);
 
   return (
@@ -43,133 +44,126 @@ InnerDropdown.propTypes = {
     PropTypes.arrayOf(PropTypes.string),
   ]),
 };
-export const LocalVocabularySelectField = ({
-  fieldPath,
-  fieldRepresentation,
-  multiple,
-  vocabularyName,
-  usedOptions = [],
-  helpText,
-  placeholder,
-  showLeafsOnly = false,
-  optimized = true,
-  filterFunction = undefined,
-  icon = "tag",
-  clearable = true,
-  label,
-  required,
-  ref,
-  ...uiProps
-}) => {
-  const { getFieldData } = useFieldData();
-  const fieldData = {
-    ...getFieldData({
+
+export const LocalVocabularySelectField = forwardRef(
+  (
+    {
       fieldPath,
-      icon,
       fieldRepresentation,
-    }),
-    ...(label && { label }),
-    ...(required && { required }),
-    ...(helpText && { helpText }),
-    ...(placeholder && { placeholder }),
-  };
-
-  // Remove helpText from fieldData to avoid passing it to the SelectField
-  const { helpText: help, ...restFieldData } = fieldData;
-  const hasMultipleItems = multiple || fieldData.detail === "array";
-
-  const { values, setFieldTouched } = useFormikContext();
-  const value = getIn(values, fieldPath, hasMultipleItems ? [] : {});
-
-  const {
-    formConfig: { vocabularies },
-  } = useFormConfig();
-
-  if (!vocabularies) {
-    console.error("Do not have vocabularies in formConfig");
-  }
-
-  const { all: allOptions = [], featured: featuredOptions = [] } =
-    vocabularies[vocabularyName] || {};
-
-  if (allOptions.length === 0) {
-    console.error(
-      `Do not have options for ${vocabularyName} inside:`,
-      vocabularies
-    );
-  }
-
-  let serializedOptions = useMemo(
-    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
-    [allOptions, showLeafsOnly, filterFunction]
-  );
-
-  let serializedFeaturedOptions = useMemo(
-    () =>
-      processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
-    [featuredOptions, showLeafsOnly, filterFunction]
-  );
-
-  const handleChange = ({ data, formikProps }) => {
-    if (hasMultipleItems) {
-      let vocabularyItems = serializedOptions.filter((o) =>
-        data.value.includes(o.id)
-      );
-      vocabularyItems = vocabularyItems.map((vocabularyItem) => {
-        return { id: vocabularyItem.id };
-      });
-      formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
-    } else {
-      let vocabularyItem = serializedOptions.find((o) => o.id === data.value);
-      vocabularyItem = data.value ? { id: vocabularyItem?.id } : {};
-      formikProps.form.setFieldValue(fieldPath, vocabularyItem);
-    }
-  };
-
-  const customSearch = (options, searchQuery) =>
-    search(options, searchQuery, "text");
-
-  if (!vocabularies[vocabularyName]) {
-    console.error(
-      "Vocabulary with name ",
+      multiple,
       vocabularyName,
-      " not found in formConfig"
+      usedOptions = [],
+      helpText,
+      placeholder,
+      showLeafsOnly = false,
+      optimized = true,
+      filterFunction = undefined,
+      icon = "tag",
+      clearable = true,
+      label,
+      required,
+      ...uiProps
+    },
+    ref
+  ) => {
+    const { getFieldData } = useFieldData();
+    const fieldData = {
+      ...getFieldData({
+        fieldPath,
+        icon,
+        fieldRepresentation,
+      }),
+      ...(label && { label }),
+      ...(required && { required }),
+      ...(helpText && { helpText }),
+      ...(placeholder && { placeholder }),
+    };
+
+    const { helpText: help, ...restFieldData } = fieldData;
+    const hasMultipleItems =
+      multiple !== undefined ? multiple : fieldData.detail === "array";
+
+    const { values, setFieldTouched } = useFormikContext();
+    const value = getIn(values, fieldPath, hasMultipleItems ? [] : {});
+
+    const {
+      formConfig: { vocabularies },
+    } = useFormConfig();
+
+    if (!vocabularies) {
+      console.error("Do not have vocabularies in formConfig");
+    }
+
+    const { all: allOptions = [], featured: featuredOptions = [] } =
+      vocabularies[vocabularyName] || {};
+
+    if (allOptions.length === 0) {
+      console.error(
+        `Do not have options for ${vocabularyName} inside:`,
+        vocabularies
+      );
+    }
+
+    const serializedOptions = useMemo(
+      () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+      [allOptions, showLeafsOnly, filterFunction]
     );
+
+    const serializedFeaturedOptions = useMemo(
+      () =>
+        processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
+      [featuredOptions, showLeafsOnly, filterFunction]
+    );
+
+    const handleChange = ({ data, formikProps }) => {
+      if (hasMultipleItems) {
+        const vocabularyItems = serializedOptions
+          .filter((o) => data.value.includes(o.id))
+          .map((vocabularyItem) => ({ id: vocabularyItem.id }));
+
+        formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
+      } else {
+        const foundVocabularyItem = serializedOptions.find(
+          (o) => o.id === data.value
+        );
+        const vocabularyItem = data.value
+          ? { id: foundVocabularyItem?.id }
+          : {};
+        formikProps.form.setFieldValue(fieldPath, vocabularyItem);
+      }
+    };
+
+    if (!vocabularies[vocabularyName]) {
+      throw new Error(
+        `Vocabulary with name "${vocabularyName}" not found in formConfig`
+      );
+    }
     return (
-      <div className="rel-mt-2 rel-mb-2">
-        <strong>
-          Vocabulary not found: `Vocabulary with name ${vocabularyName} not
-          found in formConfig`
-        </strong>
-      </div>
+      <>
+        <SelectField
+          selectOnBlur={false}
+          optimized={optimized}
+          onBlur={() => setFieldTouched(fieldPath)}
+          deburr
+          search={search}
+          control={InnerDropdown}
+          fieldPath={fieldPath}
+          multiple={hasMultipleItems}
+          featured={serializedFeaturedOptions}
+          options={serializedOptions}
+          usedOptions={usedOptions}
+          onChange={handleChange}
+          value={hasMultipleItems ? value.map((o) => o?.id) : value?.id}
+          ref={ref}
+          clearable={clearable}
+          {...restFieldData}
+          {...uiProps}
+        />
+        <label className="helptext">{help}</label>
+      </>
     );
   }
-
-  return (
-    <React.Fragment>
-      <SelectField
-        selectOnBlur={false}
-        optimized={optimized}
-        onBlur={() => setFieldTouched(fieldPath)}
-        deburr
-        search={customSearch}
-        control={InnerDropdown}
-        fieldPath={fieldPath}
-        multiple={hasMultipleItems}
-        featured={serializedFeaturedOptions}
-        options={serializedOptions}
-        usedOptions={usedOptions}
-        onChange={handleChange}
-        value={hasMultipleItems ? value.map((o) => o?.id) : value?.id}
-        ref={ref}
-        clearable={clearable}
-        {...restFieldData}
-        {...uiProps}
-      />
-      <label className="helptext">{help}</label>
-    </React.Fragment>
-  );
-};
+);
 
 LocalVocabularySelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
