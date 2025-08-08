@@ -27,20 +27,6 @@ class DepositI18nHierarchySchema(marshmallow.Schema):
     ancestors = marshmallow.fields.List(marshmallow.fields.String())
 
 
-class VocabularyPrefetchSchema(VocabularyUISchema):
-    pass
-    # title = VocabularyI18nStrUIField(data_key="text")
-    # hierarchy = marshmallow.fields.Nested(
-    #     DepositI18nHierarchySchema(), data_key="hierarchy"
-    # )
-    # props = marshmallow.fields.Dict(
-    #     keys=marshmallow.fields.String(), values=marshmallow.fields.String()
-    # )
-    # tags = marshmallow.fields.List(marshmallow.fields.String())
-    # icon = marshmallow.fields.String()
-    # description = VocabularyI18nStrUIField()
-
-
 class VocabularyCache:
     cache: Dict[str, Dict[str, VocabularyCacheItem]]
     """Language => vocabulary type => last modified + items"""
@@ -135,7 +121,7 @@ class VocabularyCache:
         return result.total > 0
 
     def _serialize_items(self, locale, items):
-        schema = VocabularyPrefetchSchema(context={"locale": locale})
+        schema = VocabularyUISchema(context={"locale": locale})
 
         for item in items:
             dumped_item = schema.dump(item)
