@@ -30,12 +30,14 @@ class CachedVocabularyLabels(VocabularyLabels):
     def _get_title(self, cache, _id):
         item = cache.get((self.vocabulary, _id))
         if item:
-            return item["text"]
+            return item["title"]
         return None
 
     def __call__(self, ids):
         if not ids:
             return {}
         cache = current_ui_vocabulary_cache
-        resolved = cache.resolve([(self.vocabulary, _id) for _id in ids], self.vocabulary)
+        resolved = cache.resolve(
+            [(self.vocabulary, _id) for _id in ids], self.vocabulary
+        )
         return {_id: self._get_title(resolved, _id) for _id in ids}

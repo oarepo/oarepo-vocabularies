@@ -7,6 +7,7 @@ from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from marshmallow import fields as ma_fields
+import marshmallow
 from oarepo_runtime.i18n import get_locale
 from oarepo_runtime.services.custom_fields import InlinedCustomFieldsSchemaMixin
 from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
@@ -59,6 +60,15 @@ class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema
     links = ma.fields.Raw(dump_only=True)
     title = VocabularyI18nStrUIField()
     type = ma.fields.Raw(dump_only=True)
+    description = VocabularyI18nStrUIField()
+    props = ma.fields.Dict(keys=ma.fields.String(), values=ma.fields.String())
+
+    @ma.post_dump()
+    def dump_extra_fields(self, data, **kwargs):
+        """Dump extra fields that are not in the schema."""
+        data["value"] = data.get("id")
+        data["text"] = data.get("title")
+        return data
 
 
 class VocabularySpecializedUISchema(VocabularyUISchema):
