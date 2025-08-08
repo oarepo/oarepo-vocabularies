@@ -131,9 +131,9 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                 form_config_vocabularies[vocabulary_type]["featured"] = []
             else:
                 # TODO: use vocabulary service config and prefix???
-                form_config_vocabularies[vocabulary_type][
-                    "url"
-                ] = f"/api/vocabularies/{vocabulary_type}"
+                form_config_vocabularies[vocabulary_type]["url"] = (
+                    f"/api/vocabularies/{vocabulary_type}"
+                )
         return vocabularies_to_prefetch, form_config_vocabularies
 
 

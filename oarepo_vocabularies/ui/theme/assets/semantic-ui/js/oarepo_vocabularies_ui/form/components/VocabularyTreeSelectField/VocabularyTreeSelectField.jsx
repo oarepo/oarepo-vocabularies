@@ -52,10 +52,7 @@ export const VocabularyTreeSelectField = ({
   );
 
   const allOptions = vocabularies?.[vocabulary]?.all;
-  if (!allOptions) {
-    console.error(`Missing options for ${vocabulary} inside:`, vocabularies);
-    return null;
-  }
+
   const handleSubmit = React.useCallback(
     (currentValue) => {
       const newValue = currentValue.map((item) => ({
@@ -66,6 +63,11 @@ export const VocabularyTreeSelectField = ({
     },
     [fieldPath, hasMultipleItems, setFieldValue]
   );
+
+  if (!allOptions) {
+    console.error(`Missing options for ${vocabulary} inside:`, vocabularies);
+    return null;
+  }
 
   return (
     <MemoizedVocabularyTreeSelectPresentation

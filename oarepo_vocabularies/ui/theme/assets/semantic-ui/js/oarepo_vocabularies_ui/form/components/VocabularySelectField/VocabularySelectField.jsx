@@ -1,7 +1,10 @@
 import React from "react";
-import { RelatedSelectField, useFieldData } from "@js/oarepo_ui/forms";
-import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
+import { useFieldData } from "@js/oarepo_ui/forms";
+import { processVocabularyItems } from "@js/oarepo_vocabularies";
 import PropTypes from "prop-types";
+import { RemoteSelectField } from "react-invenio-forms";
+import { useFormikContext, getIn } from "formik";
+import _isEmpty from "lodash/isEmpty";
 
 // for adding free text items
 const serializeAddedValue = (value) => {
@@ -11,23 +14,28 @@ const serializeAddedValue = (value) => {
 export const VocabularySelectField = ({
   vocabularyName,
   fieldPath,
-  externalAuthority,
-  multiple,
-  filterFunction,
+  externalAuthority = false,
+  multiple = false,
+  filterFunction = (opt) => opt,
   icon,
   label,
   required,
   helpText,
   placeholder,
   fieldRepresentation,
+  suggestionAPIHeaders = {
+    Accept: "application/vnd.inveniordm.v1+json",
+  },
+  clearable = true,
+  ref,
+  showLeafsOnly = false,
   ...restProps
 }) => {
   const suggestionsConfig = {
     suggestionAPIUrl: `/api/vocabularies/${vocabularyName}`,
   };
-  if (externalAuthority) {
-    suggestionsConfig.externalSuggestionApi = `${suggestionsConfig.suggestionAPIUrl}/authoritative`;
-  }
+
+  const { values } = useFormikContext();
 
   const { getFieldData } = useFieldData();
 
@@ -44,24 +52,67 @@ export const VocabularySelectField = ({
   };
   const hasMultipleItems = multiple || fieldData.detail === "array";
 
+  const initialSuggestions = hasMultipleItems
+    ? getIn(values, fieldPath, [])
+    : _isEmpty(getIn(values, fieldPath, {}))
+    ? []
+    : [getIn(values, fieldPath)];
+
+  const value = hasMultipleItems
+    ? getIn(values, fieldPath, [])
+    : getIn(values, fieldPath, {});
+
   function _serializeSuggestions(suggestions) {
     // We need to do post-filtering here (it seems impossible to add pre-filter to suggestion API query)
 
-    return filterFunction(serializeVocabularySuggestions(suggestions));
+    return processVocabularyItems(suggestions, showLeafsOnly, filterFunction);
   }
 
   return (
-    <RelatedSelectField
-      fieldPath={fieldPath}
-      {...suggestionsConfig}
-      selectOnBlur={false}
-      serializeSuggestions={_serializeSuggestions}
-      multiple={hasMultipleItems}
-      deburr
-      serializeAddedValue={serializeAddedValue}
-      {...fieldData}
-      {...restProps}
-    />
+    <React.Fragment>
+      <RemoteSelectField
+        fieldPath={fieldPath}
+        {...suggestionsConfig}
+        selectOnBlur={false}
+        serializeSuggestions={_serializeSuggestions}
+        multiple={hasMultipleItems}
+        deburr
+        serializeAddedValue={serializeAddedValue}
+        initialSuggestions={initialSuggestions}
+        suggestionAPIHeaders={suggestionAPIHeaders}
+        clearable={clearable}
+        onValueChange={({ e, data, formikProps }, selectedSuggestions) => {
+          if (hasMultipleItems) {
+            let vocabularyItems = selectedSuggestions.filter((o) =>
+              data.value.includes(o.id)
+            );
+            vocabularyItems = vocabularyItems.map((vocabularyItem) => {
+              return { id: vocabularyItem.id, text: vocabularyItem.text };
+            });
+            formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
+          } else {
+            let vocabularyItem = selectedSuggestions.find(
+              (o) => o.id === data.value
+            );
+            if (vocabularyItem) {
+              formikProps.form.setFieldValue(fieldPath, {
+                id: vocabularyItem.id,
+                text: vocabularyItem.text,
+              });
+            } else {
+              formikProps.form.setFieldValue(fieldPath, "");
+            }
+          }
+        }}
+        value={hasMultipleItems ? value.map((item) => item.id) : value.id ?? ""}
+        ref={ref}
+        {...fieldData}
+        {...restProps}
+      />
+      {fieldData?.helpText && (
+        <label className="helptext">{fieldData.helpText}</label>
+      )}
+    </React.Fragment>
   );
 };
 
@@ -77,10 +128,6 @@ VocabularySelectField.propTypes = {
   helpText: PropTypes.string,
   placeholder: PropTypes.string,
   fieldRepresentation: PropTypes.string,
-};
-
-VocabularySelectField.defaultProps = {
-  multiple: false,
-  externalAuthority: false,
-  filterFunction: (opt) => opt,
+  clearable: PropTypes.bool,
+  suggestionAPIHeaders: PropTypes.object,
 };

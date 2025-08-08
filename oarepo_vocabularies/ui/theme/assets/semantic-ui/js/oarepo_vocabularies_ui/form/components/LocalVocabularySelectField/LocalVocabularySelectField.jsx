@@ -4,24 +4,7 @@ import { useFormConfig, search, useFieldData } from "@js/oarepo_ui/forms";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
-import { serializeVocabularyItems } from "@js/oarepo_vocabularies";
-
-export const processVocabularyItems = (
-  options,
-  showLeafsOnly,
-  filterFunction
-) => {
-  let serializedOptions = serializeVocabularyItems(options);
-  if (showLeafsOnly) {
-    serializedOptions = serializedOptions.filter(
-      (o) => o.element_type === "leaf"
-    );
-  }
-  if (filterFunction) {
-    serializedOptions = filterFunction(serializedOptions);
-  }
-  return serializedOptions;
-};
+import { processVocabularyItems } from "@js/oarepo_vocabularies";
 
 const InnerDropdown = ({
   options,
@@ -75,10 +58,10 @@ export const LocalVocabularySelectField = ({
   clearable = true,
   label,
   required,
+  ref,
   ...uiProps
 }) => {
   const { getFieldData } = useFieldData();
-
   const fieldData = {
     ...getFieldData({
       fieldPath,
@@ -93,6 +76,10 @@ export const LocalVocabularySelectField = ({
 
   // Remove helpText from fieldData to avoid passing it to the SelectField
   const { helpText: help, ...restFieldData } = fieldData;
+  const hasMultipleItems = multiple || fieldData.detail === "array";
+
+  const { values, setFieldTouched } = useFormikContext();
+  const value = getIn(values, fieldPath, hasMultipleItems ? [] : {});
 
   const {
     formConfig: { vocabularies },
@@ -101,6 +88,46 @@ export const LocalVocabularySelectField = ({
   if (!vocabularies) {
     console.error("Do not have vocabularies in formConfig");
   }
+
+  const { all: allOptions = [], featured: featuredOptions = [] } =
+    vocabularies[vocabularyName] || {};
+
+  if (allOptions.length === 0) {
+    console.error(
+      `Do not have options for ${vocabularyName} inside:`,
+      vocabularies
+    );
+  }
+
+  let serializedOptions = useMemo(
+    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
+    [allOptions, showLeafsOnly, filterFunction]
+  );
+
+  let serializedFeaturedOptions = useMemo(
+    () =>
+      processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
+    [featuredOptions, showLeafsOnly, filterFunction]
+  );
+
+  const handleChange = ({ data, formikProps }) => {
+    if (hasMultipleItems) {
+      let vocabularyItems = serializedOptions.filter((o) =>
+        data.value.includes(o.id)
+      );
+      vocabularyItems = vocabularyItems.map((vocabularyItem) => {
+        return { id: vocabularyItem.id };
+      });
+      formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
+    } else {
+      let vocabularyItem = serializedOptions.find((o) => o.id === data.value);
+      vocabularyItem = data.value ? { id: vocabularyItem?.id } : {};
+      formikProps.form.setFieldValue(fieldPath, vocabularyItem);
+    }
+  };
+
+  const customSearch = (options, searchQuery) =>
+    search(options, searchQuery, "text");
 
   if (!vocabularies[vocabularyName]) {
     console.error(
@@ -118,48 +145,6 @@ export const LocalVocabularySelectField = ({
     );
   }
 
-  const { all: allOptions, featured: featuredOptions } =
-    vocabularies[vocabularyName];
-
-  if (!allOptions) {
-    console.error(
-      `Do not have options for ${vocabularyName} inside:`,
-      vocabularies
-    );
-  }
-
-  let serializedOptions = useMemo(
-    () => processVocabularyItems(allOptions, showLeafsOnly, filterFunction),
-    [allOptions, showLeafsOnly, filterFunction]
-  );
-
-  let serializedFeaturedOptions = useMemo(
-    () =>
-      processVocabularyItems(featuredOptions, showLeafsOnly, filterFunction),
-    [featuredOptions, showLeafsOnly, filterFunction]
-  );
-  const hasMultipleItems = multiple || fieldData.detail === "array";
-
-  const handleChange = ({ data, formikProps }) => {
-    if (hasMultipleItems) {
-      let vocabularyItems = allOptions.filter((o) =>
-        data.value.includes(o.value)
-      );
-      vocabularyItems = vocabularyItems.map((vocabularyItem) => {
-        return { ...vocabularyItem, id: vocabularyItem.value };
-      });
-      formikProps.form.setFieldValue(fieldPath, [...vocabularyItems]);
-    } else {
-      let vocabularyItem = allOptions.find((o) => o.value === data.value);
-      vocabularyItem = data.value
-        ? { ...vocabularyItem, id: vocabularyItem?.value }
-        : {};
-      formikProps.form.setFieldValue(fieldPath, vocabularyItem);
-    }
-  };
-
-  const { values, setFieldTouched } = useFormikContext();
-  const value = getIn(values, fieldPath, hasMultipleItems ? [] : {});
   return (
     <React.Fragment>
       <SelectField
@@ -167,7 +152,7 @@ export const LocalVocabularySelectField = ({
         optimized={optimized}
         onBlur={() => setFieldTouched(fieldPath)}
         deburr
-        search={search}
+        search={customSearch}
         control={InnerDropdown}
         fieldPath={fieldPath}
         multiple={hasMultipleItems}
@@ -176,6 +161,7 @@ export const LocalVocabularySelectField = ({
         usedOptions={usedOptions}
         onChange={handleChange}
         value={hasMultipleItems ? value.map((o) => o?.id) : value?.id}
+        ref={ref}
         clearable={clearable}
         {...restFieldData}
         {...uiProps}

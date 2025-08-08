@@ -10,6 +10,7 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from oarepo_runtime.i18n import get_locale
 
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
+from .ui_schema import VocabularyUISchema
 
 
 class VocabularyCacheItem:
@@ -26,17 +27,18 @@ class DepositI18nHierarchySchema(marshmallow.Schema):
     ancestors = marshmallow.fields.List(marshmallow.fields.String())
 
 
-class VocabularyPrefetchSchema(marshmallow.Schema):
-    title = VocabularyI18nStrUIField(data_key="text")
-    hierarchy = marshmallow.fields.Nested(
-        DepositI18nHierarchySchema(), data_key="hierarchy"
-    )
-    props = marshmallow.fields.Dict(
-        keys=marshmallow.fields.String(), values=marshmallow.fields.String()
-    )
-    tags = marshmallow.fields.List(marshmallow.fields.String())
-    icon = marshmallow.fields.String()
-    description = VocabularyI18nStrUIField()
+class VocabularyPrefetchSchema(VocabularyUISchema):
+    pass
+    # title = VocabularyI18nStrUIField(data_key="text")
+    # hierarchy = marshmallow.fields.Nested(
+    #     DepositI18nHierarchySchema(), data_key="hierarchy"
+    # )
+    # props = marshmallow.fields.Dict(
+    #     keys=marshmallow.fields.String(), values=marshmallow.fields.String()
+    # )
+    # tags = marshmallow.fields.List(marshmallow.fields.String())
+    # icon = marshmallow.fields.String()
+    # description = VocabularyI18nStrUIField()
 
 
 class VocabularyCache:

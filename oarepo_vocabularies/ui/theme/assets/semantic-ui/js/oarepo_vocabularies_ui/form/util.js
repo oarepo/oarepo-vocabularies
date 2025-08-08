@@ -56,63 +56,72 @@ export const serializeVocabularySuggestions = (suggestions) =>
     }
   });
 
-export const serializeVocabularyItems = (vocabularyItems) =>
-  vocabularyItems.map((vocabularyItem) => {
-    const {
-      hierarchy: { title: titlesArray },
-      text,
-    } = vocabularyItem;
-    const sections = [
-      ...titlesArray.map((title, index) => {
-        if (index === 0) {
-          return {
-            content: <span>{title}</span>,
-            key: crypto.randomUUID(),
-          };
-        } else {
-          return {
-            content: (
-              <span className="ui breadcrumb vocabulary-parent-item">
-                {title}
-              </span>
+export function serializeVocabularyItems(vocabularyItems) {
+  return (
+    vocabularyItems
+      // BE returns empty vocabulary items (for single selection vocabulary fields)that are objects with some keys.
+      //  Check if this makes sense?
+      .filter((vocabularyItem) => vocabularyItem.id)
+      .map((vocabularyItem) => {
+        const text =
+          getTitleFromMultilingualObject(vocabularyItem.title) ||
+          vocabularyItem.text;
+        const titlesArray = vocabularyItem?.hierarchy?.title || [];
+        const sections = titlesArray.map((title, index) => {
+          if (index === 0) {
+            return {
+              content: <span>{getTitleFromMultilingualObject(title)}</span>,
+              key: crypto.randomUUID(),
+            };
+          } else {
+            return {
+              content: (
+                <span className="ui breadcrumb vocabulary-parent-item">
+                  {getTitleFromMultilingualObject(title)}
+                </span>
+              ),
+              key: crypto.randomUUID(),
+            };
+          }
+        });
+
+        return {
+          id: vocabularyItem.id || vocabularyItem.value,
+          value: vocabularyItem.value || vocabularyItem.id,
+          text: text,
+          key: vocabularyItem.value || vocabularyItem.id,
+          content:
+            titlesArray.length <= 1 ? (
+              <span>{text}</span>
+            ) : (
+              <Breadcrumb icon="left angle" sections={sections} />
             ),
-            key: crypto.randomUUID(),
-          };
-        }
-      }),
-    ];
-    // the dropdown uses "description" prop to show the description, but it
-    // does not look very nice, so we remove it from the vocabulary item and use it how it suits us
-    const { description, ...vocabularyItemWithoutDescription } = vocabularyItem;
-    return {
-      ...vocabularyItemWithoutDescription,
-      text:
-        titlesArray.length === 1 ? (
-          <React.Fragment>
-            <span>{text}</span>
-            {description && (
-              <Popup
-                content={description}
-                trigger={<Icon name="circle info" />}
-              />
-            )}
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Breadcrumb icon="left angle" sections={sections} />
-            {description && (
-              <Popup
-                position="top center"
-                content={description}
-                trigger={<Icon className="ml-5" name="circle info" />}
-              />
-            )}
-          </React.Fragment>
-        ),
-      name:
-        "title" in vocabularyItem
-          ? getTitleFromMultilingualObject(vocabularyItem.title)
-          : text,
-      icon: undefined,
-    };
-  });
+          description: vocabularyItem.description && (
+            <Popup
+              position="top center"
+              content={vocabularyItem.description}
+              trigger={<Icon className="ml-5" name="circle info" />}
+            />
+          ),
+          name: getTitleFromMultilingualObject(vocabularyItem.title),
+          props: vocabularyItem.props,
+          hierarchy: vocabularyItem.hierarchy,
+        };
+      })
+  );
+}
+
+export const processVocabularyItems = (
+  options,
+  showLeafsOnly,
+  filterFunction
+) => {
+  let serializedOptions = serializeVocabularyItems(options);
+  if (showLeafsOnly) {
+    serializedOptions = serializedOptions.filter((o) => o?.hierarchy?.leaf);
+  }
+  if (filterFunction) {
+    serializedOptions = filterFunction(serializedOptions);
+  }
+  return serializedOptions;
+};
