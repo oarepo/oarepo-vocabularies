@@ -24,7 +24,7 @@ export const VocabularyTreeSelectField = ({
   filterFunction,
   ...restProps
 }) => {
-  const { formConfig } = useFormConfig();
+  const formConfig = useFormConfig();
   const { vocabularies } = formConfig;
   const { values, setFieldValue } = useFormikContext();
   // it looks clunky, but unfortunately, when this field is empty, the getIn,
