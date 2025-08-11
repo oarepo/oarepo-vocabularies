@@ -6,7 +6,6 @@ import _isEmpty from "lodash/isEmpty";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import {
   ErrorElement,
-  useFormConfig,
   httpApplicationJson,
   getTitleFromMultilingualObject,
 } from "@js/oarepo_ui";
@@ -23,10 +22,6 @@ const NewTopLevelItemMessage = () => (
   <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
 );
 const NewChildItemMessage = ({ record, newChildItemParentId }) => {
-  const {
-    record: { type },
-  } = useFormConfig();
-
   async function read(recordUrl) {
     const res = await httpApplicationJson.get(recordUrl);
     return res.data;
@@ -34,7 +29,8 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
-    queryFn: () => read(`/api/vocabularies/${type}/${newChildItemParentId}`),
+    queryFn: () =>
+      read(`/api/vocabularies/${record.type}/${newChildItemParentId}`),
   });
 
   if (isLoading)
@@ -108,9 +104,8 @@ const EditMessage = ({ record }) => {
 export const CurrentLocationInformation = ({
   newChildItemParentId,
   isUpdateForm,
+  record,
 }) => {
-  const { record } = useFormConfig();
-
   if (!record?.hierarchy?.level) return null;
 
   if (!isUpdateForm && !newChildItemParentId) {

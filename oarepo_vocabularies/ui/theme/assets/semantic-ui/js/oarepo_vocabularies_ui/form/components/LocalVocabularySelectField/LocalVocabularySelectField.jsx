@@ -94,9 +94,7 @@ export const LocalVocabularySelectField = ({
   // Remove helpText from fieldData to avoid passing it to the SelectField
   const { helpText: help, ...restFieldData } = fieldData;
 
-  const {
-    formConfig: { vocabularies },
-  } = useFormConfig();
+  const { vocabularies } = useFormConfig();
 
   if (!vocabularies) {
     console.error("Do not have vocabularies in formConfig");

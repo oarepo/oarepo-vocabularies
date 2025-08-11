@@ -4,10 +4,10 @@ import { BaseFormLayout, useFormConfig } from "@js/oarepo_ui";
 import { CurrentLocationInformation } from "./components";
 import { useLocation } from "react-router-dom";
 import _has from "lodash/has";
+import { connect } from "react-redux";
 
-export const FormAppLayout = () => {
-  const { formConfig } = useFormConfig();
-
+const FormAppLayoutComponent = ({ record }) => {
+  const formConfig = useFormConfig();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
@@ -21,13 +21,22 @@ export const FormAppLayout = () => {
             <CurrentLocationInformation
               isUpdateForm={isUpdateForm}
               newChildItemParentId={newChildItemParentId}
+              record={record}
             />
           </Grid.Column>
         </Grid.Row>
       </Grid>
-
       <BaseFormLayout formikProps={{}} />
     </Container>
   );
 };
+
+const mapStateToProps = (state) => ({
+  record: state.deposit.record,
+});
+
+export const FormAppLayout = connect(
+  mapStateToProps,
+  null
+)(FormAppLayoutComponent);
 export default FormAppLayout;

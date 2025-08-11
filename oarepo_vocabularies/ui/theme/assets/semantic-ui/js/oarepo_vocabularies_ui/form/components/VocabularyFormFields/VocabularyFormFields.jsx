@@ -11,7 +11,7 @@ import Overridable from "react-overridable";
 import { buildUID } from "react-searchkit";
 
 export const VocabularyFormFields = () => {
-  const { formConfig } = useFormConfig();
+  const formConfig = useFormConfig();
   const { vocabularyProps, overridableIdPrefix, vocabularyType } = formConfig;
 
   const hasPropFields = _has(vocabularyProps, "props");

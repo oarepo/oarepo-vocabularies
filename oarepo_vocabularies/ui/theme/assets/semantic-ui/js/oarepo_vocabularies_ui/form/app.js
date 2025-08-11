@@ -1,4 +1,7 @@
-import { createFormAppInit, parseFormAppConfig } from "@js/oarepo_ui/forms";
+import { DepositFormApp, parseFormAppConfig } from "@js/oarepo_ui/forms";
+import { OARepoDepositSerializer } from "@js/oarepo_ui/api";
+import React from "react";
+import ReactDOM from "react-dom";
 import FormAppLayout from "./FormAppLayout";
 import {
   VocabularyFormControlPanel,
@@ -8,8 +11,8 @@ import {
   VocabularyFormFieldsFunders,
   VocabularyFormFieldsAffiliations,
 } from "./components";
-const { formConfig } = parseFormAppConfig();
-const { overridableIdPrefix } = formConfig;
+const config = parseFormAppConfig();
+const overridableIdPrefix = config.formConfig.overridableIdPrefix;
 
 export const componentOverrides = {
   [`${overridableIdPrefix}.FormApp.layout`]: FormAppLayout,
@@ -24,7 +27,18 @@ export const componentOverrides = {
     VocabularyFormFieldsAffiliations,
   [`${overridableIdPrefix}.FormActions.container`]: VocabularyFormControlPanel,
 };
-createFormAppInit({
-  componentOverrides,
-  keysToRemoveProp: ["__key", "_title"],
-});
+
+const recordSerializer = new OARepoDepositSerializer(
+  ["errors", "expanded"],
+  ["__key"]
+);
+
+ReactDOM.render(
+  <DepositFormApp
+    config={config.formConfig}
+    record={config.record}
+    recordSerializer={recordSerializer}
+    componentOverrides={componentOverrides}
+  />,
+  config.rootEl
+);
