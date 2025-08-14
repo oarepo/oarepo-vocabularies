@@ -82,6 +82,7 @@ export const VocabularyPickerField = ({
   );
 };
 
+/* eslint-disable react/require-default-props */
 VocabularyPickerField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
@@ -93,6 +94,7 @@ VocabularyPickerField.propTypes = {
   children: PropTypes.node,
   onChange: PropTypes.func,
 };
+/* eslint-enable react/require-default-props */
 
 VocabularyPickerField.defaultProps = {};
 

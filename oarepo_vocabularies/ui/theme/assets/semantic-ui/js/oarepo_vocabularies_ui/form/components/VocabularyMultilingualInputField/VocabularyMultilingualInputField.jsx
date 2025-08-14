@@ -2,24 +2,23 @@ import React, { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { TextField, ArrayField, FieldLabel } from "react-invenio-forms";
 import { useFormikContext, getIn } from "formik";
-import {
-  array2object,
-  object2array,
-  LanguageSelectField,
-  ArrayFieldItem,
-} from "@js/oarepo_ui";
+import { array2object, object2array } from "@js/oarepo_ui/util";
+import { LanguageSelectField, ArrayFieldItem } from "@js/oarepo_ui/forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _isEmpty from "lodash/isEmpty";
 
 export const VocabularyMultilingualInputField = ({
   fieldPath,
-  label,
+  label = i18next.t("Title"),
   labelIcon,
   required,
-  emptyNewInput,
-  newItemInitialValue,
-  textFieldLabel,
-  displayFirstInputRemoveButton,
+  emptyNewInput = {
+    language: "",
+    name: "",
+  },
+  newItemInitialValue = { cs: "" },
+  textFieldLabel = i18next.t("Name"),
+  displayFirstInputRemoveButton = true,
   helpText,
 }) => {
   const placeholderFieldPath = useMemo(() => {
@@ -46,6 +45,10 @@ export const VocabularyMultilingualInputField = ({
       fieldPath,
       array2object(getIn(values, placeholderFieldPath), "lang", "name")
     );
+    // TODO: there are issues with some other inputs that we merged, so form is crashing
+    // will need to look into the exhausting dependecies eslint issue when we get a new
+    // working repo
+    /*eslint-disable-next-line */
   }, [values[placeholderFieldPath]]);
 
   return (
@@ -91,6 +94,7 @@ export const VocabularyMultilingualInputField = ({
   );
 };
 
+/* eslint-disable react/require-default-props */
 VocabularyMultilingualInputField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
@@ -102,15 +106,4 @@ VocabularyMultilingualInputField.propTypes = {
   displayFirstInputRemoveButton: PropTypes.bool,
   helpText: PropTypes.string,
 };
-
-VocabularyMultilingualInputField.defaultProps = {
-  label: i18next.t("Title"),
-  required: undefined,
-  emptyNewInput: {
-    language: "",
-    name: "",
-  },
-  newItemInitialValue: { cs: "" },
-  textFieldLabel: i18next.t("Name"),
-  displayFirstInputRemoveButton: true,
-};
+/* eslint-enable react/require-default-props */

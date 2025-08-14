@@ -1,7 +1,7 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 import PropTypes from "prop-types";
-import { useFormConfig } from "@js/oarepo_ui";
+import { useFormConfig } from "@js/oarepo_ui/forms";
 
 export const VocabularyBreadcrumb = ({ icon, sections }) => {
   const {

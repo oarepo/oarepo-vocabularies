@@ -5,7 +5,7 @@ import { LocalVocabularySelectField } from "../LocalVocabularySelectField/LocalV
 import { VocabularySelectField } from "../VocabularySelectField/VocabularySelectField";
 
 export const VocabularyField = forwardRef(
-  ({ fieldPath, vocabularyName, filterFunction, ...restProps }, ref) => {
+  ({ fieldPath, vocabularyName, ...restProps }, ref) => {
     const { formConfig } = useFormConfig();
     const hasLocalOptions =
       formConfig?.vocabularies?.vocabularies?.[vocabularyName]?.all?.length > 0;
@@ -22,6 +22,8 @@ export const VocabularyField = forwardRef(
     );
   }
 );
+
+VocabularyField.displayName = "VocabularyField";
 
 VocabularyField.propTypes = {
   fieldPath: PropTypes.string.isRequired,

@@ -8,7 +8,7 @@ import {
 import { OverridableContext } from "react-overridable";
 import { SearchSource } from "./constants";
 import Qs from "qs";
-import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
+import { serializeVocabularySuggestions } from "../../util";
 
 class SuggestionRequestSerializer {
   constructor() {
@@ -111,7 +111,9 @@ export const MultiSourceSearchApp = React.memo(
       <OverridableContext.Provider value={overriddenComponents}>
         <ReactSearchKit
           // Suggestions are supported only by Invenio API
-          suggestionApi={source === SearchSource.INTERNAL ? suggestionApi : null}
+          suggestionApi={
+            source === SearchSource.INTERNAL ? suggestionApi : null
+          }
           searchApi={searchApi}
           urlHandlerApi={{ enabled: false }}
           initialQueryState={searchConfig.initialQueryState}
@@ -124,6 +126,7 @@ export const MultiSourceSearchApp = React.memo(
   }
 );
 
+/* eslint-disable react/require-default-props */
 MultiSourceSearchApp.propTypes = {
   source: PropTypes.string.isRequired,
   vocabulary: PropTypes.string.isRequired,
@@ -131,6 +134,9 @@ MultiSourceSearchApp.propTypes = {
   queryState: PropTypes.object,
   children: PropTypes.node,
 };
+/* eslint-enable react/require-default-props */
+
+MultiSourceSearchApp.displayName = "MultiSourceSearchApp";
 
 MultiSourceSearchApp.defaultProps = {};
 

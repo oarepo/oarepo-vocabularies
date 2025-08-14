@@ -2,7 +2,7 @@ import {
   createSearchAppsInit,
   parseSearchAppConfigs,
   SearchAppLayout,
-} from "@js/oarepo_ui";
+} from "@js/oarepo_ui/search";
 import {
   VocabularyResultsListItemWithState,
   VocabularyButtonSidebar,
@@ -12,6 +12,7 @@ import {
   AffiliationsResultsListItem,
 } from "./components";
 import { parametrize } from "react-overridable";
+
 const [{ overridableIdPrefix }] = parseSearchAppConfigs();
 
 const ResultsListItemWithConfig = parametrize(

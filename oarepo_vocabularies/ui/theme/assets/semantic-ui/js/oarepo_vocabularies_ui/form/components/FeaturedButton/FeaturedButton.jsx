@@ -18,7 +18,7 @@ export const FeaturedButton = () => {
       icon="star"
       labelPosition="left"
       content={i18next.t("Feature")}
-      title={i18next.t('Item will be displayed on top of form input options')}
+      title={i18next.t("Item will be displayed on top of form input options")}
       type="button"
       onClick={() =>
         setFieldValue(

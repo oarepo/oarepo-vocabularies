@@ -7,7 +7,7 @@ import {
   ResultsPerPage,
 } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { ResultCountWithState } from "@js/oarepo_ui";
+import { ResultCountWithState } from "@js/oarepo_ui/search";
 
 const resultsPerPageLabel = (cmp) => (
   <React.Fragment>
@@ -25,7 +25,7 @@ export const Results = ({ resultsPerPageValues, currentResultsState }) => {
       <ResultsMultiLayout />
       <Grid relaxed verticalAlign="middle" textAlign="center">
         <Grid.Row verticalAlign="middle">
-          <Grid.Column className="computer tablet only" width={4}></Grid.Column>
+          <Grid.Column className="computer tablet only" width={4} />
           <Grid.Column
             className="computer tablet only"
             width={8}

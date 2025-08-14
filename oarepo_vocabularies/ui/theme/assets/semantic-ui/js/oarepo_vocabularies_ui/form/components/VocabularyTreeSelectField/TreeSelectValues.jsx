@@ -1,9 +1,9 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
+import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
 import { Grid, Breadcrumb, Button, Label, Icon } from "semantic-ui-react";
 
-export const TreeSelectValues = ({ selected, onRemove }) => {
+export const TreeSelectValues = ({ selected = [], onRemove }) => {
   return (
     <Grid.Row className="gapped">
       {selected.map((item) => (
@@ -28,10 +28,11 @@ export const TreeSelectValues = ({ selected, onRemove }) => {
     </Grid.Row>
   );
 };
-
+/* eslint-disable react/require-default-props */
 TreeSelectValues.propTypes = {
-  onRemove: PropTypes.func,
+  onRemove: PropTypes.func.isRequired,
   selected: PropTypes.array,
 };
+/* eslint-enable react/require-default-props */
 
 export default TreeSelectValues;

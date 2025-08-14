@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useDepositApiClient, useSuggestionApi } from "@js/oarepo_ui";
-import { serializeVocabularySuggestions } from "@js/oarepo_vocabularies";
+import { useDepositApiClient, useSuggestionApi } from "@js/oarepo_ui/forms";
+import { serializeVocabularySuggestions } from "./util";
 import { VocabularyModalTrigger } from "./components/VocabularyModalTrigger";
 import _isEmpty from "lodash/isEmpty";
 import _isObject from "lodash/isObject";

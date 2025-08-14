@@ -2,8 +2,7 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { List, Icon, Label, Header } from "semantic-ui-react";
 import _join from "lodash/join";
-
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
+import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
 
 export const ExternalResultListItem = ({
   result,
