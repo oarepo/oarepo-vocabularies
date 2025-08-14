@@ -77,7 +77,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         )
         return tpl.expand(identity, record)
 
-    def expand_search_links(self, identity, pagination, args):
+    def expand_search_links(self, identity, pagination, query_args):
         """Get links for this result item."""
         tpl = LinksTemplate(
             self.config.ui_links_search,
@@ -85,7 +85,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
                 "config": self.config,
                 "url_prefix": self.config.url_prefix,
                 "vocabulary_type": resource_requestctx.view_args["vocabulary_type"],
-                "args": args,
+                "args": query_args,
             },
         )
         return tpl.expand(identity, pagination)
