@@ -7,7 +7,7 @@ import _reverse from "lodash/reverse";
 import { Item, Table, Grid, Breadcrumb } from "semantic-ui-react";
 import { withState, AppContext } from "react-searchkit";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { I18nString } from "@js/oarepo_ui";
+import { I18nString } from "@js/oarepo_ui/forms";
 import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 
 export const VocabularyItemPropsTable = (props) => {
@@ -17,6 +17,7 @@ export const VocabularyItemPropsTable = (props) => {
   return (
     <Grid celled="internally" columns={tables.length} className="dense">
       {tables.map((tableData, index) => (
+        /* eslint-disable react/no-array-index-key */
         <Grid.Column key={index}>
           <Table basic="very" collapsing compact>
             <Table.Body>
@@ -46,7 +47,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
       id: hierarchy?.ancestors_or_self[index],
     })
   );
-  const { self_html, vocabulary_html } = links;
+  const { self_html: selfHTML, vocabulary_html: vocabularyHTML } = links;
 
   return (
     <Overridable
@@ -57,7 +58,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
       <Item key={id}>
         <Item.Content>
           <Item.Header as="h2">
-            <a href={self_html}>
+            <a href={selfHTML}>
               <I18nString value={title} />
             </a>
           </Item.Header>
@@ -68,7 +69,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
                   (ancestorTitleWithId, index) => (
                     <React.Fragment key={ancestorTitleWithId.id}>
                       <Breadcrumb.Section
-                        href={`${vocabulary_html}/${ancestorTitleWithId.id}`}
+                        href={`${vocabularyHTML}/${ancestorTitleWithId.id}`}
                       >
                         <I18nString value={ancestorTitleWithId} />
                       </Breadcrumb.Section>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Breadcrumb, Popup, Icon } from "semantic-ui-react";
 import _join from "lodash/join";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
+import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const serializeVocabularySuggestions = (suggestions) =>

@@ -1,1 +1,1 @@
-export * from './SelectedVocabularyValues'
+export * from "./SelectedVocabularyValues";

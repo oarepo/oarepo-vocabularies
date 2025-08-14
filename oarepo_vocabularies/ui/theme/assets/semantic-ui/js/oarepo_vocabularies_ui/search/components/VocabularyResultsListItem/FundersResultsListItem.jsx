@@ -12,14 +12,14 @@ export const FundersResultsListItem = ({ result }) => {
     name,
     identifiers,
     country,
-    links: { self_html },
+    links: { self_html: selfHTML },
   } = result;
   return (
     <Overridable id={buildUID(`FundersResultsListItem.layout`)} result={result}>
       <Item key={id}>
         <Item.Content>
           <Item.Header as="h3">
-            <a href={self_html}>{name}</a>
+            <a href={selfHTML}>{name}</a>
             {country ? ` (${country})` : ""}
           </Item.Header>
           <Item.Meta>
@@ -47,5 +47,5 @@ FundersResultsListItem.propTypes = {
       self_html: PropTypes.string,
     }),
     props: PropTypes.object,
-  }),
+  }).isRequired,
 };

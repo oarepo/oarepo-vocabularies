@@ -4,12 +4,12 @@ import React from "react";
 import _reverse from "lodash/reverse";
 import _isEmpty from "lodash/isEmpty";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
+import { useFormConfig } from "@js/oarepo_ui/forms";
+import { ErrorElement } from "@js/oarepo_ui/search";
 import {
-  ErrorElement,
-  useFormConfig,
-  httpApplicationJson,
   getTitleFromMultilingualObject,
-} from "@js/oarepo_ui";
+  httpApplicationJson,
+} from "@js/oarepo_ui/util";
 import PropTypes from "prop-types";
 import { VocabularyBreadcrumbMessage } from "./VocabularyBreadcrumbMessage";
 import { VocabularyBreadcrumb } from "./VocabularyBreadcrumb";
@@ -79,7 +79,7 @@ const NewChildItemMessage = ({ record, newChildItemParentId }) => {
 };
 
 NewChildItemMessage.propTypes = {
-  record: PropTypes.object,
+  record: PropTypes.object.isRequired,
   newChildItemParentId: PropTypes.string,
 };
 
@@ -140,13 +140,9 @@ EditMessage.propTypes = {
   }).isRequired,
 };
 
+/* eslint-disable react/require-default-props */
 CurrentLocationInformation.propTypes = {
   newChildItemParentId: PropTypes.string,
-  isUpdateForm: PropTypes.bool,
-  record: PropTypes.shape({
-    hierarchy: PropTypes.shape({
-      level: PropTypes.number.isRequired,
-      ancestors_or_self: PropTypes.arrayOf(PropTypes.string),
-    }),
-  }),
+  isUpdateForm: PropTypes.bool.isRequired,
 };
+/* eslint-enable react/require-default-props */

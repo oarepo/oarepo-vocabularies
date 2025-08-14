@@ -2,10 +2,10 @@ import * as React from "react";
 import { List, Checkbox, Button, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { isSelectable } from "./util";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui";
+import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
 
 export const HierarchyColumn = ({
-  items,
+  items = [],
   level,
   onSelect,
   onExpand,
@@ -65,7 +65,7 @@ export const HierarchyColumn = ({
                 {getTitleFromMultilingualObject(item.hierarchy.title[0])}
               </List.Content>
 
-              {item.element_type === "parent" && (
+              {!item.hierarchy.leaf && (
                 <Button
                   className="transparent"
                   onClick={onExpand(item.value, level)}
@@ -76,26 +76,25 @@ export const HierarchyColumn = ({
             </List.Item>
           );
         }
+        return null;
       })}
     </List>
   );
 };
 
+/* eslint-disable react/require-default-props */
 HierarchyColumn.propTypes = {
-  level: PropTypes.number,
+  level: PropTypes.number.isRequired,
   items: PropTypes.array,
-  onSelect: PropTypes.func,
-  onExpand: PropTypes.func,
-  onKeyDown: PropTypes.func,
-  selected: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  currentAncestors: PropTypes.array,
-  value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onExpand: PropTypes.func.isRequired,
+  onKeyDown: PropTypes.func.isRequired,
+  selected: PropTypes.array.isRequired,
+  currentAncestors: PropTypes.array.isRequired,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   multiple: PropTypes.bool,
   isLast: PropTypes.bool,
 };
-
-HierarchyColumn.defaultProps = {
-  items: [],
-};
+/* eslint-enable react/require-default-props */
 
 export default HierarchyColumn;

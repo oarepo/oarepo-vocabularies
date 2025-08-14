@@ -13,11 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
       searchAppElement.dataset[_camelCase("invenio-search-config")]
     );
 
-  const uiLinksConfig = JSON.parse(
-    searchAppElement.dataset[_camelCase("ui-links")]
-  );
+    const uiLinksConfig = JSON.parse(
+      searchAppElement.dataset[_camelCase("ui-links")]
+    );
 
-  initialAppConfig.uiLinks = uiLinksConfig;
+    initialAppConfig.uiLinks = uiLinksConfig;
 
     ReactDOM.render(<App appConfig={initialAppConfig} />, searchAppElement);
   }
