@@ -28,9 +28,7 @@ const ContextAwarePagination = withState(
   ({ currentQueryState, ...paginationProps }) => {
     // Suggestions are always fixed to one-page size
     return (
-      !inSuggestMode(currentQueryState) && (
-        <Pagination {...paginationProps}></Pagination>
-      )
+      !inSuggestMode(currentQueryState) && <Pagination {...paginationProps} />
     );
   }
 );
@@ -48,7 +46,7 @@ export const VocabularyRemoteSearchAppLayout = ({
     queryString: "",
     filters: [["tags", "featured"]],
   },
-  allowAdditions,
+  allowAdditions = true,
   handleSelect = () => {},
 }) => {
   const [source, setSource] = useState(SearchSource.INTERNAL);
@@ -62,13 +60,16 @@ export const VocabularyRemoteSearchAppLayout = ({
     "AutocompleteSearchBar.suggestions": () => null,
   };
 
-  const findMore = (previousQueryState) => {
-    if (source === SearchSource.INTERNAL) {
-      setSource(SearchSource.EXTERNAL);
-    }
-    const newQueryState = { ...previousQueryState, filters: [], page: 1 };
-    setQueryState(newQueryState);
-  };
+  const findMore = React.useCallback(
+    (previousQueryState) => {
+      if (source === SearchSource.INTERNAL) {
+        setSource(SearchSource.EXTERNAL);
+      }
+      const newQueryState = { ...previousQueryState, filters: [], page: 1 };
+      setQueryState(newQueryState);
+    },
+    [source, setSource, setQueryState]
+  );
 
   const resetSearch = () => {
     setQueryState(initialQueryState);
@@ -79,9 +80,7 @@ export const VocabularyRemoteSearchAppLayout = ({
     // There's currently no other more sane way to focus that component's input
     if (searchbarContainer.current) {
       const searchbarInput = searchbarContainer.current.querySelector("input");
-      if (searchbarInput) {
-        searchbarInput.focus();
-      }
+      if (searchbarInput) searchbarInput.focus();
     }
   }, []);
 
@@ -147,11 +146,13 @@ export const VocabularyRemoteSearchAppLayout = ({
       </Modal.Content>
       <Modal.Actions>
         {extraActions}
-        {allowAdditions && <Button
-          icon="plus"
-          content={i18next.t("Add new")}
-          onClick={() => addNew()}
-        />}
+        {allowAdditions && (
+          <Button
+            icon="plus"
+            content={i18next.t("Add new")}
+            onClick={() => addNew()}
+          />
+        )}
         {multiple && (
           <Button
             type="submit"
@@ -166,6 +167,7 @@ export const VocabularyRemoteSearchAppLayout = ({
   );
 };
 
+/* eslint-disable react/require-default-props */
 VocabularyRemoteSearchAppLayout.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   overriddenComponents: PropTypes.object,
@@ -174,19 +176,8 @@ VocabularyRemoteSearchAppLayout.propTypes = {
   addNew: PropTypes.func,
   onSubmit: PropTypes.func,
   extraActions: PropTypes.node,
-  allowAdditions: PropTypes.bool
+  allowAdditions: PropTypes.bool,
 };
-
-VocabularyRemoteSearchAppLayout.defaultProps = {
-  overriddenComponents: {},
-  initialQueryState: {
-    size: 10,
-    page: 1,
-    sortBy: "bestmatch",
-    filters: [["tags", "featured"]],
-  },
-  handleSelect: () => {},
-  allowAdditions: true
-};
+/* eslint-enable react/require-default-props */
 
 export default VocabularyRemoteSearchAppLayout;

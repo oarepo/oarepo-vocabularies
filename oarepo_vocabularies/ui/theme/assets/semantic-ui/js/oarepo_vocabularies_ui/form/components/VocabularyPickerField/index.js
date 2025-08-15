@@ -1,1 +1,1 @@
-export * from './VocabularyPickerField'
+export * from "./VocabularyPickerField";

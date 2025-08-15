@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Grid } from "semantic-ui-react";
-import { BaseFormLayout, useFormConfig } from "@js/oarepo_ui";
+import { BaseFormLayout, useFormConfig } from "@js/oarepo_ui/forms";
 import { CurrentLocationInformation } from "./components";
 import { useLocation } from "react-router-dom";
 import _has from "lodash/has";

@@ -21,6 +21,8 @@ export const VocabularyModalTrigger = React.forwardRef((props, ref) => {
   );
 });
 
+VocabularyModalTrigger.displayName = "VocabularyModalTrigger";
+
 VocabularyModalTrigger.propTypes = {
   icon: PropTypes.string,
   label: PropTypes.string,

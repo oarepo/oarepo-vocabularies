@@ -4,13 +4,15 @@ import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const NewItemButton = () => {
-  const { ui_links, permissions } = useContext(SearchConfigurationContext);
+  const { ui_links: uiLinks, permissions } = useContext(
+    SearchConfigurationContext
+  );
 
   return permissions?.can_create ? (
     <React.Fragment>
       <Button
         as="a"
-        href={ui_links.create}
+        href={uiLinks.create}
         fluid
         color="green"
         icon="plus"
@@ -21,7 +23,7 @@ export const NewItemButton = () => {
       />
       <Button
         as="a"
-        href={ui_links.create}
+        href={uiLinks.create}
         fluid
         color="green"
         icon="plus"

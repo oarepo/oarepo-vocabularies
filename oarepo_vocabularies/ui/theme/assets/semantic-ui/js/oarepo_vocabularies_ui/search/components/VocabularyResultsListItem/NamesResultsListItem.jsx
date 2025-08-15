@@ -13,14 +13,14 @@ export const NamesResultsListItem = ({ result }) => {
     name,
     identifiers,
     affiliations,
-    links: { self_html },
+    links: { self_html: selfHTML },
   } = result;
   return (
     <Overridable id={buildUID(`NamesResultsListItem.layout`)} result={result}>
       <Item key={id}>
         <Item.Content>
           <Item.Header as="h3">
-            <a href={self_html}>{name}</a>
+            <a href={selfHTML}>{name}</a>
           </Item.Header>
           <Item.Meta>
             <VocabularyItemIdentifiers identifiers={identifiers} />

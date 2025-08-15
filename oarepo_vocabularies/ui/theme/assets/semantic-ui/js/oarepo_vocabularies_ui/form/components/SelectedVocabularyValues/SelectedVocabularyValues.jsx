@@ -32,7 +32,7 @@ export const SelectedVocabularyValue = ({ value }) => {
 };
 
 SelectedVocabularyValue.propTypes = {
-  value: PropTypes.object,
+  value: PropTypes.object.isRequired,
 };
 
 export const SelectedVocabularyValues = () => {

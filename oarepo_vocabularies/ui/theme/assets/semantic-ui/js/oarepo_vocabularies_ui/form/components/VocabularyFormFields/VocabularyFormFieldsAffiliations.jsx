@@ -69,5 +69,5 @@ export const VocabularyFormFieldsAffiliations = ({ isUpdateForm }) => {
 };
 
 VocabularyFormFieldsAffiliations.propTypes = {
-  isUpdateForm: PropTypes.bool,
+  isUpdateForm: PropTypes.bool.isRequired,
 };

@@ -29,7 +29,7 @@ export const VocabularyFormFieldsFunders = ({ isUpdateForm }) => {
         fieldPath="title"
         textFieldLabel={i18next.t("Title")}
         labelIcon="pencil"
-        displayFirstInputRemoveButton={true}
+        displayFirstInputRemoveButton
         required
         newItemInitialValue={{}}
         helpText={i18next.t(
@@ -59,5 +59,5 @@ export const VocabularyFormFieldsFunders = ({ isUpdateForm }) => {
 };
 
 VocabularyFormFieldsFunders.propTypes = {
-  isUpdateForm: PropTypes.bool,
+  isUpdateForm: PropTypes.bool.isRequired,
 };
