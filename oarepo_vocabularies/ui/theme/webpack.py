@@ -12,9 +12,7 @@ theme = WebpackThemeBundle(
                 "oarepo_vocabularies_detail": "./js/oarepo_vocabularies_ui/detail/app.js",
                 "oarepo_vocabularies_form": "./js/oarepo_vocabularies_ui/form/app.js",
             },
-            dependencies={
-                "@tanstack/react-query": "^4",
-            },
+            dependencies={},
             devDependencies={},
             aliases={
                 "@translations/oarepo_vocabularies_ui": "./translations/oarepo_vocabularies_ui",
