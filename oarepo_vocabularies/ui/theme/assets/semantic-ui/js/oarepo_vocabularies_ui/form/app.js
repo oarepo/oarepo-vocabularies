@@ -8,6 +8,7 @@ import {
   VocabularyFormFieldsFunders,
   VocabularyFormFieldsAffiliations,
 } from "./components";
+
 const { formConfig } = parseFormAppConfig();
 const { overridableIdPrefix } = formConfig;
 

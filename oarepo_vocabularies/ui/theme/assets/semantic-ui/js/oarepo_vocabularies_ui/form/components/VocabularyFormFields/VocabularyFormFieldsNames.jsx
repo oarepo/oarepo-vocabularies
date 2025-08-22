@@ -110,5 +110,5 @@ export const VocabularyFormFieldsNames = ({ isUpdateForm }) => {
 };
 
 VocabularyFormFieldsNames.propTypes = {
-  isUpdateForm: PropTypes.bool,
+  isUpdateForm: PropTypes.bool.isRequired,
 };

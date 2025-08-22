@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { useFieldData } from "@js/oarepo_ui/forms";
-import { processVocabularyItems } from "@js/oarepo_vocabularies";
+import { processVocabularyItems } from "../../util";
 import PropTypes from "prop-types";
 import { RemoteSelectField } from "react-invenio-forms";
 import { useFormikContext, getIn } from "formik";
@@ -122,6 +122,9 @@ export const VocabularySelectField = forwardRef(
   }
 );
 
+VocabularySelectField.displayName = "VocabularySelectField";
+
+/* eslint-disable react/require-default-props */
 VocabularySelectField.propTypes = {
   vocabularyName: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
@@ -136,4 +139,6 @@ VocabularySelectField.propTypes = {
   fieldRepresentation: PropTypes.string,
   clearable: PropTypes.bool,
   suggestionAPIHeaders: PropTypes.object,
+  showLeafsOnly: PropTypes.bool,
 };
+/* eslint-enable react/require-default-props */

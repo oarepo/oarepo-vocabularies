@@ -1,5 +1,4 @@
 import React from "react";
-
 import PropTypes from "prop-types";
 import { VocabularyRemoteSelectModal } from "./VocabularyRemoteSelectModal";
 import { VocabularyPickerField } from "../VocabularyPickerField";
@@ -9,12 +8,12 @@ export const VocabularyRemoteSelectField = ({
   fieldPath,
   label,
   helpText,
-  multiple,
+  multiple = false,
   required,
   triggerButton,
   triggerLabel,
-  overriddenComponents,
-  modalHeader,
+  overriddenComponents = {},
+  modalHeader = "",
   ...restProps
 }) => {
   return (
@@ -39,6 +38,7 @@ export const VocabularyRemoteSelectField = ({
   );
 };
 
+/* eslint-disable react/require-default-props */
 VocabularyRemoteSelectField.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
@@ -51,9 +51,4 @@ VocabularyRemoteSelectField.propTypes = {
   triggerLabel: PropTypes.string,
   overriddenComponents: PropTypes.object,
 };
-
-VocabularyRemoteSelectField.defaultProps = {
-  multiple: false,
-  overriddenComponents: {},
-  modalHeader: "",
-};
+/* eslint-enable react/require-default-props */

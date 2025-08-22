@@ -11,14 +11,10 @@ import {
   ModalContent,
   ModalActions,
 } from "semantic-ui-react";
-import {
-  useVocabularySuggestions,
-  OptionsLoadingSkeleton,
-} from "@js/oarepo_vocabularies";
-import {
-  EmptyResultsElement,
-  useConfirmationModal as useModal,
-} from "@js/oarepo_ui";
+import { useVocabularySuggestions } from "../../hooks";
+import { OptionsLoadingSkeleton } from "../OptionsLoadingSkeleton";
+import { useConfirmationModal as useModal } from "@js/oarepo_ui/forms/hooks";
+import { EmptyResultsElement } from "@js/oarepo_ui/search";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _groupBy from "lodash/groupBy";
 import _toPairs from "lodash/toPairs";
@@ -40,13 +36,13 @@ export const TreeSelectFieldModal = ({
   value,
   root,
   trigger,
-  showLeafsOnly,
+  showLeafsOnly = false,
   filterFunction,
   onSubmit,
   onSelect,
   onClose,
   selected,
-  loadingMessage,
+  loadingMessage = i18next.t("Loading..."),
   vocabularyType,
 }) => {
   const { isOpen, close, open } = useModal();
@@ -76,6 +72,7 @@ export const TreeSelectFieldModal = ({
           filterFunction
         )
       : options;
+
   const hierarchyLevels = _groupBy(_options, "hierarchy.ancestors.length");
 
   const columns = useMemo(
@@ -89,7 +86,7 @@ export const TreeSelectFieldModal = ({
           )
         )
       ),
-    [hierarchyLevels, searchResults]
+    [hierarchyLevels]
   );
 
   const columnsCount = columns.length;
@@ -100,54 +97,92 @@ export const TreeSelectFieldModal = ({
     setCurrentAncestors(valueAncestors);
     onClose();
   }
-
-  const openHierarchyNode = (parent, level) => () => {
-    let updatedParents = [...currentAncestors];
-    updatedParents.splice(level + 1);
-    updatedParents[level] = parent;
-
-    let updatedKeybState = [...keybState];
-
-    const columnOptions = columns[level];
-    const nextColumnIndex = columnOptions.findIndex((o) => o.value === parent);
-    updatedKeybState.splice(level + 1);
-    updatedKeybState[level] = nextColumnIndex;
-
-    setCurrentAncestors(updatedParents);
-    setKeybState(updatedKeybState);
-  };
-
-  const selectAndClose = (option) => {
-    onSelect([option]);
-    onSubmit([option]);
-    close();
-  };
-
-  const selectOption = (option) => {
-    const existingIndex = selected.findIndex((i) => i.value === option?.value);
-    const existingParentIndex = selected.findIndex((i) =>
-      option?.hierarchy.ancestors.includes(i.value)
-    );
-    const childIndexes = selected.reduce(
-      (acc, curr, index) =>
-        curr.hierarchy?.ancestors.includes(option.value)
-          ? [...acc, index]
-          : acc,
-      []
-    );
-
-    if (existingIndex !== -1) {
-      onSelect((prevState) =>
-        prevState.filter((_, index) => index !== existingIndex)
-      );
-    } else if (multiple && selected.length !== 0) {
-      onSelect((prevState) =>
-        updateState(prevState, option, existingParentIndex, childIndexes)
-      );
-    } else {
-      onSelect([option]);
+  const removeChildIndexes = React.useCallback((state, childIndexes) => {
+    if (childIndexes.length > 0) {
+      let adjustedState = [...state];
+      childIndexes.forEach((childIndex, i) => {
+        adjustedState = adjustedState.filter(
+          (_, index) => index !== childIndex - i
+        );
+      });
+      return adjustedState;
     }
-  };
+    return state;
+  }, []);
+
+  const updateState = React.useCallback(
+    (prevState, option, existingParentIndex, childIndexes) => {
+      let newState = [...prevState];
+      newState = removeChildIndexes(newState, childIndexes);
+
+      if (existingParentIndex !== -1 && childIndexes.length === 0) {
+        newState = newState.filter((_, index) => index !== existingParentIndex);
+      }
+      return [...newState, option];
+    },
+    [removeChildIndexes]
+  );
+
+  const openHierarchyNode = React.useCallback(
+    (parent, level) => () => {
+      let updatedParents = [...currentAncestors];
+      updatedParents.splice(level + 1);
+      updatedParents[level] = parent;
+
+      let updatedKeybState = [...keybState];
+
+      const columnOptions = columns[level];
+      const nextColumnIndex = columnOptions.findIndex(
+        (o) => o.value === parent
+      );
+      updatedKeybState.splice(level + 1);
+      updatedKeybState[level] = nextColumnIndex;
+
+      setCurrentAncestors(updatedParents);
+      setKeybState(updatedKeybState);
+    },
+    [currentAncestors, keybState, columns, setCurrentAncestors, setKeybState]
+  );
+
+  const selectAndClose = React.useCallback(
+    (option) => {
+      onSelect([option]);
+      onSubmit([option]);
+      close();
+    },
+    [onSelect, onSubmit, close]
+  );
+
+  const selectOption = React.useCallback(
+    (option) => {
+      const existingIndex = selected.findIndex(
+        (i) => i.value === option?.value
+      );
+      const existingParentIndex = selected.findIndex((i) =>
+        option?.hierarchy.ancestors.includes(i.value)
+      );
+      const childIndexes = selected.reduce(
+        (acc, curr, index) =>
+          curr.hierarchy?.ancestors.includes(option.value)
+            ? [...acc, index]
+            : acc,
+        []
+      );
+
+      if (existingIndex !== -1) {
+        onSelect((prevState) =>
+          prevState.filter((_, index) => index !== existingIndex)
+        );
+      } else if (multiple && selected.length !== 0) {
+        onSelect((prevState) =>
+          updateState(prevState, option, existingParentIndex, childIndexes)
+        );
+      } else {
+        onSelect([option]);
+      }
+    },
+    [selected, multiple, onSelect, updateState]
+  );
 
   const handleSelect = React.useCallback(
     (option, e) => {
@@ -161,114 +196,80 @@ export const TreeSelectFieldModal = ({
         selectOption(option);
       }
     },
-    [multiple, onSubmit, selected, onSelect]
+    [multiple, selectAndClose, selectOption]
   );
 
   const handleSubmit = React.useCallback(() => {
     onSubmit(selected);
     close();
-  }, [onSubmit, selected]);
-
-  const updateState = (
-    prevState,
-    option,
-    existingParentIndex,
-    childIndexes
-  ) => {
-    let newState = [...prevState];
-    newState = removeChildIndexes(newState, childIndexes);
-
-    if (existingParentIndex !== -1 && childIndexes.length === 0) {
-      newState = newState.filter((_, index) => index !== existingParentIndex);
-    }
-    return [...newState, option];
-  };
-
-  const removeChildIndexes = (state, childIndexes) => {
-    if (childIndexes.length > 0) {
-      let adjustedState = [...state];
-      childIndexes.forEach((childIndex, i) => {
-        adjustedState = adjustedState.filter(
-          (_, index) => index !== childIndex - i
-        );
-      });
-      return adjustedState;
-    }
-    return state;
-  };
-
-  const moveKey = React.useCallback(
-    (index, newIndex, back = false) => {
-      setKeybState((prev) => {
-        const newState = [...prev];
-        const newValue = back ? undefined : newIndex;
-        if (back) {
-          newState.splice(index, 1);
-        } else {
-          newState[index] = newValue;
-        }
-        return newState;
-      });
-    },
-    [setKeybState]
-  );
-
-  const handleArrowUp = React.useCallback(
-    (e, index, data) => {
-      const newIndex = keybState[index] - 1;
-      if (newIndex >= 0) {
-        openHierarchyNode(data[newIndex].value, index)();
-        moveKey(index, newIndex, false);
-        if (e.shiftKey) {
-          handleSelect(data[newIndex], e);
-        }
-      }
-    },
-    [setKeybState, openHierarchyNode, moveKey, handleSelect]
-  );
-
-  const handleArrowDown = (e, index, data) => {
-    const newIndex = keybState[index] + 1;
-    if (newIndex < data.length) {
-      openHierarchyNode(data[newIndex].value, index)();
-      moveKey(index, newIndex, false);
-      if (e.shiftKey) {
-        handleSelect(data[newIndex], e);
-      }
-    }
-  };
-
-  const handleArrowLeft = (index) => {
-    if (index > 0) {
-      setCurrentAncestors((prev) => {
-        const newState = [...prev];
-        newState.splice(index, 1);
-        return newState;
-      });
-      moveKey(index, null, true);
-    }
-  };
-
-  const handleArrowRight = (index) => {
-    if (index < columnsCount - 1) {
-      const nextColumnOptions = columns[index + 1];
-      const nextColumnIndex = nextColumnOptions.findIndex(
-        (o) => o.hierarchy.ancestors[0] === currentAncestors[index]
-      );
-      if (nextColumnIndex !== -1) {
-        const newIndex = nextColumnIndex;
-        openHierarchyNode(nextColumnOptions[newIndex].value, index + 1)();
-        moveKey(index + 1, newIndex, false);
-      }
-    }
-  };
-
-  const handleEnterSpace = (e, index, data) => {
-    handleSelect(data[keybState[index]], e);
-  };
+  }, [close, onSubmit, selected]);
 
   const handleKey = React.useCallback(
     (e, index) => {
+      const handleEnterSpace = (e, index, data) => {
+        handleSelect(data[keybState[index]], e);
+      };
+
+      const moveKey = (index, newIndex, back = false) => {
+        setKeybState((prev) => {
+          const newState = [...prev];
+          const newValue = back ? undefined : newIndex;
+          if (back) {
+            newState.splice(index, 1);
+          } else {
+            newState[index] = newValue;
+          }
+          return newState;
+        });
+      };
+
+      const handleArrowRight = (index) => {
+        if (index < columnsCount - 1) {
+          const nextColumnOptions = columns[index + 1];
+          const nextColumnIndex = nextColumnOptions.findIndex(
+            (o) => o.hierarchy.ancestors[0] === currentAncestors[index]
+          );
+          if (nextColumnIndex !== -1) {
+            const newIndex = nextColumnIndex;
+            openHierarchyNode(nextColumnOptions[newIndex].value, index + 1)();
+            moveKey(index + 1, newIndex, false);
+          }
+        }
+      };
+
+      const handleArrowDown = (e, index, data) => {
+        const newIndex = keybState[index] + 1;
+        if (newIndex < data.length) {
+          openHierarchyNode(data[newIndex].value, index)();
+          moveKey(index, newIndex, false);
+          if (e.shiftKey) {
+            handleSelect(data[newIndex], e);
+          }
+        }
+      };
+
+      const handleArrowLeft = (index) => {
+        if (index > 0) {
+          setCurrentAncestors((prev) => {
+            const newState = [...prev];
+            newState.splice(index, 1);
+            return newState;
+          });
+          moveKey(index, null, true);
+        }
+      };
+
+      const handleArrowUp = (e, index, data) => {
+        const newIndex = keybState[index] - 1;
+        if (newIndex >= 0) {
+          openHierarchyNode(data[newIndex].value, index)();
+          moveKey(index, newIndex, false);
+          if (e.shiftKey) {
+            handleSelect(data[newIndex], e);
+          }
+        }
+      };
+
       e.preventDefault();
       index = Math.max(keybState.length - 1, index);
       const data = columns[index];
@@ -294,9 +295,18 @@ export const TreeSelectFieldModal = ({
         case " ":
           handleEnterSpace(e, index, data);
           break;
+        default:
+          break;
       }
     },
-    [columns]
+    [
+      columns,
+      columnsCount,
+      currentAncestors,
+      handleSelect,
+      keybState,
+      openHierarchyNode,
+    ]
   );
 
   return (
@@ -346,6 +356,7 @@ export const TreeSelectFieldModal = ({
                   {columns.map((items, level) => (
                     <HierarchyColumn
                       items={items}
+                      // eslint-disable-next-line
                       key={level}
                       level={level}
                       onSelect={handleSelect}
@@ -382,7 +393,7 @@ export const TreeSelectFieldModal = ({
     </Modal>
   );
 };
-
+/* eslint-disable react/require-default-props */
 TreeSelectFieldModal.propTypes = {
   multiple: PropTypes.bool,
   placeholder: PropTypes.string,
@@ -399,7 +410,4 @@ TreeSelectFieldModal.propTypes = {
   filterFunction: PropTypes.func,
   loadingMessage: PropTypes.string,
 };
-
-TreeSelectFieldModal.defaultProps = {
-  loadingMessage: i18next.t("Loading..."),
-};
+/* eslint-enable react/require-default-props */

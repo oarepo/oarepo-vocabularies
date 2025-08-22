@@ -4,11 +4,11 @@ import { useFormConfig, search, useFieldData } from "@js/oarepo_ui/forms";
 import { useFormikContext, getIn } from "formik";
 import PropTypes from "prop-types";
 import { Dropdown, Divider } from "semantic-ui-react";
-import { processVocabularyItems } from "@js/oarepo_vocabularies";
+import { processVocabularyItems } from "../../util";
 
 const InnerDropdown = ({
-  options,
-  featured,
+  options = [],
+  featured = [],
   usedOptions = [],
   value,
   ...rest
@@ -35,6 +35,7 @@ const InnerDropdown = ({
   );
 };
 
+/* eslint-disable react/require-default-props */
 InnerDropdown.propTypes = {
   options: PropTypes.array.isRequired,
   featured: PropTypes.array,
@@ -44,6 +45,7 @@ InnerDropdown.propTypes = {
     PropTypes.arrayOf(PropTypes.string),
   ]),
 };
+/* eslint-enable react/require-default-props */
 
 export const LocalVocabularySelectField = forwardRef(
   (
@@ -165,6 +167,8 @@ export const LocalVocabularySelectField = forwardRef(
   }
 );
 
+LocalVocabularySelectField.displayName = "LocalVocabularySelectField";
+/* eslint-disable react/require-default-props */
 LocalVocabularySelectField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   fieldRepresentation: PropTypes.string,
@@ -181,3 +185,4 @@ LocalVocabularySelectField.propTypes = {
   icon: PropTypes.string,
   clearable: PropTypes.bool,
 };
+/* eslint-enable react/require-default-props */

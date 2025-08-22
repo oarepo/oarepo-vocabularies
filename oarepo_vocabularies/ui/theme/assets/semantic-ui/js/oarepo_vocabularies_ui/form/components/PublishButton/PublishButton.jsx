@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-import { useVocabularyApiClient } from "@js/oarepo_vocabularies";
+import { useVocabularyApiClient } from "../../hooks";
 
 export const PublishButton = ({ newChildItemParentId }) => {
   const { isSubmitting, createOrUpdate } =
@@ -22,6 +22,8 @@ export const PublishButton = ({ newChildItemParentId }) => {
   );
 };
 
+/* eslint-disable react/require-default-props */
 PublishButton.propTypes = {
   newChildItemParentId: PropTypes.string,
 };
+/* eslint-enable react/require-default-props */

@@ -4,7 +4,7 @@ import {
   PropFieldsComponent,
   VocabularyMultilingualInputField,
 } from "../../components";
-import { useFormConfig } from "@js/oarepo_ui";
+import { useFormConfig } from "@js/oarepo_ui/forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import _has from "lodash/has";
 import Overridable from "react-overridable";
@@ -33,7 +33,7 @@ export const VocabularyFormFields = () => {
           textFieldLabel={i18next.t("Title")}
           labelIcon="pencil"
           displayFirstInputRemoveButton={false}
-          required={true}
+          required
         />
         <TextField
           fieldPath="id"

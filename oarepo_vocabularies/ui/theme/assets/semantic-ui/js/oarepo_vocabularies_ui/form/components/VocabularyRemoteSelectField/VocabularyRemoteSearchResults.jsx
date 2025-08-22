@@ -2,12 +2,13 @@ import React from "react";
 import Overridable from "react-overridable";
 import { withState, ResultsLoader } from "react-searchkit";
 import { List, Header } from "semantic-ui-react";
-import { ShouldRender } from "@js/oarepo_ui";
+import { ShouldRender } from "@js/oarepo_ui/search";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { InternalResultListItem } from "./InternalResultListItem";
 import { SearchSource } from "./constants";
 import { featuredFilterActive, inSuggestMode } from "./util";
 import { useFieldValue } from "./context";
+import PropTypes from "prop-types";
 
 export const VocabularyRemoteResultsLoader = withState(
   ({ currentQueryState, currentResultsState: results, children }) => {
@@ -57,7 +58,15 @@ export const VocabularyRemoteSearchResults = withState(
       ) {
         findMore(currentQueryState);
       }
-    }, [results, suggestionString, _results, canFindMore, notEnoughResults]);
+    }, [
+      results,
+      suggestionString,
+      _results,
+      canFindMore,
+      notEnoughResults,
+      currentQueryState,
+      findMore,
+    ]);
 
     React.useEffect(() => {
       if (
@@ -70,7 +79,7 @@ export const VocabularyRemoteSearchResults = withState(
           filters: [],
         });
       }
-    }, [queryString, suggestionString, currentQueryState]);
+    }, [queryString, suggestionString, currentQueryState, updateQueryState]);
 
     const isSelected = (result) => {
       if (!fieldValue) {
@@ -115,7 +124,18 @@ export const VocabularyRemoteSearchResults = withState(
     );
   }
 );
-
-VocabularyRemoteSearchResults.defaultProps = {};
-
+VocabularyRemoteSearchResults.propTypes = {
+  currentResultsState: PropTypes.shape({
+    loading: PropTypes.bool.isRequired,
+    data: PropTypes.shape({
+      hits: PropTypes.array.isRequired,
+      total: PropTypes.number,
+    }).isRequired,
+  }).isRequired,
+  updateQueryState: PropTypes.func.isRequired,
+  currentQueryState: PropTypes.object.isRequired,
+  handleSelect: PropTypes.func.isRequired,
+  findMore: PropTypes.func.isRequired,
+  source: PropTypes.oneOf(Object.values(SearchSource)).isRequired,
+};
 export default VocabularyRemoteSearchResults;

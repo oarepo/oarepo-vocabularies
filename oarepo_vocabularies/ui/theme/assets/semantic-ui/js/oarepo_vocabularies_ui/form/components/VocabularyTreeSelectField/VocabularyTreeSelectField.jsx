@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { useFormConfig } from "@js/oarepo_ui";
 import { getIn, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import { TreeSelectFieldModal } from "./TreeSelectFieldModal";
@@ -7,7 +6,7 @@ import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { vocabularyItemsToColumnOptions } from "./util";
 import { VocabularyPickerField } from "../VocabularyPickerField";
 import { useModalTrigger } from "../../hooks";
-import { useFieldData } from "@js/oarepo_ui/forms";
+import { useFieldData, useFormConfig } from "@js/oarepo_ui/forms";
 
 export const VocabularyTreeSelectField = ({
   vocabulary,
@@ -20,7 +19,7 @@ export const VocabularyTreeSelectField = ({
   triggerButton,
   placeholder,
   root,
-  showLeafsOnly,
+  showLeafsOnly = false,
   filterFunction,
   ...restProps
 }) => {
@@ -41,7 +40,8 @@ export const VocabularyTreeSelectField = ({
     ...(required && { required }),
     ...(helpText && { helpText }),
   };
-  const hasMultipleItems = multiple || fieldData.detail === "array";
+  const hasMultipleItems =
+    multiple !== undefined ? multiple : fieldData.detail === "array";
 
   const emptyArray = useMemo(() => [], []);
   const emptyObject = useMemo(() => ({}), []);
@@ -99,7 +99,7 @@ const VocabularyTreeSelectPresentation = ({
   triggerButton,
   placeholder,
   root,
-  showLeafsOnly,
+  showLeafsOnly = false,
   filterFunction,
   value,
   allOptions,
@@ -117,27 +117,31 @@ const VocabularyTreeSelectPresentation = ({
       ),
     [allOptions, root, showLeafsOnly, filterFunction]
   );
+
+  const getCurrentSelections = React.useCallback(
+    (newValue = null) => {
+      const _value = newValue || value;
+
+      if (multiple && Array.isArray(_value)) {
+        return _value
+          .map((v) => serializedOptions.find((option) => option.value === v.id))
+          .filter((v) => v);
+      } else if (_value) {
+        return (
+          serializedOptions.find((option) => option.value === _value.id) || []
+        );
+      }
+      return [];
+    },
+    [value, multiple, serializedOptions]
+  );
+
   const [selected, setSelected] = useState(() => getCurrentSelections());
 
   const _trigger = useModalTrigger({
     value,
     trigger: triggerButton,
   });
-
-  function getCurrentSelections(newValue = null) {
-    const _value = newValue || value;
-
-    if (multiple && Array.isArray(_value)) {
-      return _value
-        .map((v) => serializedOptions.find((option) => option.value === v.id))
-        .filter((v) => v);
-    } else if (_value) {
-      return (
-        serializedOptions.find((option) => option.value === _value.id) || []
-      );
-    }
-    return [];
-  }
 
   const handleSelect = React.useCallback((newValue) => {
     if (typeof newValue === "function") {
@@ -147,14 +151,17 @@ const VocabularyTreeSelectPresentation = ({
     }
   }, []);
 
-  const handleChange = React.useCallback((newValue) => {
-    const newSelected = getCurrentSelections(newValue);
-    setSelected(newSelected);
-  }, []);
+  const handleChange = React.useCallback(
+    (newValue) => {
+      const newSelected = getCurrentSelections(newValue);
+      setSelected(newSelected);
+    },
+    [getCurrentSelections]
+  );
 
   const handleModalClose = React.useCallback(() => {
     setSelected(getCurrentSelections());
-  }, [value, serializedOptions]);
+  }, [getCurrentSelections]);
 
   return (
     <VocabularyPickerField
@@ -187,6 +194,7 @@ const VocabularyTreeSelectPresentation = ({
   );
 };
 
+/* eslint-disable react/require-default-props */
 VocabularyTreeSelectPresentation.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
@@ -199,17 +207,11 @@ VocabularyTreeSelectPresentation.propTypes = {
   placeholder: PropTypes.string,
   filterFunction: PropTypes.func,
   triggerButton: PropTypes.node,
-  value: PropTypes.array,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   allOptions: PropTypes.array,
   onSubmit: PropTypes.func,
 };
-
-VocabularyTreeSelectPresentation.defaultProps = {
-  showLeafsOnly: false,
-  filterFunction: undefined,
-  multiple: false,
-  required: false,
-};
+/* eslint-enable react/require-default-props */
 
 const MemoizedVocabularyTreeSelectPresentation = React.memo(
   VocabularyTreeSelectPresentation,
@@ -223,6 +225,8 @@ const MemoizedVocabularyTreeSelectPresentation = React.memo(
     );
   }
 );
+
+/* eslint-disable react/require-default-props */
 VocabularyTreeSelectField.propTypes = {
   icon: PropTypes.string,
   fieldPath: PropTypes.string.isRequired,
@@ -237,10 +241,4 @@ VocabularyTreeSelectField.propTypes = {
   filterFunction: PropTypes.func,
   triggerButton: PropTypes.node,
 };
-
-VocabularyTreeSelectField.defaultProps = {
-  showLeafsOnly: false,
-  filterFunction: undefined,
-  multiple: false,
-  required: false,
-};
+/* eslint-enable react/require-default-props */

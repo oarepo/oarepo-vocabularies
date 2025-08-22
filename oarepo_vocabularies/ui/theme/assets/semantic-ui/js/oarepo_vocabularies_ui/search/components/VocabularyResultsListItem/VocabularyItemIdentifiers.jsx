@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { ClipboardCopyButton } from "@js/oarepo_ui/components/ClipboardCopyButton";
 
-export const VocabularyItemIdentifiers = ({ identifiers }) => {
+export const VocabularyItemIdentifiers = ({ identifiers = [] }) => {
   if (!identifiers || identifiers.length === 0) {
     return null;
   }
@@ -39,6 +39,7 @@ export const VocabularyItemIdentifiers = ({ identifiers }) => {
   );
 };
 
+/* eslint-disable react/require-default-props */
 VocabularyItemIdentifiers.propTypes = {
   identifiers: PropTypes.arrayOf(
     PropTypes.shape({
@@ -47,3 +48,4 @@ VocabularyItemIdentifiers.propTypes = {
     })
   ),
 };
+/* eslint-enable react/require-default-props */

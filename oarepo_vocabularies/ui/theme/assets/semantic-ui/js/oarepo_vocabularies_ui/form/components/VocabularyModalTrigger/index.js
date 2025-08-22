@@ -1,1 +1,1 @@
-export * from './VocabularyModalTrigger';
+export * from "./VocabularyModalTrigger";
