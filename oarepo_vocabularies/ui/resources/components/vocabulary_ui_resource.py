@@ -9,7 +9,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
     """
 
     def before_ui_search(
-        self, *, extra_context, identity, search_options, view_args, **kwargs
+        self, *, extra_context, identity, search_options, vocabulary_type, **kwargs
     ):
         vocabulary_type = view_args["vocabulary_type"]
         api_service = self.resource.api_service
