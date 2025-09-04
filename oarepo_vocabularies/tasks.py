@@ -12,7 +12,8 @@ import yaml
 from celery import shared_task
 from flask import current_app
 from invenio_vocabularies.contrib.affiliations.models import AffiliationsMetadata
-from oarepo_runtime.cli.fixtures import TQDMCallback, _show_stats, load_fixtures
+
+# TQDMCallback, _show_stats, load_fixtures
 
 
 @shared_task
@@ -58,20 +59,19 @@ affiliations:
     # and load it
 
     with current_app.wsgi_app.mounts["/api"].app_context():
-        callback = TQDMCallback(verbose=True)
-
-        load_fixtures(
-            str(tmp_ror_converted_dir),
-            system_fixtures=False,
-            callback=callback,
-        )
-        _show_stats(callback, "Load ROR data")
+        # callback = TQDMCallback(verbose=True)
+        raise ValueError("Import ror from zenodo called")
+        # load_fixtures(
+        #    str(tmp_ror_converted_dir),
+        #    system_fixtures=False,
+        #    callback=callback,
+        # )
+        # _show_stats(callback, "Load ROR data")
 
 
 def convert_ror(
     tmp_ror_file: Path, output: Path, records_not_added_by_ror: dict[str, str]
 ):
-
     with open(output, "w", encoding="utf-8") as out_f:
         yaml.safe_dump_all(
             get_affiliation_records(tmp_ror_file, records_not_added_by_ror),

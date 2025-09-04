@@ -12,21 +12,19 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
-import os
+
 import shutil
 import sys
 from pathlib import Path
 
 from flask import g
-from invenio_records_permissions.generators import AnyUser, SystemProcess
-from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
 
-from oarepo_vocabularies.authorities.providers.ror_provider import RORClientV2
 from oarepo_vocabularies.authorities import (
     AuthorityProvider,
     RORProviderV2,
 )
-from oarepo_vocabularies.services.permissions import NonDangerousVocabularyOperation
+from oarepo_vocabularies.authorities.providers.ror_provider import RORClientV2
+from oarepo_vocabularies.services.service import VocabulariesService
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -82,60 +80,6 @@ def extra_entry_points():
     return {}
 
 
-class FineGrainedPermissionPolicy(EveryonePermissionPolicy):
-    can_create_languages = [SystemProcess(), AnyUser()]
-    can_update_languages = [SystemProcess(), NonDangerousVocabularyOperation(AnyUser())]
-    can_delete_languages = [SystemProcess(), AnyUser()]
-
-    can_create_authority = [SystemProcess(), AnyUser()]
-    can_update_authority = [SystemProcess(), AnyUser()]
-    can_delete_authority = [SystemProcess(), AnyUser()]
-
-    can_create_ror_authority = [SystemProcess(), AnyUser()]
-    can_update_ror_authority = [SystemProcess(), AnyUser()]
-    can_delete_ror_authority = [SystemProcess(), AnyUser()]
-
-    can_create_access_rights = [SystemProcess(), AnyUser()]
-    can_update_access_rights = [SystemProcess(), AnyUser()]
-    can_delete_access_rights = [SystemProcess(), AnyUser()]
-
-    can_create_contributor_types = [SystemProcess(), AnyUser()]
-    can_update_contributor_types = [SystemProcess(), AnyUser()]
-    can_delete_contributor_types = [SystemProcess(), AnyUser()]
-
-    can_create_countries = [SystemProcess(), AnyUser()]
-    can_update_countries = [SystemProcess(), AnyUser()]
-    can_delete_countries = [SystemProcess(), AnyUser()]
-
-    can_create_funders = [SystemProcess(), AnyUser()]
-    can_update_funders = [SystemProcess(), AnyUser()]
-    can_delete_funders = [SystemProcess(), AnyUser()]
-
-    can_create_institutions = [SystemProcess(), AnyUser()]
-    can_update_institutions = [SystemProcess(), AnyUser()]
-    can_delete_institutions = [SystemProcess(), AnyUser()]
-
-    can_create_item_relation_types = [SystemProcess(), AnyUser()]
-    can_update_item_relation_types = [SystemProcess(), AnyUser()]
-    can_delete_item_relation_types = [SystemProcess(), AnyUser()]
-
-    can_create_licenses = [SystemProcess(), AnyUser()]
-    can_update_licenses = [SystemProcess(), AnyUser()]
-    can_delete_licenses = [SystemProcess(), AnyUser()]
-
-    can_create_resource_types = [SystemProcess(), AnyUser()]
-    can_update_resource_types = [SystemProcess(), AnyUser()]
-    can_delete_resource_types = [SystemProcess(), AnyUser()]
-
-    can_create_related_resource_types = [SystemProcess(), AnyUser()]
-    can_update_related_resource_types = [SystemProcess(), AnyUser()]
-    can_delete_related_resource_types = [SystemProcess(), AnyUser()]
-
-    can_create_subject_categories = [SystemProcess(), AnyUser()]
-    can_update_subject_categories = [SystemProcess(), AnyUser()]
-    can_delete_subject_categories = [SystemProcess(), AnyUser()]
-
-
 @pytest.fixture(scope="module")
 def app_config(app_config):
     """Mimic an instance's configuration."""
@@ -171,17 +115,20 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE"] = VocabularyTypeService
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
 
+    app_config["VOCABULARIES_TYPES_SERVICE_CONFIG_CLASS"] = VocabularyTypeServiceConfig
     app_config["OAREPO_VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
-    app_config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
+    app_config["VOCABULARIES_ADMIN_RESOURCE_CONFIG_CLASS"] = (
+        VocabularyTypeResourceConfig
+    )
+    app_config["VOCABULARIES_TYPES_SERVICE_CLASS"] = VocabularyTypeService
 
+    app_config["VOCABULARIES_SERVICE_CLASS"] = VocabulariesService
     app_config["OAREPO_VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
     app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = (
         AuthoritativeVocabulariesResourceConfig
     )
-    app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
-    app_config["OAREPO_PERMISSIONS_PRESETS"] = {
-        "fine-grained": FineGrainedPermissionPolicy
-    }
+    # app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
+    app_config["OAREPO_PERMISSIONS_PRESETS"] = {}
     app_config["OAREPO_VOCABULARIES_SPECIALIZED_SERVICES"] = {
         "names": "names",
     }
@@ -249,11 +196,11 @@ def app_config(app_config):
         "oarepo_vocabularies_ui/test_header_template.html"
     )
 
-    app_config["ORCID_CLIENT_ID"] = os.environ["INVENIO_ORCID_CLIENT_ID"]
-    app_config["ORCID_CLIENT_SECRET"] = os.environ["INVENIO_ORCID_CLIENT_SECRET"]
-    
-    app_config["OPENAIRE_CLIENT_ID"] = os.environ["INVENIO_OPENAIRE_CLIENT_ID"]
-    app_config["OPENAIRE_CLIENT_SECRET"] = os.environ["INVENIO_OPENAIRE_CLIENT_SECRET"]
+    app_config["ORCID_CLIENT_ID"] = "blah"
+    app_config["ORCID_CLIENT_SECRET"] = "blah"
+
+    app_config["OPENAIRE_CLIENT_ID"] = "blah"
+    app_config["OPENAIRE_CLIENT_SECRET"] = "blah"
 
     return app_config
 
@@ -286,7 +233,10 @@ def identity():
 @pytest.fixture(scope="module")
 def service(app):
     """Vocabularies service object."""
-    return app.extensions["invenio-vocabularies"].service
+    from invenio_vocabularies.proxies import current_service
+
+    return current_service
+    # return app.extensions["invenio-vocabularies"].service
 
 
 @pytest.fixture()
@@ -351,6 +301,46 @@ def lang_data2(lang_data):
     data = dict(lang_data)
     data["id"] = "new"
     return data
+
+
+@pytest.fixture(scope="function")
+def lang_data3():
+    """Example data for testing another case."""
+    vocabulary_data = {
+        "a": {
+            "id": "a",
+            "title": {"en": "English", "da": "Engelsk"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello",
+        },
+        "b": {
+            "id": "b",
+            "title": {"en": "English (US)", "da": "Engelsk (US)"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello in american",
+        },
+        "c": {
+            "id": "c",
+            "title": {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello in american texas yeehaw",
+        },
+        "d": {
+            "id": "d",
+            "title": {"en": "English (UK)", "da": "Engelsk (UK)"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello in UK",
+        },
+    }
+
+    hierarchy = {
+        "a": None,  # root node
+        "b": "a",  # b's parent is a
+        "c": "b",  # c's parent is b
+        "d": None,  # root node
+    }
+
+    return vocabulary_data, hierarchy
 
 
 @pytest.fixture()
@@ -493,9 +483,14 @@ def cache():
 
 @pytest.fixture()
 def vocab_cf(app, db, cache):
-    from oarepo_runtime.services.custom_fields.mappings import prepare_cf_indices
+    # zavolat oarepo_runtime.services.records.mapping:update_all_records_mappings
+    from oarepo_runtime.services.records.custom_fields import (
+        update_all_records_mappings_relation_fields,
+    )
+    from oarepo_runtime.services.records.mapping import update_all_records_mappings
 
-    prepare_cf_indices()
+    update_all_records_mappings_relation_fields()
+    update_all_records_mappings()
 
 
 @pytest.fixture

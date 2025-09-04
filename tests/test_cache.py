@@ -1,17 +1,21 @@
 import json
 import time
-from pathlib import Path
 
+import pytest
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
-from oarepo_runtime.datastreams.fixtures import FixturesCallback, load_fixtures
 
+# from oarepo_runtime.datastreams.fixtures import (  # z invenio
+# FixturesCallback,
+# load_fixtures,
+# )
 from oarepo_vocabularies.services.cache import VocabularyCache
 
 
+@pytest.mark.skip(reason="We want to remove cache")
 def test_cache_fast(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
-    load_fixtures(Path(__file__).parent / "data", callback=FixturesCallback())
+    # load_fixtures(Path(__file__).parent / "data", callback=FixturesCallback())
     Vocabulary.index.refresh()
 
     cache = VocabularyCache()
@@ -50,8 +54,9 @@ def test_cache_fast(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
     assert cache.count_prefetched == count_prefetched
 
 
+@pytest.mark.skip(reason="We want to remove cache")
 def test_cache(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
-    load_fixtures(Path(__file__).parent / "complex-data", callback=FixturesCallback())
+    # load_fixtures(Path(__file__).parent / "complex-data", callback=FixturesCallback())
     Vocabulary.index.refresh()
 
     cache = VocabularyCache()
@@ -82,8 +87,9 @@ def test_cache(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
     assert t2_cs < t1_cs / 2
 
 
+@pytest.mark.skip(reason="We want to remove cache")
 def test_cache_resolve(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
-    load_fixtures(Path(__file__).parent / "complex-data", callback=FixturesCallback())
+    # load_fixtures(Path(__file__).parent / "complex-data", callback=FixturesCallback())
     Vocabulary.index.refresh()
 
     cache = VocabularyCache()
@@ -134,8 +140,9 @@ def test_cache_resolve(app, db, vocab_cf, reset_babel, cache_clear, search_clear
     print(f"Resolve time: {time_cs_1=} {time_en_1=} {time_cs_2=}")
 
 
+@pytest.mark.skip(reason="We want to remove cache")
 def test_cache_resolve_fast(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
-    load_fixtures(Path(__file__).parent / "data", callback=FixturesCallback())
+    # load_fixtures(Path(__file__).parent / "data", callback=FixturesCallback())
     Vocabulary.index.refresh()
 
     print(

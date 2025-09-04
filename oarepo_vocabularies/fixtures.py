@@ -1,5 +1,4 @@
 import functools
-from typing import Union
 
 from invenio_db import db
 from invenio_records_resources.proxies import current_service_registry
@@ -7,12 +6,10 @@ from invenio_vocabularies.contrib.affiliations.models import AffiliationsMetadat
 from invenio_vocabularies.contrib.awards.models import AwardsMetadata
 from invenio_vocabularies.contrib.funders.models import FundersMetadata
 from invenio_vocabularies.contrib.names.models import NamesMetadata
+from invenio_vocabularies.datastreams.datastreams import StreamEntry
+from invenio_vocabularies.datastreams.readers import BaseReader
+from invenio_vocabularies.datastreams.writers import BaseWriter, ServiceWriter
 from invenio_vocabularies.records.api import VocabularyType
-from oarepo_runtime.datastreams import StreamBatch
-from oarepo_runtime.datastreams.readers.service import ServiceReader
-from oarepo_runtime.datastreams.types import StreamBatch
-from oarepo_runtime.datastreams.writers import BaseWriter
-from oarepo_runtime.datastreams.writers.service import ServiceWriter, StreamEntry
 
 
 def vocabularies_generator(service_id, **kwargs):
@@ -34,7 +31,7 @@ def vocabularies_generator(service_id, **kwargs):
         yield f"vocabulary-{vocab_type.id}", loader, dumper
 
 
-class VocabularyReader(ServiceReader):
+class VocabularyReader(BaseReader):
     def __init__(self, *, vocabulary=None, identity=None, **kwargs):
         super().__init__(service="vocabularies", identity=identity, **kwargs)
         self.vocabulary = vocabulary
@@ -70,7 +67,7 @@ class VocabularyWriter(ServiceWriter):
             db.session.add(vt)
             db.session.commit()
 
-    def write(self, stream_batch: StreamBatch, *args, **kwargs):
+    def write(self, stream_batch, *args, **kwargs):
         for stream_entry in stream_batch.entries:
             entry = stream_entry.entry
             entry["type"] = self.vocabulary
@@ -89,7 +86,7 @@ class AwardsWriter(BaseWriter):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-    def write(self, batch: StreamBatch) -> Union[StreamBatch, None]:
+    def write(self, batch):
         """Writes the input entry to the target output.
         :returns: nothing
                   Raises WriterException in case of errors.
@@ -135,7 +132,7 @@ class NamesWriter(BaseWriter):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-    def write(self, batch: StreamBatch) -> Union[StreamBatch, None]:
+    def write(self, batch):
         """Writes the input entry to the target output.
         :returns: nothing
                   Raises WriterException in case of errors.
@@ -174,7 +171,7 @@ class AffiliationsWriter(BaseWriter):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-    def write(self, batch: StreamBatch) -> Union[StreamBatch, None]:
+    def write(self, batch):
         """Writes the input entry to the target output.
         :returns: nothing
                   Raises WriterException in case of errors.

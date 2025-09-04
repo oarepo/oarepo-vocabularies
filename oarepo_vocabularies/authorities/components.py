@@ -1,12 +1,13 @@
 from invenio_access.permissions import system_identity
 from invenio_db import db
+from invenio_records.systemfields.relations.errors import InvalidRelationValue
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from oarepo_runtime.services.relations.errors import (
-    InvalidRelationError,
-    MultipleInvalidRelationErrors,
-)
 
+# from oarepo_runtime.services.relations.errors import (
+# InvalidRelationError,
+# MultipleInvalidRelationErrors,
+# )  # z invenio-records-resources
 from oarepo_vocabularies.authorities.providers import AuthorityProvider
 from oarepo_vocabularies.authorities.proxies import authorities
 from oarepo_vocabularies.records.api import find_vocabulary_relations
@@ -25,8 +26,8 @@ class AuthorityComponent(ServiceComponent):
     def lookup_and_store_authority_records(self, identity, record):
         for found_vocabulary in find_vocabulary_relations(record):
             try:
-                found_vocabulary.field.validate(raise_first_exception=False)
-            except MultipleInvalidRelationErrors as e:
+                found_vocabulary.field.validate()
+            except Exception as e:
                 authority_service = authorities.get_authority_api(
                     found_vocabulary.vocabulary_type
                 )
@@ -62,7 +63,7 @@ class AuthorityComponent(ServiceComponent):
         with db.session.begin_nested():
             value = result.value or {}
             if "id" not in value:
-                raise InvalidRelationError(
+                raise InvalidRelationValue(
                     f"'id' not found in relation value {value}",
                     related_id=None,
                     location=result.path,
@@ -78,7 +79,7 @@ class AuthorityComponent(ServiceComponent):
                     identity, item_id, uow=self.uow, value=value
                 )
             except Exception as e:
-                raise InvalidRelationError(
+                raise InvalidRelationValue(
                     f"External authority failed: {e}",
                     related_id=item_id,
                     location=result.path,

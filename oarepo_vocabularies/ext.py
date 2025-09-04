@@ -1,15 +1,15 @@
 import functools
 from functools import cached_property
-from flask import current_app
 
+from flask import current_app
 from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.records.links import (
     RecordLink,
 )
+from invenio_vocabularies.services.permissions import PermissionPolicy
 
 from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
-from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 
 
 class OARepoVocabularies(object):
@@ -95,10 +95,11 @@ class OARepoVocabularies(object):
 
     def init_resource(self, app):
         """Initialize resources."""
-        self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
-            config=app.config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"](),
-            service=self.type_service,
-        )
+        # self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
+        #    config=app.config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"](),
+        #    service=self.type_service,
+        # )
+        pass
 
     def get_config(self, vocabulary_name):
         if isinstance(vocabulary_name, dict):
@@ -146,6 +147,7 @@ def create_vocabulary_permission_policy_class():
         return None
 
     permissions = {}
+    """
     for preset_class in preset_classes:
         for (
             permission_name,
@@ -155,7 +157,7 @@ def create_vocabulary_permission_policy_class():
             for need in permission_needs:
                 if need not in target:
                     target.append(need)
-
+    """
     return type("VocabularyPermissionsPolicy", tuple(preset_classes), permissions)
 
 
@@ -166,25 +168,19 @@ def finalize_app(app) -> None:
     awards_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/awards/{id}"
     )
-    awards_service.config.permission_policy_cls = (
-        create_vocabulary_permission_policy_class()
-    )
+    awards_service.config.permission_policy_cls = PermissionPolicy
 
     affiliations_service = app.extensions["invenio-vocabularies"].affiliations_service
     affiliations_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/affiliations/{id}"
     )
-    affiliations_service.config.permission_policy_cls = (
-        create_vocabulary_permission_policy_class()
-    )
+    affiliations_service.config.permission_policy_cls = PermissionPolicy
 
     funders_service = app.extensions["invenio-vocabularies"].funders_service
     funders_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/funders/{id}"
     )
-    funders_service.config.permission_policy_cls = (
-        create_vocabulary_permission_policy_class()
-    )
+    funders_service.config.permission_policy_cls = PermissionPolicy
 
     names_service = app.extensions["invenio-vocabularies"].names_service
     names_service.config.search.sort_options["name"] = dict(
@@ -194,6 +190,4 @@ def finalize_app(app) -> None:
     names_service.config.links_item["self_html"] = RecordLink(
         "{+ui}/vocabularies/names/{id}"
     )
-    names_service.config.permission_policy_cls = (
-        create_vocabulary_permission_policy_class()
-    )
+    names_service.config.permission_policy_cls = PermissionPolicy

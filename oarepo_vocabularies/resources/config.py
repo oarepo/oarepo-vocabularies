@@ -1,21 +1,23 @@
 from functools import cached_property
 
-from flask_resources import BaseListSchema, ResponseHandler
+from flask_resources import BaseListSchema, MarshmallowSerializer, ResponseHandler
 from flask_resources.serializers import JSONSerializer
+from importlib_metadata import entry_points
 from invenio_records_resources.resources.records.headers import etag_headers
-from invenio_vocabularies.resources.resource import (
+from invenio_vocabularies.resources.config import (
     VocabulariesResourceConfig as InvenioVocabulariesResourceConfig,
 )
-from invenio_vocabularies.resources.resource import (
+from invenio_vocabularies.resources.config import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
-from marshmallow import fields, post_dump
-from oarepo_runtime.resources import LocalizedUIJSONSerializer
-
-from oarepo_vocabularies.services.ui_schema import VocabularyUISchema, VocabularySpecializedUISchema
+from marshmallow import fields
 from marshmallow_oneofschema import OneOfSchema
 
-from importlib_metadata import entry_points
+# from oarepo_runtime.resources import LocalizedUIJSONSerializer  # prejit na invenio
+from oarepo_vocabularies.services.ui_schema import (
+    VocabularySpecializedUISchema,
+    VocabularyUISchema,
+)
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
@@ -44,6 +46,7 @@ class VocabularySchemaSelector(OneOfSchema):
 
     def get_obj_type(self, obj):
         from flask_resources import resource_requestctx
+
         if "type" in obj:
             return "vocabulary"
         vocabulary_type = resource_requestctx.view_args.get("type")
@@ -57,8 +60,9 @@ class VocabularySchemaSelector(OneOfSchema):
             ret.pop("type")
         return ret
 
+
 class VocabulariesUIResponseHandler(ResponseHandler):
-    serializer = LocalizedUIJSONSerializer(
+    serializer = MarshmallowSerializer(
         format_serializer_cls=JSONSerializer,
         object_schema_cls=VocabularySchemaSelector,
         list_schema_cls=BaseListSchema,

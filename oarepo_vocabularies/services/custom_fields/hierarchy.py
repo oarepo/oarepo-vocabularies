@@ -63,5 +63,5 @@ class HierarchyAncestorsOrSelfCF(HierarchyCF, KeywordCF):
 class HierarchyLeafCF(HierarchyCF, BooleanCF):
     def update(self, record, parent):
         # initial value
-        if not "leaf" in record.hierarchy:
+        if "leaf" not in record.hierarchy:
             record.hierarchy["leaf"] = True

@@ -1,10 +1,9 @@
+import pytest
 from flask_principal import PermissionDenied
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
 from oarepo_vocabularies.records.systemfields import HierarchyPartSelector
-
-import pytest
 
 
 def test_hierarchy_lang(
@@ -50,6 +49,7 @@ def test_hierarchy_lang(
     }
 
 
+# @pytest.mark.skip(reason="Not search_cls in VocabularySearchOptions")
 def test_children(sample_records, client, search_clear):
     def _test_children(x):
         node, expected_children = x
@@ -60,9 +60,9 @@ def test_children(sample_records, client, search_clear):
         child_nodes = resp["hits"]["hits"]
         expected_ids = set(c.node["id"] for c in expected_children)
         actual_ids = set(x["id"] for x in child_nodes)
-        assert (
-            expected_ids == actual_ids
-        ), f"Children are not as expected. Expected {expected_ids}, got {actual_ids} on url {children_url}"
+        assert expected_ids == actual_ids, (
+            f"Children are not as expected. Expected {expected_ids}, got {actual_ids} on url {children_url}"
+        )
 
         for child in expected_children:
             _test_children(child)
@@ -71,6 +71,7 @@ def test_children(sample_records, client, search_clear):
         _test_children(s)
 
 
+# @pytest.mark.skip(reason="Not search_cls in VocabularySearchOptions")
 def test_descendants(sample_records, client, search_clear):
     def _get_descendants(x):
         for c in x.children:
@@ -86,9 +87,9 @@ def test_descendants(sample_records, client, search_clear):
         child_nodes = resp["hits"]["hits"]
         expected_ids = set(a.node["id"] for a in _get_descendants(x))
         actual_ids = set(x["id"] for x in child_nodes)
-        assert (
-            expected_ids == actual_ids
-        ), f"Children are not as expected. Expected {expected_ids}, got {actual_ids} on url {descendants_url}"
+        assert expected_ids == actual_ids, (
+            f"Children are not as expected. Expected {expected_ids}, got {actual_ids} on url {descendants_url}"
+        )
 
         for child in x.children:
             _test_descendants(child)
@@ -103,9 +104,9 @@ def test_parent(sample_records, client, search_clear):
         if expected_parent:
             parent_url = node["links"]["parent"]
             resp = client.get(parent_url).json
-            assert (
-                resp["id"] == expected_parent["id"]
-            ), f"Expected and actual parents do not match. Expected {expected_parent['id']}, got {resp['id']}"
+            assert resp["id"] == expected_parent["id"], (
+                f"Expected and actual parents do not match. Expected {expected_parent['id']}, got {resp['id']}"
+            )
         else:
             assert "parent" not in node["links"]
         for child in x.children:
@@ -141,14 +142,16 @@ def test_hierarchy_selector():
         {
             "id": "03zsq2967",
             "title": {
-                "en": "Association of Asian Pacific Community Health " "Organizations"
+                "en": "Association of Asian Pacific Community Health Organizations"
             },
         }
     ]
 
 
+# @pytest.mark.skip(
+#    reason="type object 'VocabularySearchOptions' has no attribute 'search_cls'"
+# )
 def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
-
     parent = vocab_service.create(
         system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"}
     )
@@ -183,16 +186,33 @@ def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
     assert parent_data["hierarchy"]["leaf"] == True
 
 
-def test_update_with_disallowed_hierarchy(app, db, cache, lang_type, sample_records, vocab_cf, search_clear, identity_simple):
+def test_update_with_disallowed_hierarchy(
+    app, db, cache, lang_type, sample_records, vocab_cf, search_clear, identity_simple
+):
     with pytest.raises(PermissionDenied):
-        vocab_service.update(identity_simple, ("languages", "eng.UK.S"),
-                             {"hierarchy": {"parent": "eng"},
-                             "type": "languages",
-                             "title": {"en": "English (UK)"}},)
+        vocab_service.update(
+            identity_simple,
+            ("languages", "eng.UK.S"),
+            {
+                "hierarchy": {"parent": "eng"},
+                "type": "languages",
+                "title": {"en": "English (UK)"},
+            },
+        )
 
 
-def test_update_with_hierarchy_change(app, db, cache, lang_type, sample_records, vocab_cf, search_clear):
-    vocab_service.update(system_identity, ("languages", "eng.UK.S"),
-                         {"hierarchy": {"parent": "eng"},
-                         "type": "languages",
-                         "title": {"en": "English (UK)"}},)
+# @pytest.mark.skip(
+#    reason="type object 'VocabularySearchOptions' has no attribute 'search_cls'"
+# )
+def test_update_with_hierarchy_change(
+    app, db, cache, lang_type, sample_records, vocab_cf, search_clear
+):
+    vocab_service.update(
+        system_identity,
+        ("languages", "eng.UK.S"),
+        {
+            "hierarchy": {"parent": "eng"},
+            "type": "languages",
+            "title": {"en": "English (UK)"},
+        },
+    )

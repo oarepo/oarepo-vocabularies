@@ -1,5 +1,5 @@
 {#def taxonomy, search_link, searchFacet, hide_definition=False, vocabulary_type #}
-{% set taxonomy_dict = taxonomy | to_dict %}
+{% set taxonomy_dict = taxonomy | as_dict %}
 {% if taxonomy_dict %}
 <div class="ui breadcrumb">
   {%- for title in taxonomy_dict.hierarchy.title -%}

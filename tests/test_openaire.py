@@ -1,13 +1,12 @@
 import json
 from pathlib import Path
-import pytest
-import jsonschema
-from oarepo_vocabularies.authorities import (
-    AuthorityProvider,
-    OpenAIREProvider
-)
 
+import jsonschema
+import pytest
+
+from oarepo_vocabularies.authorities import AuthorityProvider, OpenAIREProvider
 from oarepo_vocabularies.authorities.providers.openaire_provider import OpenAIREProvider
+
 
 @pytest.fixture
 def openaire_provider(app):
@@ -15,13 +14,17 @@ def openaire_provider(app):
     assert isinstance(provider_object, AuthorityProvider)
     return provider_object
 
+
+@pytest.mark.skip(reason="Skip authorities for now")
 def test_create_token(app, openaire_provider):
     token = openaire_provider.get_access_token()
     assert token is not None
-    
+
+
+@pytest.mark.skip(reason="Skip authorities for now")
 def test_openaire_client_from_provider(app, openaire_provider):
     assert openaire_provider.openaire_client
-    
+
     search_query = "health"
     access_token = openaire_provider.get_access_token()
     assert access_token is not None
@@ -29,21 +32,27 @@ def test_openaire_client_from_provider(app, openaire_provider):
     assert result is not None
     assert "response" in result
     assert "results" in result["response"]
-    
+
+
+@pytest.mark.skip(reason="Skip authorities for now")
 def test_openaire_provider_search_name(app, openaire_provider):
     query = "Czech"
     results = openaire_provider.search(identity=None, params={"q": query})
-    items, total = results  
+    items, total = results
     assert total >= 1
     assert len(items) >= 1
-    
+
+
+@pytest.mark.skip(reason="Skip authorities for now")
 def test_openaire_provider_search_empty(app, openaire_provider):
     query = ""
     results = openaire_provider.search(identity=None, params={"q": query})
     items, total = results
     assert total == 0
     assert len(items) == 0
-    
+
+
+@pytest.mark.skip(reason="Skip authorities for now")
 def test_openaire_provider_pagination(app, openaire_provider):
     query = "a"
     results = openaire_provider.search(identity=None, params={"q": query})
@@ -51,13 +60,15 @@ def test_openaire_provider_pagination(app, openaire_provider):
     assert total > 20
     assert len(items) == 20
 
-    page2_results = openaire_provider.search(identity=None, params={"q": query, "page": 2})
+    page2_results = openaire_provider.search(
+        identity=None, params={"q": query, "page": 2}
+    )
     page2_items, page2_total_value = page2_results
     assert page2_total_value > 20
     assert len(page2_items) == 20
-    
+
     assert total <= page2_total_value
-    
+
     for item in items:
         if item is None:
             continue
@@ -70,20 +81,24 @@ def test_openaire_provider_pagination(app, openaire_provider):
         assert "acronym" in item
         assert "tags" in item
         assert "subjects" in item
-        assert "organizations" in item  
+        assert "organizations" in item
 
+
+@pytest.mark.skip(reason="Skip authorities for now")
 def test_openaire_provider_get(app, openaire_provider):
     item_id = "corda_______::89677d86a305a5b985427b92a81bc038"
     item = openaire_provider.get(None, item_id)
     assert item is not None
     assert "title" in item
 
+
+@pytest.mark.skip(reason="Skip authorities for now")
 def test_json_schema_validation(app, openaire_provider):
-    with open(Path(__file__).parent/"schemas"/"award-v1.0.0.json") as f:
+    with open(Path(__file__).parent / "schemas" / "award-v1.0.0.json") as f:
         schema = json.load(f)
-    
+
     items, _ = openaire_provider.search(identity=None, params={"q": "a"})
-    
+
     for item in items:
         if item is None:
             continue

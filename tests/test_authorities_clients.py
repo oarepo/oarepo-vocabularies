@@ -1,5 +1,4 @@
 import pytest
-from oarepo_vocabularies.authorities.providers.ror_provider import RORClientV2
 from werkzeug.exceptions import BadRequest
 
 

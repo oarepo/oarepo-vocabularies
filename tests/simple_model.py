@@ -3,11 +3,15 @@ from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records.models import RecordMetadata
+from invenio_records.systemfields.relations.field import RelationsField
 from invenio_records_permissions import RecordPermissionPolicy
 from invenio_records_permissions.generators import AnyUser, SystemProcess
 from invenio_records_resources.records.api import Record
 from invenio_records_resources.records.systemfields import IndexField, PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
+from invenio_records_resources.records.systemfields.relations import (  # z invenio-records-resources
+    PIDRelation,
+)
 from invenio_records_resources.services import (
     RecordLink,
     RecordService,
@@ -15,7 +19,6 @@ from invenio_records_resources.services import (
 )
 from invenio_records_resources.services.records.components import DataComponent
 from invenio_vocabularies.records.api import Vocabulary
-from oarepo_runtime.records.relations import PIDRelation, RelationsField
 from oarepo_ui.resources import (
     BabelComponent,
     RecordsUIResource,
@@ -56,14 +59,14 @@ class ModelRecord(Record):
             "creator",
             keys=["id", "title"],
             pid_field=Vocabulary.pid.with_type_ctx("creator"),
-        ), 
+        ),
         award=PIDRelation(
             "award",
             keys=["id", "title"],
             pid_field=Vocabulary.pid.with_type_ctx("award"),
-        )
-
+        ),
     )
+
 
 class ModelPermissionPolicy(RecordPermissionPolicy):
     can_create = [AnyUser(), SystemProcess()]

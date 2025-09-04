@@ -2,15 +2,14 @@ import marshmallow as ma
 from invenio_records_resources.services import Link, pagination_links
 from invenio_records_resources.services.base import ServiceListResult
 from invenio_vocabularies.services import VocabulariesServiceConfig
-from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 
 from oarepo_vocabularies.records.api import Vocabulary
-from oarepo_vocabularies.services.components.hierarchy import HierarchyComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
-from .components.keep_vocabulary_id import KeepVocabularyIdComponent
 
+from .components.keep_vocabulary_id import KeepVocabularyIdComponent
 from .components.scanning_order import ScanningOrderComponent
+from .permissions import VocabulariesPermissionPolicy
 
 
 class VocabularyMetadataSchema(ma.Schema):
@@ -59,13 +58,13 @@ class VocabularyMetadataList(ServiceListResult):
         return res
 
 
-class VocabularyTypeServiceConfig(PermissionsPresetsConfigMixin):
+class VocabularyTypeServiceConfig:
     service_id = "vocabulary_type"
     schema = VocabularyMetadataSchema
     result_list_cls = VocabularyMetadataList
 
     PERMISSIONS_PRESETS = ["vocabularies"]
-
+    permission_policy_cls = VocabulariesPermissionPolicy
     vocabularies_listing_item = {
         "self": Link(
             "{+api}/vocabularies/{id}",
@@ -78,19 +77,19 @@ class VocabularyTypeServiceConfig(PermissionsPresetsConfigMixin):
     }
 
 
-class VocabulariesConfig(PermissionsPresetsConfigMixin, VocabulariesServiceConfig):
+class VocabulariesConfig(VocabulariesServiceConfig):
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
     components = [
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
-        HierarchyComponent,
+        # HierarchyComponent, TODO: remove
         ScanningOrderComponent,
     ]
 
     PERMISSIONS_PRESETS = ["vocabularies"]
-    PERMISSIONS_PRESETS_CONFIG_KEY = "VOCABULARIES_PERMISSIONS_PRESETS"
+    # PERMISSIONS_PRESETS_CONFIG_KEY = "VOCABULARIES_PERMISSIONS_PRESETS"
 
     url_prefix = "/vocabularies/"
 

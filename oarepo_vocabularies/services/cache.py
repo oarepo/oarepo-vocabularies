@@ -6,10 +6,11 @@ from typing import Any, Dict, List
 import marshmallow
 from cachetools import TTLCache
 from invenio_access.permissions import system_identity
+from invenio_i18n import get_locale
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from oarepo_runtime.i18n import get_locale
 
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
+
 from .ui_schema import VocabularyUISchema
 
 

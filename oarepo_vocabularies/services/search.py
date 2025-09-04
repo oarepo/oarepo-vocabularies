@@ -1,19 +1,24 @@
 from collections import defaultdict
 from functools import partial
 
+from invenio_i18n import get_locale
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.params import (
+    FacetsParam,
     FilterParam,
+    PaginationParam,
     ParamInterpreter,
+    QueryStrParam,
+    SortParam,
 )
 from invenio_records_resources.services.records.queryparser import QueryParser
-from oarepo_runtime.i18n import get_locale
-from oarepo_runtime.i18n import lazy_gettext as _
-from oarepo_runtime.services.search import (
-    I18nSearchOptions,
-    ICUSortOptions,
-    ICUSuggestParser,
-    SuggestField,
-)
+from invenio_search import RecordsSearchV2
+
+# from oarepo_runtime.services.search import (
+# ICUSortOptions,
+# ICUSuggestParser,
+# SuggestField,
+# )
 from opensearch_dsl import query
 from opensearch_dsl.query import Bool, Range, Term, Terms
 
@@ -113,9 +118,9 @@ class VocabularyIdsParam(ParamInterpreter):
             )
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
-class SpecializedVocabularyIdsParam(ParamInterpreter):
 
-    def __init__(self, config, vocabulary_type = None):
+class SpecializedVocabularyIdsParam(ParamInterpreter):
+    def __init__(self, config, vocabulary_type=None):
         super().__init__(config)
 
         self.vocabulary_type = vocabulary_type
@@ -126,12 +131,14 @@ class SpecializedVocabularyIdsParam(ParamInterpreter):
             return search
 
         if not all(id_tuple[0] == self.vocabulary_type for id_tuple in ids):
-            raise ValueError(f"All ids must have vocabulary type '{self.vocabulary_type}'")
+            raise ValueError(
+                f"All ids must have vocabulary type '{self.vocabulary_type}'"
+            )
 
         return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))
 
 
-class VocabularySearchOptions(I18nSearchOptions):
+class VocabularySearchOptions:
     SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
     SUGGEST_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SUGGEST_CF"
 
@@ -147,7 +154,14 @@ class VocabularySearchOptions(I18nSearchOptions):
             param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"
         ),
         SourceParam,
-    ] + I18nSearchOptions.params_interpreters_cls
+    ] + [
+        FacetsParam,
+        PaginationParam,
+        QueryStrParam,
+        SortParam,
+    ]
+
+    search_cls = RecordsSearchV2
 
     query_parser_cls = VocabularyQueryParser
 
@@ -173,11 +187,31 @@ class VocabularySearchOptions(I18nSearchOptions):
     sort_default = "bestmatch"
     sort_default_no_query = "title"
 
-    sort_options = ICUSortOptions("vocabularies")
-    suggest_parser_cls = ICUSuggestParser(
-        "vocabularies",
-        extra_fields=[SuggestField(field=ID_FIELD, boost=10, use_ngrams=False)],
-    )
+    sort_options = {
+        "bestmatch": dict(
+            title=_("Best match"),
+            fields=["_score"],  # ES defaults to desc on `_score` field
+        ),
+        "title": dict(
+            title=_("Title"),
+            fields=["title_sort"],
+        ),
+        "newest": dict(
+            title=_("Newest"),
+            fields=["-created"],
+        ),
+        "oldest": dict(
+            title=_("Oldest"),
+            fields=["created"],
+        ),
+    }
+    # sort_options = ICUSortOptions("vocabularies")
+    # suggest_parser_cls = ICUSuggestParser(
+    #    "vocabularies",
+    #    extra_fields=[SuggestField(field=ID_FIELD, boost=10, use_ngrams=False)],
+    # )
 
     # empty facet groups as we are inheriting from I18nSearchOptions
     facet_groups = {}
+    facets = {}
+    pagination_options = {"default_results_per_page": 25, "default_max_results": 10000}

@@ -2,22 +2,67 @@ import copy
 from functools import partial
 
 import marshmallow as ma
+import marshmallow_utils
 from flask import current_app
+from invenio_i18n import get_locale
+
+# from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI  # udelat znova
+# from oarepo_runtime.services.schema.ui import LocalizedDateTime  # copy paste z modelu
+from invenio_records_resources.services.custom_fields.schema import (
+    CustomFieldsSchemaUI as InvenioCustomFieldsSchemaUI,
+)
 from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from marshmallow import fields as ma_fields
-from oarepo_runtime.i18n import get_locale
-from oarepo_runtime.services.custom_fields import InlinedCustomFieldsSchemaMixin
-from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
-from oarepo_runtime.services.schema.ui import LocalizedDateTime
+
+
+class LocalizedDateTime(ma.fields.Field):
+    """
+    A Marshmallow field that provides localized datetime formatting.
+    """
+
+    def __init__(self, attribute, **kwargs):
+        super().__init__(**kwargs)
+        self.attribute = attribute
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        return {
+            f"{self.attribute}_l10n_long": marshmallow_utils.fields.FormatDate(
+                attribute=self.attribute,
+                format="long",
+            ),
+            f"{self.attribute}_l10n_medium": marshmallow_utils.fields.FormatDate(
+                attribute=self.attribute,
+                format="medium",
+            ),
+            f"{self.attribute}_l10n_short": marshmallow_utils.fields.FormatDate(
+                attribute=self.attribute,
+                format="short",
+            ),
+            f"{self.attribute}_l10n_full": marshmallow_utils.fields.FormatDate(
+                attribute=self.attribute,
+                format="full",
+            ),
+        }
+
+
+class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
+    def _serialize(self, obj, **kwargs):
+        self._schema.context.update(self.context)
+        return super()._serialize(obj, **kwargs)
+
+    def _deserialize(self, data, **kwargs):
+        self._schema.context.update(self.context)
+        return super()._deserialize(data, **kwargs)
 
 
 class VocabularyI18nStrUIField(ma_fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
             return None
-        locale = self.context["locale"]
+        # locale = self.context["locale"]
+        locale = self.get_locale()
         if locale:
             language = locale.language
             if language in value:
@@ -45,7 +90,7 @@ class HierarchyUISchema(ma.Schema):
     ancestors_or_self = ma_fields.List(ma_fields.String())
 
 
-class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema):
+class VocabularyUISchema(InvenioVocabularySchema):
     CUSTOM_FIELDS_VAR = "VOCABULARIES_CF"
     hierarchy = ma_fields.Nested(
         partial(CustomFieldsSchemaUI, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
@@ -54,8 +99,8 @@ class VocabularyUISchema(InlinedCustomFieldsSchemaMixin, InvenioVocabularySchema
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    created = LocalizedDateTime(dump_only=True)
-    updated = LocalizedDateTime(dump_only=True)
+    created = LocalizedDateTime("created", dump_only=True)
+    updated = LocalizedDateTime("updated", dump_only=True)
     links = ma.fields.Raw(dump_only=True)
     title = VocabularyI18nStrUIField()
     type = ma.fields.Raw(dump_only=True)

@@ -1,4 +1,4 @@
-from oarepo_runtime.i18n import lazy_gettext as _
+from invenio_i18n import lazy_gettext as _
 
 
 def load_custom_fields():

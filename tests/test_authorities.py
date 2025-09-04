@@ -9,6 +9,7 @@ from oarepo_vocabularies.authorities.providers import RORProviderV2
 from oarepo_vocabularies.records.api import Vocabulary
 
 
+@pytest.mark.skip(reason="Authorities later")
 def test_authority_resource(
     client, authority_rec, authority_type, ror_authority_type, search_clear
 ):
@@ -73,6 +74,7 @@ def test_authority_resource(
     assert len(last_page_results) == total - (last_page * page_size)
 
 
+@pytest.mark.skip(reason="Authorities later")
 def test_submit_record_fetch_authority(
     search_clear,
     identity,

@@ -4,13 +4,17 @@ from flask_resources import (
     resource_requestctx,
 )
 from invenio_records_resources.services import Link, pagination_links
+from invenio_vocabularies.records.models import VocabularyType
 from oarepo_ui.resources.components import (
-    PermissionsComponent,
     AllowedHtmlTagsComponent,
+    PermissionsComponent,
 )
-from oarepo_ui.resources.config import RecordsUIResourceConfig
-from oarepo_ui.resources.links import UIRecordLink
+from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 
+# from oarepo_ui.resources.links import UIRecordLink
+from oarepo_ui.resources.records.config import RecordsUIResourceConfig
+
+from oarepo_vocabularies.errors import VocabularyTypeDoesNotExist
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -18,11 +22,6 @@ from oarepo_vocabularies.ui.resources.components.search import VocabularySearchC
 from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
     VocabularyRecordsComponent,
 )
-from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
-
-from invenio_vocabularies.records.models import VocabularyType
-
-from oarepo_vocabularies.errors import VocabularyTypeDoesNotExist
 
 
 class VocabularyFormDepositVocabularyOptionsComponent(
@@ -116,12 +115,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
     request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
 
-    ui_links_item = {
-        "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
-        "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
-        "search": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/"),
-        "create": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/_new"),
-    }
+    # ui_links_item = {
+    #    "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
+    #    "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
+    #    "search": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/"),
+    #    "create": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/_new"),
+    # }
 
     @property
     def ui_links_search(self):
