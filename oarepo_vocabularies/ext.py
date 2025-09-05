@@ -95,11 +95,10 @@ class OARepoVocabularies(object):
 
     def init_resource(self, app):
         """Initialize resources."""
-        # self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
-        #    config=app.config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"](),
-        #    service=self.type_service,
-        # )
-        pass
+        self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
+            config=app.config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"](),
+            service=self.type_service,
+        )
 
     def get_config(self, vocabulary_name):
         if isinstance(vocabulary_name, dict):

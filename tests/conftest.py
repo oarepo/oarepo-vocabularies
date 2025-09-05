@@ -101,7 +101,6 @@ def app_config(app_config):
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
     from oarepo_vocabularies.resources.vocabulary_type import (
         VocabularyTypeResource,
-        VocabularyTypeResourceConfig,
     )
     from oarepo_vocabularies.services.config import (
         VocabulariesConfig,
@@ -117,9 +116,7 @@ def app_config(app_config):
 
     app_config["VOCABULARIES_TYPES_SERVICE_CONFIG_CLASS"] = VocabularyTypeServiceConfig
     app_config["OAREPO_VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
-    app_config["VOCABULARIES_ADMIN_RESOURCE_CONFIG_CLASS"] = (
-        VocabularyTypeResourceConfig
-    )
+
     app_config["VOCABULARIES_TYPES_SERVICE_CLASS"] = VocabularyTypeService
 
     app_config["VOCABULARIES_SERVICE_CLASS"] = VocabulariesService

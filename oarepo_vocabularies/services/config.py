@@ -1,6 +1,7 @@
 import marshmallow as ma
 from invenio_records_resources.services import Link, pagination_links
 from invenio_records_resources.services.base import ServiceListResult
+from invenio_records_resources.services.records.links import EndpointLink
 from invenio_vocabularies.services import VocabulariesServiceConfig
 
 from oarepo_vocabularies.records.api import Vocabulary
@@ -95,86 +96,85 @@ class VocabulariesConfig(VocabulariesServiceConfig):
 
     links_item = {
         **VocabulariesServiceConfig.links_item,
-        "self_html": Link(
-            "{+ui}/vocabularies/{type}/{id}",
+        "self_html": EndpointLink(
+            "oarepo_vocabularies_ui.detail",
             vars=lambda record, vars: vars.update(
                 {
-                    "id": record.pid.pid_value,
-                    "type": record.type.id,
+                    "pid_value": record.pid.pid_value,
+                    "vocabulary_type": record.type.id,
                 }
             ),
+            params=["vocabulary_type", "pid_value"],
         ),
-        "vocabulary": Link(
-            "{+api}/vocabularies/{type}",
-            vars=lambda record, vars: vars.update(
-                {
-                    "type": record.type.id,
-                }
-            ),
-        ),
-        "vocabulary_html": Link(
-            "{+ui}/vocabularies/{type}",
+        "vocabulary": EndpointLink(
+            "vocabularies.search",
             vars=lambda record, vars: vars.update(
                 {
                     "type": record.type.id,
                 }
             ),
+            params=["type"],
         ),
-        "parent": Link(
-            "{+api}/vocabularies/{type}/{parent}",
+        "vocabulary_html": EndpointLink(
+            "oarepo_vocabularies_ui.search",
             vars=lambda record, vars: vars.update(
                 {
-                    "type": record.type.id,
-                    "parent": record.get("hierarchy", {}).get("parent"),
+                    "vocabulary_type": record.type.id,
                 }
             ),
-            when=lambda obj, ctx: bool(obj.get("hierarchy", {}).get("parent")),
+            params=["vocabulary_type"],
         ),
-        "parent_html": Link(
-            "{+ui}/vocabularies/{type}/{parent}",
+        "parent": EndpointLink(
+            "vocabularies.read",
+            vars=lambda record, vars: vars.update(
+                {"type": record.type.id, "pid_value": record.hierarchy.parent_id}
+            ),
+            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),
+            params=["type", "pid_value"],
+        ),
+        "parent_html": EndpointLink(
+            "oarepo_vocabularies_ui.detail",
             vars=lambda record, vars: vars.update(
                 {
-                    "type": record.type.id,
-                    "parent": record.get("hierarchy", {}).get("parent"),
+                    "vocabulary_type": record.type.id,
+                    "pid_value": record.hierarchy.parent_id,
                 }
             ),
-            when=lambda obj, ctx: bool(obj.get("hierarchy", {}).get("parent")),
+            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),
+            params=["vocabulary_type", "pid_value"],
         ),
-        "children": Link(
-            "{+api}/vocabularies/{type}?h-parent={id}",
-            vars=lambda record, vars: vars.update(
-                {
-                    "type": record.type.id,
-                    "id": record.pid.pid_value,
-                }
-            ),
-        ),
-        "children_html": Link(
-            "{+ui}/vocabularies/{type}?h-parent={id}",
+        "children": EndpointLink(
+            "vocabularies.search",
             vars=lambda record, vars: vars.update(
                 {
                     "type": record.type.id,
                     "id": record.pid.pid_value,
+                    "args": {"h-parent": record.pid.pid_value},
                 }
             ),
+            params=["type"],
         ),
-        "descendants": Link(
-            "{+api}/vocabularies/{type}?h-ancestor={id}",
+        "children_html": EndpointLink(
+            "oarepo_vocabularies_ui.search_without_slash",
             vars=lambda record, vars: vars.update(
                 {
                     "type": record.type.id,
                     "id": record.pid.pid_value,
-                }
+                    "args": {"h-parent": record.pid.pid_value},
+                },
             ),
+            params=["type"],
         ),
-        "descendants_html": Link(
-            "{+ui}/vocabularies/{type}?h-ancestor={id}",
+        "descendants_html": EndpointLink(
+            "oarepo_vocabularies_ui.search_without_slash",
             vars=lambda record, vars: vars.update(
                 {
                     "type": record.type.id,
                     "id": record.pid.pid_value,
+                    "args": {"h-ancestor": record.pid.pid_value},
                 }
             ),
+            params=["type"],
         ),
     }
 

@@ -7,6 +7,8 @@ from oarepo_vocabularies.resources.ui import VocabularyTypeUIJSONSerializer
 
 
 class VocabularyTypeResourceConfig(InvenioVocabularyTypeResourceConfig):
+    blueprint_name = "oarepo_vocabulary_type"
+
     response_handlers = {
         **InvenioVocabularyTypeResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(

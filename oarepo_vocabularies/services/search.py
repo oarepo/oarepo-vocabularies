@@ -3,16 +3,14 @@ from functools import partial
 
 from invenio_i18n import get_locale
 from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.services.records import (
+    SearchOptions as InvenioSearchOptions,
+)
 from invenio_records_resources.services.records.params import (
-    FacetsParam,
     FilterParam,
-    PaginationParam,
     ParamInterpreter,
-    QueryStrParam,
-    SortParam,
 )
 from invenio_records_resources.services.records.queryparser import QueryParser
-from invenio_search import RecordsSearchV2
 
 # from oarepo_runtime.services.search import (
 # ICUSortOptions,
@@ -138,10 +136,7 @@ class SpecializedVocabularyIdsParam(ParamInterpreter):
         return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))
 
 
-class VocabularySearchOptions:
-    SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
-    SUGGEST_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SUGGEST_CF"
-
+class VocabularySearchOptions(InvenioSearchOptions):
     params_interpreters_cls = [
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
@@ -154,15 +149,8 @@ class VocabularySearchOptions:
             param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"
         ),
         SourceParam,
-    ] + [
-        FacetsParam,
-        PaginationParam,
-        QueryStrParam,
-        SortParam,
+        *InvenioSearchOptions.params_interpreters_cls,
     ]
-
-    search_cls = RecordsSearchV2
-
     query_parser_cls = VocabularyQueryParser
 
     extra_sort_options = {
@@ -184,34 +172,10 @@ class VocabularySearchOptions:
         ),
     }
 
-    sort_default = "bestmatch"
     sort_default_no_query = "title"
 
-    sort_options = {
-        "bestmatch": dict(
-            title=_("Best match"),
-            fields=["_score"],  # ES defaults to desc on `_score` field
-        ),
-        "title": dict(
-            title=_("Title"),
-            fields=["title_sort"],
-        ),
-        "newest": dict(
-            title=_("Newest"),
-            fields=["-created"],
-        ),
-        "oldest": dict(
-            title=_("Oldest"),
-            fields=["created"],
-        ),
-    }
-    # sort_options = ICUSortOptions("vocabularies")
-    # suggest_parser_cls = ICUSuggestParser(
-    #    "vocabularies",
-    #    extra_fields=[SuggestField(field=ID_FIELD, boost=10, use_ngrams=False)],
-    # )
+    suggest_parser_cls = None  # TODO
+    # sort_options TODO: add ICU support
 
     # empty facet groups as we are inheriting from I18nSearchOptions
     facet_groups = {}
-    facets = {}
-    pagination_options = {"default_results_per_page": 25, "default_max_results": 10000}
