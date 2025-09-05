@@ -1,37 +1,42 @@
 from functools import partial
 
 import marshmallow as ma
-from flask import current_app
 from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from invenio_vocabularies.services.schema import i18n_strings
 from marshmallow import fields as ma_fields
+from marshmallow import post_load
 from marshmallow_utils.fields import NestedAttribute
-
-
-class VocabularySchema(InvenioVocabularySchema):
-    CUSTOM_FIELDS_VAR = "VOCABULARIES_CF"
-    hierarchy = NestedAttribute(
-        partial(CustomFieldsSchema, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        custom_fields = current_app.config.get(self.CUSTOM_FIELDS_VAR, [])
-        for cf in custom_fields:
-            self.declared_fields[cf.name] = getattr(cf, "field")
-
-        self._init_fields()
 
 
 class HierarchySchema(ma.Schema):
     """HierarchySchema schema."""
 
-    parent = ma_fields.String()
+    parent = ma_fields.String(attribute="parent_id")
     level = ma_fields.Integer()
-    title = ma_fields.List(i18n_strings)
-    ancestors = ma_fields.List(ma_fields.String())
-    ancestors_or_self = ma_fields.List(ma_fields.String())
+    titles = ma_fields.List(i18n_strings)
+    ancestors = ma_fields.List(ma_fields.String(), attribute="ancestors_ids")
+    ancestors_or_self = ma_fields.List(
+        ma_fields.String(), attribute="ancestors_or_self_ids"
+    )
     leaf = ma_fields.Boolean()
+
+
+class VocabularySchema(InvenioVocabularySchema):
+    hierarchy = NestedAttribute(HierarchySchema, dump_only=True, attribute="hierarchy")
+
+    custom_fields = NestedAttribute(
+        partial(CustomFieldsSchema, fields_var="VOCABULARIES_CF")
+    )
+
+    @post_load(pass_original=True)
+    def extract_parent_id(self, data, original_data=None, **kwargs):
+        hierarchy = original_data.get("hierarchy", {})
+        parent = hierarchy.get("parent")
+        if parent:
+            data["parent"] = {"id": parent}
+        else:
+            data.pop("parent", None)
+        return data

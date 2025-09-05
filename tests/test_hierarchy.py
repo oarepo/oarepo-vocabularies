@@ -3,7 +3,604 @@ from flask_principal import PermissionDenied
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
-from oarepo_vocabularies.records.systemfields import HierarchyPartSelector
+from oarepo_vocabularies.records.api import Vocabulary
+from oarepo_vocabularies.records.models import VocabularyHierarchy
+from oarepo_vocabularies.records.systemfields.hierarchy_system_field import (
+    HierarchyPartSelector,
+)
+
+
+def test_hierarchy_change_leafs(app, db, cache, lang_type, vocab_cf, search_clear):
+    parent_data = {
+        "id": "a",
+        "title": {"en": "English", "da": "Engelsk"},
+        "type": {"id": "languages", "pid_type": "lng"},
+        "blah": "Hello",
+    }
+
+    child_data_1 = {
+        "id": "b",
+        "title": {"en": "English (US)", "da": "Engelsk (US)"},
+        "type": {"id": "languages", "pid_type": "lng"},
+        "blah": "Hello in american",
+        "parent": {"id": "a"},
+    }
+
+    child_data_2 = {
+        "id": "c",
+        "title": {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},
+        "type": {"id": "languages", "pid_type": "lng"},
+        "blah": "Hello in american texas yeehaw",
+        "parent": {"id": "b"},
+    }
+
+    parent_rec = Vocabulary.create(data=parent_data)
+    Vocabulary.pid.create(parent_rec)
+    parent_rec.commit()
+    db.session.commit()
+
+    # check original hierarchy
+    assert parent_rec.hierarchy.to_dict == {
+        "level": 1,
+        "titles": [{"en": "English", "da": "Engelsk"}],
+        "ancestors": [],
+        "ancestors_or_self": ["a"],
+        "leaf": True,
+    }
+
+    child_rec_1 = Vocabulary.create(data=child_data_1)
+    Vocabulary.pid.create(child_rec_1)
+    child_rec_1.commit()
+    db.session.commit()
+
+    # check updated hierarchy after child creation
+    parent_rec_updated = Vocabulary.get_record(parent_rec.id)
+    assert parent_rec_updated.hierarchy.to_dict == {
+        "level": 1,
+        "titles": [{"en": "English", "da": "Engelsk"}],
+        "ancestors": [],
+        "ancestors_or_self": ["a"],
+        "leaf": False,
+    }
+    assert child_rec_1.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},
+            {"en": "English", "da": "Engelsk"},
+        ],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["b", "a"],
+        "leaf": True,
+    }
+
+    child_rec_2 = Vocabulary.create(data=child_data_2)
+    Vocabulary.pid.create(child_rec_2)
+    child_rec_2.commit()
+    db.session.commit()
+
+    # check updated hierarchy after another child creation
+    parent_rec_updated_2 = Vocabulary.get_record(parent_rec.id)
+    assert parent_rec_updated_2.hierarchy.to_dict == {
+        "level": 1,
+        "titles": [{"en": "English", "da": "Engelsk"}],
+        "ancestors": [],
+        "ancestors_or_self": ["a"],
+        "leaf": False,
+    }
+
+    # check updated hierarchy after another child creation
+    child_rec_updated = Vocabulary.get_record(child_rec_1.id)
+    assert child_rec_updated.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},
+            {"en": "English", "da": "Engelsk"},
+        ],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["b", "a"],
+        "leaf": False,
+    }
+
+    assert child_rec_2.hierarchy.to_dict == {
+        "level": 3,
+        "titles": [
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},
+            {"en": "English (US)", "da": "Engelsk (US)"},
+            {"en": "English", "da": "Engelsk"},
+        ],
+        "ancestors": ["b", "a"],
+        "ancestors_or_self": ["c", "b", "a"],
+        "leaf": True,
+    }
+
+
+def prepare_data(app, db):
+    parent_data = {
+        "id": "a",
+        "title": {"en": "English", "da": "Engelsk"},
+        "type": {"id": "languages", "pid_type": "lng"},
+        "blah": "Hello",
+    }
+
+    parent_data_2 = {
+        "id": "d",
+        "title": {"en": "English (UK)", "da": "Engelsk (UK)"},
+        "type": {"id": "languages", "pid_type": "lng"},
+        "blah": "Hello in UK",
+    }
+
+    child_data_1 = {
+        "id": "b",
+        "title": {"en": "English (US)", "da": "Engelsk (US)"},
+        "type": {"id": "languages", "pid_type": "lng"},
+        "blah": "Hello in american",
+        "parent": {"id": "a"},
+    }
+
+    child_data_2 = {
+        "id": "c",
+        "title": {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},
+        "type": {"id": "languages", "pid_type": "lng"},
+        "blah": "Hello in american texas yeehaw",
+        "parent": {"id": "b"},
+    }
+
+    # prepare and create record
+    parent_rec = Vocabulary.create(data=parent_data)
+    Vocabulary.pid.create(parent_rec)
+    parent_rec.commit()
+    db.session.commit()
+
+    parent_rec_2 = Vocabulary.create(data=parent_data_2)
+    Vocabulary.pid.create(parent_rec_2)
+    parent_rec_2.commit()
+    db.session.commit()
+
+    child_rec_1 = Vocabulary.create(data=child_data_1)
+    Vocabulary.pid.create(child_rec_1)
+    child_rec_1.commit()
+    db.session.commit()
+
+    child_rec_2 = Vocabulary.create(data=child_data_2)
+    Vocabulary.pid.create(child_rec_2)
+    child_rec_2.commit()
+    db.session.commit()
+
+    return [
+        (parent_rec, parent_data),
+        (parent_rec_2, parent_data_2),
+        (child_rec_1, child_data_1),
+        (child_rec_2, child_data_2),
+    ]
+
+
+def create_vocabulary_graph(app, db, vocabulary_data, hierarchy):
+    """
+    vocabulary_data: Dictionary mapping ID to vocabulary data
+    hierarchy: Dictionary mapping ID to parent ID (None for root nodes)
+    """
+    created_records = {}
+
+    # Sort by hierarchy - parents first, then children
+    def get_depth(node_id):
+        depth = 0
+        current = node_id
+        visited = set()
+        while hierarchy.get(current) is not None and current not in visited:
+            visited.add(current)
+            current = hierarchy[current]
+            depth += 1
+        return depth
+
+    # Sort IDs by depth (parents created before children)
+    sorted_ids = sorted(vocabulary_data.keys(), key=get_depth)
+
+    for vocab_id in sorted_ids:
+        data = vocabulary_data[vocab_id].copy()
+
+        # Add parent reference if it exists
+        parent_id = hierarchy.get(vocab_id)
+        if parent_id is not None:
+            data["parent"] = {"id": parent_id}
+
+        # Create and commit the record
+        record = Vocabulary.create(data=data)
+        Vocabulary.pid.create(record)
+        record.commit()
+        db.session.commit()
+
+        created_records[vocab_id] = (record, data)
+
+    return created_records
+
+
+def test_hierarchy_change_parents_option1(
+    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
+):
+    vocabulary_data, hierarchy = lang_data3
+    results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
+    # Starting graph:
+    # 1. a (root = main parent) -> b (second parent) -> c
+    # 2. d
+    # After changes: d has new parent b -> update d
+    d_rec, d_data = results["d"]
+
+    d_rec.parent.set({"id": "b"})
+    d_rec.commit()
+
+    d_updated = Vocabulary.get_record(d_rec.id)
+    assert d_updated["parent"]["id"] == "b"
+
+    assert d_updated.hierarchy.to_dict == {
+        "level": 3,
+        "titles": [
+            {"en": "English (UK)", "da": "Engelsk (UK)"},  # d
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["b", "a"],
+        "ancestors_or_self": ["d", "b", "a"],
+        "leaf": True,
+    }
+    b_updated = Vocabulary.get_record(results["b"][0].id)
+
+    b_children = VocabularyHierarchy._get_direct_subterms_ids(b_updated.id)
+    assert len(b_children) == 2
+    assert results["c"][0].id in b_children
+    assert results["d"][0].id in b_children
+
+    b_children = VocabularyHierarchy._get_subterms_ids(b_updated.id)
+    assert len(b_children) == 2
+    assert results["c"][0].id in b_children
+    assert results["d"][0].id in b_children
+
+
+def test_hierarchy_change_parents_option2(
+    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
+):
+    vocabulary_data, hierarchy = lang_data3
+    results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
+    # Starting graph:
+    # 1. a (root = main parent) -> b (second parent) -> c
+    # 2. d
+    # After changes: d has new parent c -> update d, c is not leaf
+    d_rec, d_data = results["d"]
+
+    d_rec.parent.set({"id": "c"})
+    d_rec.commit()
+
+    d_updated = Vocabulary.get_record(d_rec.id)
+    assert d_updated["parent"]["id"] == "c"
+
+    assert d_updated.hierarchy.to_dict == {
+        "level": 4,
+        "titles": [
+            {"en": "English (UK)", "da": "Engelsk (UK)"},  # d
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["c", "b", "a"],
+        "ancestors_or_self": ["d", "c", "b", "a"],
+        "leaf": True,
+    }
+    c_updated = Vocabulary.get_record(results["c"][0].id)
+
+    assert c_updated.hierarchy.to_dict == {
+        "level": 3,
+        "titles": [
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["b", "a"],
+        "ancestors_or_self": ["c", "b", "a"],
+        "leaf": False,
+    }
+
+    c_children = VocabularyHierarchy._get_direct_subterms_ids(c_updated.id)
+    assert len(c_children) == 1
+    assert results["d"][0].id in c_children
+
+    c_children = VocabularyHierarchy._get_subterms_ids(c_updated.id)
+    assert len(c_children) == 1
+    assert results["d"][0].id in c_children
+
+
+def test_hierarchy_change_parents_option3(
+    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
+):
+    vocabulary_data, hierarchy = lang_data3
+    results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
+    # Starting graph:
+    # 1. a (root = main parent) -> b (second parent) -> c
+    # 2. d
+    # After changes: c has no parent -> update c and b is leaf
+    c_rec, c_data = results["c"]
+
+    b_rec = Vocabulary.get_record(results["b"][0].id)
+
+    assert b_rec.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["b", "a"],
+        "leaf": False,
+    }
+
+    c_rec.parent.set({})
+    c_rec.commit()
+
+    c_updated = Vocabulary.get_record(c_rec.id)
+    assert c_updated["parent"] == {}
+
+    assert c_updated.hierarchy.to_dict == {
+        "level": 1,
+        "titles": [
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+        ],
+        "ancestors": [],
+        "ancestors_or_self": ["c"],
+        "leaf": True,
+    }
+    b_updated = Vocabulary.get_record(results["b"][0].id)
+
+    assert b_updated.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["b", "a"],
+        "leaf": True,  # changed from false
+    }
+
+    c_children = VocabularyHierarchy._get_direct_subterms_ids(c_updated.id)
+    assert len(c_children) == 0
+
+    b_children = VocabularyHierarchy._get_direct_subterms_ids(b_updated.id)
+    assert len(b_children) == 0
+
+
+def test_hierarchy_change_parents_option4(
+    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
+):
+    vocabulary_data, hierarchy = lang_data3
+    results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
+    # Starting graph:
+    # 1. a (root = main parent) -> b (second parent) -> c
+    # 2. d
+    # After changes: d becomes parent of a -> update everything below a
+    a_rec, a_data = results["a"]
+
+    a_rec.parent.set({"id": "d"})
+    a_rec.commit()
+
+    a_updated = Vocabulary.get_record(a_rec.id)
+    assert a_updated["parent"] == {"id": "d"}
+
+    assert a_updated.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English", "da": "Engelsk"},  # a
+            {"en": "English (UK)", "da": "Engelsk (UK)"},  # d
+        ],
+        "ancestors": ["d"],
+        "ancestors_or_self": ["a", "d"],
+        "leaf": False,
+    }
+
+    b_updated = Vocabulary.get_record(results["b"][0].id)
+    assert b_updated.hierarchy.to_dict == {
+        "level": 3,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+            {"en": "English (UK)", "da": "Engelsk (UK)"},
+        ],
+        "ancestors": ["a", "d"],
+        "ancestors_or_self": ["b", "a", "d"],
+        "leaf": False,
+    }
+
+    c_updated = Vocabulary.get_record(results["c"][0].id)
+    assert c_updated.hierarchy.to_dict == {
+        "level": 4,
+        "titles": [
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+            {"en": "English (UK)", "da": "Engelsk (UK)"},  # d
+        ],
+        "ancestors": ["b", "a", "d"],
+        "ancestors_or_self": ["c", "b", "a", "d"],
+        "leaf": True,
+    }
+
+
+def test_hierarchy_change_parents_option5(
+    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
+):
+    vocabulary_data, hierarchy = lang_data3
+    results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
+    # Starting graph:
+    # 1. a (root = main parent) -> b (second parent) -> c
+    # 2. d
+    # After changes: c is deleted -> update leaf status b
+    c_rec, c_data = results["c"]
+
+    c_rec.delete()
+
+    b_updated = Vocabulary.get_record(results["b"][0].id)
+    assert b_updated.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["b", "a"],
+        "leaf": True,  # changed from false
+    }
+
+    # check DB table
+    entries = VocabularyHierarchy.query.filter_by(id=c_rec.id).all()
+    assert len(entries) == 0
+
+    # check that B has no children
+    b_children = VocabularyHierarchy._get_direct_subterms_ids(b_updated.id)
+    assert len(b_children) == 0
+
+    # check that A has no C as subterm
+    a_children = VocabularyHierarchy._get_subterms_ids(results["a"][0].id)
+    assert len(a_children) == 1  # only B
+
+
+def test_hierarchy_change_parents_option6(
+    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
+):
+    vocabulary_data, hierarchy = lang_data3
+    results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
+    # Starting graph:
+    # 1. a (root = main parent) -> b (second parent) -> c
+    # 2. d
+    # After changes: b is deleted -> update c parent and change its hierarchy
+    b_rec, b_data = results["b"]
+
+    b_rec.delete()
+
+    c_updated = Vocabulary.get_record(results["c"][0].id)
+    assert c_updated.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["c", "a"],
+        "leaf": True,
+    }
+
+    # check DB table
+    entries = VocabularyHierarchy.query.filter_by(id=b_rec.id).all()
+    assert len(entries) == 0
+
+    # check that B has no children
+    b_children = VocabularyHierarchy._get_direct_subterms_ids(results["b"][0].id)
+    assert len(b_children) == 0
+
+    # check that A subterms
+    a_children = VocabularyHierarchy._get_subterms_ids(results["a"][0].id)
+    assert len(a_children) == 1  # only C
+
+
+def test_hierarchy_change_parents_option7(
+    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
+):
+    vocabulary_data, _ = lang_data3
+    hierarchy = {
+        "a": None,  # root node
+        "b": "a",  # b's parent is a
+        "c": "b",  # c's parent is b
+        "d": "c",  # d's parent is c
+    }
+
+    results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
+    # Starting graph:
+    # 1. a -> b -> c -> d
+    # After changes: a is deleted -> changes should propagate down
+
+    # Check initial hierarchy
+    b_updated = Vocabulary.get_record(results["b"][0].id)
+    assert b_updated.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["b", "a"],
+        "leaf": False,
+    }
+    c_updated = Vocabulary.get_record(results["c"][0].id)
+    assert c_updated.hierarchy.to_dict == {
+        "level": 3,
+        "titles": [
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["b", "a"],
+        "ancestors_or_self": ["c", "b", "a"],
+        "leaf": False,
+    }
+
+    d_updated = Vocabulary.get_record(results["d"][0].id)
+    assert d_updated.hierarchy.to_dict == {
+        "level": 4,
+        "titles": [
+            {"en": "English (UK)", "da": "Engelsk (UK)"},  # d
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
+        ],
+        "ancestors": ["c", "b", "a"],
+        "ancestors_or_self": ["d", "c", "b", "a"],
+        "leaf": True,
+    }
+
+    a_rec, a_data = results["a"]
+    a_rec.delete()
+
+    b_updated = Vocabulary.get_record(results["b"][0].id)
+    assert b_updated.hierarchy.to_dict == {
+        "level": 1,
+        "titles": [
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+        ],
+        "ancestors": [],
+        "ancestors_or_self": ["b"],
+        "leaf": False,
+    }
+    c_updated = Vocabulary.get_record(results["c"][0].id)
+    assert c_updated.hierarchy.to_dict == {
+        "level": 2,
+        "titles": [
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+        ],
+        "ancestors": ["b"],
+        "ancestors_or_self": ["c", "b"],
+        "leaf": False,
+    }
+
+    d_updated = Vocabulary.get_record(results["d"][0].id)
+    assert d_updated.hierarchy.to_dict == {
+        "level": 3,
+        "titles": [
+            {"en": "English (UK)", "da": "Engelsk (UK)"},  # d
+            {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
+        ],
+        "ancestors": ["c", "b"],
+        "ancestors_or_self": ["d", "c", "b"],
+        "leaf": True,
+    }
+    # check DB table
+    entries = VocabularyHierarchy.query.filter_by(id=results["b"][0].id).all()
+    assert len(entries) == 1
+
+    # check that A has no children
+    a_children = VocabularyHierarchy._get_direct_subterms_ids(results["a"][0].id)
+    assert len(a_children) == 0
+
+    # check that B has subterms
+    b_children = VocabularyHierarchy._get_subterms_ids(results["b"][0].id)
+    assert len(b_children) == 2  # C and D
 
 
 def test_hierarchy_lang(
@@ -12,15 +609,16 @@ def test_hierarchy_lang(
     parent = vocab_service.create(system_identity, lang_data)
     assert "parent" not in parent.links
 
-    assert parent.data["hierarchy"] == {
+    assert parent._record.hierarchy.to_dict == {
         "level": 1,
-        "title": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
+        "titles": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
         "ancestors": [],
         "ancestors_or_self": ["eng"],
         "leaf": True,
     }
 
     child = vocab_service.create(system_identity, lang_data_child)
+
     assert (
         child.links["parent"] == "https://127.0.0.1:5000/api/vocabularies/languages/eng"
     )
@@ -32,10 +630,9 @@ def test_hierarchy_lang(
         parent.links["descendants"]
         == "https://127.0.0.1:5000/api/vocabularies/languages?h-ancestor=eng"
     )
-    assert child.data["hierarchy"] == {
+    assert child._record.hierarchy.to_dict == {
         "level": 2,
-        "parent": "eng",
-        "title": [
+        "titles": [
             {
                 "cs": "Angličtina (Spojené státy)",
                 "da": "Engelsk (US)",

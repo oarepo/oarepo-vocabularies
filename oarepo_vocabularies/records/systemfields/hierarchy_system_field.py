@@ -1,6 +1,10 @@
 from typing import Any, Protocol
 
-from invenio_records.systemfields import DictField, SystemField
+from invenio_db import db
+from invenio_records.systemfields import SystemField
+from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
+
+from oarepo_vocabularies.records.models import VocabularyHierarchy
 
 from .helpers import HierarchyObject
 
@@ -37,32 +41,38 @@ def getter(data, path: list):
             yield from getter(item, path)
 
 
-class HierarchySystemField(SystemField):
-    def __init__(self, key=None, clear_none=False, create_if_missing=True):
-        self.clear_none = clear_none
-        self.create_if_missing = create_if_missing
-        super().__init__(key=key)
-
-        self._dict_field = DictField(
-            key=key, clear_none=clear_none, create_if_missing=create_if_missing
-        )
-
-    def __set_name__(self, owner, name):
-        super().__set_name__(owner, name)
-        self._dict_field.__set_name__(owner, name)
-
+class HierarchySystemField(MappingSystemFieldMixin, SystemField):
     def __get__(self, record, owner=None) -> HierarchyObject:
         if record is None:
             return self
 
         if not hasattr(record, "_hierarchy_cache"):
-            record._hierarchy_cache = HierarchyObject(self._dict_field, record)
+            record._hierarchy_cache = HierarchyObject(record)
 
         return record._hierarchy_cache
 
+    @property
+    def mapping(self):
+        return {
+            self.key: {
+                "type": "object",
+                "enabled": True,
+                "properties": {
+                    "parent": {
+                        "type": "keyword",
+                    },
+                    "level": {"type": "integer"},
+                    "titles": {"type": "object", "enabled": False},
+                    "ancestors": {"type": "keyword"},
+                    "ancestors_or_self": {"type": "keyword"},
+                    "leaf": {"type": "boolean"},
+                },
+            }
+        }
+
     def pre_commit(self, record):
         hierarchy_obj = self.__get__(record)
-        hierarchy_obj.fix_hierarchy_on_self()
+        hierarchy_obj._hierarchy_data.fix_hierarchy_on_self()
 
         # Store information about whether we need to fix descendants
         # We have new parent or we had no parent
@@ -70,10 +80,23 @@ class HierarchySystemField(SystemField):
             record.parent.uuid and not record.parent.previous_uuid
         )
 
-        hierarchy_obj.update_parent_leaf_status()
+        hierarchy_obj._hierarchy_data.update_parent_leaf_status(record.parent)
 
         if parent_changed:
-            hierarchy_obj.fix_hierarchy_down()
+            hierarchy_obj._hierarchy_data.fix_hierarchy_down()
+
+    def pre_delete(self, record, force=False):
+        hierarchy_obj = self.__get__(record)
+
+        hierarchy_obj._hierarchy_data.update_parent_leaf_status(record.parent)
+
+        # update children hierarchy
+        hierarchy_obj._hierarchy_data.fix_hierarchy_down_on_delete()
+
+        # delete after children are updated
+        hierarchy_entry = VocabularyHierarchy.query.get(record.id)
+        if hierarchy_entry:
+            db.session.delete(hierarchy_entry)
 
 
 class HierarchyPartSelector(PathSelector):
