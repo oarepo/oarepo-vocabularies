@@ -1,8 +1,15 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
-# from oarepo_runtime.datastreams.fixtures import FixturesCallback, load_fixtures
 from oarepo_vocabularies.records.api import Vocabulary
 from tests.test_uidetail import remove_ws
 
@@ -53,9 +60,7 @@ def test_uiedit_locale(
     Vocabulary.index.refresh()
 
     reset_babel()
-    edit_page = client_with_credentials.get(
-        "/vocabularies/languages/en/edit", headers=[("Accept-Language", "cs")]
-    )
+    edit_page = client_with_credentials.get("/vocabularies/languages/en/edit", headers=[("Accept-Language", "cs")])
     print(edit_page.text)
     assert remove_ws(
         """  
@@ -66,9 +71,7 @@ def test_uiedit_locale(
     ) in remove_ws(edit_page.text)
 
     reset_babel()
-    edit_page = client_with_credentials.get(
-        "/vocabularies/languages/en/edit", headers=[("Accept-Language", "en")]
-    )
+    edit_page = client_with_credentials.get("/vocabularies/languages/en/edit", headers=[("Accept-Language", "en")])
     print(edit_page.text)
     assert remove_ws(
         """  

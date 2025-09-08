@@ -1,44 +1,19 @@
-from typing import Any, Protocol
-
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from invenio_db import db
 from invenio_records.systemfields import SystemField
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
+from oarepo_runtime.records.systemfields.selectors import PathSelector
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
 from .helpers import HierarchyObject
-
-
-# TODO: move to runtime
-class Selector(Protocol):
-    def select(self, record) -> list[Any]:
-        return []
-
-
-class PathSelector(Selector):
-    def __init__(self, *paths):
-        self.paths = [x.split(".") for x in paths]
-
-    def select(self, record):
-        ret = []
-        for path in self.paths:
-            for rec in getter(record, path):
-                ret.append(rec)
-        return ret
-
-
-def getter(data, path: list):
-    if len(path) == 0:
-        if isinstance(data, list):
-            yield from data
-        else:
-            yield data
-    elif isinstance(data, dict):
-        if path[0] in data:
-            yield from getter(data[path[0]], path[1:])
-    elif isinstance(data, list):
-        for item in data:
-            yield from getter(item, path)
 
 
 class HierarchySystemField(MappingSystemFieldMixin, SystemField):
@@ -98,6 +73,10 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         if hierarchy_entry:
             db.session.delete(hierarchy_entry)
 
+    def pre_dump(self, record, data, dumper=None):
+        hierarchy_obj = self.__get__(record)
+        data[self.key] = hierarchy_obj.to_dict()
+
 
 class HierarchyPartSelector(PathSelector):
     level = 0
@@ -117,7 +96,5 @@ class HierarchyPartSelector(PathSelector):
             ids = dg["hierarchy"]["ancestors_or_self"]
             titles = dg["hierarchy"]["title"]
             if len(ids) > self.level:
-                elements.append(
-                    {"id": ids[-1 - self.level], "title": titles[-1 - self.level]}
-                )
+                elements.append({"id": ids[-1 - self.level], "title": titles[-1 - self.level]})
         return elements

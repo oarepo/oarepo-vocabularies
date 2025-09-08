@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from invenio_db import db
 from invenio_records.systemfields import DictField, SystemField
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
@@ -13,9 +21,7 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         self.create_if_missing = create_if_missing
         super().__init__(key=key)
 
-        self._dict_field = DictField(
-            key=key, clear_none=clear_none, create_if_missing=create_if_missing
-        )
+        self._dict_field = DictField(key=key, clear_none=clear_none, create_if_missing=create_if_missing)
 
     @property
     def mapping(self):
@@ -102,7 +108,7 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         self_uuid = record.id
 
         # If record has any children, set their parent to parent of the deleted record
-        direct_children = VocabularyHierarchy._get_direct_subterms_ids(self_uuid)
+        direct_children = VocabularyHierarchy.get_direct_subterms_ids(self_uuid)
 
         for child_id in direct_children:
             child_entry = VocabularyHierarchy.query.get(child_id)

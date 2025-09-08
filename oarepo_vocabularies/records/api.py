@@ -1,15 +1,16 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+"""oarepo_vocabularies records API module."""
+
 import inspect
 from collections import namedtuple
 
-# from oarepo_runtime.records.relations.base import (
-#    RelationsField,  # invenio-records-resources
-# )
-# from oarepo_runtime.records.systemfields import (
-#    ICUSortField,
-#    ICUSuggestField,
-#    SystemFieldDumperExt,  # neni potreba
-# )
-# from oarepo_runtime.services.custom_fields import CustomFields, InlinedCustomFields
 from flask import current_app
 from invenio_records.systemfields import ConstantField, DictField, RelationsField
 from invenio_records.systemfields.relations import MultiRelationsField
@@ -41,9 +42,7 @@ class SpecialVocabulariesAwarePIDFieldContext(VocabularyPIDFieldContext):
         else:
             pid_type, item_id = pid_value
 
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(
-            pid_type
-        )
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(pid_type)
         if not specialized_service:
             return super().resolve(pid_value)
         return specialized_service.config.record_cls.pid.resolve(item_id)
@@ -78,20 +77,6 @@ class CustomFieldsMixin(MappingSystemFieldMixin):
         return data
 
 
-class CustomFields(CustomFieldsMixin, DictField):
-    def __init__(self, flatten, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.flatten = flatten
-
-    @property
-    def mapping(self):
-        mapping = {self.key: {"type": "object", "properties": super().mapping}}
-
-        if self.flatten:
-            return mapping[self.key]["properties"]
-        return mapping
-
-
 class Vocabulary(
     InvenioVocabulary,
 ):
@@ -102,12 +87,6 @@ class Vocabulary(
         create=False,
     )
 
-    # dumper = SearchDumper(
-    #    extensions=[
-    #        IndexedAtDumperExt(),
-    #        SystemFieldDumperExt(),
-    ##    ]
-    # )
     schema = ConstantField(
         "$schema",
         "local://vocabularies/vocabulary-ext-v1.0.0.json",
@@ -118,7 +97,6 @@ class Vocabulary(
             "parent",
             keys=["title"],
             pid_field=ParentVocabularyPIDField(),
-            # TODO: pid_field, vlastni class dedi z PIDRelation a nadefinovat vlastni RelationResult
         ),
         custom_fields=CustomFieldsRelation("VOCABULARIES_CF"),
     )
@@ -130,26 +108,14 @@ class Vocabulary(
     # suggest = ICUSuggestField(source_field="title")
     # suggest_hierarchy = ICUSuggestField(source_field="hierarchy.title")
 
-    # pridat to runtime: records/system fields/ custom fields/ updae_all_system_fields_mapings
-    # prochazet service a update (jestli jsou relations, vzit a update mapping)
-
-    # custom_fields, hierarchy bude dictfield a pridat element relation
-    # https://github.com/inveniosoftware/invenio-rdm-records/blob/bf32413d277fe7642ef98d6eae415f2ef1f02105/invenio_rdm_records/records/api.py#L43
     custom_fields = DictField()
 
 
-VocabularyRelation = namedtuple(
-    "VocabularyRelation", "field_name, field, vocabulary_type"
-)
+VocabularyRelation = namedtuple("VocabularyRelation", "field_name, field, vocabulary_type")
 
 
 def find_vocabulary_relations(record):
-    relations_field_names = [
-        x[0]
-        for x in inspect.getmembers(
-            type(record), lambda x: isinstance(x, RelationsField)
-        )
-    ]
+    relations_field_names = [x[0] for x in inspect.getmembers(type(record), lambda x: isinstance(x, RelationsField))]
 
     for relations_field_name in relations_field_names:
         # iterate all vocabularies there, check that the item exists

@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import typing
 
 from flask import current_app
@@ -10,9 +18,7 @@ if typing.TYPE_CHECKING:
 
 
 def _ext_proxy(attr):
-    return LocalProxy(
-        lambda: getattr(current_app.extensions["oarepo-vocabularies"], attr)
-    )
+    return LocalProxy(lambda: getattr(current_app.extensions["oarepo-vocabularies"], attr))
 
 
 current_oarepo_vocabularies: "OARepoVocabularies" = LocalProxy(  # type: ignore

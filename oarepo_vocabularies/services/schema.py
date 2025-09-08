@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from functools import partial
 
 import marshmallow as ma
@@ -18,18 +26,14 @@ class HierarchySchema(ma.Schema):
     level = ma_fields.Integer()
     titles = ma_fields.List(i18n_strings)
     ancestors = ma_fields.List(ma_fields.String(), attribute="ancestors_ids")
-    ancestors_or_self = ma_fields.List(
-        ma_fields.String(), attribute="ancestors_or_self_ids"
-    )
+    ancestors_or_self = ma_fields.List(ma_fields.String(), attribute="ancestors_or_self_ids")
     leaf = ma_fields.Boolean()
 
 
 class VocabularySchema(InvenioVocabularySchema):
     hierarchy = NestedAttribute(HierarchySchema, dump_only=True, attribute="hierarchy")
 
-    custom_fields = NestedAttribute(
-        partial(CustomFieldsSchema, fields_var="VOCABULARIES_CF")
-    )
+    custom_fields = NestedAttribute(partial(CustomFieldsSchema, fields_var="VOCABULARIES_CF"))
 
     @post_load(pass_original=True)
     def extract_parent_id(self, data, original_data=None, **kwargs):

@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import marshmallow as ma
 from flask import current_app
 from flask_resources import (
@@ -24,9 +32,7 @@ from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
 )
 
 
-class VocabularyFormDepositVocabularyOptionsComponent(
-    DepositVocabularyOptionsComponent
-):
+class VocabularyFormDepositVocabularyOptionsComponent(DepositVocabularyOptionsComponent):
     always_included_vocabularies = ["languages"]
 
     def form_config(self, *, form_config, **kwargs):
@@ -36,9 +42,7 @@ class VocabularyFormDepositVocabularyOptionsComponent(
             form_config["vocabularies"]["languages"] = []
 
         if not form_config["vocabularies"]["languages"]:
-            form_config["vocabularies"]["languages"] = [
-                {"text": "English", "value": "en"}
-            ]
+            form_config["vocabularies"]["languages"] = [{"text": "English", "value": "en"}]
 
 
 class VocabularyTypeValidationSchema(ma.Schema):
@@ -47,9 +51,7 @@ class VocabularyTypeValidationSchema(ma.Schema):
     def load(self, data, *args, **kwargs):
         vocabulary_type = data.get("vocabulary_type")
         # TODO: this will not be needed once specialized vocabs get their own resource
-        allowed_specialized_vocabularies = current_app.config.get(
-            "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", []
-        )
+        allowed_specialized_vocabularies = current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", [])
 
         try:
             if (
@@ -57,26 +59,19 @@ class VocabularyTypeValidationSchema(ma.Schema):
                 or vocabulary_type in allowed_specialized_vocabularies.values()
             ):
                 return {"vocabulary_type": vocabulary_type}
-            else:
-                raise VocabularyTypeDoesNotExist(
-                    f"Vocabulary type {vocabulary_type} does not exist."
-                )
+            raise VocabularyTypeDoesNotExist(f"Vocabulary type {vocabulary_type} does not exist.")
 
         except VocabularyTypeDoesNotExist as e:
             raise e
         except Exception:
-            raise VocabularyTypeDoesNotExist(
-                f"Vocabulary type {vocabulary_type} does not exist."
-            )
+            raise VocabularyTypeDoesNotExist(f"Vocabulary type {vocabulary_type} does not exist.")
 
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     template_folder = "../templates"
     url_prefix = "/vocabularies/"
     blueprint_name = "oarepo_vocabularies_ui"
-    ui_serializer_class = (
-        "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
-    )
+    ui_serializer_class = "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
     api_service = "vocabularies"
     application_id = "OarepoVocabularies"
 
@@ -88,14 +83,14 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
 
     routes = {
-        "create": "/<vocabulary_type>/_new",
-        "edit": "/<vocabulary_type>/<pid_value>/edit",
-        "search": "/<vocabulary_type>/",
-        "detail": "/<vocabulary_type>/<pid_value>",
-        "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
+        "create": "/<type>/_new",
+        "edit": "/<type>/<pid_value>/edit",
+        "search": "/<type>/",
+        "detail": "/<type>/<pid_value>",
+        "export": "/<type>/<pid_value>/export/<export_format>",
     }
     config_routes = {
-        "form_config": "/<vocabulary_type>/form",
+        "form_config": "/<type>/form",
     }
     error_handlers = {
         **RecordsUIResourceConfig.error_handlers,
@@ -113,45 +108,37 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     # request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
     request_vocabulary_type_args = VocabularyTypeValidationSchema
 
-    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
+    request_form_config_view_args = {"type": ma.fields.Str()}
 
     # ui_links_item = {
-    #    "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
-    #    "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
-    #    "search": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/"),
-    #    "create": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/_new"),
+    #    "self": UIRecordLink("{+ui}{+url_prefix}{type}/{id}"),
+    #    "edit": UIRecordLink("{+ui}{+url_prefix}{type}/{id}/edit"),
+    #    "search": UIRecordLink("{+ui}{+url_prefix}{type}/"),
+    #    "create": UIRecordLink("{+ui}{+url_prefix}{type}/_new"),
     # }
 
     @property
     def ui_links_search(self):
         return {
-            **pagination_links("{+ui}{+url_prefix}{vocabulary_type}/{?args*}"),
-            "create": Link("{+ui}{+url_prefix}{vocabulary_type}/_new"),
+            **pagination_links("{+ui}{+url_prefix}{type}/{?args*}"),
+            "create": Link("{+ui}{+url_prefix}{type}/_new"),
         }
 
     def vocabulary_props_config(self, vocabulary_type):
-        return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
-            vocabulary_type, {}
-        )
+        return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabulary_type, {})
 
     def _get_custom_fields_ui_config(self, key, view_args=None, **kwargs):
         if key == "OAREPO_VOCABULARIES_HIERARCHY_CF":
             return []
-        return current_app.config.get("VOCABULARIES_CF_UI", {}).get(
-            view_args["vocabulary_type"], []
-        )
+        return current_app.config.get("VOCABULARIES_CF_UI", {}).get(view_args["vocabulary_type"], [])
 
     def _get_specialized_service_config(self, vocabulary_type):
-        """
-        Get specialized service for a vocabulary type if available.
+        """Get specialized service for a vocabulary type if available.
         Returns None if no specialized service exists.
         """
         if (
             vocabulary_type
-            and vocabulary_type
-            in current_app.config.get(
-                "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}
-            ).values()
+            and vocabulary_type in current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}).values()
         ):
             from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 

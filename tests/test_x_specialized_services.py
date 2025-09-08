@@ -1,11 +1,17 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.contrib.names.api import Name
 from invenio_vocabularies.proxies import current_service as vocab_service
 
-# from oarepo_runtime.datastreams.fixtures import load_fixtures
-# from oarepo_runtime.datastreams.types import StatsKeepingDataStreamCallback
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.services.service import VocabulariesService
 
@@ -29,7 +35,7 @@ def test_names_crud(app, db, cache, vocab_cf, search_clear):
             "self": "https://127.0.0.1:5000/api/names/test",
             "self_html": "https://127.0.0.1:5000/vocabularies/names/test",
         },
-        "revision_id": 3,  # changed from 2
+        "revision_id": 3,
         "name": "Svoboda, Mirek",
         "given_name": "Mirek",
         "family_name": "Svoboda",
@@ -60,13 +66,9 @@ def test_names_crud(app, db, cache, vocab_cf, search_clear):
     }.items() <= rec.data.items()
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="Needs fixtures loading")
 def test_names_fixtures_load(app, db, cache, vocab_cf, search_clear):
-    # callback = StatsKeepingDataStreamCallback(log_error_entry=True)
-    # load_fixtures(Path(__file__).parent / "names-data", callback=callback)
-    # assert callback.ok_entries_count == 1
-    # assert callback.failed_entries_count == 0
-    # assert callback.filtered_entries_count == 0
+    # load fixtures here...
 
     names_service = current_service_registry.get("names")
     names_service.indexer.refresh()
@@ -75,21 +77,15 @@ def test_names_fixtures_load(app, db, cache, vocab_cf, search_clear):
         "family_name": "Svoboda",
     }
     # through vocab service
-    assert (
-        correct.items()
-        <= vocab_service.read(system_identity, ("names", "test")).data.items()
-    )
+    assert correct.items() <= vocab_service.read(system_identity, ("names", "test")).data.items()
 
     # through names service
     assert correct.items() <= names_service.read(system_identity, "test").data.items()
 
 
-@pytest.mark.skip
-def test_serialization_api_vnd(
-    app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client
-):
-    # callback = StatsKeepingDataStreamCallback(log_error_entry=True)
-    # load_fixtures(Path(__file__).parent / "names-data", callback=callback)
+@pytest.mark.skip(reason="Needs fixtures loading")
+def test_serialization_api_vnd(app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client):
+    # load fixtures here...
 
     with client.get(
         "/api/vocabularies/names",
@@ -107,10 +103,9 @@ def test_serialization_api_vnd(
         assert "type" not in hits[0]
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="Needs fixtures loading")
 def test_specialized_service_record_resolver(app, db, cache, vocab_cf, search_clear):
-    # callback = StatsKeepingDataStreamCallback(log_error_entry=True)
-    # load_fixtures(Path(__file__).parent / "names-data", callback=callback)
+    # load fixtures here...
 
     resolved = Vocabulary.pid.resolve(("names", "test"))
     assert isinstance(resolved, Name)

@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
@@ -23,12 +31,13 @@ def test_extra_cf_relations(app, db, cache, lang_type, vocab_cf, search_clear):
     parent_rec.commit()
     db.session.commit()
 
-    assert parent_rec.hierarchy.to_dict == {
+    assert parent_rec.hierarchy.to_dict() == {
         "level": 1,
         "titles": [{"en": "English", "da": "Engelsk"}],
         "ancestors": [],
         "ancestors_or_self": ["eng"],
         "leaf": True,
+        "parent": None,
     }
 
     child_rec = Vocabulary.create(data=child_data)
@@ -36,18 +45,15 @@ def test_extra_cf_relations(app, db, cache, lang_type, vocab_cf, search_clear):
     child_rec.commit()
     db.session.commit()
 
-    print(dict(child_rec))
     parent_uuid = parent_rec.id
     child_uuid = child_rec.id
 
     # check DB table
-    entries = VocabularyHierarchy.query.filter_by(
-        id=child_uuid, parent_id=parent_uuid
-    ).all()
+    entries = VocabularyHierarchy.query.filter_by(id=child_uuid, parent_id=parent_uuid).all()
 
     assert len(entries) == 1
 
-    assert child_rec.hierarchy.to_dict == {
+    assert child_rec.hierarchy.to_dict() == {
         "level": 2,
         "titles": [
             {"en": "English (US)", "da": "Engelsk (US)"},
@@ -56,14 +62,16 @@ def test_extra_cf_relations(app, db, cache, lang_type, vocab_cf, search_clear):
         "ancestors": ["eng"],
         "ancestors_or_self": ["eng-us", "eng"],
         "leaf": True,
+        "parent": "eng",
     }
 
     # check the updated hierarchy
     parent_rec = Vocabulary.get_record(parent_rec.id)
-    assert parent_rec.hierarchy.to_dict == {
+    assert parent_rec.hierarchy.to_dict() == {
         "level": 1,
         "titles": [{"en": "English", "da": "Engelsk"}],
         "ancestors": [],
         "ancestors_or_self": ["eng"],
         "leaf": False,
+        "parent": None,
     }

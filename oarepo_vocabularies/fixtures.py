@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import functools
 
 from invenio_db import db
@@ -56,9 +64,7 @@ class VocabularyWriter(ServiceWriter):
         update=False,
         **kwargs,
     ):
-        super().__init__(
-            service="vocabularies", identity=identity, update=update, **kwargs
-        )
+        super().__init__(service="vocabularies", identity=identity, update=update, **kwargs)
         self.vocabulary = vocabulary
         self.pid_type = pid_type
         vt = VocabularyType.query.filter_by(id=self.vocabulary).one_or_none()
@@ -194,9 +200,7 @@ class AffiliationsWriter(BaseWriter):
             entry.id = affiliation.pid
 
         db.session.commit()
-        affiliations_service.indexer.bulk_index(
-            [affiliation.id for affiliation in affiliations]
-        )
+        affiliations_service.indexer.bulk_index([affiliation.id for affiliation in affiliations])
 
         return batch
 

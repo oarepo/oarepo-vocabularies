@@ -23,20 +23,12 @@ class InvenioVocabulariesAppExtension:
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        self.resource = obj_or_import_string(
-            app.config["OAREPO_VOCABULARIES_UI_RESOURCE"]
-        )(
-            config=obj_or_import_string(
-                app.config["OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG"]
-            )(),
+        self.resource = obj_or_import_string(app.config["OAREPO_VOCABULARIES_UI_RESOURCE"])(
+            config=obj_or_import_string(app.config["OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG"])(),
         )
 
-        self.type_resource = obj_or_import_string(
-            app.config["VOCABULARY_TYPE_UI_RESOURCE"]
-        )(
-            config=obj_or_import_string(
-                app.config["VOCABULARY_TYPE_UI_RESOURCE_CONFIG"]
-            )(),
+        self.type_resource = obj_or_import_string(app.config["VOCABULARY_TYPE_UI_RESOURCE"])(
+            config=obj_or_import_string(app.config["VOCABULARY_TYPE_UI_RESOURCE_CONFIG"])(),
             service=current_type_service,
         )
 
@@ -46,6 +38,4 @@ class InvenioVocabulariesAppExtension:
             if re.match("^[A-Z_]*$", identifier) and not identifier.startswith("_"):
                 app.config.setdefault(identifier, getattr(config, identifier))
 
-        app.config.setdefault("OAREPO_UI_LESS_COMPONENTS", []).extend(
-            config.OAREPO_UI_LESS_COMPONENTS
-        )
+        app.config.setdefault("OAREPO_UI_LESS_COMPONENTS", []).extend(config.OAREPO_UI_LESS_COMPONENTS)

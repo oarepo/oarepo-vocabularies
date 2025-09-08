@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import csv
 import io
 import shutil
@@ -23,8 +31,8 @@ def import_ror_from_zenodo(uri="https://doi.org/10.5281/zenodo.6347574"):
     Args:
         uri (str): URI to the ROR vocabulary in Zenodo. Default is
             https://doi.org/10.5281/zenodo.6347574.
-    """
 
+    """
     # download ZIP with ROR dump from Zenodo
     tmp_ror_file = Path("/tmp/ror.zip")
     if tmp_ror_file.exists():
@@ -42,9 +50,7 @@ def import_ror_from_zenodo(uri="https://doi.org/10.5281/zenodo.6347574"):
         shutil.rmtree(tmp_ror_converted_dir)
 
     tmp_ror_converted_dir.mkdir(parents=True)
-    convert_ror(
-        tmp_ror_file, tmp_ror_converted_dir / "ror.yaml", records_not_added_by_ror
-    )
+    convert_ror(tmp_ror_file, tmp_ror_converted_dir / "ror.yaml", records_not_added_by_ror)
 
     # create a catalogue.yaml file to load the converted ROR dump
     (tmp_ror_converted_dir / "catalogue.yaml").write_text(
@@ -69,9 +75,7 @@ affiliations:
         # _show_stats(callback, "Load ROR data")
 
 
-def convert_ror(
-    tmp_ror_file: Path, output: Path, records_not_added_by_ror: dict[str, str]
-):
+def convert_ror(tmp_ror_file: Path, output: Path, records_not_added_by_ror: dict[str, str]):
     with open(output, "w", encoding="utf-8") as out_f:
         yaml.safe_dump_all(
             get_affiliation_records(tmp_ror_file, records_not_added_by_ror),
@@ -83,14 +87,12 @@ def convert_ror(
 
 def get_affiliation_records(
     tmp_ror_file: Path, records_not_added_by_ror: dict[str, str]
-) -> typing.Generator[dict[str, typing.Any], None, None]:
+) -> typing.Generator[dict[str, typing.Any]]:
     # unzip the file to get the csv file and open it
     with zipfile.ZipFile(tmp_ror_file, "r") as zip_ref:
         zf = [x for x in zip_ref.namelist() if x.endswith("schema_v2.csv")]
         if not zf:
-            raise click.ClickException(
-                f"Failed to find schema_v2.csv in {tmp_ror_file}"
-            )
+            raise click.ClickException(f"Failed to find schema_v2.csv in {tmp_ror_file}")
         click.secho(f"Processing {zf[0]}", fg="yellow")
         with zip_ref.open(zf[0], "r") as f:
             reader = csv.DictReader(
@@ -142,13 +144,10 @@ def ror_to_multidict(name: str) -> dict[str, str]:
 
     Returns:
         dict: Multidict with the name and its type.
+
     """
     with_lang = [x.strip() for x in name.split(";")]
-    return {
-        x.split(":")[0].strip(): x.split(":")[1].strip()
-        for x in with_lang
-        if len(x.split(":")) == 2
-    }
+    return {x.split(":")[0].strip(): x.split(":")[1].strip() for x in with_lang if len(x.split(":")) == 2}
 
 
 def download_ror(uri: str, tmp_ror_file: Path):
@@ -160,18 +159,15 @@ def download_ror(uri: str, tmp_ror_file: Path):
     # download the zip file and store it as /tmp/ror.zip
     zip_resp = requests.get(zip_url, stream=True)
     if zip_resp.status_code != 200:
-        raise click.ClickException(
-            f"Failed to download {zip_url}: {zip_resp.status_code}"
-        )
+        raise click.ClickException(f"Failed to download {zip_url}: {zip_resp.status_code}")
     click.secho(f"Downloading {zip_url} to {tmp_ror_file}", fg="yellow")
     with open(tmp_ror_file, "wb") as f:
-        for chunk in tqdm.tqdm(
+        f.writelines(tqdm.tqdm(
             zip_resp.iter_content(chunk_size=8192),
             total=int(zip_resp.headers.get("Content-Length", 0)) // 8192,
             unit="chunk",
             leave=False,
-        ):
-            f.write(chunk)
+        ))
     click.secho(f"Downloaded {zip_url} to {tmp_ror_file}", fg="green")
 
 
@@ -180,9 +176,7 @@ def get_records_not_added_by_ror() -> dict[str, str]:
     not_from_ror_records: dict[str, str] = {}
     click.secho("Filtering records not added by ROR downloader", fg="yellow")
 
-    for affiliation in tqdm.tqdm(
-        AffiliationsMetadata.query.yield_per(1000), leave=False
-    ):
+    for affiliation in tqdm.tqdm(AffiliationsMetadata.query.yield_per(1000), leave=False):
         identifiers = affiliation.json.get("identifiers", [])
         ror_identifier = next((x for x in identifiers if x["scheme"] == "ror"), None)
         if not ror_identifier:

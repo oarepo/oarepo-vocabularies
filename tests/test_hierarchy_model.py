@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from invenio_vocabularies.records.models import VocabularyMetadata
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy
@@ -19,9 +27,7 @@ def test_db_hierarchy_model(db):
     db.session.add(child)
     db.session.commit()
     assert child.id is not None
-    child_hierarchy = VocabularyHierarchy(
-        id=child.id, parent_id=parent.id, pid="eng-US"
-    )
+    child_hierarchy = VocabularyHierarchy(id=child.id, parent_id=parent.id, pid="eng-US")
     db.session.add(child_hierarchy)
     db.session.commit()
 
@@ -30,4 +36,4 @@ def test_db_hierarchy_model(db):
     assert child_hierarchy.vocabulary_term == child
 
     assert parent_hierarchy.subterms.count() == 1
-    assert list(parent_hierarchy.subterms)[0] == child_hierarchy
+    assert next(iter(parent_hierarchy.subterms)) == child_hierarchy

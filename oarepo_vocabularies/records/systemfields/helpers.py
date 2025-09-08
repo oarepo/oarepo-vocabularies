@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from invenio_db import db
 from invenio_vocabularies.records.api import Vocabulary
 
@@ -64,11 +72,7 @@ class ParentObject:
         if parent_id != self._parent_id:
             self._parent_id = parent_id
             self._previous_parent_uuid = self._parent_uuid  # current will be previous
-            self._parent_uuid = (
-                Vocabulary.pid.with_type_ctx(self._record["type"]["id"])
-                .resolve(parent_id)
-                .id
-            )
+            self._parent_uuid = Vocabulary.pid.with_type_ctx(self._record["type"]["id"]).resolve(parent_id).id
             self._cached = True
 
 
@@ -90,7 +94,6 @@ class HierarchyObject:
         """Get the hierarchy data dictionary"""
         return self._hierarchy_data
 
-    @property
     def to_dict(self):
         return {
             "level": self._hierarchy_data.level,
@@ -98,21 +101,22 @@ class HierarchyObject:
             "ancestors": self._hierarchy_data.ancestors,
             "ancestors_or_self": self._hierarchy_data.ancestors_or_self,
             "leaf": self._hierarchy_data.leaf,
+            "parent": self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None,
         }
 
     def query_subterms(self):
         """Get direct subterms of this record"""
-        subterm_ids = self._hierarchy_data._get_direct_subterms_ids(self._record.id)
+        subterm_ids = self._hierarchy_data.get_direct_subterms_ids(self._record.id)
         return Vocabulary.get_records(subterm_ids)
 
     def query_descendants(self):
         """Get all descendants (children, grandchildren, etc.) of this record"""
-        descendants_ids = self._hierarchy_data._get_subterms_ids(self._record.id)
+        descendants_ids = self._hierarchy_data.get_subterms_ids(self._record.id)
         return Vocabulary.get_records(descendants_ids)
 
     def query_ancestors(self):
         """Get all ancestors of this record"""
-        ancestors_ids = self._hierarchy_data._get_ancestors_ids(self._record.id)
+        ancestors_ids = self._hierarchy_data.get_ancestors_ids(self._record.id)
         return Vocabulary.get_records(ancestors_ids)
 
     @property
@@ -137,8 +141,4 @@ class HierarchyObject:
 
     @property
     def parent_id(self):
-        return (
-            self._hierarchy_data.ancestors[0]
-            if self._hierarchy_data.ancestors
-            else None
-        )
+        return self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None

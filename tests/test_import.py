@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import tempfile
 from pathlib import Path
 
@@ -6,9 +14,6 @@ import yaml
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.api import Vocabulary
-
-# from oarepo_runtime.datastreams.fixtures import dump_fixtures, load_fixtures
-# from oarepo_runtime.datastreams.types import StatsKeepingDataStreamCallback
 
 
 def read_yaml(fp):
@@ -19,27 +24,17 @@ def read_yaml(fp):
         return ret
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="Needs fixtures loading")
 def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
-    # callback = StatsKeepingDataStreamCallback()
-    # load_fixtures(Path(__file__).parent / "data", callback=callback)
-    # assert callback.ok_entries_count == 2
-    # assert callback.failed_entries_count == 0
-    # assert callback.filtered_entries_count == 0
+    # load fixtures here...
 
     Vocabulary.index.refresh()
 
     assert current_service.read(system_identity, ("languages", "en")).data["id"] == "en"
-    assert current_service.read(system_identity, ("languages", "en.US")).data[
-        "hierarchy"
-    ]["ancestors"] == ["en"]
+    assert current_service.read(system_identity, ("languages", "en.US")).data["hierarchy"]["ancestors"] == ["en"]
 
     with tempfile.TemporaryDirectory() as d:
-        # callback = StatsKeepingDataStreamCallback()
-        # dump_fixtures(d, include=["vocabulary-languages"], callback=callback)
-        # assert callback.ok_entries_count == 2
-        # assert callback.failed_entries_count == 0
-        # assert callback.filtered_entries_count == 0
+        # export
         d = Path(d)
         assert read_yaml(d / "catalogue.yaml") == {
             "vocabulary-languages": [
@@ -47,6 +42,4 @@ def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
                 {"source": "vocabulary-languages.yaml"},
             ]
         }
-        assert set(
-            x["title"]["en"] for x in read_yaml(d / "vocabulary-languages.yaml")
-        ) == {"English", "English (US)"}
+        assert set(x["title"]["en"] for x in read_yaml(d / "vocabulary-languages.yaml")) == {"English", "English (US)"}

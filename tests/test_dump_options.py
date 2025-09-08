@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import pytest
 from invenio_records_resources.services.records.results import RecordItem
 
@@ -23,9 +31,7 @@ def test_dump_options(
     rec = ModelRecord({})
     comp.form_config(
         form_config=form_config,
-        api_record=RecordItem(
-            service=simple_record_service, identity=identity, record=rec
-        ),
+        api_record=RecordItem(service=simple_record_service, identity=identity, record=rec),
         view_args={},
         identity=identity,
     )

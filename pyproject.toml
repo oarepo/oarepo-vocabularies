@@ -20,6 +20,9 @@ dependencies = [
     "orcid"
 ]
 
+[project.urls]
+Homepage = "https://github.com/oarepo/oarepo-vocabularies"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.1.2",
@@ -43,12 +46,10 @@ include-package-data = true
 [project.entry-points."invenio_base.apps"]
 oarepo_vocabularies = "oarepo_vocabularies.ext:OARepoVocabularies"
 oarepo_vocabularies_ui = "oarepo_vocabularies.ui.ext:InvenioVocabulariesAppExtension"
-oarepo_vocabulary_authorities = "oarepo_vocabularies.authorities.ext:OARepoVocabulariesAuthorities"
 
 [project.entry-points."invenio_base.api_apps"]
 oarepo_vocabularies = "oarepo_vocabularies.ext:OARepoVocabularies"
 oarepo_vocabularies_ui = "oarepo_vocabularies.ui.ext:InvenioVocabulariesAppExtension"
-oarepo_vocabulary_authorities = "oarepo_vocabularies.authorities.ext:OARepoVocabulariesAuthorities"
 
 [project.entry-points."invenio_jsonschemas.schemas"]
 oarepo_vocabularies = "oarepo_vocabularies.records.jsonschemas"
@@ -60,7 +61,6 @@ oarepo_vocabulary_type_ui = "oarepo_vocabularies.ui.views:create_vocabulary_type
 
 [project.entry-points."invenio_base.api_blueprints"]
 oarepo_vocabulary_type_api = "oarepo_vocabularies.views.api:create_api_blueprint"
-oarepo_vocabulary_authorities = "oarepo_vocabularies.authorities.views:create_authorities_blueprint"
 
 [project.entry-points."invenio_assets.webpack"]
 oarepo_vocabularies_ui_theme = "oarepo_vocabularies.ui.theme.webpack:theme"

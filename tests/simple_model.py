@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import marshmallow as ma
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
@@ -26,8 +34,6 @@ from oarepo_ui.resources import (
 )
 from oarepo_ui.resources.components import PermissionsComponent
 
-from oarepo_vocabularies.authorities.components import AuthorityComponent
-
 
 class ModelRecordIdProvider(RecordIdProviderV2):
     pid_type = "rec"
@@ -36,9 +42,7 @@ class ModelRecordIdProvider(RecordIdProviderV2):
 class ModelRecord(Record):
     index = IndexField("test_record")
     model_cls = RecordMetadata
-    pid = PIDField(
-        provider=ModelRecordIdProvider, context_cls=PIDFieldContext, create=True
-    )
+    pid = PIDField(provider=ModelRecordIdProvider, context_cls=PIDFieldContext, create=True)
     relations = RelationsField(
         authority=PIDRelation(
             "authority",
@@ -90,7 +94,7 @@ class ModelServiceConfig(RecordServiceConfig):
     record_cls = ModelRecord
     permission_policy_cls = ModelPermissionPolicy
     schema = ModelSchema
-    components = [DataComponent, AuthorityComponent]
+    components = [DataComponent]
 
     url_prefix = "/simple-model"
 

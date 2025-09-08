@@ -1,7 +1,16 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from flask import current_app, g
 from flask_resources import route
 from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources import UIResource
+
 from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 
 
@@ -31,30 +40,20 @@ class VocabularyTypeUIResource(UIResource):
         """Returns vocabulary types page."""
         list_data = self.service.search(g.identity).to_dict()
 
-        for specialized_service_type in current_app.config.get(
-            "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}
-        ).values():
-            specialized_service = current_oarepo_vocabularies.get_specialized_service(
-                specialized_service_type
-            )
+        for specialized_service_type in current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}).values():
+            specialized_service = current_oarepo_vocabularies.get_specialized_service(specialized_service_type)
 
-            specialized_vocabulary_data = specialized_service.search(
-                g.identity
-            ).to_dict()
+            specialized_vocabulary_data = specialized_service.search(g.identity).to_dict()
 
             list_data["hits"]["hits"].append(
                 {
                     "count": specialized_vocabulary_data["hits"]["total"],
                     "self_html": f"/vocabularies/{specialized_service_type}",
                     "id": specialized_service_type,
-                    "name": current_app.config.get(
-                        "OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {}
-                    )
+                    "name": current_app.config.get("OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {})
                     .get(specialized_service_type, {})
                     .get("name", {}),
-                    "description": current_app.config.get(
-                        "OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {}
-                    )
+                    "description": current_app.config.get("OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {})
                     .get(specialized_service_type, {})
                     .get("description", {}),
                 }

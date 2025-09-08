@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_vocabularies.services.facets import VocabularyLabels
 
@@ -37,7 +45,5 @@ class CachedVocabularyLabels(VocabularyLabels):
         if not ids:
             return {}
         cache = current_ui_vocabulary_cache
-        resolved = cache.resolve(
-            [(self.vocabulary, _id) for _id in ids], self.vocabulary
-        )
+        resolved = cache.resolve([(self.vocabulary, _id) for _id in ids], self.vocabulary)
         return {_id: self._get_title(resolved, _id) for _id in ids}

@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from flask import g
 from flask_resources import from_conf, request_parser, resource_requestctx
 from flask_security import login_required
@@ -9,9 +17,7 @@ from invenio_records_resources.services import LinksTemplate
 from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources.records.resource import RecordsUIResource
 
-request_vocabulary_args = request_parser(
-    from_conf("request_vocabulary_type_args"), location="view_args"
-)
+request_vocabulary_args = request_parser(from_conf("request_vocabulary_type_args"), location="view_args")
 
 
 class InvenioVocabulariesUIResource(RecordsUIResource):

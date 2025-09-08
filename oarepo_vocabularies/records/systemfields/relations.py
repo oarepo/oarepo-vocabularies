@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from invenio_records.systemfields.relations.results import RelationResult
 from invenio_records_resources.records.systemfields.relations import PIDRelation
 from invenio_vocabularies.records.api import Vocabulary

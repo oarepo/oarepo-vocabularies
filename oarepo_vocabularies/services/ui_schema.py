@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import copy
 from functools import partial
 
@@ -18,8 +26,7 @@ from marshmallow import fields as ma_fields
 
 
 class LocalizedDateTime(ma.fields.Field):
-    """
-    A Marshmallow field that provides localized datetime formatting.
+    """A Marshmallow field that provides localized datetime formatting.
     """
 
     def __init__(self, attribute, **kwargs):
@@ -92,9 +99,7 @@ class HierarchyUISchema(ma.Schema):
 
 class VocabularyUISchema(InvenioVocabularySchema):
     CUSTOM_FIELDS_VAR = "VOCABULARIES_CF"
-    hierarchy = ma_fields.Nested(
-        partial(CustomFieldsSchemaUI, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF")
-    )
+    hierarchy = ma_fields.Nested(partial(CustomFieldsSchemaUI, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF"))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

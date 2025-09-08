@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 """Vocabulary models."""
 
 from invenio_db import db
@@ -16,9 +24,7 @@ class VocabularyHierarchy(db.Model):
         db.ForeignKey("vocabularies_metadata.id"),
         primary_key=True,
     )
-    parent_id = db.Column(
-        UUIDType, db.ForeignKey("vocabularies_hierarchy.id"), nullable=True
-    )
+    parent_id = db.Column(UUIDType, db.ForeignKey("vocabularies_hierarchy.id"), nullable=True)
 
     vocabulary_term = db.relationship(
         VocabularyMetadata,
@@ -52,11 +58,7 @@ class VocabularyHierarchy(db.Model):
         parent_hierarchy = self.parent_hierarchy_metadata
 
         # check if node has children
-        result = (
-            db.session.query(VocabularyHierarchy.id)
-            .filter(VocabularyHierarchy.parent_id == self.id)
-            .all()
-        )
+        result = db.session.query(VocabularyHierarchy.id).filter(VocabularyHierarchy.parent_id == self.id).all()
 
         self.leaf = not bool(result)
         title = self.titles[0]
@@ -75,20 +77,20 @@ class VocabularyHierarchy(db.Model):
         db.session.add(self)
 
     @staticmethod
-    def _get_subterms_ids(start_id=None):
+    def get_subterms_ids(start_id=None):
         """Get all descendant IDs using recursive CTE"""
         # Base case: direct children of the node
-        base = db.session.query(
-            VocabularyHierarchy.id.label("id"), db.literal(1).label("depth")
-        ).filter(VocabularyHierarchy.parent_id == start_id)
+        base = db.session.query(VocabularyHierarchy.id.label("id"), db.literal(1).label("depth")).filter(
+            VocabularyHierarchy.parent_id == start_id
+        )
 
         # Recursive CTE
         hierarchy_cte = base.cte(name="children", recursive=True)
         child_alias = aliased(VocabularyHierarchy)
 
-        recursive = db.session.query(
-            child_alias.id, (hierarchy_cte.c.depth + 1).label("depth")
-        ).filter(child_alias.parent_id == hierarchy_cte.c.id)
+        recursive = db.session.query(child_alias.id, (hierarchy_cte.c.depth + 1).label("depth")).filter(
+            child_alias.parent_id == hierarchy_cte.c.id
+        )
 
         hierarchy_cte = hierarchy_cte.union_all(recursive)
 
@@ -97,20 +99,20 @@ class VocabularyHierarchy(db.Model):
         return [cid for (cid,) in q.all() if cid is not None]
 
     @staticmethod
-    def _get_ancestors_ids(start_id=None):
+    def get_ancestors_ids(start_id=None):
         """Get all ancestor IDs using recursive CTE"""
         # Base case: direct parent of the node
-        base = db.session.query(
-            VocabularyHierarchy.parent_id.label("id"), db.literal(1).label("depth")
-        ).filter(VocabularyHierarchy.id == start_id)
+        base = db.session.query(VocabularyHierarchy.parent_id.label("id"), db.literal(1).label("depth")).filter(
+            VocabularyHierarchy.id == start_id
+        )
 
         # Recursive CTE
         hierarchy_cte = base.cte(name="parents", recursive=True)
         parent_alias = aliased(VocabularyHierarchy)
 
-        recursive = db.session.query(
-            parent_alias.parent_id, (hierarchy_cte.c.depth + 1).label("depth")
-        ).filter(parent_alias.id == hierarchy_cte.c.id)
+        recursive = db.session.query(parent_alias.parent_id, (hierarchy_cte.c.depth + 1).label("depth")).filter(
+            parent_alias.id == hierarchy_cte.c.id
+        )
 
         hierarchy_cte = hierarchy_cte.union_all(recursive)
 
@@ -119,18 +121,14 @@ class VocabularyHierarchy(db.Model):
         return [pid for (pid,) in q.all() if pid is not None]
 
     @staticmethod
-    def _get_direct_subterms_ids(parent_id=None):
+    def get_direct_subterms_ids(parent_id=None):
         """Get direct subterms IDs"""
-        result = (
-            db.session.query(VocabularyHierarchy.id)
-            .filter(VocabularyHierarchy.parent_id == parent_id)
-            .all()
-        )
+        result = db.session.query(VocabularyHierarchy.id).filter(VocabularyHierarchy.parent_id == parent_id).all()
         return [child_id for (child_id,) in result if child_id is not None]
 
     def fix_hierarchy_down(self):
         """Fix hierarchy for all descendants"""
-        children_ids = VocabularyHierarchy._get_subterms_ids(self.id)
+        children_ids = VocabularyHierarchy.get_subterms_ids(self.id)
 
         for child in children_ids:
             child_hierarchy = db.session.query(VocabularyHierarchy).get(child)
@@ -138,7 +136,7 @@ class VocabularyHierarchy(db.Model):
 
     def fix_hierarchy_down_on_delete(self):
         """Fix hierarchy for all descendants"""
-        children_ids = VocabularyHierarchy._get_subterms_ids(self.parent_id)
+        children_ids = VocabularyHierarchy.get_subterms_ids(self.parent_id)
 
         for child in children_ids:
             if child == self.id:
@@ -151,27 +149,17 @@ class VocabularyHierarchy(db.Model):
         """Update leaf status for the parent ancestor"""
         parent_hierarchy = self.parent_hierarchy_metadata
         # case when record is deleted, change parent leaf if record has children
-        if (
-            parent_hierarchy is not None
-            and cache.previous_uuid != cache.uuid
-            and not cache.uuid
-        ):
+        if parent_hierarchy is not None and cache.previous_uuid != cache.uuid and not cache.uuid:
             previous_parent_rec = (
-                db.session.query(VocabularyHierarchy)
-                .filter(VocabularyHierarchy.id == cache.previous_uuid)
-                .one()
+                db.session.query(VocabularyHierarchy).filter(VocabularyHierarchy.id == cache.previous_uuid).one()
             )
 
-            parent_children = VocabularyHierarchy._get_direct_subterms_ids(
-                previous_parent_rec.id
-            )
+            parent_children = VocabularyHierarchy.get_direct_subterms_ids(previous_parent_rec.id)
 
             # since row in DB is not yet deleted, we need to exclude current record from children check
             parent_has_children = bool(
                 len(parent_children) > 0  # list is not empty
-                and any(
-                    child_id != self.id for child_id in parent_children
-                )  # it has other children beside this record
+                and any(child_id != self.id for child_id in parent_children)  # it has other children beside this record
             )
 
             if not previous_parent_rec.leaf and not parent_has_children:
@@ -188,14 +176,10 @@ class VocabularyHierarchy(db.Model):
         # update previous parent, if current parent is none
         if parent_hierarchy is None and cache.previous_uuid:
             previous_parent_rec = (
-                db.session.query(VocabularyHierarchy)
-                .filter(VocabularyHierarchy.id == cache.previous_uuid)
-                .one()
+                db.session.query(VocabularyHierarchy).filter(VocabularyHierarchy.id == cache.previous_uuid).one()
             )
 
-            parent_has_children = bool(
-                VocabularyHierarchy._get_direct_subterms_ids(previous_parent_rec.id)
-            )
+            parent_has_children = bool(VocabularyHierarchy.get_direct_subterms_ids(previous_parent_rec.id))
 
             if not previous_parent_rec.leaf and not parent_has_children:
                 previous_parent_rec.leaf = True

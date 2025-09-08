@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020-2021 CERN.
 #
@@ -9,7 +8,12 @@
 """Vocabulary permissions."""
 
 from invenio_records_permissions import RecordPermissionPolicy
-from invenio_records_permissions.generators import AnyUser, Disable, SystemProcess, ConditionalGenerator
+from invenio_records_permissions.generators import (
+    AnyUser,
+    ConditionalGenerator,
+    Disable,
+    SystemProcess,
+)
 
 
 class VocabulariesPermissionPolicy(RecordPermissionPolicy):
@@ -57,9 +61,11 @@ class NonDangerousVocabularyOperation(ConditionalGenerator):
     def _condition(self, **kwargs):
         """Condition to choose generators set."""
         if "data" not in kwargs:
-            raise ValueError("Data are not provided. "
-                             "Make sure you use the generator on update operation "
-                             "and use the oarepo fork of invenio-records-resources")
+            raise ValueError(
+                "Data are not provided. "
+                "Make sure you use the generator on update operation "
+                "and use the oarepo fork of invenio-records-resources"
+            )
         data = kwargs["data"]
         record = kwargs["record"]
 

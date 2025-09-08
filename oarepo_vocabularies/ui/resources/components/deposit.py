@@ -1,6 +1,14 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import inspect
 import json
-from typing import Any, Dict
+from typing import Any
 
 from flask import current_app
 from invenio_records import Record
@@ -11,16 +19,14 @@ from oarepo_vocabularies.records.api import find_vocabulary_relations
 
 
 class DepositVocabularyOptionsComponent(UIResourceComponent):
-    """
-    This component is used in deposit form of normal records. For small vocabularies,
+    """This component is used in deposit form of normal records. For small vocabularies,
     it provides their values so that they might be displayed in, for example, a combo.
     """
 
     always_included_vocabularies = []
 
     def form_config(self, *, form_config, api_record, view_args, identity, **kwargs):
-        """
-        Adds vocabularies to the form config as in:
+        """Adds vocabularies to the form config as in:
         ```
         "vocabularies": {
             "languages": {
@@ -47,7 +53,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         ```
         """
         if not isinstance(api_record, Record):
-            record_cls = self.resource.api_service.config.record_cls  # noqa
+            record_cls = self.resource.api_service.config.record_cls
             api_record = record_cls({})
 
         form_config.setdefault("vocabularies", {})
@@ -55,23 +61,17 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         if current_app.config.get("VOCABULARIES_LANGUAGES_DISABLED"):
             return
 
-        vocabulary_config = current_app.config.get(
-            "INVENIO_VOCABULARY_TYPE_METADATA", {}
-        )
+        vocabulary_config = current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {})
 
         used_vocabularies = self._get_used_vocabularies(api_record)
 
         (
             vocabularies_to_prefetch,
             form_config_vocabularies,
-        ) = self.create_form_config_vocabularies(
-            vocabulary_config, used_vocabularies=used_vocabularies
-        )
+        ) = self.create_form_config_vocabularies(vocabulary_config, used_vocabularies=used_vocabularies)
 
         form_config["vocabularies"] = form_config_vocabularies
-        self._prefetch_vocabularies_to_form_config(
-            form_config_vocabularies, vocabularies_to_prefetch, identity
-        )
+        self._prefetch_vocabularies_to_form_config(form_config_vocabularies, vocabularies_to_prefetch, identity)
 
         for vocabularies in form_config["vocabularies"].values():
             if "all" in vocabularies:
@@ -84,22 +84,15 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                         voc["element_type"] = "leaf"
 
     def _get_used_vocabularies(self, api_record):
-        used_vocabularies = [
-            vocab_field.vocabulary_type
-            for vocab_field in find_vocabulary_relations(api_record)
-        ]
+        used_vocabularies = [vocab_field.vocabulary_type for vocab_field in find_vocabulary_relations(api_record)]
         for v in self.always_included_vocabularies:
             if v not in used_vocabularies:
                 used_vocabularies.append(v)
         return used_vocabularies
 
-    def _prefetch_vocabularies_to_form_config(
-        self, form_config_vocabularies, vocabularies_to_prefetch, identity
-    ):
-        prefetched_vocabularies: Dict[str, Dict[str, Any]]
-        prefetched_vocabularies = current_ui_vocabulary_cache.get(
-            vocabularies_to_prefetch
-        )
+    def _prefetch_vocabularies_to_form_config(self, form_config_vocabularies, vocabularies_to_prefetch, identity):
+        prefetched_vocabularies: dict[str, dict[str, Any]]
+        prefetched_vocabularies = current_ui_vocabulary_cache.get(vocabularies_to_prefetch)
         for vocabulary_type, items in prefetched_vocabularies.items():
             for item_id, item in items.items():
                 by_type = form_config_vocabularies[vocabulary_type]
@@ -121,9 +114,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         for vocabulary_type in used_vocabularies:
             vocabulary_definition = vocabulary_config.get(vocabulary_type, {})
             form_config_vocabularies[vocabulary_type] = {
-                "definition": json.loads(
-                    json.dumps(vocabulary_definition, default=json_default)
-                )
+                "definition": json.loads(json.dumps(vocabulary_definition, default=json_default))
             }
             if vocabulary_definition.get("dump_options"):
                 vocabularies_to_prefetch.append(vocabulary_type)
@@ -131,9 +122,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                 form_config_vocabularies[vocabulary_type]["featured"] = []
             else:
                 # TODO: use vocabulary service config and prefix???
-                form_config_vocabularies[vocabulary_type]["url"] = (
-                    f"/api/vocabularies/{vocabulary_type}"
-                )
+                form_config_vocabularies[vocabulary_type]["url"] = f"/api/vocabularies/{vocabulary_type}"
         return vocabularies_to_prefetch, form_config_vocabularies
 
 

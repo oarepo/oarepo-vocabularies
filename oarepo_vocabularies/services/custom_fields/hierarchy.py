@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 from invenio_records_resources.services.custom_fields import BooleanCF
 from invenio_records_resources.services.custom_fields.base import BaseCF
 from invenio_records_resources.services.custom_fields.number import IntegerCF
@@ -20,7 +28,7 @@ class HierarchyLevelCF(HierarchyCF, IntegerCF):
 
 class HierarchyTitleCF(HierarchyCF, BaseCF):
     def update(self, record, parent):
-        titles = [record["title"]] if "title" in record and record["title"] else []
+        titles = [record["title"]] if record.get("title") else []
         if parent:
             titles.extend(parent["hierarchy"]["title"])
         record.hierarchy["title"] = titles

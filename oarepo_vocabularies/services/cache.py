@@ -1,7 +1,15 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 import contextlib
 from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Any, Dict, List
+from datetime import UTC, datetime
+from typing import Any
 
 import marshmallow
 from cachetools import TTLCache
@@ -16,10 +24,10 @@ from .ui_schema import VocabularyUISchema
 
 class VocabularyCacheItem:
     last_modified: datetime
-    items: Dict[str, Any]
+    items: dict[str, Any]
 
     def __init__(self):
-        self.last_modified = datetime.fromtimestamp(0, timezone.utc)
+        self.last_modified = datetime.fromtimestamp(0, UTC)
         self.items = {}
 
 
@@ -29,7 +37,7 @@ class DepositI18nHierarchySchema(marshmallow.Schema):
 
 
 class VocabularyCache:
-    cache: Dict[str, Dict[str, VocabularyCacheItem]]
+    cache: dict[str, dict[str, VocabularyCacheItem]]
     """Language => vocabulary type => last modified + items"""
     lru_terms_cache = TTLCache(maxsize=10000, ttl=3600)
 
@@ -47,7 +55,7 @@ class VocabularyCache:
         yield cached_language
         self.cache[language] = cached_language
 
-    def update(self, vocabulary_types: List[str]):
+    def update(self, vocabulary_types: list[str]):
         if not vocabulary_types:
             return
 
@@ -61,18 +69,13 @@ class VocabularyCache:
 
             by_vocabulary_type = {}
             max_modified = {}
-            for item, dumped_item in self._serialize_items(
-                locale, self._prefetch_vocabularies(vocabulary_types)
-            ):
-                by_vocabulary_type.setdefault(item["type"], {})[item["id"]] = (
-                    dumped_item
-                )
+            for item, dumped_item in self._serialize_items(locale, self._prefetch_vocabularies(vocabulary_types)):
+                by_vocabulary_type.setdefault(item["type"], {})[item["id"]] = dumped_item
                 if item["type"] not in max_modified:
-                    max_modified[item["type"]] = datetime.fromtimestamp(0, timezone.utc)
+                    max_modified[item["type"]] = datetime.fromtimestamp(0, UTC)
 
                 modified = datetime.fromisoformat(item["updated"])
-                if max_modified[item["type"]] < modified:
-                    max_modified[item["type"]] = modified
+                max_modified[item["type"]] = max(max_modified[item["type"]], modified)
 
             if not by_vocabulary_type:
                 return
@@ -91,7 +94,7 @@ class VocabularyCache:
         self.count_fetched = 0
         self.count_prefetched = 0
 
-    def _prefetch_vocabularies(self, vocabulary_types: List[str]):
+    def _prefetch_vocabularies(self, vocabulary_types: list[str]):
         yield from vocabulary_service.scan(
             system_identity,
             params={
@@ -102,15 +105,11 @@ class VocabularyCache:
             preserve_order=True,
         )
 
-    def _check_modified(self, cached_language, vocabulary_types: List[str]):
+    def _check_modified(self, cached_language, vocabulary_types: list[str]):
         params = {
             "size": 1,
             "updated_after": {
-                vt: (
-                    cached_language[vt].last_modified.isoformat()
-                    if vt in cached_language
-                    else None
-                )
+                vt: (cached_language[vt].last_modified.isoformat() if vt in cached_language else None)
                 for vt in vocabulary_types
             },
         }
@@ -128,7 +127,7 @@ class VocabularyCache:
             dumped_item = schema.dump(item)
             yield item, dumped_item
 
-    def get(self, vocabulary_types: List[str]):
+    def get(self, vocabulary_types: list[str]):
         self.update(vocabulary_types)
         language = get_locale().language
         ret = {}
@@ -142,8 +141,7 @@ class VocabularyCache:
         return ret
 
     def resolve(self, ids, type=None):
-        """
-        Resolves vocabulary ids to their localized records.
+        """Resolves vocabulary ids to their localized records.
 
         :param ids: list of vocabulary ids in the form of tuple (type, id)
         """
@@ -163,9 +161,7 @@ class VocabularyCache:
         if uncached:
             for item, serialized_item in self._serialize_items(
                 locale,
-                vocabulary_service.search_many(
-                    system_identity, params={"ids": uncached}, type=type
-                ),
+                vocabulary_service.search_many(system_identity, params={"ids": uncached}, type=type),
             ):
                 if "type" in item:
                     typed_id = (item["type"], item["id"])
@@ -183,9 +179,7 @@ class VocabularyCache:
         for vocab_type, items in uncached_small.items():
             for it in items:
                 cached[(vocab_type, it)] = cached_types[vocab_type][it]
-                self.lru_terms_cache[(language, (vocab_type, it))] = cached_types[
-                    vocab_type
-                ][it]
+                self.lru_terms_cache[(language, (vocab_type, it))] = cached_types[vocab_type][it]
 
     def _split_cached_uncached(self, language, ids):
         cached = {}
@@ -196,9 +190,8 @@ class VocabularyCache:
                 term = self.lru_terms_cache.get((language, vocab_id))
                 if term:
                     cached[vocab_id] = term
+                elif vocab_id[0] in cached_language:
+                    uncached_small[vocab_id[0]].append(vocab_id[1])
                 else:
-                    if vocab_id[0] in cached_language:
-                        uncached_small[vocab_id[0]].append(vocab_id[1])
-                    else:
-                        uncached.append(vocab_id)
+                    uncached.append(vocab_id)
         return cached, uncached, uncached_small
