@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oarepo-vocabularies"
-version = "3.0.0"
+dynamic = ["version"]
 description = "Support for custom fields and hierarchy on Invenio vocabularies"
 authors = [
     { name = "Mirek Simek", email = "miroslav.simek@cesnet.cz" }
