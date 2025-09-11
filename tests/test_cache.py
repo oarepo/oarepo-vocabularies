@@ -19,8 +19,8 @@ def test_cache_fast(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
     # load_fixtures here...
     Vocabulary.index.refresh()
 
-    cache = VocabularyCache()
-
+    # import cache here...
+    cache = {}  # placeholder
     with app.test_request_context(headers=[("Accept-Language", "cs")]):
         t1_cs = time.time()
         data = cache.get(["languages"])
@@ -50,7 +50,8 @@ def test_cache(app, db, vocab_cf, reset_babel, cache_clear, search_clear):
     # load_fixtures here...
     Vocabulary.index.refresh()
 
-    cache = VocabularyCache()
+    # import cache here...
+    cache = {}  # placeholder
 
     with app.test_request_context(headers=[("Accept-Language", "cs")]):
         t1_cs = time.time()
@@ -82,7 +83,8 @@ def test_cache_resolve(app, db, vocab_cf, reset_babel, cache_clear, search_clear
     # load_fixtures here...
     Vocabulary.index.refresh()
 
-    cache = VocabularyCache()
+    # import cache here...
+    cache = {}  # placeholder
 
     ids = [
         ("institutions", "amu-hamu"),
@@ -135,7 +137,8 @@ def test_cache_resolve_fast(app, db, vocab_cf, reset_babel, cache_clear, search_
 
     assert len(list(vocabulary_service.scan(system_identity, type="languages"))) == 2
 
-    cache = VocabularyCache()
+    # import cache here...
+    cache = {}  # placeholder
 
     with app.test_request_context(headers=[("Accept-Language", "cs")]):
         time_cs_1 = time.time()

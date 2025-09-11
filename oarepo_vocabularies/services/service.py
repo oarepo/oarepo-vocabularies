@@ -116,11 +116,11 @@ class VocabulariesService(InvenioVocabulariesService):
         identity: Identity,
         params: dict | None = None,
         search_preference: Any = None,
-        type_: str | None = None,
+        type: str | None = None,  # noqa: A002
         **kwargs: Any,
     ) -> RecordList:
         """Search for vocabulary entries."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type_)
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
         if specialized_service:
             return specialized_service.search(
                 identity=identity,
@@ -132,7 +132,7 @@ class VocabulariesService(InvenioVocabulariesService):
             identity=identity,
             params=params,
             search_preference=search_preference,
-            type=type_,
+            type=type,
             **kwargs,
         )
 
@@ -141,7 +141,7 @@ class VocabulariesService(InvenioVocabulariesService):
         identity: Identity,
         params: dict,
         search_preference: Any | None = None,
-        type_: str | None = None,
+        type: str | None = None,  # noqa: A002
         **kwargs: Any,
     ) -> RecordList:
         """Search for vocabulary entries."""
@@ -151,7 +151,7 @@ class VocabulariesService(InvenioVocabulariesService):
         # use case is an optimization where we want to fetch multiple items
         # from multiple vocabulary types in a single query.
 
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type_)
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
         if specialized_service:
             return specialized_service.search(
                 identity=identity,
@@ -165,13 +165,13 @@ class VocabulariesService(InvenioVocabulariesService):
         self,
         identity: Identity,
         fields: list[str],
-        type_: str,
+        type: str,  # noqa: A002
         cache: bool = True,
         extra_filter: str = "",
         **kwargs: Any,
     ) -> RecordList:
         """Search for records matching the querystring."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type_)
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
         if specialized_service:
             return specialized_service.read_all(
                 identity=identity,
@@ -190,13 +190,18 @@ class VocabulariesService(InvenioVocabulariesService):
         )
 
     def read_many(
-        self, identity: Identity, type_: str, ids: list[str], fields: list[str] | None = None, **kwargs: Any
+        self,
+        identity: Identity,
+        type: str,  # noqa: A002
+        ids: list[str],
+        fields: list[str] | None = None,
+        **kwargs: Any,
     ) -> RecordList:
         """Search for records matching the querystring filtered by ids."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type_)
+        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
         if specialized_service:
             return specialized_service.read_many(identity=identity, ids=ids, fields=fields, **kwargs)
-        return super().read_many(identity=identity, type=type_, ids=ids, fields=fields, **kwargs)
+        return super().read_many(identity=identity, type=type, ids=ids, fields=fields, **kwargs)
 
     @unit_of_work()
     def create(
