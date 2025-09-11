@@ -6,7 +6,12 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Configuration for vocabulary resource."""
+
+from __future__ import annotations
+
 from functools import cached_property
+from typing import Any, ClassVar
 
 from flask_resources import BaseListSchema, MarshmallowSerializer, ResponseHandler
 from flask_resources.serializers import JSONSerializer
@@ -21,7 +26,6 @@ from invenio_vocabularies.resources.config import (
 from marshmallow import fields
 from marshmallow_oneofschema import OneOfSchema
 
-# from oarepo_runtime.resources import LocalizedUIJSONSerializer  # prejit na invenio
 from oarepo_vocabularies.services.ui_schema import (
     VocabularySpecializedUISchema,
     VocabularyUISchema,
@@ -29,18 +33,22 @@ from oarepo_vocabularies.services.ui_schema import (
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
+    """Request args schema for vocabulary search."""
+
     parent = fields.List(fields.String(), data_key="h-parent", attribute="h-parent")
     ancestor = fields.List(fields.String(), data_key="h-ancestor", attribute="h-ancestor")
     level = fields.List(fields.Integer(), data_key="h-level", attribute="h-level")
 
-    def _deserialize(self, *args, **kwargs):
-        ret = super()._deserialize(*args, **kwargs)
-        return ret
+    def _deserialize(self, *args: Any, **kwargs: Any) -> Any:
+        return super()._deserialize(*args, **kwargs)
 
 
 class VocabularySchemaSelector(OneOfSchema):
+    """Select vocabulary schema based on the type."""
+
     @cached_property
-    def type_schemas(self):
+    def type_schemas(self) -> dict:
+        """Get vocabulary type schemas from entry points."""
         ui_schemas = {
             "vocabulary": VocabularyUISchema,
             "*": VocabularySpecializedUISchema,
@@ -50,7 +58,8 @@ class VocabularySchemaSelector(OneOfSchema):
 
         return ui_schemas
 
-    def get_obj_type(self, obj):
+    def get_obj_type(self, obj: dict) -> str:
+        """Determine the type of the object for schema selection."""
         from flask_resources import resource_requestctx
 
         if "type" in obj:
@@ -60,7 +69,8 @@ class VocabularySchemaSelector(OneOfSchema):
             return vocabulary_type
         return "*"
 
-    def dump(self, obj, *, many=None, **kwargs):
+    def dump(self, obj: Any, *, many: bool | None = None, **kwargs: Any) -> dict:
+        """Dump the object using the selected schema."""
         ret = super().dump(obj, many=many, **kwargs)
         if ret.get("type") == "*":
             ret.pop("type")
@@ -68,20 +78,25 @@ class VocabularySchemaSelector(OneOfSchema):
 
 
 class VocabulariesUIResponseHandler(ResponseHandler):
+    """UI JSON response handler."""
+
     serializer = MarshmallowSerializer(
         format_serializer_cls=JSONSerializer,
         object_schema_cls=VocabularySchemaSelector,
         list_schema_cls=BaseListSchema,
     )
 
-    def __init__(self, headers):
+    def __init__(self, headers: dict[str, str] | None = None):
+        """Initialise Response Handler."""
         super().__init__(self.serializer, headers)
 
 
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
+    """Vocabulary resource config."""
+
     request_search_args = VocabularySearchRequestArgsSchema
 
-    response_handlers = {
+    response_handlers: ClassVar[dict[str, ResponseHandler]] = {
         **InvenioVocabulariesResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": VocabulariesUIResponseHandler(
             headers=etag_headers,

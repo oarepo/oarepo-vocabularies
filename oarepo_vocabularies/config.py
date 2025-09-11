@@ -27,39 +27,7 @@ from oarepo_vocabularies.services.service import VocabularyTypeService
 
 OAREPO_VOCABULARIES_PERMISSIONS_PRESETS = {"vocabularies": VocabulariesPermissionPolicy}
 
-INVENIO_VOCABULARY_TYPE_METADATA = {
-    # etc.
-    # "affilliations": {
-    #    "authority": <authority service class>
-    # },
-    # "grants": {
-    #    "authority": <authority service class>
-    # },
-    # "languages": {
-    #     "name": {
-    #         "cs": "jazyky",
-    #         "en": "languages",
-    #     },
-    #     "description": {
-    #         "cs": "slovnikovy typ ceskeho jazyka.",
-    #         "en": "czech language vocabulary type.",
-    #     },
-    #     "hierarchical": False,
-    #     "props": {"alpha3CodeNative": {
-    #                 "description": _("ISO 639-2 standard 3-letter language code"),
-    #                 "icon": None,
-    #                 "label": _("Alpha3 code (native)"),
-    #                 "multiple": False,
-    #                 "options": [],
-    #                 "placeholder": "eng, ces...",
-    #             }},
-    #     "custom_fields": ["names of custom fields from VOCABULARIES_CF to show in ui/serialize"],
-    #     "dump_options": True
-    # },
-    # "organisms": {
-    #    "authority": <authority service class>
-    # }
-}
+INVENIO_VOCABULARY_TYPE_METADATA = {}
 
 OAREPO_VOCABULARIES_HIERARCHY_CF = [
     hierarchy.HierarchyLevelCF("level"),

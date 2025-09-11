@@ -6,14 +6,32 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Objects helping parent/hierarchy system fields management."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from invenio_db import db
 from invenio_vocabularies.records.api import Vocabulary
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from invenio_records.systemfields import DictField
+    from invenio_records_resources.records.api import Record
+
 
 class ParentObject:
-    def __init__(self, dict_field, record):
+    """Object representing the parent data of a vocabulary record.
+
+    Caches the current and previous parent UUIDs to detect changes and need for updates of Hierarchy.
+    """
+
+    def __init__(self, dict_field: DictField, record: Record):
+        """Initialize the ParentObject."""
         self._dict_field = dict_field
         self._record = record
         self._previous_parent_uuid = None
@@ -22,19 +40,22 @@ class ParentObject:
         self._cached = False
 
     @property
-    def uuid(self):
+    def uuid(self) -> UUID | None:
+        """Get the current parent UUID."""
         if not self._cached:
             self._get_from_record()
 
         return self._parent_uuid
 
     @property
-    def previous_uuid(self):
+    def previous_uuid(self) -> UUID | None:
+        """Get the previous parent UUID."""
         if not self._cached:
             self._get_from_record()
         return self._previous_parent_uuid
 
-    def _get_from_record(self):
+    def _get_from_record(self) -> None:
+        """Get the parent UUIDs from the record relations."""
         parent = self._record.relations.parent()
 
         if parent:
@@ -54,7 +75,8 @@ class ParentObject:
             self._parent_id = None
             self._cached = True
 
-    def set(self, value):
+    def set(self, value: Any) -> None:
+        """Set the parent value."""
         if not self._cached:
             self._get_from_record()
 
@@ -77,7 +99,13 @@ class ParentObject:
 
 
 class HierarchyObject:
-    def __init__(self, record):
+    """Object representing the hierarchy data of a vocabulary record.
+
+    References the VocabularyHierarchy table row and provides methods to interact with it.
+    """
+
+    def __init__(self, record: Record):
+        """Initialize the HierarchyObject."""
         self._record = record
         self._hierarchy_data = self._record.model.hierarchy_metadata
 
@@ -90,11 +118,12 @@ class HierarchyObject:
             )
 
     @property
-    def data(self):
-        """Get the hierarchy data dictionary"""
+    def data(self) -> VocabularyHierarchy:
+        """Get the hierarchy data."""
         return self._hierarchy_data
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
+        """Convert the hierarchy data to a dictionary."""
         return {
             "level": self._hierarchy_data.level,
             "titles": self._hierarchy_data.titles,
@@ -104,41 +133,47 @@ class HierarchyObject:
             "parent": self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None,
         }
 
-    def query_subterms(self):
-        """Get direct subterms of this record"""
+    def query_subterms(self) -> list[Vocabulary]:
+        """Get direct subterms of this record."""
         subterm_ids = self._hierarchy_data.get_direct_subterms_ids(self._record.id)
         return Vocabulary.get_records(subterm_ids)
 
-    def query_descendants(self):
-        """Get all descendants (children, grandchildren, etc.) of this record"""
+    def query_descendants(self) -> list[Vocabulary]:
+        """Get all descendants (children, grandchildren, etc.) of this record."""
         descendants_ids = self._hierarchy_data.get_subterms_ids(self._record.id)
         return Vocabulary.get_records(descendants_ids)
 
-    def query_ancestors(self):
-        """Get all ancestors of this record"""
+    def query_ancestors(self) -> list[Vocabulary]:
+        """Get all ancestors of this record."""
         ancestors_ids = self._hierarchy_data.get_ancestors_ids(self._record.id)
         return Vocabulary.get_records(ancestors_ids)
 
     @property
-    def level(self):
+    def level(self) -> int:
+        """Get the level of the record in the hierarchy."""
         return self._hierarchy_data.level
 
     @property
-    def leaf(self):
+    def leaf(self) -> bool:
+        """Check if the record is a leaf in the hierarchy."""
         return self._hierarchy_data.leaf
 
     @property
-    def titles(self):
+    def titles(self) -> list[dict[str, str]]:
+        """Get the titles of the hierarchy."""
         return self._hierarchy_data.titles
 
     @property
-    def ancestors_ids(self):
+    def ancestors_ids(self) -> list[str]:
+        """Get the PIDs of the ancestors in the hierarchy."""
         return self._hierarchy_data.ancestors
 
     @property
-    def ancestors_or_self_ids(self):
+    def ancestors_or_self_ids(self) -> list[str]:
+        """Get the PIDs of the ancestors or self in the hierarchy."""
         return self._hierarchy_data.ancestors_or_self
 
     @property
-    def parent_id(self):
+    def parent_id(self) -> str | None:
+        """Get the PID of the parent in the hierarchy."""
         return self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None

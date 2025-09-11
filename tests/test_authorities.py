@@ -54,8 +54,8 @@ def test_authority_resource(client, authority_rec, authority_type, ror_authority
     resp = client.get(f"/api/vocabularies/ror-authority/authoritative?{params}").json
     page1_results = resp["hits"]["hits"]
     assert "links" in resp
-    assert "next" in resp["links"].keys()
-    assert "prev" not in resp["links"].keys()
+    assert "next" in resp["links"]
+    assert "prev" not in resp["links"]
     next_link = urlparse(resp["links"]["next"])
     assert next_link.path == "/api/vocabularies/ror-authority/authoritative"
     assert "page=2" in next_link.query
@@ -63,8 +63,8 @@ def test_authority_resource(client, authority_rec, authority_type, ror_authority
     resp = client.get(next_link.geturl()).json
     page2_results = resp["hits"]["hits"]
     assert page2_results[0]["id"] != page1_results[0]["id"]
-    assert "next" in resp["links"].keys()
-    assert "prev" in resp["links"].keys()
+    assert "next" in resp["links"]
+    assert "prev" in resp["links"]
     prev_link = urlparse(resp["links"]["prev"])
     assert "page=1" in prev_link.query
 
@@ -100,7 +100,6 @@ def test_submit_record_fetch_authority(
     assert response.data["authority"]["title"] == {"en": "Association of Asian Pacific Community Health Organizations"}
 
     assert response.data["ror-authority"]["id"] == "ror:050dkka69"
-    print(response.data["ror-authority"])
     assert response.data["ror-authority"]["title"] == {"cs": "CESNET, zájmové sdružení právnických osob"}
 
     # check that the vocabulary item has been created
@@ -165,7 +164,6 @@ def test_submit_record_update_authority(
     assert response.data["authority"]["title"] == {"en": "Oakton Community College"}
 
     assert response.data["ror-authority"]["id"] == "ror:050dkka69"
-    print(response.data["ror-authority"])
     assert response.data["ror-authority"]["title"] == {"cs": "CESNET, zájmové sdružení právnických osob"}
 
     # check that the vocabulary item has been created

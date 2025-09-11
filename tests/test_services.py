@@ -111,7 +111,7 @@ def test_services_read_all(app, db, cache, lang_type, vocab_cf, search_clear):
     results = vocab_service.read_all(system_identity, fields=["id"], type=lang_type.id, cache=False)
 
     assert results.total == 1
-    assert list(results.hits)[0]["id"] == "eng"
+    assert next(iter(results.hits))["id"] == "eng"
 
 
 def test_services_read_many(app, db, cache, lang_type, vocab_cf, search_clear):
@@ -132,7 +132,7 @@ def test_services_read_many(app, db, cache, lang_type, vocab_cf, search_clear):
     results = vocab_service.read_many(system_identity, type=lang_type.id, ids=["eng"])
 
     assert results.total == 1
-    assert list(results.hits)[0]["id"] == "eng"
+    assert next(iter(results.hits))["id"] == "eng"
 
 
 def test_services_exists(app, db, cache, lang_type, vocab_cf, search_clear):
@@ -170,4 +170,4 @@ def test_services_search(app, db, cache, lang_type, vocab_cf, search_clear):
 
     results = vocab_service.search(system_identity, {"q": "eng"}, type=lang_type.id)
     assert results.total == 1
-    assert list(results.hits)[0]["id"] == "eng"
+    assert next(iter(results.hits))["id"] == "eng"

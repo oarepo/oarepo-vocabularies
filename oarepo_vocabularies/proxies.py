@@ -6,6 +6,8 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Oarepo vocabularies proxies."""
+
 import typing
 
 from flask import current_app
@@ -17,15 +19,15 @@ if typing.TYPE_CHECKING:
     from .services.service import VocabularyTypeService
 
 
-def _ext_proxy(attr):
+def _ext_proxy(attr: str) -> LocalProxy:
     return LocalProxy(lambda: getattr(current_app.extensions["oarepo-vocabularies"], attr))
 
 
-current_oarepo_vocabularies: "OARepoVocabularies" = LocalProxy(  # type: ignore
+current_oarepo_vocabularies: "OARepoVocabularies" = LocalProxy(  # type: ignore  # noqa: PGH003
     lambda: current_app.extensions["oarepo-vocabularies"]
 )
 
-current_type_service: "VocabularyTypeService" = _ext_proxy("type_service")  # type: ignore
+current_type_service: "VocabularyTypeService" = _ext_proxy("type_service")  # type: ignore  # noqa: PGH003
 """Proxy to the instantiated vocabulary type service."""
 
-current_ui_vocabulary_cache: "UIVocabularyCache" = _ext_proxy("ui_cache")  # type: ignore
+current_ui_vocabulary_cache: "UIVocabularyCache" = _ext_proxy("ui_cache")  # type: ignore  # noqa: PGH003

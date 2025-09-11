@@ -6,6 +6,12 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Parent system field for vocabulary records."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from invenio_db import db
 from invenio_records.systemfields import DictField, SystemField
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
@@ -14,9 +20,15 @@ from oarepo_vocabularies.records.models import VocabularyHierarchy
 
 from .helpers import ParentObject
 
+if TYPE_CHECKING:
+    from invenio_records_resources.records.api import Record
+
 
 class ParentSystemField(MappingSystemFieldMixin, SystemField):
-    def __init__(self, key=None, clear_none=False, create_if_missing=True):
+    """System field handling the VocabularyHierarchy parent column updates on create/update/delete of a record."""
+
+    def __init__(self, key: str | None = None, clear_none: bool = False, create_if_missing: bool = True):
+        """Initialize the ParentSystemField."""
         self.clear_none = clear_none
         self.create_if_missing = create_if_missing
         super().__init__(key=key)
@@ -24,7 +36,8 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         self._dict_field = DictField(key=key, clear_none=clear_none, create_if_missing=create_if_missing)
 
     @property
-    def mapping(self):
+    def mapping(self) -> dict[str, Any]:
+        """Get the mapping for the parent field."""
         return {
             self.key: {
                 "type": "object",
@@ -36,23 +49,30 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
             }
         }
 
-    def __set_name__(self, owner, name):
+    def __set_name__(self, owner: Any, name: str) -> None:
+        """Set the name of the field."""
         super().__set_name__(owner, name)
         self._dict_field.__set_name__(owner, name)
 
-    def __get__(self, record, owner=None) -> ParentObject:
+    def __get__(self, record: Record, owner: Any = None) -> ParentObject:
+        """Get the parent field value or cached value."""
         if record is None:
             return self
 
         if not hasattr(record, "_parent_cache"):
-            record._parent_cache = ParentObject(self._dict_field, record)
+            record._parent_cache = ParentObject(self._dict_field, record)  # noqa: SLF001
 
-        return record._parent_cache
+        return record._parent_cache  # noqa: SLF001
 
-    def __set__(self, record, value):
+    def __set__(self, record: Record, value: dict | None) -> None:
+        """Set the parent field value."""
         self.__get__(record).set(value)
 
-    def pre_commit(self, record):
+    def pre_commit(self, record: Record) -> None:
+        """Handle updates by updating/inserting row in VocabularyHierarchy table.
+
+        When record is updated/created, we add/change the parent to a actual one in VocabularyHierarchy table.
+        """
         cache = self.__get__(record)
 
         parent = record.relations.parent()
@@ -99,12 +119,13 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
                 db.session.add(row)
                 db.session.flush()
 
-    def pre_delete(self, record, force=False):
+    def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
+        """Handle deletion by setting correct parent to children in VocabularyHierarchy table."""
         cache = self.__get__(record)
 
-        cache._previous_parent_uuid = cache.uuid
-        cache._parent_uuid = None
-        cache._parent_id = None
+        cache._previous_parent_uuid = cache.uuid  # noqa: SLF001
+        cache._parent_uuid = None  # noqa: SLF001
+        cache._parent_id = None  # noqa: SLF001
         self_uuid = record.id
 
         # If record has any children, set their parent to parent of the deleted record

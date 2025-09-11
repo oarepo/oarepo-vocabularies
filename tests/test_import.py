@@ -17,7 +17,7 @@ from invenio_vocabularies.records.api import Vocabulary
 
 
 def read_yaml(fp):
-    with open(fp) as f:
+    with Path.open(fp) as f:
         ret = list(yaml.safe_load_all(f))
         if len(ret) == 1:
             return ret[0]
@@ -35,11 +35,11 @@ def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
 
     with tempfile.TemporaryDirectory() as d:
         # export
-        d = Path(d)
+        d = Path(d)  # noqa: PLW2901
         assert read_yaml(d / "catalogue.yaml") == {
             "vocabulary-languages": [
                 {"pid_type": "lng", "vocabulary": "languages", "writer": "vocabulary"},
                 {"source": "vocabulary-languages.yaml"},
             ]
         }
-        assert set(x["title"]["en"] for x in read_yaml(d / "vocabulary-languages.yaml")) == {"English", "English (US)"}
+        assert {x["title"]["en"] for x in read_yaml(d / "vocabulary-languages.yaml")} == {"English", "English (US)"}

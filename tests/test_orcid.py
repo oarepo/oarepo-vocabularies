@@ -75,7 +75,7 @@ def test_orcid_provider_pagination(app, orcid_provider):
 
 @pytest.mark.skip(reason="Skip authorities for now")
 def test_json_schema_validation(app, orcid_provider):
-    with open(Path(__file__).parent / "schemas" / "name-v1.0.0.json") as f:
+    with Path.open(Path(__file__).parent / "schemas" / "name-v1.0.0.json") as f:
         schema = json.load(f)
 
     items, _ = orcid_provider.search(identity=None, params={"q": "a"})
@@ -85,6 +85,5 @@ def test_json_schema_validation(app, orcid_provider):
             continue
         try:
             jsonschema.validate(item, schema)
-        except jsonschema.ValidationError as e:
-            print(e)
-            assert False
+        except jsonschema.ValidationError:
+            raise AssertionError  # noqa: B904

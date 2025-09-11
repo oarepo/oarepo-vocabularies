@@ -6,7 +6,12 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Schemas for vocabularies."""
+
+from __future__ import annotations
+
 from functools import partial
+from typing import Any
 
 import marshmallow as ma
 from invenio_records_resources.services.custom_fields import CustomFieldsSchema
@@ -31,12 +36,15 @@ class HierarchySchema(ma.Schema):
 
 
 class VocabularySchema(InvenioVocabularySchema):
+    """Schema for vocabularies."""
+
     hierarchy = NestedAttribute(HierarchySchema, dump_only=True, attribute="hierarchy")
 
     custom_fields = NestedAttribute(partial(CustomFieldsSchema, fields_var="VOCABULARIES_CF"))
 
     @post_load(pass_original=True)
-    def extract_parent_id(self, data, original_data=None, **kwargs):
+    def extract_parent_id(self, data: dict, original_data: dict | None = None, **kwargs: Any) -> dict:  # noqa: ARG002
+        """Extract and set parent id from hierarchy."""
         hierarchy = original_data.get("hierarchy", {})
         parent = hierarchy.get("parent")
         if parent:

@@ -12,6 +12,8 @@ from invenio_vocabularies.services.schema import i18n_strings
 
 
 class RelatedURICF(BaseCF):
+    """Custom field for related URIs."""
+
     @property
     def mapping(self):
         """Return the mapping."""
@@ -24,6 +26,8 @@ class RelatedURICF(BaseCF):
 
 
 class NonPreferredLabelsCF(BaseCF):
+    """Non preferred labels custom field."""
+
     @property
     def mapping(self):
         """Return the mapping."""
@@ -36,6 +40,8 @@ class NonPreferredLabelsCF(BaseCF):
 
 
 class HintCF(BaseCF):
+    """Custom field for hint."""
+
     @property
     def mapping(self):
         """Return the mapping."""

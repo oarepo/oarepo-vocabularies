@@ -6,7 +6,12 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Fixtures for vocabularies."""
+
+from __future__ import annotations
+
 import functools
+from typing import TYPE_CHECKING, Any
 
 from invenio_db import db
 from invenio_records_resources.proxies import current_service_registry
@@ -19,8 +24,14 @@ from invenio_vocabularies.datastreams.readers import BaseReader
 from invenio_vocabularies.datastreams.writers import BaseWriter, ServiceWriter
 from invenio_vocabularies.records.api import VocabularyType
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
-def vocabularies_generator(service_id, **kwargs):
+    from flask_principal import Identity
+
+
+def vocabularies_generator(service_id: str, **kwargs: Any) -> Iterable:  # noqa: ARG001
+    """Generate loaders and dumpers for all vocabularies."""
     vocabularies = VocabularyType.query.all()
     for vocab_type in vocabularies:
         loader = [
@@ -40,30 +51,37 @@ def vocabularies_generator(service_id, **kwargs):
 
 
 class VocabularyReader(BaseReader):
-    def __init__(self, *, vocabulary=None, identity=None, **kwargs):
+    """Reader for vocabularies."""
+
+    def __init__(self, *, vocabulary: str | None = None, identity: Identity | None = None, **kwargs: Any) -> None:
+        """Initialize the VocabularyReader."""
         super().__init__(service="vocabularies", identity=identity, **kwargs)
         self.vocabulary = vocabulary
 
     def __iter__(self):
+        """Iterate over vocabulary entries and yield specific vocabulary type."""
         # invenio-vocabularies has no filter on type id, so need to scan everything
         # hopefully this is not a too frequent op
         for rec in self._service.scan(self._identity):
             if rec["type"] == self.vocabulary:
-                rec = dict(rec)
-                rec.pop("type")
-                yield StreamEntry(rec)
+                rec_tmp = dict(rec)
+                rec_tmp.pop("type")
+                yield StreamEntry(rec_tmp)
 
 
 class VocabularyWriter(ServiceWriter):
+    """Writer for vocabularies."""
+
     def __init__(
         self,
         *,
-        vocabulary=None,
-        pid_type=None,
-        identity=None,
-        update=False,
-        **kwargs,
-    ):
+        vocabulary: str | None = None,
+        pid_type: str | None = None,
+        identity: Identity | None = None,
+        update: bool = False,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the VocabularyWriter."""
         super().__init__(service="vocabularies", identity=identity, update=update, **kwargs)
         self.vocabulary = vocabulary
         self.pid_type = pid_type
@@ -73,13 +91,14 @@ class VocabularyWriter(ServiceWriter):
             db.session.add(vt)
             db.session.commit()
 
-    def write(self, stream_batch, *args, **kwargs):
+    def write(self, stream_batch: StreamEntry, *args: Any, **kwargs: Any) -> StreamEntry:
+        """Write the input entry using a given service to the target output."""
         for stream_entry in stream_batch.entries:
             entry = stream_entry.entry
             entry["type"] = self.vocabulary
         return super().write(stream_batch, *args, **kwargs)
 
-    def _get_stream_entry_id(self, entry):
+    def _get_stream_entry_id(self, entry: StreamEntry) -> tuple | None:
         _id = entry.entry.get("id", None)
         if _id:
             return (self.vocabulary, _id)
@@ -89,14 +108,12 @@ class VocabularyWriter(ServiceWriter):
 class AwardsWriter(BaseWriter):
     """Optimized writer for awards."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        """Initialize the AwardsWriter."""
         super().__init__(**kwargs)
 
-    def write(self, batch):
-        """Writes the input entry to the target output.
-        :returns: nothing
-                  Raises WriterException in case of errors.
-        """
+    def write(self, batch: StreamEntry) -> None:
+        """Write the input entry to the target output."""
         awards_service = current_service_registry.get("awards")
 
         awards = []
@@ -122,11 +139,11 @@ class AwardsWriter(BaseWriter):
 
         return batch
 
-    def finish(self):
-        pass
+    def finish(self) -> None:
+        """Finish the writing process."""
 
-    @functools.lru_cache(maxsize=1024)
-    def lookup_funder_name(self, funder_id):
+    @functools.lru_cache(maxsize=1024)  # noqa: B019
+    def lookup_funder_name(self, funder_id: str) -> str:
         """Lookup funder name by id."""
         funder = FundersMetadata.query.filter_by(pid=funder_id).one()
         return funder.json["name"]
@@ -135,21 +152,19 @@ class AwardsWriter(BaseWriter):
 class NamesWriter(BaseWriter):
     """Optimized writer for names."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        """Initialize the NamesWriter."""
         super().__init__(**kwargs)
 
-    def write(self, batch):
-        """Writes the input entry to the target output.
-        :returns: nothing
-                  Raises WriterException in case of errors.
-        """
+    def write(self, batch: StreamEntry) -> None:
+        """Write the input entry to the target output."""
         names_service = current_service_registry.get("names")
 
         names = []
         for entry in batch.ok_entries:
             payload = entry.entry
             if "affiliations" in payload:
-                raise Exception("Affiliations are not supported in this writer")
+                raise Exception("Affiliations are not supported in this writer")  # noqa: TRY002
             stored = NamesMetadata.query.filter_by(pid=payload["id"]).first()
             if stored:
                 entry.id = payload["id"]
@@ -167,21 +182,19 @@ class NamesWriter(BaseWriter):
 
         return batch
 
-    def finish(self):
-        pass
+    def finish(self) -> None:
+        """Finish the writing process."""
 
 
 class AffiliationsWriter(BaseWriter):
     """Optimized writer for awards."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        """Initialize the AffiliationsWriter."""
         super().__init__(**kwargs)
 
-    def write(self, batch):
-        """Writes the input entry to the target output.
-        :returns: nothing
-                  Raises WriterException in case of errors.
-        """
+    def write(self, batch: StreamEntry) -> None:
+        """Write the input entry to the target output."""
         affiliations_service = current_service_registry.get("affiliations")
 
         affiliations = []
@@ -204,5 +217,5 @@ class AffiliationsWriter(BaseWriter):
 
         return batch
 
-    def finish(self):
-        pass
+    def finish(self) -> None:
+        """Finish the writing process."""

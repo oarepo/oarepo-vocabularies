@@ -8,10 +8,19 @@
 #
 """Vocabulary models."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from invenio_db import db
 from invenio_vocabularies.records.models import VocabularyMetadata
 from sqlalchemy.orm import aliased
 from sqlalchemy_utils.types import UUIDType
+
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from oarepo_vocabularies.records.systemfields.helpers import ParentObject
 
 
 class VocabularyHierarchy(db.Model):
@@ -53,8 +62,8 @@ class VocabularyHierarchy(db.Model):
 
     leaf = db.Column(db.Boolean, default=True, nullable=False)
 
-    def fix_hierarchy_on_self(self):
-        """Fix hierarchy data on this record based on its parent"""
+    def fix_hierarchy_on_self(self) -> None:
+        """Fix hierarchy data on this record based on its parent."""
         parent_hierarchy = self.parent_hierarchy_metadata
 
         # check if node has children
@@ -70,15 +79,15 @@ class VocabularyHierarchy(db.Model):
             self.level = 1
         else:
             self.level = parent_hierarchy.level + 1
-            self.titles = [title] + parent_hierarchy.titles
+            self.titles = [title, *parent_hierarchy.titles]
             self.ancestors = parent_hierarchy.ancestors_or_self
-            self.ancestors_or_self = [self.pid] + parent_hierarchy.ancestors_or_self
+            self.ancestors_or_self = [self.pid, *parent_hierarchy.ancestors_or_self]
 
         db.session.add(self)
 
     @staticmethod
-    def get_subterms_ids(start_id=None):
-        """Get all descendant IDs using recursive CTE"""
+    def get_subterms_ids(start_id: UUID | None = None) -> list[UUID]:
+        """Get all descendant IDs using recursive CTE."""
         # Base case: direct children of the node
         base = db.session.query(VocabularyHierarchy.id.label("id"), db.literal(1).label("depth")).filter(
             VocabularyHierarchy.parent_id == start_id
@@ -99,8 +108,8 @@ class VocabularyHierarchy(db.Model):
         return [cid for (cid,) in q.all() if cid is not None]
 
     @staticmethod
-    def get_ancestors_ids(start_id=None):
-        """Get all ancestor IDs using recursive CTE"""
+    def get_ancestors_ids(start_id: UUID | None = None) -> list[UUID]:
+        """Get all ancestor IDs using recursive CTE."""
         # Base case: direct parent of the node
         base = db.session.query(VocabularyHierarchy.parent_id.label("id"), db.literal(1).label("depth")).filter(
             VocabularyHierarchy.id == start_id
@@ -121,21 +130,21 @@ class VocabularyHierarchy(db.Model):
         return [pid for (pid,) in q.all() if pid is not None]
 
     @staticmethod
-    def get_direct_subterms_ids(parent_id=None):
-        """Get direct subterms IDs"""
+    def get_direct_subterms_ids(parent_id: UUID | None = None) -> list[UUID]:
+        """Get direct subterms IDs."""
         result = db.session.query(VocabularyHierarchy.id).filter(VocabularyHierarchy.parent_id == parent_id).all()
         return [child_id for (child_id,) in result if child_id is not None]
 
-    def fix_hierarchy_down(self):
-        """Fix hierarchy for all descendants"""
+    def fix_hierarchy_down(self) -> None:
+        """Fix hierarchy for all descendants."""
         children_ids = VocabularyHierarchy.get_subterms_ids(self.id)
 
         for child in children_ids:
             child_hierarchy = db.session.query(VocabularyHierarchy).get(child)
             child_hierarchy.fix_hierarchy_on_self()
 
-    def fix_hierarchy_down_on_delete(self):
-        """Fix hierarchy for all descendants"""
+    def fix_hierarchy_down_on_delete(self) -> None:
+        """Fix hierarchy for all descendants."""
         children_ids = VocabularyHierarchy.get_subterms_ids(self.parent_id)
 
         for child in children_ids:
@@ -145,8 +154,8 @@ class VocabularyHierarchy(db.Model):
             child_hierarchy = db.session.query(VocabularyHierarchy).get(child)
             child_hierarchy.fix_hierarchy_on_self()
 
-    def update_parent_leaf_status(self, cache):
-        """Update leaf status for the parent ancestor"""
+    def update_parent_leaf_status(self, cache: ParentObject) -> None:
+        """Update leaf status for the parent ancestor."""
         parent_hierarchy = self.parent_hierarchy_metadata
         # case when record is deleted, change parent leaf if record has children
         if parent_hierarchy is not None and cache.previous_uuid != cache.uuid and not cache.uuid:

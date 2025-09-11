@@ -36,10 +36,14 @@ from oarepo_ui.resources.components import PermissionsComponent
 
 
 class ModelRecordIdProvider(RecordIdProviderV2):
+    """Record identifier provider."""
+
     pid_type = "rec"
 
 
 class ModelRecord(Record):
+    """Record model."""
+
     index = IndexField("test_record")
     model_cls = RecordMetadata
     pid = PIDField(provider=ModelRecordIdProvider, context_cls=PIDFieldContext, create=True)
@@ -73,13 +77,17 @@ class ModelRecord(Record):
 
 
 class ModelPermissionPolicy(RecordPermissionPolicy):
-    can_create = [AnyUser(), SystemProcess()]
-    can_update = [AnyUser(), SystemProcess()]
-    can_search = [AnyUser(), SystemProcess()]
-    can_read = [AnyUser(), SystemProcess()]
+    """Permission policy for records."""
+
+    can_create = [AnyUser(), SystemProcess()]  # noqa: RUF012
+    can_update = [AnyUser(), SystemProcess()]  # noqa: RUF012
+    can_search = [AnyUser(), SystemProcess()]  # noqa: RUF012
+    can_read = [AnyUser(), SystemProcess()]  # noqa: RUF012
 
 
 class ModelSchema(ma.Schema):
+    """Model schema."""
+
     title = ma.fields.String()
     authority = ma.fields.Raw()  # just a simulation ...
     ror_authority = ma.fields.Raw(data_key="ror-authority")
@@ -87,27 +95,32 @@ class ModelSchema(ma.Schema):
     award = ma.fields.Raw()
 
     class Meta:
+        """Meta."""
+
         unknown = ma.INCLUDE
 
 
 class ModelServiceConfig(RecordServiceConfig):
+    """Record service config."""
+
     record_cls = ModelRecord
     permission_policy_cls = ModelPermissionPolicy
     schema = ModelSchema
-    components = [DataComponent]
+    components = [DataComponent]  # noqa: RUF012
 
     url_prefix = "/simple-model"
 
     @property
     def links_item(self):
+        """Item links config."""
         return {
-            "self": RecordLink("{+api}%s/{id}" % self.url_prefix),
-            "ui": RecordLink("{+ui}%s/{id}" % self.url_prefix),
+            "self": RecordLink(f"{{+api}}{self.url_prefix}/{{id}}"),
+            "ui": RecordLink(f"{{+ui}}{self.url_prefix}/{{id}}"),
         }
 
 
 class ModelService(RecordService):
-    pass
+    """Record service."""
 
 
 class ModelUISerializer(MarshmallowSerializer):
@@ -124,19 +137,21 @@ class ModelUISerializer(MarshmallowSerializer):
 
 
 class ModelUIResourceConfig(RecordsUIResourceConfig):
+    """Record UI resource config."""
+
     api_service = "simple_model"  # must be something included in oarepo, as oarepo is used in tests
 
     blueprint_name = "simple_model"
     url_prefix = "/simple-model"
     ui_serializer_class = ModelUISerializer
-    templates = {
+    templates = {  # noqa: RUF012
         **RecordsUIResourceConfig.templates,
         "detail": "TestDetail",
         "search": "TestSearch",
     }
 
-    components = [BabelComponent, PermissionsComponent]
+    components = [BabelComponent, PermissionsComponent]  # noqa: RUF012
 
 
 class ModelUIResource(RecordsUIResource):
-    pass
+    """Record UI resource."""

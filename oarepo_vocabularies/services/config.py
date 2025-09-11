@@ -6,6 +6,12 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Configuration for vocabularies service."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, ClassVar
+
 import marshmallow as ma
 from invenio_records_resources.services import pagination_endpoint_links
 from invenio_records_resources.services.base import ServiceListResult
@@ -21,22 +27,34 @@ from oarepo_vocabularies.services.search import VocabularySearchOptions
 from .components.keep_vocabulary_id import KeepVocabularyIdComponent
 from .components.scanning_order import ScanningOrderComponent
 
+if TYPE_CHECKING:
+    from flask_principal import Identity
+    from invenio_records_resources.services.base import Service
+    from invenio_records_resources.services.base.links import LinksTemplate
+    from invenio_records_resources.services.records.components import ServiceComponent
+
 
 class VocabularyMetadataSchema(ma.Schema):
+    """Schema for vocabulary metadata records."""
+
     class Meta:
+        """Meta class for the schema."""
+
         unknown = ma.INCLUDE
 
 
 class VocabularyMetadataList(ServiceListResult):
+    """List of vocabulary metadata records."""
+
     def __init__(
         self,
-        service,
-        identity,
-        results,
-        links_tpl=None,
-        links_item_tpl=None,
+        service: Service,
+        identity: Identity,
+        results: Any,
+        links_tpl: LinksTemplate = None,
+        links_item_tpl: LinksTemplate = None,
     ):
-        """Constructor.
+        """Init the vocabulary metadata list.
 
         :params service: a service instance
         :params identity: an identity that performed the service request
@@ -48,7 +66,8 @@ class VocabularyMetadataList(ServiceListResult):
         self._links_tpl = links_tpl
         self._links_item_tpl = links_item_tpl
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
+        """Convert the result to a dictionary."""
         hits = list(self._results)
 
         for hit in hits:
@@ -69,44 +88,46 @@ class VocabularyMetadataList(ServiceListResult):
 
 
 class VocabularyTypeServiceConfig:
+    """Vocabulary types service configuration."""
+
     service_id = "vocabulary_type"
     schema = VocabularyMetadataSchema
     result_list_cls = VocabularyMetadataList
 
     permission_policy_cls = PermissionPolicy
-    vocabularies_listing_item = {
+    vocabularies_listing_item: ClassVar[dict[str, EndpointLink]] = {
         "self": EndpointLink(
             "vocabularies.search",
-            vars=lambda vocab_type, vars: vars.update({"type": vocab_type["id"]}),
+            vars=lambda vocab_type, vars_: vars_.update({"type": vocab_type["id"]}),
             params=["type"],
         ),
         "self_html": EndpointLink(
             "oarepo_vocabularies_ui.search_without_slash",
-            vars=lambda vocab_type, vars: vars.update({"type": vocab_type["id"]}),
+            vars=lambda vocab_type, vars_: vars_.update({"type": vocab_type["id"]}),
             params=["type"],
         ),
     }
 
 
 class VocabulariesConfig(VocabulariesServiceConfig):
+    """Vocabulary service configuration."""
+
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
-    components = [
+    components: ClassVar[list[ServiceComponent]] = [
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
         ScanningOrderComponent,
     ]
 
-    PERMISSIONS_PRESETS = ["vocabularies"]
-
     url_prefix = "/vocabularies/"
 
-    links_item = {
+    links_item: ClassVar[dict[str, EndpointLink]] = {
         **VocabulariesServiceConfig.links_item,
         "self_html": EndpointLink(
             "oarepo_vocabularies_ui.detail",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "pid_value": record.pid.pid_value,
                     "type": record.type.id,
@@ -116,7 +137,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
         "vocabulary": EndpointLink(
             "vocabularies.search",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                 }
@@ -125,7 +146,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
         "vocabulary_html": EndpointLink(
             "oarepo_vocabularies_ui.search_without_slash",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                 }
@@ -134,24 +155,24 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
         "parent": EndpointLink(
             "vocabularies.read",
-            vars=lambda record, vars: vars.update({"type": record.type.id, "pid_value": record.hierarchy.parent_id}),
-            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),
+            vars=lambda record, vars_: vars_.update({"type": record.type.id, "pid_value": record.hierarchy.parent_id}),
+            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),  # noqa: ARG005
             params=["type", "pid_value"],
         ),
         "parent_html": EndpointLink(
             "oarepo_vocabularies_ui.detail",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                     "pid_value": record.hierarchy.parent_id,
                 }
             ),
-            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),
+            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),  # noqa: ARG005
             params=["type", "pid_value"],
         ),
         "children": EndpointLink(
             "vocabularies.search",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                     "id": record.pid.pid_value,
@@ -162,7 +183,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
         "children_html": EndpointLink(
             "oarepo_vocabularies_ui.search_without_slash",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                     "id": record.pid.pid_value,
@@ -173,7 +194,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
         "descendants": EndpointLink(
             "vocabularies.search",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                     "id": record.pid.pid_value,
@@ -184,7 +205,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
         "descendants_html": EndpointLink(
             "oarepo_vocabularies_ui.search_without_slash",
-            vars=lambda record, vars: vars.update(
+            vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                     "id": record.pid.pid_value,
@@ -195,7 +216,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
     }
 
-    links_search = {
+    links_search: ClassVar[dict[str, EndpointLink]] = {
         **pagination_endpoint_links("vocabularies.search", params=["type"]),
         **pagination_endpoint_links_html("oarepo_vocabularies_ui.search_without_slash", params=["type"]),
     }

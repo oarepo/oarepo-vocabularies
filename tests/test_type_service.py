@@ -24,8 +24,8 @@ def test_counts(
     assert results["hits"]["total"] == 2
     hits = results["hits"]["hits"]
 
-    hits_languages = [hit for hit in hits if hit["id"] == "languages"][0]
+    hits_languages = next(hit for hit in hits if hit["id"] == "languages")
     assert hits_languages["count"] == 5
 
-    hits_licences = [hit for hit in hits if hit["id"] == "licences"][0]
+    hits_licences = next(hit for hit in hits if hit["id"] == "licences")
     assert hits_licences["count"] == 0

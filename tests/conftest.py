@@ -34,9 +34,9 @@ try:
     # Werkzeug <2.1
     from werkzeug import security
 
-    security.safe_str_cmp
+    security.safe_str_cmp  # noqa: B018
 except AttributeError:
-    # Werkzeug >=2.1
+    # Werkzeug >=2.1  # noqa: ERA001
     import hmac
 
     from werkzeug import security
@@ -106,7 +106,7 @@ def app_config(app_config):
     app_config["VOCABULARIES_TYPES_SERVICE_CLASS"] = VocabularyTypeService
 
     app_config["VOCABULARIES_SERVICE_CLASS"] = VocabulariesService
-    # app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
+    # app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]  # noqa: ERA001
     app_config["OAREPO_PERMISSIONS_PRESETS"] = {}
     app_config["OAREPO_VOCABULARIES_SPECIALIZED_SERVICES"] = {
         "names": "names",
@@ -174,10 +174,10 @@ def app_config(app_config):
     app_config["THEME_HEADER_TEMPLATE"] = "oarepo_vocabularies_ui/test_header_template.html"
 
     app_config["ORCID_CLIENT_ID"] = "blah"
-    app_config["ORCID_CLIENT_SECRET"] = "blah"
+    app_config["ORCID_CLIENT_SECRET"] = "blah"  # noqa: S105
 
     app_config["OPENAIRE_CLIENT_ID"] = "blah"
-    app_config["OPENAIRE_CLIENT_SECRET"] = "blah"
+    app_config["OPENAIRE_CLIENT_SECRET"] = "blah"  # noqa: S105
 
     return app_config
 
@@ -190,7 +190,7 @@ def create_app(instance_path, entry_points):
 
 @pytest.fixture(scope="module")
 def identity_simple():
-    """Simple identity fixture."""
+    """Simple identity fixture."""  # noqa: D401
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(Need(method="system_role", value="any_user"))
@@ -199,7 +199,7 @@ def identity_simple():
 
 @pytest.fixture(scope="module")
 def identity():
-    """Simple identity to interact with the service."""
+    """Simple identity to interact with the service."""  # noqa: D401
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(any_user)
@@ -213,7 +213,6 @@ def service(app):
     from invenio_vocabularies.proxies import current_service
 
     return current_service
-    # return app.extensions["invenio-vocabularies"].service
 
 
 @pytest.fixture
@@ -240,9 +239,9 @@ def ror_authority_type(db):
     return v
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def lang_data():
-    """Example data."""
+    """Example data."""  # noqa: D401
     return {
         "id": "eng",
         "title": {"en": "English", "da": "Engelsk", "cs": "Angličtina"},
@@ -256,9 +255,9 @@ def lang_data():
     }
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def lang_data_child():
-    """Example data."""
+    """Example data."""  # noqa: D401
     return {
         "id": "eng.US",
         "title": {
@@ -274,15 +273,15 @@ def lang_data_child():
 
 @pytest.fixture
 def lang_data2(lang_data):
-    """Example data for testing invalid cases."""
+    """Example data for testing invalid cases."""  # noqa: D401
     data = dict(lang_data)
     data["id"] = "new"
     return data
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def lang_data3():
-    """Example data for testing another case."""
+    """Testing data."""  # noqa: D401
     vocabulary_data = {
         "a": {
             "id": "a",
@@ -322,7 +321,7 @@ def lang_data3():
 
 @pytest.fixture
 def example_record(db, identity, service, example_data):
-    """Example record."""
+    """Record example."""
     vocabulary_type_languages = VocabularyType(name="languages")
     vocabulary_type_licenses = VocabularyType(name="licenses")
     db.session.add(vocabulary_type_languages)
@@ -396,7 +395,7 @@ def example_ror_record():
     }
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def lang_data_many(lang_type, lang_data, service, identity):
     """Create many language vocabulary."""
     lang_ids = ["fr", "tr", "gr", "ger", "es"]
@@ -447,7 +446,7 @@ def client_with_credentials(db, client, user, role):
     return client
 
 
-# FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30
+# FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30  # noqa: FIX001, TD001
 # Without this, success of test depends on the tests order
 @pytest.fixture
 def cache():
@@ -520,7 +519,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         },
     )
     Vocabulary.index.refresh()
-    TN = namedtuple("TN", "node,children")
+    TN = namedtuple("TN", "node,children")  # noqa: PYI024
     return [
         TN(
             parent.data,
@@ -568,7 +567,7 @@ def fake_manifest(app):
 def vocabularies_ui_resource_config(app):
     class Cfg(InvenioVocabulariesUIResourceConfig):
         api_service = "vocabularies"  # must be something included in oarepo, as oarepo is used in tests
-        components = [DepositVocabularyOptionsComponent]
+        components = [DepositVocabularyOptionsComponent]  # noqa: RUF012
 
     return Cfg()
 
@@ -597,13 +596,13 @@ def simple_record_ui_resource(app):
 
 @pytest.fixture
 def reset_babel(app):
-    def clear_babel_context():
+    def clear_babel_context() -> None:
         # for invenio 12
         try:
             from flask_babel import SimpleNamespace
         except ImportError:
             return
-        g._flask_babel = SimpleNamespace()
+        g._flask_babel = SimpleNamespace()  # noqa: SLF001
 
     try:
         clear_babel_context()

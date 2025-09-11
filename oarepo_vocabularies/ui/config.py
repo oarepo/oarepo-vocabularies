@@ -6,6 +6,8 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""UI configuration for oarepo-vocabularies."""
+
 OAREPO_VOCABULARIES_UI_RESOURCE = "oarepo_vocabularies.ui.resources.resource:InvenioVocabulariesUIResource"
 OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG = "oarepo_vocabularies.ui.resources.config:InvenioVocabulariesUIResourceConfig"
 

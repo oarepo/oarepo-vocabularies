@@ -6,6 +6,8 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Import tasks for vocabularies."""
+
 import csv
 import io
 import shutil
@@ -15,7 +17,6 @@ from pathlib import Path
 
 import click
 import requests
-import tqdm
 import yaml
 from celery import shared_task
 from flask import current_app
@@ -25,7 +26,7 @@ from invenio_vocabularies.contrib.affiliations.models import AffiliationsMetadat
 
 
 @shared_task
-def import_ror_from_zenodo(uri="https://doi.org/10.5281/zenodo.6347574"):
+def import_ror_from_zenodo(uri: str = "https://doi.org/10.5281/zenodo.6347574") -> None:
     """Import ROR vocabulary from Zenodo.
 
     Args:
@@ -34,7 +35,7 @@ def import_ror_from_zenodo(uri="https://doi.org/10.5281/zenodo.6347574"):
 
     """
     # download ZIP with ROR dump from Zenodo
-    tmp_ror_file = Path("/tmp/ror.zip")
+    tmp_ror_file = Path("/tmp/ror.zip")  # noqa: S108
     if tmp_ror_file.exists():
         click.secho(f"Removing {tmp_ror_file}", fg="yellow")
         tmp_ror_file.unlink()
@@ -44,7 +45,7 @@ def import_ror_from_zenodo(uri="https://doi.org/10.5281/zenodo.6347574"):
     records_not_added_by_ror = get_records_not_added_by_ror()
 
     # convert ROR dump to YAML, and filter out records that are not added by ROR
-    tmp_ror_converted_dir = Path("/tmp/ror-converted")
+    tmp_ror_converted_dir = Path("/tmp/ror-converted")  # noqa: S108
     if tmp_ror_converted_dir.exists():
         click.secho(f"Removing {tmp_ror_converted_dir}", fg="yellow")
         shutil.rmtree(tmp_ror_converted_dir)
@@ -65,18 +66,14 @@ affiliations:
     # and load it
 
     with current_app.wsgi_app.mounts["/api"].app_context():
-        # callback = TQDMCallback(verbose=True)
+        # create a callback
         raise ValueError("Import ror from zenodo called")
-        # load_fixtures(
-        #    str(tmp_ror_converted_dir),
-        #    system_fixtures=False,
-        #    callback=callback,
-        # )
-        # _show_stats(callback, "Load ROR data")
+        # load fixtures here
 
 
-def convert_ror(tmp_ror_file: Path, output: Path, records_not_added_by_ror: dict[str, str]):
-    with open(output, "w", encoding="utf-8") as out_f:
+def convert_ror(tmp_ror_file: Path, output: Path, records_not_added_by_ror: dict[str, str]) -> None:
+    """Convert ROR dump to YAML."""
+    with Path.open(output, "w", encoding="utf-8") as out_f:
         yaml.safe_dump_all(
             get_affiliation_records(tmp_ror_file, records_not_added_by_ror),
             out_f,
@@ -88,6 +85,7 @@ def convert_ror(tmp_ror_file: Path, output: Path, records_not_added_by_ror: dict
 def get_affiliation_records(
     tmp_ror_file: Path, records_not_added_by_ror: dict[str, str]
 ) -> typing.Generator[dict[str, typing.Any]]:
+    """Get affiliation records from ROR dump."""
     # unzip the file to get the csv file and open it
     with zipfile.ZipFile(tmp_ror_file, "r") as zip_ref:
         zf = [x for x in zip_ref.namelist() if x.endswith("schema_v2.csv")]
@@ -147,32 +145,38 @@ def ror_to_multidict(name: str) -> dict[str, str]:
 
     """
     with_lang = [x.strip() for x in name.split(";")]
-    return {x.split(":")[0].strip(): x.split(":")[1].strip() for x in with_lang if len(x.split(":")) == 2}
+    return {x.split(":")[0].strip(): x.split(":")[1].strip() for x in with_lang if len(x.split(":")) == 2}  # noqa: PLR2004
 
 
-def download_ror(uri: str, tmp_ror_file: Path):
-    resp = requests.get(uri)
-    if resp.status_code != 200:
+def download_ror(uri: str, tmp_ror_file: Path) -> None:
+    """Download ROR dump from Zenodo."""
+    resp = requests.get(uri, timeout=10)
+    if resp.status_code != 200:  # noqa: PLR2004
         raise click.ClickException(f"Failed to download {uri}: {resp.status_code}")
+
     # get link header with content type application/json
     zip_url = resp.links["item"]["url"]
     # download the zip file and store it as /tmp/ror.zip
-    zip_resp = requests.get(zip_url, stream=True)
-    if zip_resp.status_code != 200:
+    zip_resp = requests.get(zip_url, stream=True, timeout=10)
+    if zip_resp.status_code != 200:  # noqa: PLR2004
         raise click.ClickException(f"Failed to download {zip_url}: {zip_resp.status_code}")
     click.secho(f"Downloading {zip_url} to {tmp_ror_file}", fg="yellow")
-    with open(tmp_ror_file, "wb") as f:
-        f.writelines(tqdm.tqdm(
-            zip_resp.iter_content(chunk_size=8192),
-            total=int(zip_resp.headers.get("Content-Length", 0)) // 8192,
-            unit="chunk",
-            leave=False,
-        ))
+
+    with Path.open(tmp_ror_file, "wb") as f:
+        f.writelines(
+            tqdm.tqdm(
+                zip_resp.iter_content(chunk_size=8192),
+                total=int(zip_resp.headers.get("Content-Length", 0)) // 8192,
+                unit="chunk",
+                leave=False,
+            )
+        )
     click.secho(f"Downloaded {zip_url} to {tmp_ror_file}", fg="green")
 
 
 @typing.no_type_check
 def get_records_not_added_by_ror() -> dict[str, str]:
+    """Get records not added by ROR downloader."""
     not_from_ror_records: dict[str, str] = {}
     click.secho("Filtering records not added by ROR downloader", fg="yellow")
 

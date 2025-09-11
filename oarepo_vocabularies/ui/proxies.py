@@ -6,6 +6,8 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""UI proxies for oarepo-vocabularies."""
+
 from flask import current_app
 from werkzeug.local import LocalProxy
 

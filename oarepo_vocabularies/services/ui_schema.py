@@ -6,16 +6,20 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Schemas for vocabularies UI."""
+
+from __future__ import annotations
+
 import copy
 from functools import partial
+from typing import TYPE_CHECKING, Any
 
 import marshmallow as ma
 import marshmallow_utils
 from flask import current_app
 from invenio_i18n import get_locale
 
-# from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI  # udelat znova
-# from oarepo_runtime.services.schema.ui import LocalizedDateTime  # copy paste z modelu
+# TODO: udelat znova from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
 from invenio_records_resources.services.custom_fields.schema import (
     CustomFieldsSchemaUI as InvenioCustomFieldsSchemaUI,
 )
@@ -24,16 +28,19 @@ from invenio_vocabularies.services.schema import (
 )
 from marshmallow import fields as ma_fields
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
+
 
 class LocalizedDateTime(ma.fields.Field):
-    """A Marshmallow field that provides localized datetime formatting.
-    """
+    """A Marshmallow field that provides localized datetime formatting."""
 
-    def __init__(self, attribute, **kwargs):
+    def __init__(self, attribute: str, **kwargs: Any) -> None:
+        """Initialize the LocalizedDateTime field."""
         super().__init__(**kwargs)
         self.attribute = attribute
 
-    def _serialize(self, value, attr, obj, **kwargs):
+    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:  # noqa: ARG002
         return {
             f"{self.attribute}_l10n_long": marshmallow_utils.fields.FormatDate(
                 attribute=self.attribute,
@@ -55,20 +62,23 @@ class LocalizedDateTime(ma.fields.Field):
 
 
 class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
-    def _serialize(self, obj, **kwargs):
+    """Custom fields schema for UI."""
+
+    def _serialize(self, obj: Any, **kwargs: Any) -> Any:
         self._schema.context.update(self.context)
         return super()._serialize(obj, **kwargs)
 
-    def _deserialize(self, data, **kwargs):
+    def _deserialize(self, data: Mapping[str, Any] | Iterable[Mapping[str, Any]], **kwargs: Any) -> Any:
         self._schema.context.update(self.context)
         return super()._deserialize(data, **kwargs)
 
 
 class VocabularyI18nStrUIField(ma_fields.Field):
-    def _serialize(self, value, attr, obj, **kwargs):
+    """A Marshmallow field that provides localized string from i18n dict."""
+
+    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> Any:  # noqa: ARG002
         if not value:
             return None
-        # locale = self.context["locale"]
         locale = self.get_locale()
         if locale:
             language = locale.language
@@ -79,7 +89,8 @@ class VocabularyI18nStrUIField(ma_fields.Field):
             return value[locale]
         return next(iter(value.values()))
 
-    def get_locale(self):
+    def get_locale(self) -> Any:
+        """Get locale from context or current locale."""
         if "locale" in self.context:
             return self.context["locale"]
         locale = get_locale()
@@ -98,10 +109,12 @@ class HierarchyUISchema(ma.Schema):
 
 
 class VocabularyUISchema(InvenioVocabularySchema):
-    CUSTOM_FIELDS_VAR = "VOCABULARIES_CF"
+    """Vocabulary UI schema."""
+
     hierarchy = ma_fields.Nested(partial(CustomFieldsSchemaUI, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF"))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the vocabulary UI schema."""
         super().__init__(*args, **kwargs)
 
     created = LocalizedDateTime("created", dump_only=True)
@@ -114,8 +127,11 @@ class VocabularyUISchema(InvenioVocabularySchema):
 
 
 class VocabularySpecializedUISchema(VocabularyUISchema):
+    """Specialized vocabulary schema."""
+
     @ma.post_dump(pass_many=False, pass_original=True)
-    def dump_extra_fields(self, data, original_data, **kwargs):
+    def dump_extra_fields(self, data: dict, original_data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
+        """Dump extra fields from original data."""
         for k, v in original_data.items():
             if k not in data:
                 data[k] = copy.deepcopy(v)

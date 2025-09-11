@@ -6,6 +6,12 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+"""Custom fields for hierarchy in vocabularies."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from invenio_records_resources.services.custom_fields import BooleanCF
 from invenio_records_resources.services.custom_fields.base import BaseCF
 from invenio_records_resources.services.custom_fields.number import IntegerCF
@@ -15,39 +21,56 @@ from marshmallow import fields as ma_fields
 
 from oarepo_vocabularies.services.ui_schema import VocabularyI18nStrUIField
 
+if TYPE_CHECKING:
+    from invenio_records_resources.records.api import Record
+
 
 class HierarchyCF:
-    def update(self, record, parent):
-        pass
+    """Base class for hierarchy custom fields."""
+
+    def update(self, record: Record, parent: Record | None) -> None:
+        """Update the record with hierarchy information."""
 
 
 class HierarchyLevelCF(HierarchyCF, IntegerCF):
-    def update(self, record, parent):
+    """Hierarchy level custom field."""
+
+    def update(self, record: Record, parent: Record | None) -> None:
+        """Update the record with hierarchy level information."""
         record.hierarchy["level"] = (parent["hierarchy"]["level"] + 1) if parent else 1
 
 
 class HierarchyTitleCF(HierarchyCF, BaseCF):
-    def update(self, record, parent):
+    """Hierarchy title custom field."""
+
+    def update(self, record: Record, parent: Record | None) -> None:
+        """Update the record with hierarchy title information."""
         titles = [record["title"]] if record.get("title") else []
         if parent:
             titles.extend(parent["hierarchy"]["title"])
         record.hierarchy["title"] = titles
 
     @property
-    def mapping(self):
+    def mapping(self) -> dict:
+        """Return the Elasticsearch mapping for the field."""
         return {"type": "object", "dynamic": True}
 
     @property
-    def field(self):
+    def field(self) -> ma_fields.List:
+        """Return the Marshmallow field for the field."""
         return ma_fields.List(i18n_strings)
 
     @property
-    def ui_field(self):
+    def ui_field(self) -> ma_fields.List:
+        """Return the Marshmallow UI field for the field."""
         return ma_fields.List(VocabularyI18nStrUIField())
 
 
 class HierarchyAncestorsCF(HierarchyCF, KeywordCF):
-    def update(self, record, parent):
+    """Hierarchy ancestors custom field."""
+
+    def update(self, record: Record, parent: Record | None) -> None:
+        """Update the record with hierarchy ancestors information."""
         if parent:
             record.hierarchy["ancestors"] = [
                 parent["id"],
@@ -58,7 +81,10 @@ class HierarchyAncestorsCF(HierarchyCF, KeywordCF):
 
 
 class HierarchyAncestorsOrSelfCF(HierarchyCF, KeywordCF):
-    def update(self, record, parent):
+    """Hierarchy ancestors or self custom field."""
+
+    def update(self, record: Record, parent: Record | None) -> None:
+        """Update the record with hierarchy ancestors or self information."""
         if parent:
             record.hierarchy["ancestors_or_self"] = [
                 record["id"],
@@ -69,7 +95,10 @@ class HierarchyAncestorsOrSelfCF(HierarchyCF, KeywordCF):
 
 
 class HierarchyLeafCF(HierarchyCF, BooleanCF):
-    def update(self, record, parent):
+    """Hierarchy leaf custom field."""
+
+    def update(self, record: Record, parent: Record | None) -> None:  # noqa: ARG002
+        """Update the record with hierarchy leaf information."""
         # initial value
         if "leaf" not in record.hierarchy:
             record.hierarchy["leaf"] = True

@@ -97,7 +97,7 @@ def test_openaire_provider_get(app, openaire_provider):
 
 @pytest.mark.skip(reason="Skip authorities for now")
 def test_json_schema_validation(app, openaire_provider):
-    with open(Path(__file__).parent / "schemas" / "award-v1.0.0.json") as f:
+    with Path.open(Path(__file__).parent / "schemas" / "award-v1.0.0.json") as f:
         schema = json.load(f)
 
     items, _ = openaire_provider.search(identity=None, params={"q": "a"})
@@ -108,5 +108,4 @@ def test_json_schema_validation(app, openaire_provider):
         try:
             jsonschema.validate(item, schema)
         except jsonschema.ValidationError as e:
-            print(e)
-            assert False
+            raise AssertionError from e

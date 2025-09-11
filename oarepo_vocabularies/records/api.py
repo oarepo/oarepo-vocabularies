@@ -8,10 +8,11 @@
 #
 """oarepo_vocabularies records API module."""
 
-import inspect
-from collections import namedtuple
+from __future__ import annotations
 
-from flask import current_app
+import inspect
+from typing import TYPE_CHECKING, NamedTuple
+
 from invenio_records.systemfields import ConstantField, DictField, RelationsField
 from invenio_records.systemfields.relations import MultiRelationsField
 from invenio_records_resources.records.systemfields.pid import PIDField
@@ -19,7 +20,6 @@ from invenio_vocabularies.records.api import Vocabulary as InvenioVocabulary
 from invenio_vocabularies.records.pidprovider import VocabularyIdProvider
 from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
 from invenio_vocabularies.records.systemfields.relations import CustomFieldsRelation
-from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
 
 from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 from oarepo_vocabularies.records.systemfields.hierarchy_system_field import (
@@ -33,9 +33,17 @@ from oarepo_vocabularies.records.systemfields.relations import (
     ParentVocabularyPIDField,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from invenio_records_resources.records.api import Record
+
 
 class SpecialVocabulariesAwarePIDFieldContext(VocabularyPIDFieldContext):
-    def resolve(self, pid_value):
+    """A PIDFieldContext that is aware of special vocabularies."""
+
+    def resolve(self, pid_value: str | tuple[str, str]) -> Record | None:
+        """Resolve the PID value to a record, considering special vocabularies."""
         if isinstance(pid_value, str):
             pid_type = self._type_id
             item_id = pid_value
@@ -48,38 +56,11 @@ class SpecialVocabulariesAwarePIDFieldContext(VocabularyPIDFieldContext):
         return specialized_service.config.record_cls.pid.resolve(item_id)
 
 
-class CustomFieldsMixin(MappingSystemFieldMixin):
-    def __init__(self, config_key, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.config_key = config_key
-
-    @property
-    def mapping(self):
-        custom_fields = current_app.config[self.config_key]
-        return {cf.name: cf.mapping for cf in custom_fields}
-
-    @property
-    def mapping_settings(self):
-        return {}
-
-    def search_dump(self, data, record):
-        custom_fields = current_app.config.get(self.config_key, {})
-
-        for cf in custom_fields:
-            cf.dump(data, cf_key=self.key)
-        return data
-
-    def search_load(self, data, record_cls):
-        custom_fields = current_app.config.get(self.config_key, {})
-
-        for cf in custom_fields:
-            cf.load(data, cf_key=self.key)
-        return data
-
-
 class Vocabulary(
     InvenioVocabulary,
 ):
+    """Vocabulary record class with hierarchy and parent system fields."""
+
     pid = PIDField(
         "id",
         provider=VocabularyIdProvider,
@@ -104,17 +85,18 @@ class Vocabulary(
     parent = ParentSystemField()
 
     hierarchy = HierarchySystemField()
-    # sort = ICUSortField(source_field="title")
-    # suggest = ICUSuggestField(source_field="title")
-    # suggest_hierarchy = ICUSuggestField(source_field="hierarchy.title")
+    # TODO: ICU sort field for title
+    # TODO: ICU suggest field for title
+    # TODO: ICU suggest field for suggest hierarchy title
 
     custom_fields = DictField()
 
 
-VocabularyRelation = namedtuple("VocabularyRelation", "field_name, field, vocabulary_type")
+VocabularyRelation = NamedTuple("VocabularyRelation", "field_name, field, vocabulary_type")
 
 
-def find_vocabulary_relations(record):
+def find_vocabulary_relations(record: Record) -> Iterable[VocabularyRelation]:
+    """Find all vocabulary relations in a record."""
     relations_field_names = [x[0] for x in inspect.getmembers(type(record), lambda x: isinstance(x, RelationsField))]
 
     for relations_field_name in relations_field_names:
@@ -126,7 +108,7 @@ def find_vocabulary_relations(record):
             fld = getattr(relations, fld_name)
             try:
                 pid_context = fld.field.pid_field
-            except:
+            except AttributeError:
                 continue
             if isinstance(pid_context, VocabularyPIDFieldContext):
-                yield VocabularyRelation(fld_name, fld, pid_context._type_id)
+                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa: SLF001

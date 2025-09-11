@@ -6,14 +6,16 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-import dataclasses
-import inspect
+"""Search for oarepo-vocabularies."""
+
+from __future__ import annotations
+
 from collections import defaultdict
 from functools import partial
+from typing import TYPE_CHECKING, ClassVar, Self
 
 from invenio_i18n import get_locale
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.records import (
     SearchOptions as InvenioSearchOptions,
 )
@@ -22,21 +24,23 @@ from invenio_records_resources.services.records.params import (
     ParamInterpreter,
 )
 from invenio_records_resources.services.records.queryparser import QueryParser
-
-# from oarepo_runtime.services.search import (
-# ICUSortOptions,
-# ICUSuggestParser,
-# SuggestField,
-# )
 from opensearch_dsl import query
 from opensearch_dsl.query import Bool, Range, Term, Terms
+
+if TYPE_CHECKING:
+    from flask_principal import Identity
+    from invenio_records_resources.services.base import ServiceConfig
+    from opensearch_dsl import Search
 
 TYPE_ID_FIELD = "type.id"
 ID_FIELD = "id"
 
 
 class VocabularyQueryParser(QueryParser):
-    def parse(self, query_str):
+    """Parser for search queries."""
+
+    def parse(self, query_str: str) -> query.Query:
+        """Parse the query string, adding language-specific fields."""
         original_parsed_query = super().parse(query_str)
         current_locale = get_locale()
         if current_locale:
@@ -65,7 +69,8 @@ class VocabularyQueryParser(QueryParser):
 class SourceParam(ParamInterpreter):
     """Evaluate the 'q' or 'suggest' parameter."""
 
-    def apply(self, identity, search, params):
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+        """Apply the source parameter."""
         source = params.get("source")
         if not source:
             return search
@@ -75,19 +80,19 @@ class SourceParam(ParamInterpreter):
 class UpdatedAfterParam(ParamInterpreter):
     """Evaluate type filter."""
 
-    def __init__(self, param_name, field_name, config):
+    def __init__(self, param_name: str, field_name: str, config: ServiceConfig):
         """."""
         self.param_name = param_name
         self.field_name = field_name
         super().__init__(config)
 
     @classmethod
-    def factory(cls, param=None, field=None):
+    def factory(cls, param: str | None = None, field: str | None = None) -> Self:
         """Create a new filter parameter."""
         return partial(cls, param, field)
 
-    def apply(self, identity, search, params):
-        """Applies a filter to get only records for a specific type."""
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+        """Apply a filter to get only records for a specific type."""
         # Pop because we don't want it to show up in links.
         # TODO: only pop if needed.
         value = params.pop(self.param_name, None)
@@ -112,7 +117,10 @@ class UpdatedAfterParam(ParamInterpreter):
 
 
 class VocabularyIdsParam(ParamInterpreter):
-    def apply(self, identity, search, params):
+    """Evaluate type filter."""
+
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+        """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
             return search
@@ -127,12 +135,16 @@ class VocabularyIdsParam(ParamInterpreter):
 
 
 class SpecializedVocabularyIdsParam(ParamInterpreter):
-    def __init__(self, config, vocabulary_type=None):
+    """Evaluate type filter."""
+
+    def __init__(self, config: ServiceConfig, vocabulary_type: str | None = None):
+        """Init the param."""
         super().__init__(config)
 
         self.vocabulary_type = vocabulary_type
 
-    def apply(self, identity, search, params):
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+        """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
             return search
@@ -143,54 +155,10 @@ class SpecializedVocabularyIdsParam(ParamInterpreter):
         return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))
 
 
-@dataclasses.dataclass
-class SortField:
-    option_name: str = "title"
-    icu_sort_field: str = "sort"
-    title: str = _("By Title")
-
-
-class ICUSortOptions:
-    def __init__(self, service_name):
-        self._service_name = service_name
-        self.fields = [SortField()]
-
-    @property
-    def service_name(self):
-        return current_service_registry.get(self._service_name).config.record_cls
-
-    def __get__(self, instance, owner):
-        if not inspect.isclass(owner):
-            owner = type(owner)
-        super_options = {}
-        for mro in list(owner.mro())[1:]:
-            if hasattr(mro, "sort_options"):
-                super_options = mro.sort_options
-                break
-
-        ret = {
-            **super_options,
-            **getattr(owner, "extra_sort_options", {}),
-        }
-
-        # transform the sort options by the current language
-        locale = get_locale()
-        if not locale:
-            return ret
-
-        language = locale.language
-
-        for sort_field in self.fields:
-            icu_field = getattr(self.service_name, sort_field.icu_sort_field)
-            ret[sort_field.option_name] = {
-                "title": sort_field.title,
-                "fields": [f"{icu_field.key}.{language}"],
-            }
-        return ret
-
-
 class VocabularySearchOptions(InvenioSearchOptions):
-    params_interpreters_cls = [
+    """Search options for vocabularies."""
+
+    params_interpreters_cls: ClassVar[list[ParamInterpreter]] = [
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
         VocabularyIdsParam,
@@ -204,29 +172,27 @@ class VocabularySearchOptions(InvenioSearchOptions):
     ]
     query_parser_cls = VocabularyQueryParser
 
-    extra_sort_options = {
-        "bestmatch": dict(
-            title=_("Best match"),
-            fields=["_score"],  # ES defaults to desc on `_score` field
-        ),
-        "title": dict(
-            title=_("Title"),
-            fields=["title_sort"],
-        ),
-        "newest": dict(
-            title=_("Newest"),
-            fields=["-created"],
-        ),
-        "oldest": dict(
-            title=_("Oldest"),
-            fields=["created"],
-        ),
+    extra_sort_options: ClassVar[dict[str, dict]] = {
+        "bestmatch": {
+            "title": _("Best match"),
+            "fields": ["_score"],  # ES defaults to desc on `_score` field
+        },
+        "title": {
+            "title": _("Title"),
+            "fields": ["title_sort"],
+        },
+        "newest": {
+            "title": _("Newest"),
+            "fields": ["-created"],
+        },
+        "oldest": {
+            "title": _("Oldest"),
+            "fields": ["created"],
+        },
     }
 
-    # sort_default_no_query = "title"
+    # TODO: define sort_default_no_query to "title"
+    # TODO: implement suggest_parser_cls
+    # TODO: icu sort options
 
-    suggest_parser_cls = None  # TODO
-    # sort_options TODO: icu sort options
-
-    # empty facet groups as we are inheriting from I18nSearchOptions
-    facet_groups = {}
+    facet_groups: ClassVar[dict[str, dict]] = {}

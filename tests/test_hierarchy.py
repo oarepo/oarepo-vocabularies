@@ -178,7 +178,7 @@ def test_hierarchy_change_parents_option1(app, db, cache, lang_type, vocab_cf, s
     # 1. a (root = main parent) -> b (second parent) -> c
     # 2. d
     # After changes: d has new parent b -> update d
-    d_rec, d_data = results["d"]
+    d_rec, _ = results["d"]
 
     d_rec.parent.set({"id": "b"})
     d_rec.commit()
@@ -218,7 +218,7 @@ def test_hierarchy_change_parents_option2(app, db, cache, lang_type, vocab_cf, s
     # 1. a (root = main parent) -> b (second parent) -> c
     # 2. d
     # After changes: d has new parent c -> update d, c is not leaf
-    d_rec, d_data = results["d"]
+    d_rec, _ = results["d"]
 
     d_rec.parent.set({"id": "c"})
     d_rec.commit()
@@ -270,7 +270,7 @@ def test_hierarchy_change_parents_option3(app, db, cache, lang_type, vocab_cf, s
     # 1. a (root = main parent) -> b (second parent) -> c
     # 2. d
     # After changes: c has no parent -> update c and b is leaf
-    c_rec, c_data = results["c"]
+    c_rec, _ = results["c"]
 
     b_rec = Vocabulary.get_record(results["b"][0].id)
 
@@ -330,7 +330,7 @@ def test_hierarchy_change_parents_option4(app, db, cache, lang_type, vocab_cf, s
     # 1. a (root = main parent) -> b (second parent) -> c
     # 2. d
     # After changes: d becomes parent of a -> update everything below a
-    a_rec, a_data = results["a"]
+    a_rec, _ = results["a"]
 
     a_rec.parent.set({"id": "d"})
     a_rec.commit()
@@ -387,7 +387,7 @@ def test_hierarchy_change_parents_option5(app, db, cache, lang_type, vocab_cf, s
     # 1. a (root = main parent) -> b (second parent) -> c
     # 2. d
     # After changes: c is deleted -> update leaf status b
-    c_rec, c_data = results["c"]
+    c_rec, _ = results["c"]
 
     c_rec.delete()
 
@@ -424,7 +424,7 @@ def test_hierarchy_change_parents_option6(app, db, cache, lang_type, vocab_cf, s
     # 1. a (root = main parent) -> b (second parent) -> c
     # 2. d
     # After changes: b is deleted -> update c parent and change its hierarchy
-    b_rec, b_data = results["b"]
+    b_rec, _ = results["b"]
 
     b_rec.delete()
 
@@ -510,7 +510,7 @@ def test_hierarchy_change_parents_option7(app, db, cache, lang_type, vocab_cf, s
         "parent": "c",
     }
 
-    a_rec, a_data = results["a"]
+    a_rec, _ = results["a"]
     a_rec.delete()
 
     b_updated = Vocabulary.get_record(results["b"][0].id)
@@ -567,7 +567,7 @@ def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, v
     parent = vocab_service.create(system_identity, lang_data)
     assert "parent" not in parent.links
 
-    assert parent._record.hierarchy.to_dict() == {
+    assert parent._record.hierarchy.to_dict() == {  # noqa: SLF001
         "level": 1,
         "titles": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
         "ancestors": [],
@@ -581,7 +581,7 @@ def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, v
     assert child.links["parent"] == "https://127.0.0.1:5000/api/vocabularies/languages/eng"
     assert parent.links["children"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-parent=eng"
     assert parent.links["descendants"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-ancestor=eng"
-    assert child._record.hierarchy.to_dict() == {
+    assert child._record.hierarchy.to_dict() == {  # noqa: SLF001
         "level": 2,
         "titles": [
             {
