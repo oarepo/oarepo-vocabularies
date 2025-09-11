@@ -8,6 +8,8 @@
 #
 """UI utils."""
 
+from __future__ import annotations
+
 from invenio_i18n import lazy_gettext as _
 
 

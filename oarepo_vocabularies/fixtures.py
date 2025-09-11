@@ -112,7 +112,7 @@ class AwardsWriter(BaseWriter):
         """Initialize the AwardsWriter."""
         super().__init__(**kwargs)
 
-    def write(self, batch: StreamEntry) -> None:
+    def write(self, batch: StreamEntry) -> Any:
         """Write the input entry to the target output."""
         awards_service = current_service_registry.get("awards")
 
@@ -143,7 +143,7 @@ class AwardsWriter(BaseWriter):
         """Finish the writing process."""
 
     @functools.lru_cache(maxsize=1024)  # noqa: B019
-    def lookup_funder_name(self, funder_id: str) -> str:
+    def lookup_funder_name(self, funder_id: str) -> Any:
         """Lookup funder name by id."""
         funder = FundersMetadata.query.filter_by(pid=funder_id).one()
         return funder.json["name"]
@@ -156,7 +156,7 @@ class NamesWriter(BaseWriter):
         """Initialize the NamesWriter."""
         super().__init__(**kwargs)
 
-    def write(self, batch: StreamEntry) -> None:
+    def write(self, batch: StreamEntry) -> Any:
         """Write the input entry to the target output."""
         names_service = current_service_registry.get("names")
 
@@ -182,7 +182,7 @@ class NamesWriter(BaseWriter):
 
         return batch
 
-    def finish(self) -> None:
+    def finish(self) -> Any:
         """Finish the writing process."""
 
 
@@ -193,7 +193,7 @@ class AffiliationsWriter(BaseWriter):
         """Initialize the AffiliationsWriter."""
         super().__init__(**kwargs)
 
-    def write(self, batch: StreamEntry) -> None:
+    def write(self, batch: StreamEntry) -> Any:
         """Write the input entry to the target output."""
         affiliations_service = current_service_registry.get("affiliations")
 
@@ -217,5 +217,5 @@ class AffiliationsWriter(BaseWriter):
 
         return batch
 
-    def finish(self) -> None:
+    def finish(self) -> Any:
         """Finish the writing process."""

@@ -6,6 +6,8 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+from __future__ import annotations
+
 import marshmallow as ma
 from invenio_records_resources.services.custom_fields import BaseCF
 from invenio_vocabularies.services.schema import i18n_strings

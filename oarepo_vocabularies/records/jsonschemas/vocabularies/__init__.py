@@ -12,3 +12,5 @@
 # are added to it.
 #
 """JSON Schemas for vocabularies."""
+
+from __future__ import annotations

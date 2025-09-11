@@ -8,6 +8,8 @@
 #
 """Vocabulary type UI JSON serializer."""
 
+from __future__ import annotations
+
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
 

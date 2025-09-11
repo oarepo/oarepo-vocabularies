@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import functools
 from functools import cached_property
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.proxies import current_service_registry
@@ -102,7 +102,7 @@ class OARepoVocabularies:
         return None
 
     @cached_property
-    def specialized_services(self) -> dict:
+    def specialized_services(self) -> Any:
         """Return specialized services configuration."""
         return self.app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {})
 
@@ -113,10 +113,12 @@ class OARepoVocabularies:
             service=self.type_service,
         )
 
-    def get_config(self, vocabulary_name: dict) -> dict:
+    def get_config(self, vocabulary_name_or_dict: dict | str) -> Any:
         """Get specific vocabulary configuration."""
-        if isinstance(vocabulary_name, dict):
-            vocabulary_name = vocabulary_name.get("id")
+        if isinstance(vocabulary_name_or_dict, dict):
+            vocabulary_name = vocabulary_name_or_dict.get("id")
+        else:
+            vocabulary_name = vocabulary_name_or_dict
 
         vocabulary_type_metadata = self.app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {})
         return vocabulary_type_metadata.get(vocabulary_name, {})

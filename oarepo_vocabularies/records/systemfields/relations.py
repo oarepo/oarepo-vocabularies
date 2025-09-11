@@ -8,6 +8,8 @@
 #
 """System fields for relations in vocabularies."""
 
+from __future__ import annotations
+
 from invenio_records.systemfields.relations.results import RelationResult
 from invenio_records_resources.records.systemfields.relations import PIDRelation
 from invenio_vocabularies.records.api import Vocabulary

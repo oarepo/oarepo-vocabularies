@@ -8,6 +8,8 @@
 #
 """UI proxies for oarepo-vocabularies."""
 
+from __future__ import annotations
+
 from flask import current_app
 from werkzeug.local import LocalProxy
 

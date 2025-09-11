@@ -7,3 +7,5 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """UI Resources for vocabulary types."""
+
+from __future__ import annotations

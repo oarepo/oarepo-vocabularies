@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from flask import current_app, g
 from flask_resources import route
@@ -49,28 +49,31 @@ class VocabularyTypeUIResource(UIResource):
             ),
         ]
 
-    def list(self) -> str:
+    def list(self) -> Any:
         """Return vocabulary types page."""
         list_data = self.service.search(g.identity).to_dict()
 
         for specialized_service_type in current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}).values():
             specialized_service = current_oarepo_vocabularies.get_specialized_service(specialized_service_type)
 
-            specialized_vocabulary_data = specialized_service.search(g.identity).to_dict()
+            specialized_vocabulary_data = {}
+            if specialized_service is not None:
+                specialized_vocabulary_data = specialized_service.search(g.identity).to_dict()
 
-            list_data["hits"]["hits"].append(
-                {
-                    "count": specialized_vocabulary_data["hits"]["total"],
-                    "self_html": f"/vocabularies/{specialized_service_type}",
-                    "id": specialized_service_type,
-                    "name": current_app.config.get("OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {})
-                    .get(specialized_service_type, {})
-                    .get("name", {}),
-                    "description": current_app.config.get("OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {})
-                    .get(specialized_service_type, {})
-                    .get("description", {}),
-                }
-            )
+            if specialized_vocabulary_data:
+                list_data["hits"]["hits"].append(
+                    {
+                        "count": specialized_vocabulary_data["hits"]["total"],
+                        "self_html": f"/vocabularies/{specialized_service_type}",
+                        "id": specialized_service_type,
+                        "name": current_app.config.get("OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {})
+                        .get(specialized_service_type, {})
+                        .get("name", {}),
+                        "description": current_app.config.get("OAREPO_SPECIALIZED_VOCABULARIES_METADATA", {})
+                        .get(specialized_service_type, {})
+                        .get("description", {}),
+                    }
+                )
 
         config_metadata = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
         for item in list_data["hits"]["hits"]:
@@ -82,7 +85,7 @@ class VocabularyTypeUIResource(UIResource):
         # TODO: handle permissions UI way - better response than generic error
         serialized_list_data = self.config.ui_serializer.dump_list(list_data)
 
-        extra_context = {}
+        extra_context: dict = {}
         self.run_components(
             "before_ui_list",
             resource=self,

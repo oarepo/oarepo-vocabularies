@@ -107,7 +107,7 @@ class HierarchyObject:
     def __init__(self, record: Record):
         """Initialize the HierarchyObject."""
         self._record = record
-        self._hierarchy_data = self._record.model.hierarchy_metadata
+        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata
 
         if self._hierarchy_data is None:
             self._hierarchy_data = VocabularyHierarchy(
@@ -133,17 +133,17 @@ class HierarchyObject:
             "parent": self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None,
         }
 
-    def query_subterms(self) -> list[Vocabulary]:
+    def query_subterms(self) -> Any:
         """Get direct subterms of this record."""
         subterm_ids = self._hierarchy_data.get_direct_subterms_ids(self._record.id)
         return Vocabulary.get_records(subterm_ids)
 
-    def query_descendants(self) -> list[Vocabulary]:
+    def query_descendants(self) -> Any:
         """Get all descendants (children, grandchildren, etc.) of this record."""
         descendants_ids = self._hierarchy_data.get_subterms_ids(self._record.id)
         return Vocabulary.get_records(descendants_ids)
 
-    def query_ancestors(self) -> list[Vocabulary]:
+    def query_ancestors(self) -> Any:
         """Get all ancestors of this record."""
         ancestors_ids = self._hierarchy_data.get_ancestors_ids(self._record.id)
         return Vocabulary.get_records(ancestors_ids)

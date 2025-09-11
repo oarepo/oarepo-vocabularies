@@ -6,6 +6,10 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
@@ -13,7 +17,9 @@ from invenio_vocabularies.contrib.names.api import Name
 from invenio_vocabularies.proxies import current_service as vocab_service
 
 from oarepo_vocabularies.records.api import Vocabulary
-from oarepo_vocabularies.services.service import VocabulariesService
+
+if TYPE_CHECKING:
+    from oarepo_vocabularies.services.service import VocabulariesService
 
 vocab_service: VocabulariesService
 

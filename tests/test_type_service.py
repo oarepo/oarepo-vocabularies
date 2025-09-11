@@ -6,6 +6,8 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+from __future__ import annotations
+
 from oarepo_vocabularies.proxies import current_type_service as vocabulary_type_service
 
 

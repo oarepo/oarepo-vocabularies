@@ -8,6 +8,10 @@
 #
 """oarepo_vocabularies configuration."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from invenio_records_resources.services.custom_fields.text import KeywordCF
 
 from oarepo_vocabularies.fixtures import (
@@ -27,9 +31,12 @@ from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.permissions import VocabulariesPermissionPolicy
 from oarepo_vocabularies.services.service import VocabularyTypeService
 
+if TYPE_CHECKING:
+    from invenio_records_resources.services.custom_fields import BaseCF
+
 OAREPO_VOCABULARIES_PERMISSIONS_PRESETS = {"vocabularies": VocabulariesPermissionPolicy}
 
-INVENIO_VOCABULARY_TYPE_METADATA = {}
+INVENIO_VOCABULARY_TYPE_METADATA: dict[str, dict[str, Any]] = {}
 
 OAREPO_VOCABULARIES_HIERARCHY_CF = [
     hierarchy.HierarchyLevelCF("level"),
@@ -40,11 +47,11 @@ OAREPO_VOCABULARIES_HIERARCHY_CF = [
     KeywordCF("parent"),
 ]
 
-OAREPO_VOCABULARIES_SORT_CF = []
+OAREPO_VOCABULARIES_SORT_CF: list[str] = []
 
-OAREPO_VOCABULARIES_SUGGEST_CF = []
+OAREPO_VOCABULARIES_SUGGEST_CF: list[str] = []
 
-VOCABULARIES_CF = []
+VOCABULARIES_CF: list[type[BaseCF]] = []
 
 OAREPO_VOCABULARY_TYPE_SERVICE = VocabularyTypeService
 OAREPO_VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig

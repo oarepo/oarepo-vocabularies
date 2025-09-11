@@ -6,6 +6,8 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+from __future__ import annotations
+
 from invenio_vocabularies.records.models import VocabularyMetadata
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy

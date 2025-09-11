@@ -8,7 +8,12 @@
 #
 """Create UI blueprints."""
 
-from flask import Blueprint, Flask
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from flask import Blueprint, Flask
 
 from oarepo_vocabularies.ui.proxies import current_ui
 

@@ -54,7 +54,7 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         super().__set_name__(owner, name)
         self._dict_field.__set_name__(owner, name)
 
-    def __get__(self, record: Record, owner: Any = None) -> ParentObject:
+    def __get__(self, record: Record, owner: Any = None) -> Any:
         """Get the parent field value or cached value."""
         if record is None:
             return self

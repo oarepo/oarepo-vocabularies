@@ -10,13 +10,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import Any, ClassVar
 
 from invenio_base.utils import obj_or_import_string
 from oarepo_ui.resources import UIResourceConfig
-
-if TYPE_CHECKING:
-    from oarepo_vocabularies.resources.ui import VocabularyTypeUIJSONSerializer
 
 
 class VocabularyTypeUIResourceConfig(UIResourceConfig):
@@ -33,6 +30,6 @@ class VocabularyTypeUIResourceConfig(UIResourceConfig):
     routes: ClassVar[dict[str, str]] = {"list": "/"}
 
     @property
-    def ui_serializer(self) -> VocabularyTypeUIJSONSerializer:
+    def ui_serializer(self) -> Any:
         """Return an instance of the serializer class."""
         return obj_or_import_string(self.ui_serializer_class)()

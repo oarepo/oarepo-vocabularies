@@ -8,6 +8,8 @@
 #
 """Import tasks for vocabularies."""
 
+from __future__ import annotations
+
 import csv
 import io
 import shutil
@@ -17,6 +19,7 @@ from pathlib import Path
 
 import click
 import requests
+import tqdm
 import yaml
 from celery import shared_task
 from flask import current_app

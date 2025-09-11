@@ -8,6 +8,8 @@
 #
 """Webpack theme definition."""
 
+from __future__ import annotations
+
 from invenio_assets.webpack import WebpackThemeBundle
 
 theme = WebpackThemeBundle(

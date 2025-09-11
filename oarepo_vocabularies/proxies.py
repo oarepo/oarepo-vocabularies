@@ -8,6 +8,8 @@
 #
 """Oarepo vocabularies proxies."""
 
+from __future__ import annotations
+
 import typing
 
 from flask import current_app
@@ -23,11 +25,11 @@ def _ext_proxy(attr: str) -> LocalProxy:
     return LocalProxy(lambda: getattr(current_app.extensions["oarepo-vocabularies"], attr))
 
 
-current_oarepo_vocabularies: "OARepoVocabularies" = LocalProxy(  # type: ignore  # noqa: PGH003
+current_oarepo_vocabularies: OARepoVocabularies = LocalProxy(  # type: ignore  # noqa: PGH003
     lambda: current_app.extensions["oarepo-vocabularies"]
 )
 
-current_type_service: "VocabularyTypeService" = _ext_proxy("type_service")  # type: ignore  # noqa: PGH003
+current_type_service: VocabularyTypeService = _ext_proxy("type_service")  # type: ignore  # noqa: PGH003
 """Proxy to the instantiated vocabulary type service."""
 
-current_ui_vocabulary_cache: "UIVocabularyCache" = _ext_proxy("ui_cache")  # type: ignore  # noqa: PGH003
+current_ui_vocabulary_cache: UIVocabularyCache = _ext_proxy("ui_cache")  # type: ignore  # noqa: PGH003

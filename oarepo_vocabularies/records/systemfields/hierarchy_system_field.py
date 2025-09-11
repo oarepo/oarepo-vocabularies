@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 class HierarchySystemField(MappingSystemFieldMixin, SystemField):
     """System field handling the VocabularyHierarchy hierarchy fields fixes on create/update/delete of a record."""
 
-    def __get__(self, record: Record, owner: Any = None) -> HierarchyObject:
+    def __get__(self, record: Record, owner: Any = None) -> Any:
         """Get the hierarchy field value or cached value."""
         if record is None:
             return self

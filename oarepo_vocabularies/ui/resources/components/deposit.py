@@ -151,7 +151,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         return vocabularies_to_prefetch, form_config_vocabularies
 
 
-def json_default(x: Any) -> str:
+def json_default(x: Any) -> Any:
     """Return json default value for json dumps."""
     if hasattr(x, "name"):
         return x.name

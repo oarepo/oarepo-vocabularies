@@ -69,7 +69,7 @@ class NonDangerousVocabularyOperation(ConditionalGenerator):
             else_ = [else_]
         super().__init__(then_, else_)
 
-    def _condition(self, **kwargs: Any) -> bool:
+    def _condition(self, **kwargs: Any) -> Any:
         """Condition to choose generators set."""
         if "data" not in kwargs:
             raise ValueError(

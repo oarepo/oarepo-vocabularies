@@ -52,15 +52,15 @@ class VocabularyHierarchy(db.Model):
 
     pid = db.Column(db.String(255), nullable=False, unique=False)
 
-    level = db.Column(db.Integer, default=1, nullable=False)
+    level: int = db.Column(db.Integer, default=1, nullable=False)
 
-    titles = db.Column(db.JSON, default=list, nullable=False)
+    titles: list = db.Column(db.JSON, default=list, nullable=False)
 
-    ancestors = db.Column(db.JSON, default=list, nullable=False)
+    ancestors: list = db.Column(db.JSON, default=list, nullable=False)
 
-    ancestors_or_self = db.Column(db.JSON, default=list, nullable=False)
+    ancestors_or_self: list = db.Column(db.JSON, default=list, nullable=False)
 
-    leaf = db.Column(db.Boolean, default=True, nullable=False)
+    leaf: bool = db.Column(db.Boolean, default=True, nullable=False)
 
     def fix_hierarchy_on_self(self) -> None:
         """Fix hierarchy data on this record based on its parent."""

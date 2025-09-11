@@ -8,6 +8,8 @@
 #
 """Translations for vocabularies."""
 
+from __future__ import annotations
+
 from gettext import gettext as _
 
 _("vocabulary.names")

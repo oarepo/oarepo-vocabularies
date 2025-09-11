@@ -8,6 +8,8 @@
 #
 """CLI commands for vocabularies."""
 
+from __future__ import annotations
+
 import click
 from oarepo_runtime.cli import oarepo
 

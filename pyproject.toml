@@ -18,6 +18,7 @@ dependencies = [
     "cachetools",
     "orcid",
     "oarepo[rdm,tests]>=13,<14",
+    tqdm
 ]
 
 [project.urls]

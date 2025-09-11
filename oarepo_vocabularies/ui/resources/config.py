@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, cast
 
 import marshmallow as ma
 from flask import current_app
@@ -36,7 +36,7 @@ from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping
+    from collections.abc import Mapping
     from typing import Any, ClassVar
 
     from flask.typing import ErrorHandlerCallable
@@ -65,7 +65,7 @@ class VocabularyTypeValidationSchema(ma.Schema):
 
     vocabulary_type = ma.fields.String()
 
-    def load(self, data: Mapping[str, Any] | Iterable[Mapping[str, Any]], *args: Any, **kwargs: Any) -> dict | None:  # noqa: ARG002
+    def load(self, data: Mapping[str, Any], *args: Any, **kwargs: Any) -> dict | None:  # noqa: ARG002
         """Load marshmallow data and validate vocabulary type existence."""
         vocabulary_type = data.get("vocabulary_type")
         # TODO: this will not be needed once specialized vocabs get their own resource
@@ -139,15 +139,21 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
             "create": Link("{+ui}{+url_prefix}{type}/_new"),
         }
 
-    def vocabulary_props_config(self, vocabulary_type: str) -> dict:
+    def vocabulary_props_config(self, vocabulary_type: str) -> Any:
         """Get vocabulary properties config for a vocabulary type if available."""
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabulary_type, {})
 
-    def _get_custom_fields_ui_config(self, key: str, view_args: dict | None = None) -> list:
+    def _get_custom_fields_ui_config(self, key: str, view_args: dict | None = None) -> Any:
         """Get custom fields config for a vocabulary type if available."""
         if key == "OAREPO_VOCABULARIES_HIERARCHY_CF":
             return []
-        return current_app.config.get("VOCABULARIES_CF_UI", {}).get(view_args["vocabulary_type"], [])
+
+        vocab_type = view_args.get("vocabulary_type") if view_args else None
+        vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
+        vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
+        if vocab_type is not None:
+            return vocabularies_cf_ui.get(vocab_type, [])
+        return []
 
     def _get_specialized_service_config(self, vocabulary_type: str) -> Service | None:
         """Get specialized service for a vocabulary type if available.
@@ -170,9 +176,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         specialized_service = self._get_specialized_service_config(vocabulary_type)
 
         if specialized_service:
-            return specialized_service.config.search.sort_options
+            return cast("dict", specialized_service.config.search.sort_options)
 
-        return api_config.search.sort_options
+        return cast("dict", api_config.search.sort_options)
 
     def search_active_sort_options(self, api_config: ServiceConfig) -> list:
         """Get the active sort options for the current vocabulary type."""

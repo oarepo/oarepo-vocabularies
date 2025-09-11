@@ -7,3 +7,5 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """Record package for vocabularies."""
+
+from __future__ import annotations

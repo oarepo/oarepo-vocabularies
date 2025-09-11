@@ -223,7 +223,7 @@ class VocabulariesService(InvenioVocabulariesService):
             return specialized_service.read(identity=identity, id_=id_[1], expand=expand, action=action, **kwargs)
         return super().read(identity=identity, id_=id_, expand=expand, action=action, **kwargs)
 
-    def exists(self, identity: Identity, id_: tuple[str, str], **kwargs: Any) -> bool:
+    def exists(self, identity: Identity, id_: tuple[str, str], **kwargs: Any) -> Any:
         """Check if the record exists and user has permission."""
         specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
         if specialized_service:
@@ -293,7 +293,7 @@ class VocabulariesService(InvenioVocabulariesService):
         revision_id: int | None = None,
         uow: UnitOfWork | None = None,
         **kwargs: Any,
-    ) -> bool:
+    ) -> Any:
         """Delete a record."""
         specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
         if specialized_service:

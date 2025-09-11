@@ -43,7 +43,7 @@ class VocabularySchema(InvenioVocabularySchema):
     custom_fields = NestedAttribute(partial(CustomFieldsSchema, fields_var="VOCABULARIES_CF"))
 
     @post_load(pass_original=True)
-    def extract_parent_id(self, data: dict, original_data: dict | None = None, **kwargs: Any) -> dict:  # noqa: ARG002
+    def extract_parent_id(self, data: dict, original_data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
         """Extract and set parent id from hierarchy."""
         hierarchy = original_data.get("hierarchy", {})
         parent = hierarchy.get("parent")

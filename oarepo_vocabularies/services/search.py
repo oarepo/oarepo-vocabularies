@@ -87,7 +87,7 @@ class UpdatedAfterParam(ParamInterpreter):
         super().__init__(config)
 
     @classmethod
-    def factory(cls, param: str | None = None, field: str | None = None) -> Self:
+    def factory(cls, param: str, field: str) -> partial[Self]:
         """Create a new filter parameter."""
         return partial(cls, param, field)
 

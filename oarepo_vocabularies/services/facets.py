@@ -49,7 +49,7 @@ class CachedVocabularyLabels(VocabularyLabels):
 
     _internal_vocabulary_terms_cache = None
 
-    def _get_title(self, cache: Any, _id: str) -> dict | None:
+    def _get_title(self, cache: Any, _id: str) -> Any:
         item = cache.get((self.vocabulary, _id))
         if item:
             return item["title"]

@@ -47,7 +47,7 @@ class VocabularySchemaSelector(OneOfSchema):
     """Select vocabulary schema based on the type."""
 
     @cached_property
-    def type_schemas(self) -> dict:
+    def type_schemas(self) -> dict[str, type[VocabularyUISchema]]:
         """Get vocabulary type schemas from entry points."""
         ui_schemas = {
             "vocabulary": VocabularyUISchema,
@@ -64,14 +64,14 @@ class VocabularySchemaSelector(OneOfSchema):
 
         if "type" in obj:
             return "vocabulary"
-        vocabulary_type = resource_requestctx.view_args.get("type")
+        vocabulary_type: str = resource_requestctx.view_args.get("type")
         if vocabulary_type in self.type_schemas:
             return vocabulary_type
         return "*"
 
     def dump(self, obj: Any, *, many: bool | None = None, **kwargs: Any) -> dict:
         """Dump the object using the selected schema."""
-        ret = super().dump(obj, many=many, **kwargs)
+        ret: dict = super().dump(obj, many=many, **kwargs)
         if ret.get("type") == "*":
             ret.pop("type")
         return ret

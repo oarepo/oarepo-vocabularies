@@ -8,6 +8,8 @@
 #
 """Vocabulary type resource and its configuration."""
 
+from __future__ import annotations
+
 from oarepo_vocabularies.resources.vocabulary_type.config import (
     VocabularyTypeResourceConfig,
 )

@@ -47,7 +47,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     @request_read_args
     @request_view_args
     @request_vocabulary_args
-    def export(self) -> tuple[Any, int, dict[str, str]]:
+    def export(self) -> Any:
         """Export a record in the specified format."""
         return super().export()
 
@@ -100,7 +100,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         record["tags"] = []
         return record
 
-    def expand_detail_links(self, identity: Identity, record: Record) -> dict:
+    def expand_detail_links(self, identity: Identity, record: Record) -> Any:
         """Get links for this result item."""
         tpl = LinksTemplate(
             self.config.ui_links_item,
@@ -111,7 +111,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         )
         return tpl.expand(identity, record)
 
-    def expand_search_links(self, identity: Identity, pagination: Any, args: Any) -> dict:
+    def expand_search_links(self, identity: Identity, pagination: Any, args: Any) -> Any:
         """Get links for this result item."""
         tpl = LinksTemplate(
             self.config.ui_links_search,
@@ -124,7 +124,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         )
         return tpl.expand(identity, pagination)
 
-    def vocabulary_type_does_not_exist(self, error) -> str:  # noqa: ANN001
+    def vocabulary_type_does_not_exist(self, error) -> Any:  # noqa: ANN001
         """Render vocabulary type does not exist page."""
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(
