@@ -92,7 +92,12 @@ class Vocabulary(
     custom_fields = DictField()
 
 
-VocabularyRelation = NamedTuple("VocabularyRelation", "field_name, field, vocabulary_type")
+class VocabularyRelation(NamedTuple):
+    """A relation to a vocabulary field."""
+
+    field_name: str
+    field: RelationsField
+    vocabulary_type: str
 
 
 def find_vocabulary_relations(record: Record) -> Iterable[VocabularyRelation]:

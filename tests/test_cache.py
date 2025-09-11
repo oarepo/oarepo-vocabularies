@@ -13,8 +13,6 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
-from oarepo_vocabularies.services.cache import VocabularyCache
-
 
 @pytest.mark.skip(reason="We want to remove cache, need to load fixtures too")
 def test_cache_fast(app, db, vocab_cf, reset_babel, cache_clear, search_clear):

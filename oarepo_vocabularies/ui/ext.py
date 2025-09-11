@@ -5,15 +5,12 @@
 """oarepo-vocabularies UI extension."""
 
 import re
-from typing import TYPE_CHECKING
 
+from flask import Flask
 from invenio_base.utils import obj_or_import_string
 
 from oarepo_vocabularies.proxies import current_type_service
 from oarepo_vocabularies.ui import config
-
-if TYPE_CHECKING:
-    from flask import Flask  # noqa: TC004
 
 
 class InvenioVocabulariesAppExtension:
