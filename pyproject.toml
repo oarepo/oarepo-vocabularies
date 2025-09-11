@@ -30,6 +30,7 @@ dev = [
     "black",
     "autoflake",
     "isort",
+    "types-requests"
 ]
 tests = [
     "pytest>=7.1.2",
@@ -84,3 +85,7 @@ i18next_output_translations = ["oarepo_vocabularies/ui/theme/assets/semantic-ui/
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.mypy]
+# Ignore missing type hints for some third-party libraries
+ignore_missing_imports = true
