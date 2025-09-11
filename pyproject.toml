@@ -30,12 +30,12 @@ dev = [
     "black",
     "autoflake",
     "isort",
-    "types-requests"
 ]
 tests = [
     "pytest>=7.1.2",
     "pytest-mock",
     "pytest-invenio",
+    "types-requests"
 ]
 
 [tool.setuptools.packages.find]
