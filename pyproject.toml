@@ -12,12 +12,12 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "invenio-vocabularies",
     "oarepo-runtime>=2.0.0dev0,<3.0.0",
     "openpyxl",
     "oarepo-ui>=6.0.0dev0,<7.0.0",
     "cachetools",
-    "orcid"
+    "orcid",
+    "oarepo[rdm,tests]>=13,<14",
 ]
 
 [project.urls]
