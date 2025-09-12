@@ -30,12 +30,12 @@ dev = [
     "black",
     "autoflake",
     "isort",
+    "types-requests"
 ]
 tests = [
     "pytest>=7.1.2",
     "pytest-mock",
     "pytest-invenio",
-    "types-requests"
 ]
 
 [tool.setuptools.packages.find]
@@ -69,6 +69,7 @@ oarepo_vocabularies_ui_theme = "oarepo_vocabularies.ui.theme.webpack:theme"
 
 [project.entry-points."invenio_base.finalize_app"]
 oarepo_vocabularies = "oarepo_vocabularies.ext:finalize_app"
+#oarepo_vocabularies_ui = "oarepo_vocabularies.ui.ext:finalize_app"
 
 [project.entry-points."oarepo.ui"]
 oarepo_vocabularies_ui = "oarepo_vocabularies.models:ui.json"
