@@ -21,7 +21,8 @@ if TYPE_CHECKING:
     from uuid import UUID
 
     from invenio_records.systemfields import DictField
-    from invenio_records_resources.records.api import Record
+
+    from oarepo_vocabularies.records.api import Vocabulary as OarepoVocabularyRecord
 
 
 class ParentObject:
@@ -30,7 +31,7 @@ class ParentObject:
     Caches the current and previous parent UUIDs to detect changes and need for updates of Hierarchy.
     """
 
-    def __init__(self, dict_field: DictField, record: Record):
+    def __init__(self, dict_field: DictField, record: OarepoVocabularyRecord):
         """Initialize the ParentObject."""
         self._dict_field = dict_field
         self._record = record
@@ -94,7 +95,7 @@ class ParentObject:
         if parent_id != self._parent_id:
             self._parent_id = parent_id
             self._previous_parent_uuid = self._parent_uuid  # current will be previous
-            self._parent_uuid = Vocabulary.pid.with_type_ctx(self._record["type"]["id"]).resolve(parent_id).id
+            self._parent_uuid = Vocabulary.pid.with_type_ctx(self._record["type"]["id"]).resolve(parent_id).id  # type: ignore[attr-defined]
             self._cached = True
 
 
@@ -104,18 +105,19 @@ class HierarchyObject:
     References the VocabularyHierarchy table row and provides methods to interact with it.
     """
 
-    def __init__(self, record: Record):
+    def __init__(self, record: OarepoVocabularyRecord):
         """Initialize the HierarchyObject."""
         self._record = record
-        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata
+        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata  # type: ignore[union-attr]
 
         if self._hierarchy_data is None:
-            self._hierarchy_data = VocabularyHierarchy(
-                id=self._record.id,
-                parent_id=self._record.parent.uuid,
-                pid=self._record["id"],
-                titles=[self._record.get("title")],
+            self._hierarchy_data = VocabularyHierarchy()
+            self._hierarchy_data.id = self._record.id
+            self._hierarchy_data.parent_id = (
+                getattr(self._record.parent, "uuid", None) if hasattr(self._record, "parent") else None
             )
+            self._hierarchy_data.pid = self._record["id"]
+            self._hierarchy_data.titles = [self._record.get("title")]
 
     @property
     def data(self) -> VocabularyHierarchy:

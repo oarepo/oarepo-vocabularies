@@ -22,7 +22,10 @@ if TYPE_CHECKING:
 class KeepVocabularyIdComponent(ServiceComponent):
     """Component to keep the vocabulary ID unchanged on updates."""
 
-    def update(self, identity: Identity, data: dict[str, Any], record: Record, **kwargs: Any) -> None:  # noqa: ARG002
+    def update(self, identity: Identity, **kwargs: Any) -> None:  # noqa: ARG002
         """Keep the vocabulary ID unchanged on updates."""
-        if "id" not in data:
+        data: dict[str, Any] = kwargs.get("data", {})
+        record: Record | None = kwargs.get("record")
+
+        if "id" not in data and record:
             data["id"] = record["id"]

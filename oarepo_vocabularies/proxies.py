@@ -17,7 +17,6 @@ from werkzeug.local import LocalProxy
 
 if typing.TYPE_CHECKING:
     from .ext import OARepoVocabularies
-    from .services.cache import UIVocabularyCache
     from .services.service import VocabularyTypeService
 
 
@@ -31,5 +30,3 @@ current_oarepo_vocabularies: OARepoVocabularies = LocalProxy(  # type: ignore  #
 
 current_type_service: VocabularyTypeService = _ext_proxy("type_service")  # type: ignore  # noqa: PGH003
 """Proxy to the instantiated vocabulary type service."""
-
-current_ui_vocabulary_cache: UIVocabularyCache = _ext_proxy("ui_cache")  # type: ignore  # noqa: PGH003

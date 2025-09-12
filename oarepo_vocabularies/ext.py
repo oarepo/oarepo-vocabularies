@@ -14,7 +14,6 @@ import functools
 from functools import cached_property
 from typing import TYPE_CHECKING, Any
 
-from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.records.links import (
     RecordEndpointLink,
@@ -25,9 +24,7 @@ from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
 
 if TYPE_CHECKING:
     from flask import Flask
-    from invenio_records_resources.services.base import Service
-
-    from oarepo_vocabularies.services.cache import VocabularyCache
+    from invenio_records_resources.services.records.service import RecordService
 
 
 class OARepoVocabularies:
@@ -54,13 +51,6 @@ class OARepoVocabularies:
             config=app.config["OAREPO_VOCABULARY_TYPE_SERVICE_CONFIG"](),
         )
 
-    @cached_property
-    def ui_cache(self) -> VocabularyCache:
-        """Initialize UI cache."""
-        from oarepo_vocabularies.services.cache import VocabularyCache
-
-        return obj_or_import_string(self.app.config.get("OAREPO_VOCABULARIES_UI_CACHE", VocabularyCache))()
-
     def init_config(self, app: Flask) -> None:
         """Initialize configuration."""
         from . import config
@@ -70,10 +60,6 @@ class OARepoVocabularies:
                 app.config.setdefault(k, getattr(config, k))
             if k.startswith("OAREPO_VOCABULARY_"):
                 app.config.setdefault(k, getattr(config, k))
-            if k.startswith("DATASTREAMS_CONFIG_GENERATOR_"):
-                app.config.setdefault(k, getattr(config, k))
-            elif k.startswith("DATASTREAMS_"):
-                app.config.setdefault(k, {}).update(getattr(config, k))
             if k.startswith("VOCABULARIES"):
                 app.config.setdefault(k, getattr(config, k))
         app.config.setdefault("VOCABULARIES_FACET_CACHE_SIZE", config.VOCABULARIES_FACET_CACHE_SIZE)
@@ -93,7 +79,7 @@ class OARepoVocabularies:
                 app.config["OAREPO_PERMISSIONS_PRESETS"][k] = config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
 
     @functools.lru_cache  # noqa: B019
-    def get_specialized_service(self, _type: str) -> Service | None:
+    def get_specialized_service(self, _type: str) -> RecordService | None:
         """Get specialized service for the given vocabulary type."""
         service_name = self.specialized_services.get(_type)
         if service_name:

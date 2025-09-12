@@ -23,6 +23,8 @@ from .helpers import ParentObject
 if TYPE_CHECKING:
     from invenio_records_resources.records.api import Record
 
+    from oarepo_vocabularies.records.api import Vocabulary as OarepoVocabularyRecord
+
 
 class ParentSystemField(MappingSystemFieldMixin, SystemField):
     """System field handling the VocabularyHierarchy parent column updates on create/update/delete of a record."""
@@ -38,8 +40,12 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
     @property
     def mapping(self) -> dict[str, Any]:
         """Get the mapping for the parent field."""
+        key = self.key
+        if key is None:
+            raise ValueError("Field key cannot be None")
+
         return {
-            self.key: {
+            key: {
                 "type": "object",
                 "enabled": True,
                 "properties": {
@@ -60,15 +66,15 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
             return self
 
         if not hasattr(record, "_parent_cache"):
-            record._parent_cache = ParentObject(self._dict_field, record)  # noqa: SLF001
+            record._parent_cache = ParentObject(self._dict_field, record)  # noqa: SLF001 # type: ignore[attr-defined]
 
-        return record._parent_cache  # noqa: SLF001
+        return record._parent_cache  # noqa: SLF001 # type: ignore[attr-defined]
 
-    def __set__(self, record: Record, value: dict | None) -> None:
+    def __set__(self, record: Record, value: dict | None):  # type: ignore[override]
         """Set the parent field value."""
         self.__get__(record).set(value)
 
-    def pre_commit(self, record: Record) -> None:
+    def pre_commit(self, record: OarepoVocabularyRecord) -> None:
         """Handle updates by updating/inserting row in VocabularyHierarchy table.
 
         When record is updated/created, we add/change the parent to a actual one in VocabularyHierarchy table.
@@ -92,12 +98,12 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
                     hierarchy_entry.titles[0] = record.get("title")
             else:
                 # Insert new row
-                hierarchy_entry = VocabularyHierarchy(
-                    id=self_uuid,
-                    parent_id=parent_uuid,
-                    pid=record.get("id"),
-                    titles=[record.get("title")],
-                )
+                hierarchy_entry = VocabularyHierarchy()
+                hierarchy_entry.id = self_uuid
+                hierarchy_entry.parent_id = parent_uuid
+                hierarchy_entry.pid = record.get("id")
+                hierarchy_entry.titles = [record.get("title")]
+
                 db.session.add(hierarchy_entry)
 
             # Use flush so it stays inside the same transaction

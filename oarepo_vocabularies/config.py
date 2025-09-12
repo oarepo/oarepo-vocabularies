@@ -12,22 +12,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from invenio_records_resources.services.custom_fields.text import KeywordCF
-
-from oarepo_vocabularies.fixtures import (
-    AffiliationsWriter,
-    AwardsWriter,
-    NamesWriter,
-    VocabularyReader,
-    VocabularyWriter,
-    vocabularies_generator,
-)
 from oarepo_vocabularies.resources.vocabulary_type import (
     VocabularyTypeResource,
     VocabularyTypeResourceConfig,
 )
 from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
-from oarepo_vocabularies.services.custom_fields import hierarchy
 from oarepo_vocabularies.services.permissions import VocabulariesPermissionPolicy
 from oarepo_vocabularies.services.service import VocabularyTypeService
 
@@ -37,15 +26,6 @@ if TYPE_CHECKING:
 OAREPO_VOCABULARIES_PERMISSIONS_PRESETS = {"vocabularies": VocabulariesPermissionPolicy}
 
 INVENIO_VOCABULARY_TYPE_METADATA: dict[str, dict[str, Any]] = {}
-
-OAREPO_VOCABULARIES_HIERARCHY_CF = [
-    hierarchy.HierarchyLevelCF("level"),
-    hierarchy.HierarchyTitleCF("title"),
-    hierarchy.HierarchyAncestorsCF("ancestors", multiple=True),
-    hierarchy.HierarchyAncestorsOrSelfCF("ancestors_or_self", multiple=True),
-    hierarchy.HierarchyLeafCF("leaf"),
-    KeywordCF("parent"),
-]
 
 OAREPO_VOCABULARIES_SORT_CF: list[str] = []
 
@@ -59,16 +39,6 @@ OAREPO_VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
 OAREPO_VOCABULARY_TYPE_RESOURCE = VocabularyTypeResource
 OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
 
-DATASTREAMS_CONFIG_GENERATOR_VOCABULARIES = vocabularies_generator
-
-DATASTREAMS_READERS = {"vocabulary": VocabularyReader}
-
-DATASTREAMS_WRITERS = {
-    "vocabulary": VocabularyWriter,
-    "awards": AwardsWriter,
-    "names": NamesWriter,
-    "affiliations": AffiliationsWriter,
-}
 
 OAREPO_SPECIALIZED_VOCABULARIES_METADATA = {
     "awards": {

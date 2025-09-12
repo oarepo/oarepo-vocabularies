@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 
 from invenio_db import db
 from invenio_vocabularies.records.models import VocabularyMetadata
+from sqlalchemy import literal, select
 from sqlalchemy.orm import aliased
 from sqlalchemy_utils.types import UUIDType
 
@@ -89,7 +90,7 @@ class VocabularyHierarchy(db.Model):
     def get_subterms_ids(start_id: UUID | None = None) -> list[UUID]:
         """Get all descendant IDs using recursive CTE."""
         # Base case: direct children of the node
-        base = db.session.query(VocabularyHierarchy.id.label("id"), db.literal(1).label("depth")).filter(
+        base = select(VocabularyHierarchy.id.label("id"), literal(1).label("depth")).where(
             VocabularyHierarchy.parent_id == start_id
         )
 
@@ -97,7 +98,7 @@ class VocabularyHierarchy(db.Model):
         hierarchy_cte = base.cte(name="children", recursive=True)
         child_alias = aliased(VocabularyHierarchy)
 
-        recursive = db.session.query(child_alias.id, (hierarchy_cte.c.depth + 1).label("depth")).filter(
+        recursive = select(child_alias.id, (hierarchy_cte.c.depth + 1).label("depth")).where(
             child_alias.parent_id == hierarchy_cte.c.id
         )
 
@@ -111,7 +112,7 @@ class VocabularyHierarchy(db.Model):
     def get_ancestors_ids(start_id: UUID | None = None) -> list[UUID]:
         """Get all ancestor IDs using recursive CTE."""
         # Base case: direct parent of the node
-        base = db.session.query(VocabularyHierarchy.parent_id.label("id"), db.literal(1).label("depth")).filter(
+        base = select(VocabularyHierarchy.parent_id.label("id"), literal(1).label("depth")).where(
             VocabularyHierarchy.id == start_id
         )
 
@@ -119,7 +120,7 @@ class VocabularyHierarchy(db.Model):
         hierarchy_cte = base.cte(name="parents", recursive=True)
         parent_alias = aliased(VocabularyHierarchy)
 
-        recursive = db.session.query(parent_alias.parent_id, (hierarchy_cte.c.depth + 1).label("depth")).filter(
+        recursive = select(parent_alias.parent_id, (hierarchy_cte.c.depth + 1).label("depth")).where(
             parent_alias.id == hierarchy_cte.c.id
         )
 
@@ -140,7 +141,7 @@ class VocabularyHierarchy(db.Model):
         children_ids = VocabularyHierarchy.get_subterms_ids(self.id)
 
         for child in children_ids:
-            child_hierarchy = db.session.query(VocabularyHierarchy).get(child)
+            child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
             child_hierarchy.fix_hierarchy_on_self()
 
     def fix_hierarchy_down_on_delete(self) -> None:
@@ -151,7 +152,7 @@ class VocabularyHierarchy(db.Model):
             if child == self.id:
                 continue
 
-            child_hierarchy = db.session.query(VocabularyHierarchy).get(child)
+            child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
             child_hierarchy.fix_hierarchy_on_self()
 
     def update_parent_leaf_status(self, cache: ParentObject) -> None:
@@ -178,7 +179,7 @@ class VocabularyHierarchy(db.Model):
             return
         # current parent exists, change parent leaf if exists and if it is False
         if parent_hierarchy is not None and parent_hierarchy.leaf:
-            parent_hierarchy.leaf = False
+            parent_hierarchy.leaf = False  # type: ignore[attr-defined]
             db.session.add(parent_hierarchy)
             return
 

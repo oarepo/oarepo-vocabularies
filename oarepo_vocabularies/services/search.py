@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import partial
-from typing import TYPE_CHECKING, ClassVar, Self
+from typing import TYPE_CHECKING, ClassVar
 
 from invenio_i18n import get_locale
 from invenio_i18n import lazy_gettext as _
@@ -69,7 +69,7 @@ class VocabularyQueryParser(QueryParser):
 class SourceParam(ParamInterpreter):
     """Evaluate the 'q' or 'suggest' parameter."""
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
         """Apply the source parameter."""
         source = params.get("source")
         if not source:
@@ -87,11 +87,11 @@ class UpdatedAfterParam(ParamInterpreter):
         super().__init__(config)
 
     @classmethod
-    def factory(cls, param: str, field: str) -> partial[Self]:
+    def factory(cls, param: str, field: str) -> partial[ParamInterpreter]:
         """Create a new filter parameter."""
         return partial(cls, param, field)
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
         """Apply a filter to get only records for a specific type."""
         # Pop because we don't want it to show up in links.
         # TODO: only pop if needed.
@@ -103,7 +103,7 @@ class UpdatedAfterParam(ParamInterpreter):
                     vocabulary_filter.append(
                         Bool(
                             must=[
-                                Range(**{self.field_name: {"gt": v}}),
+                                Range(**{self.field_name: {"gt": v}}),  # type: ignore[arg-type]
                                 Term(**{TYPE_ID_FIELD: k}),
                             ]
                         )
@@ -119,7 +119,7 @@ class UpdatedAfterParam(ParamInterpreter):
 class VocabularyIdsParam(ParamInterpreter):
     """Evaluate type filter."""
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
         """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
@@ -130,7 +130,7 @@ class VocabularyIdsParam(ParamInterpreter):
             by_type[vt].append(vid)
         search_filters = []
         for vt, vids in by_type.items():
-            search_filters.append(Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})]))
+            search_filters.append(Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})]))  # type: ignore[arg-type]
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
 
@@ -143,7 +143,7 @@ class SpecializedVocabularyIdsParam(ParamInterpreter):
 
         self.vocabulary_type = vocabulary_type
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
         """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
@@ -152,13 +152,15 @@ class SpecializedVocabularyIdsParam(ParamInterpreter):
         if not all(id_tuple[0] == self.vocabulary_type for id_tuple in ids):
             raise ValueError(f"All ids must have vocabulary type '{self.vocabulary_type}'")
 
-        return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))
+        return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))  # type: ignore[arg-type]
 
 
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
-    params_interpreters_cls: ClassVar[list[ParamInterpreter]] = [
+    params_interpreters_cls: ClassVar[
+        list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
+    ] = [
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
         VocabularyIdsParam,

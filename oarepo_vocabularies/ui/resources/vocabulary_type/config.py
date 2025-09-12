@@ -32,4 +32,7 @@ class VocabularyTypeUIResourceConfig(UIResourceConfig):
     @property
     def ui_serializer(self) -> Any:
         """Return an instance of the serializer class."""
-        return obj_or_import_string(self.ui_serializer_class)()
+        ui_serializer_cls = obj_or_import_string(self.ui_serializer_class)
+        if ui_serializer_cls is None:
+            raise RuntimeError("UI serializer class not found.")
+        return ui_serializer_cls()

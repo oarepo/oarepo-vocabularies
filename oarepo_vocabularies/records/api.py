@@ -36,16 +36,16 @@ from oarepo_vocabularies.records.systemfields.relations import (
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from invenio_records_resources.records.api import Record
+    from invenio_records_resources.services.records.results import RecordItem
 
 
 class SpecialVocabulariesAwarePIDFieldContext(VocabularyPIDFieldContext):
     """A PIDFieldContext that is aware of special vocabularies."""
 
-    def resolve(self, pid_value: str | tuple[str, str]) -> Record | None:
+    def resolve(self, pid_value: str | tuple[str, str]) -> RecordItem | None:
         """Resolve the PID value to a record, considering special vocabularies."""
         if isinstance(pid_value, str):
-            pid_type = self._type_id
+            pid_type = self._type_id  # type: ignore[attr-defined]
             item_id = pid_value
         else:
             pid_type, item_id = pid_value
@@ -100,7 +100,7 @@ class VocabularyRelation(NamedTuple):
     vocabulary_type: str
 
 
-def find_vocabulary_relations(record: Record) -> Iterable[VocabularyRelation]:
+def find_vocabulary_relations(record: RecordItem) -> Iterable[VocabularyRelation]:
     """Find all vocabulary relations in a record."""
     relations_field_names = [x[0] for x in inspect.getmembers(type(record), lambda x: isinstance(x, RelationsField))]
 
@@ -116,4 +116,4 @@ def find_vocabulary_relations(record: Record) -> Iterable[VocabularyRelation]:
             except AttributeError:
                 continue
             if isinstance(pid_context, VocabularyPIDFieldContext):
-                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa: SLF001
+                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa: SLF001 # type: ignore[attr-defined]

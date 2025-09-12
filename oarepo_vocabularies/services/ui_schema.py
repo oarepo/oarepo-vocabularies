@@ -15,7 +15,6 @@ from functools import partial
 from typing import TYPE_CHECKING, Any
 
 import marshmallow as ma
-import marshmallow_utils
 from flask import current_app
 from invenio_i18n import get_locale
 
@@ -27,6 +26,7 @@ from invenio_vocabularies.services.schema import (
     VocabularySchema as InvenioVocabularySchema,
 )
 from marshmallow import fields as ma_fields
+from marshmallow_utils.fields import FormatDate
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
@@ -42,19 +42,19 @@ class LocalizedDateTime(ma.fields.Field):
 
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:  # noqa: ARG002
         return {
-            f"{self.attribute}_l10n_long": marshmallow_utils.fields.FormatDate(
+            f"{self.attribute}_l10n_long": FormatDate(
                 attribute=self.attribute,
                 format="long",
             ),
-            f"{self.attribute}_l10n_medium": marshmallow_utils.fields.FormatDate(
+            f"{self.attribute}_l10n_medium": FormatDate(
                 attribute=self.attribute,
                 format="medium",
             ),
-            f"{self.attribute}_l10n_short": marshmallow_utils.fields.FormatDate(
+            f"{self.attribute}_l10n_short": FormatDate(
                 attribute=self.attribute,
                 format="short",
             ),
-            f"{self.attribute}_l10n_full": marshmallow_utils.fields.FormatDate(
+            f"{self.attribute}_l10n_full": FormatDate(
                 attribute=self.attribute,
                 format="full",
             ),
@@ -91,10 +91,11 @@ class VocabularyI18nStrUIField(ma_fields.Field):
 
     def get_locale(self) -> Any:
         """Get locale from context or current locale."""
-        if "locale" in self.context:
+        if isinstance(self.context, dict) and "locale" in self.context:
             return self.context["locale"]
         locale = get_locale()
-        self.context["locale"] = locale
+        if self.context is not None:
+            self.context["locale"] = locale
         return locale
 
 

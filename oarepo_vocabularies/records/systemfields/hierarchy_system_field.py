@@ -22,6 +22,8 @@ from oarepo_vocabularies.records.models import VocabularyHierarchy
 from .helpers import HierarchyObject
 
 if TYPE_CHECKING:
+    from invenio_records.api import RecordBase
+    from invenio_records.dumpers import Dumper
     from invenio_records_resources.records.api import Record
 
 
@@ -34,15 +36,19 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
             return self
 
         if not hasattr(record, "_hierarchy_cache"):
-            record._hierarchy_cache = HierarchyObject(record)  # noqa: SLF001
+            record._hierarchy_cache = HierarchyObject(record)  # noqa: SLF001 # type: ignore[attr-defined]
 
-        return record._hierarchy_cache  # noqa: SLF001
+        return record._hierarchy_cache  # noqa: SLF001 # type: ignore[attr-defined]
 
     @property
     def mapping(self) -> dict[str, Any]:
         """Get the mapping for the hierarchy field."""
+        key = self.key
+        if key is None:
+            raise ValueError("Field key cannot be None")
+
         return {
-            self.key: {
+            key: {
                 "type": "object",
                 "enabled": True,
                 "properties": {
@@ -61,36 +67,36 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
     def pre_commit(self, record: Record) -> None:
         """Fix the parent leaf status and update children hierarchy on create/update."""
         hierarchy_obj = self.__get__(record)
-        hierarchy_obj._hierarchy_data.fix_hierarchy_on_self()  # noqa: SLF001
+        hierarchy_obj.data.fix_hierarchy_on_self()
 
         # Store information about whether we need to fix descendants
         # We have new parent or we had no parent
-        parent_changed = record.parent.uuid != record.parent.previous_uuid or (
-            record.parent.uuid and not record.parent.previous_uuid
+        parent_changed = record.parent.uuid != record.parent.previous_uuid or (  # type: ignore[attr-defined]
+            record.parent.uuid and not record.parent.previous_uuid  # type: ignore[attr-defined]
         )
 
-        hierarchy_obj._hierarchy_data.update_parent_leaf_status(record.parent)  # noqa: SLF001
+        hierarchy_obj.data.update_parent_leaf_status(record.parent)  # type: ignore[attr-defined]
 
         if parent_changed:
-            hierarchy_obj._hierarchy_data.fix_hierarchy_down()  # noqa: SLF001
+            hierarchy_obj.data.fix_hierarchy_down()
 
     def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
         """Fix the parent leaf status and update children hierarchy on delete."""
         hierarchy_obj = self.__get__(record)
 
-        hierarchy_obj._hierarchy_data.update_parent_leaf_status(record.parent)  # noqa: SLF001
+        hierarchy_obj.data.update_parent_leaf_status(record.parent)  # type: ignore[attr-defined]
 
         # update children hierarchy
-        hierarchy_obj._hierarchy_data.fix_hierarchy_down_on_delete()  # noqa: SLF001
+        hierarchy_obj.data.fix_hierarchy_down_on_delete()
 
         # delete after children are updated
         hierarchy_entry = VocabularyHierarchy.query.get(record.id)
         if hierarchy_entry:
             db.session.delete(hierarchy_entry)
 
-    def pre_dump(self, record: Record, data: dict[str, Any], dumper: Any = None) -> None:  # noqa: ARG002
+    def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:  # noqa: ARG002
         """Add the hierarchy data to the record before dumping."""
-        hierarchy_obj = self.__get__(record)
+        hierarchy_obj = self.__get__(record)  # type: ignore[arg-type]
         data[self.key] = hierarchy_obj.to_dict()
 
 
@@ -99,7 +105,7 @@ class HierarchyPartSelector(PathSelector):
 
     level = 0
 
-    def __init__(self, *paths: tuple[str], level: int | None = None) -> None:
+    def __init__(self, *paths: str, level: int | None = None) -> None:
         """Initialize the selector."""
         super().__init__(*paths)
         if level is not None:
@@ -107,9 +113,9 @@ class HierarchyPartSelector(PathSelector):
         if not self.paths:
             raise ValueError("At least one path must be set")
 
-    def select(self, data: dict[str, Any]) -> list[dict[str, Any]]:
+    def select(self, record: dict) -> list[Any]:
         """Select the correct part of hierarchy."""
-        parts = super().select(data)
+        parts = super().select(record)
 
         elements = []
         for dg in parts:

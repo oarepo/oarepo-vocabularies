@@ -38,4 +38,4 @@ class ParentVocabularyPIDField:
     def resolve(self, id_: tuple[str, str]) -> Vocabulary:
         """Resolve the PID to a specific type Vocabulary record."""
         vocabulary_type, item_id = id_
-        return Vocabulary.pid.with_type_ctx(vocabulary_type).resolve(item_id)
+        return Vocabulary.pid.with_type_ctx(vocabulary_type).resolve(item_id)  # type: ignore[attr-defined]

@@ -34,7 +34,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
     ) -> None:
         """Process the data before the search page is rendered."""
         vocabulary_type = view_args["vocabulary_type"]
-        api_service = self.resource.api_service
+        api_service = self.resource.api_service  # type: ignore[attr-defined]
         search_options.setdefault(
             "endpoint",
             api_service.config.links_search["self"].expand(None, {"type": vocabulary_type, "api": "/api"}),
@@ -53,22 +53,22 @@ class VocabularyRecordsComponent(UIResourceComponent):
     ) -> None:
         """Prepare the context for displaying a vocabulary item detail page."""
         vocabulary_type = view_args["vocabulary_type"]
-        api_service = self.resource.api_service
+        api_service = self.resource.api_service  # type: ignore[attr-defined]
         search_options = {
             "api_config": api_service.config,
             "identity": identity,
             "endpoint": api_service.config.links_search["self"].expand(None, {"type": vocabulary_type, "api": "/api"}),
             "initial_filters": [["h-parent", api_record["id"]]],
         }
-        search_config = partial(self.config.search_app_config, **search_options)
+        search_config = partial(self.config.search_app_config, **search_options)  # type: ignore[attr-defined]
         extra_context.setdefault("search_app_config", search_config)
         extra_context["vocabularyType"] = vocabulary_type
-        extra_context["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)
+        extra_context["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
 
     def before_ui_edit(self, *, form_config: dict, api_record: RecordItem, view_args: Any, **kwargs: Any) -> None:  # noqa: ARG002
         """Prepare the form configuration for editing a vocabulary item."""
         vocabulary_type = view_args["vocabulary_type"]
-        form_config.setdefault("vocabularyProps", self.config.vocabulary_props_config(vocabulary_type))
+        form_config.setdefault("vocabularyProps", self.config.vocabulary_props_config(vocabulary_type))  # type: ignore[attr-defined]
         form_config.setdefault(
             "updateUrl",
             api_record["links"].get("self", None),
@@ -78,7 +78,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
     def before_ui_create(self, *, form_config: dict, view_args: Any, **kwargs: Any) -> None:  # noqa: ARG002
         """Prepare the form configuration for creating a new vocabulary item."""
         vocabulary_type = view_args["vocabulary_type"]
-        api_service = self.resource.api_service
-        form_config.setdefault("vocabularyProps", self.config.vocabulary_props_config(vocabulary_type))
+        api_service = self.resource.api_service  # type: ignore[attr-defined]
+        form_config.setdefault("vocabularyProps", self.config.vocabulary_props_config(vocabulary_type))  # type: ignore[attr-defined]
         form_config["createUrl"] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
         form_config["vocabularyType"] = vocabulary_type

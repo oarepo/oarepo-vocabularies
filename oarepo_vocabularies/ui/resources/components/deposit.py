@@ -18,7 +18,6 @@ from flask import current_app
 from invenio_records import Record
 from oarepo_ui.resources.components import UIResourceComponent
 
-from oarepo_vocabularies.proxies import current_ui_vocabulary_cache
 from oarepo_vocabularies.records.api import find_vocabulary_relations
 
 if TYPE_CHECKING:
@@ -71,7 +70,7 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
 
         """
         if not isinstance(api_record, Record):
-            record_cls = self.resource.api_service.config.record_cls
+            record_cls = self.resource.api_service.config.record_cls  # type: ignore[attr-defined]
             api_record = record_cls({})
 
         form_config.setdefault("vocabularies", {})
@@ -111,12 +110,12 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
     def _prefetch_vocabularies_to_form_config(
         self,
         form_config_vocabularies: dict,
-        vocabularies_to_prefetch: list[str],
+        vocabularies_to_prefetch: list[str],  # noqa: ARG002
         identity: Identity,  # noqa: ARG002
     ) -> None:
         """Prefetch vocabularies to form config."""
         prefetched_vocabularies: dict[str, dict[str, Any]]
-        prefetched_vocabularies = current_ui_vocabulary_cache.get(vocabularies_to_prefetch)
+        prefetched_vocabularies = {}  # prefetch from cache or service
         for vocabulary_type, items in prefetched_vocabularies.items():
             for item_id, item in items.items():
                 by_type = form_config_vocabularies[vocabulary_type]

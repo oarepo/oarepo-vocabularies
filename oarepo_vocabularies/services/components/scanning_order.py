@@ -16,7 +16,7 @@ from invenio_records_resources.services.records.components import ServiceCompone
 
 if TYPE_CHECKING:
     from flask_principal import Identity
-    from invenio_search import Search
+    from opensearch_dsl import Search
 
 
 class ScanningOrderComponent(ServiceComponent):

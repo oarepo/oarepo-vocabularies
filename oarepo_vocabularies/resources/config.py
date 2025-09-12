@@ -11,7 +11,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 from flask_resources import BaseListSchema, MarshmallowSerializer, ResponseHandler
 from flask_resources.serializers import JSONSerializer
@@ -24,12 +24,17 @@ from invenio_vocabularies.resources.config import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
 from marshmallow import fields
-from marshmallow_oneofschema import OneOfSchema
+from marshmallow_oneofschema.one_of_schema import OneOfSchema
 
 from oarepo_vocabularies.services.ui_schema import (
     VocabularySpecializedUISchema,
     VocabularyUISchema,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from marshmallow import Schema
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
@@ -47,7 +52,7 @@ class VocabularySchemaSelector(OneOfSchema):
     """Select vocabulary schema based on the type."""
 
     @cached_property
-    def type_schemas(self) -> dict[str, type[VocabularyUISchema]]:
+    def type_schemas(self) -> Mapping[str, type[Schema] | Schema]:  # type: ignore[override]
         """Get vocabulary type schemas from entry points."""
         ui_schemas = {
             "vocabulary": VocabularyUISchema,
@@ -71,7 +76,7 @@ class VocabularySchemaSelector(OneOfSchema):
 
     def dump(self, obj: Any, *, many: bool | None = None, **kwargs: Any) -> dict:
         """Dump the object using the selected schema."""
-        ret: dict = super().dump(obj, many=many, **kwargs)
+        ret = cast("dict[str, Any]", super().dump(obj, many=many, **kwargs))
         if ret.get("type") == "*":
             ret.pop("type")
         return ret
@@ -99,6 +104,6 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
     response_handlers: ClassVar[dict[str, ResponseHandler]] = {
         **InvenioVocabulariesResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": VocabulariesUIResponseHandler(
-            headers=etag_headers,
+            headers=etag_headers,  # type: ignore[arg-type]
         ),
     }

@@ -51,8 +51,8 @@ class VocabularyMetadataList(ServiceListResult):
         service: Service,
         identity: Identity,
         results: Any,
-        links_tpl: LinksTemplate = None,
-        links_item_tpl: LinksTemplate = None,
+        links_tpl: LinksTemplate | None = None,
+        links_item_tpl: LinksTemplate | None = None,
     ):
         """Init the vocabulary metadata list.
 
@@ -115,7 +115,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
-    components: ClassVar[list[ServiceComponent]] = [
+    components: ClassVar[list[type[ServiceComponent]]] = [
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
         ScanningOrderComponent,
@@ -124,7 +124,16 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     url_prefix = "/vocabularies/"
 
     links_item: ClassVar[dict[str, EndpointLink]] = {
-        **VocabulariesServiceConfig.links_item,
+        "self": EndpointLink(
+            "vocabularies.read",
+            vars=lambda record, _vars: _vars.update(
+                {
+                    "pid_value": record.pid.pid_value,
+                    "type": record.type.id,
+                }
+            ),
+            params=["type", "pid_value"],
+        ),
         "self_html": EndpointLink(
             "oarepo_vocabularies_ui.detail",
             vars=lambda record, vars_: vars_.update(

@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from flask_principal import Identity
     from invenio_records_resources.records.api import Record
     from invenio_records_resources.services.records.results import RecordItem, RecordList
+    from invenio_records_resources.services.records.service import RecordService
     from invenio_records_resources.services.uow import UnitOfWork
 
 
@@ -97,7 +98,7 @@ class VocabularyTypeService(Service):
 
         search = search_opts.search_cls(
             using=current_search_client,
-            index=config.record_cls.index.search_alias,
+            index=config.record_cls.index.search_alias,  # type: ignore[attr-defined]
         )
 
         search.aggs.bucket("vocabularies", {"terms": {"field": "type.id", "size": 100}})
@@ -120,8 +121,8 @@ class VocabulariesService(InvenioVocabulariesService):
         **kwargs: Any,
     ) -> RecordList:
         """Search for vocabulary entries."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
-        if specialized_service:
+        specialized_service: RecordService | None = current_oarepo_vocabularies.get_specialized_service(type)
+        if specialized_service is not None:
             return specialized_service.search(
                 identity=identity,
                 params=params,

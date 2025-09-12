@@ -40,6 +40,7 @@ if TYPE_CHECKING:
     from typing import Any, ClassVar
 
     from flask.typing import ErrorHandlerCallable
+    from invenio_access.permissions import Identity
     from invenio_records_resources.services.base.config import ServiceConfig
     from invenio_records_resources.services.base.service import Service
 
@@ -95,28 +96,28 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     api_service = "vocabularies"
     application_id = "OarepoVocabularies"
 
-    templates: ClassVar[dict[str, str]] = {
+    templates: ClassVar[Mapping[str, str | None]] = {  # type: ignore[override]
         "detail": "oarepo_vocabularies_ui.VocabulariesDetail",
         "search": "oarepo_vocabularies_ui.VocabulariesSearch",
         "create": "oarepo_vocabularies_ui.VocabulariesForm",
         "edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
-    routes: ClassVar[dict[str, str]] = {
+    routes: ClassVar[Mapping[str, str]] = {  # type: ignore[override]
         "create": "/<type>/_new",
         "edit": "/<type>/<pid_value>/edit",
         "search": "/<type>/",
         "detail": "/<type>/<pid_value>",
         "export": "/<type>/<pid_value>/export/<export_format>",
     }
-    config_routes: ClassVar[dict[str, str]] = {
+    config_routes: ClassVar[Mapping[str, str]] = {  # type: ignore[override]
         "form_config": "/<type>/form",
     }
     error_handlers: Mapping[type[Exception], str | ErrorHandlerCallable] = {
         **RecordsUIResourceConfig.error_handlers,
         VocabularyTypeDoesNotExistError: "vocabulary_type_does_not_exist",
     }
-    components: ClassVar[list] = [
+    components: ClassVar[list] = [  # type: ignore[override]
         PermissionsComponent,
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
@@ -127,7 +128,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
     request_vocabulary_type_args = VocabularyTypeValidationSchema
 
-    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type": ma.fields.Str()}
+    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type": ma.fields.Str()}  # type: ignore[override]
 
     # TODO: add ui_links_item with self, edit, search, create
 
@@ -143,11 +144,11 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """Get vocabulary properties config for a vocabulary type if available."""
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabulary_type, {})
 
-    def _get_custom_fields_ui_config(self, key: str, view_args: dict | None = None) -> Any:
+    def _get_custom_fields_ui_config(self, key: str, **kwargs: Any) -> Any:
         """Get custom fields config for a vocabulary type if available."""
         if key == "OAREPO_VOCABULARIES_HIERARCHY_CF":
             return []
-
+        view_args = kwargs.get("view_args", {})
         vocab_type = view_args.get("vocabulary_type") if view_args else None
         vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
         vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
@@ -170,7 +171,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         return None
 
     # adapt to search options of each specialized service if available
-    def search_available_sort_options(self, api_config: ServiceConfig) -> dict:
+    def search_available_sort_options(self, api_config: ServiceConfig, identity: Identity) -> dict:  # noqa: ARG002 added for inheritance
         """Get the available sort options for the current vocabulary type."""
         vocabulary_type = resource_requestctx.view_args.get("vocabulary_type")
         specialized_service = self._get_specialized_service_config(vocabulary_type)
@@ -178,9 +179,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         if specialized_service:
             return cast("dict", specialized_service.config.search.sort_options)
 
-        return cast("dict", api_config.search.sort_options)
+        return cast("dict", api_config.search.sort_options)  # type: ignore[attr-defined]
 
-    def search_active_sort_options(self, api_config: ServiceConfig) -> list:
+    def search_active_sort_options(self, api_config: ServiceConfig, identity: Identity) -> list:  # noqa: ARG002 added for inheritance
         """Get the active sort options for the current vocabulary type."""
         vocabulary_type = resource_requestctx.view_args.get("vocabulary_type")
         specialized_service = self._get_specialized_service_config(vocabulary_type)
@@ -188,4 +189,4 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         if specialized_service:
             return list(specialized_service.config.search.sort_options.keys())
 
-        return list(api_config.search.sort_options.keys())
+        return list(api_config.search.sort_options.keys())  # type: ignore[attr-defined]
