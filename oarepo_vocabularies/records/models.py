@@ -135,34 +135,15 @@ class VocabularyHierarchy(db.Model):
 
     def update_parent_leaf_status(self, cache: ParentObject) -> None:
         """Update leaf status for the parent ancestor."""
-        parent_hierarchy = self.parent_hierarchy_metadata
-        # case when record is deleted, change parent leaf if record has children
-        if parent_hierarchy is not None and cache.previous_uuid != cache.uuid and not cache.uuid:
-            previous_parent_rec = (
-                db.session.query(VocabularyHierarchy).filter(VocabularyHierarchy.id == cache.previous_uuid).one()
-            )
-
-            parent_children = VocabularyHierarchy.get_direct_subterms_ids(previous_parent_rec.id)
-
-            # since row in DB is not yet deleted, we need to exclude current record from children check
-            parent_has_children = bool(
-                len(parent_children) > 0  # list is not empty
-                and any(child_id != self.id for child_id in parent_children)  # it has other children beside this record
-            )
-
-            if not previous_parent_rec.leaf and not parent_has_children:
-                previous_parent_rec.leaf = True
-                db.session.add(previous_parent_rec)
-
-            return
+        parent_hierarchy: VocabularyHierarchy | None = self.parent_hierarchy_metadata
         # current parent exists, change parent leaf if exists and if it is False
         if parent_hierarchy is not None and parent_hierarchy.leaf:
-            parent_hierarchy.leaf = False  # type: ignore[attr-defined]
+            parent_hierarchy.leaf = False
             db.session.add(parent_hierarchy)
             return
 
-        # update previous parent, if current parent is none
-        if parent_hierarchy is None and cache.previous_uuid:
+        # if current parent changed
+        if cache.previous_uuid != cache.uuid and cache.previous_uuid is not None:
             previous_parent_rec = (
                 db.session.query(VocabularyHierarchy).filter(VocabularyHierarchy.id == cache.previous_uuid).one()
             )
