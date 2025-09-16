@@ -160,17 +160,16 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
 
     def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
         """Fix the parent leaf status and update children hierarchy on delete."""
-        hierarchy_obj = self.__get__(record)
+        # update current record to have no parent
+        hierarchy_entry = VocabularyHierarchy.query.get(record.id)
+        hierarchy_entry.parent_id = None
 
+        # fix parent leaf status
+        hierarchy_obj = self.__get__(record)
         hierarchy_obj.data.update_parent_leaf_status(record.parent)  # type: ignore[attr-defined]
 
-        # update children hierarchy
-        hierarchy_obj.data.fix_hierarchy_down_on_delete()
-
-        # delete after children are updated
-        hierarchy_entry = VocabularyHierarchy.query.get(record.id)
-        if hierarchy_entry:
-            db.session.delete(hierarchy_entry)
+        # delete the DB entry
+        db.session.delete(hierarchy_entry)
 
     def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:  # noqa: ARG002
         """Add the hierarchy data to the record before dumping."""

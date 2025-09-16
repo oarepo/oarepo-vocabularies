@@ -70,21 +70,35 @@ class VocabularyHierarchy(db.Model):
         # check if node has children
         result = db.session.query(VocabularyHierarchy.id).filter(VocabularyHierarchy.parent_id == self.id).all()
 
-        self.leaf = not bool(result)
+        new_leaf = not bool(result)
         title = self.titles[0]
-        # TODO: check if something changed, if not, skip
         if not parent_hierarchy:
-            self.titles = [title]
-            self.ancestors = []
-            self.ancestors_or_self = [self.pid]
-            self.level = 1
+            new_titles = [title]
+            new_ancestors = []
+            new_ancestors_or_self = [self.pid]
+            new_level = 1
         else:
-            self.level = parent_hierarchy.level + 1
-            self.titles = [title, *parent_hierarchy.titles]
-            self.ancestors = parent_hierarchy.ancestors_or_self
-            self.ancestors_or_self = [self.pid, *parent_hierarchy.ancestors_or_self]
+            new_level = parent_hierarchy.level + 1
+            new_titles = [title, *parent_hierarchy.titles]
+            new_ancestors = parent_hierarchy.ancestors_or_self
+            new_ancestors_or_self = [self.pid, *parent_hierarchy.ancestors_or_self]
 
-        db.session.add(self)
+        # Only update if something actually changed
+        changed = (
+            self.leaf != new_leaf
+            or self.titles != new_titles
+            or self.ancestors != new_ancestors
+            or self.ancestors_or_self != new_ancestors_or_self
+            or self.level != new_level
+        )
+
+        if changed:
+            self.leaf = new_leaf
+            self.titles = new_titles
+            self.ancestors = new_ancestors
+            self.ancestors_or_self = new_ancestors_or_self
+            self.level = new_level
+            db.session.add(self)
 
     @staticmethod
     def get_subterms_ids(start_id: UUID | None = None) -> list[UUID]:
@@ -119,17 +133,6 @@ class VocabularyHierarchy(db.Model):
         children_ids = VocabularyHierarchy.get_subterms_ids(self.id)
 
         for child in children_ids:
-            child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
-            child_hierarchy.fix_hierarchy_on_self()
-
-    def fix_hierarchy_down_on_delete(self) -> None:
-        """Fix hierarchy for all descendants."""
-        children_ids = VocabularyHierarchy.get_subterms_ids(self.parent_id)
-
-        for child in children_ids:
-            if child == self.id:
-                continue
-
             child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
             child_hierarchy.fix_hierarchy_on_self()
 

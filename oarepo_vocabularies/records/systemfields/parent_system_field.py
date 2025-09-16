@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any
 from invenio_db import db
 from invenio_records.systemfields import DictField, SystemField
 from invenio_vocabularies.records.api import Vocabulary
+from marshmallow import ValidationError
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy
@@ -151,14 +152,16 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         cache = self.__get__(record)
 
         parent = record.relations.parent()
+
+        # we have a parent, either new or changed
         if parent:
             parent_uuid = parent.id
             self_uuid = record.id
 
             hierarchy_entry = VocabularyHierarchy.query.get(self_uuid)
-
+            # If hierarchy entry exists, update it
             if hierarchy_entry:
-                # Update existing row
+                # check if parent is the same
                 if hierarchy_entry.parent_id != parent_uuid:
                     hierarchy_entry.parent_id = parent_uuid
 
@@ -177,6 +180,7 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
 
             # Use flush so it stays inside the same transaction
             db.session.flush()
+        # we had a parent, but now it is removed, because we moved to other "tree"
         elif parent is None and cache.previous_uuid and not cache.uuid:
             # parent was removed, we need to update row in DB
             row = (
@@ -196,10 +200,21 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
 
     def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
         """Handle deletion by setting correct parent to children in VocabularyHierarchy table."""
+        cache = self.__get__(record)
+
+        # update cache values, because there are used later in updating hierarchy leaf status
+        cache._previous_parent_uuid = cache.uuid  # noqa: SLF001
+        cache._parent_uuid = None  # noqa: SLF001
+        cache._parent_id = None  # noqa: SLF001
         self_uuid = record.id
 
-        # If record has any children, set their parent to parent of the deleted record
+        # Can only delete if has no children
         direct_children = VocabularyHierarchy.get_direct_subterms_ids(self_uuid)
         if len(direct_children) > 0:
             # TODO: Change to marshmallow validation error if has children
-            raise ValueError("Cannot delete a vocabulary term that has children. Reassign or delete children first.")
+            raise ValidationError(
+                {
+                    "parent": f"Cannot delete a vocabulary term with ID {self_uuid} "
+                    "that has children. Reassign or delete children first."
+                }
+            )
