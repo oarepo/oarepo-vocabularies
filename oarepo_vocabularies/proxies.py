@@ -19,14 +19,15 @@ if typing.TYPE_CHECKING:
     from .ext import OARepoVocabularies
     from .services.service import VocabularyTypeService
 
+    current_oarepo_vocabularies: OARepoVocabularies
+    current_type_service: VocabularyTypeService
+
 
 def _ext_proxy(attr: str) -> LocalProxy:
     return LocalProxy(lambda: getattr(current_app.extensions["oarepo-vocabularies"], attr))
 
 
-current_oarepo_vocabularies: OARepoVocabularies = LocalProxy(  # type: ignore  # noqa: PGH003
-    lambda: current_app.extensions["oarepo-vocabularies"]
-)
+current_oarepo_vocabularies = LocalProxy(lambda: current_app.extensions["oarepo-vocabularies"])
 
-current_type_service: VocabularyTypeService = _ext_proxy("type_service")  # type: ignore  # noqa: PGH003
+current_type_service = _ext_proxy("type_service")
 """Proxy to the instantiated vocabulary type service."""
