@@ -14,6 +14,7 @@ import pytest
 from flask_principal import PermissionDenied
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
+from marshmallow import ValidationError
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.records.models import VocabularyHierarchy
@@ -425,35 +426,39 @@ def test_hierarchy_change_parents_option6(app, db, cache, lang_type, vocab_cf, s
     # Starting graph:
     # 1. a (root = main parent) -> b (second parent) -> c
     # 2. d
-    # After changes: b is deleted -> update c parent and change its hierarchy
+    # We want to delete B, but it has child C, should raise error
     b_rec, _ = results["b"]
-
-    b_rec.delete()
+    with pytest.raises(
+        ValidationError,
+        match=r"Cannot delete a vocabulary term with ID .* that has children. Reassign or delete children first.",
+    ):
+        b_rec.delete()
 
     c_updated = Vocabulary.get_record(results["c"][0].id)
     assert c_updated.hierarchy.to_dict() == {
-        "level": 2,
+        "level": 3,
         "titles": [
             {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
+            {"en": "English (US)", "da": "Engelsk (US)"},  # b
             {"en": "English", "da": "Engelsk"},  # a
         ],
-        "ancestors": ["a"],
-        "ancestors_or_self": ["c", "a"],
+        "ancestors": ["b", "a"],
+        "ancestors_or_self": ["c", "b", "a"],
         "leaf": True,
-        "parent": "a",
+        "parent": "b",
     }
 
     # check DB table
     entries = VocabularyHierarchy.query.filter_by(id=b_rec.id).all()
-    assert len(entries) == 0
+    assert len(entries) == 1  # still there
 
-    # check that B has no children
+    # check that B still has children
     b_children = VocabularyHierarchy.get_direct_subterms_ids(results["b"][0].id)
-    assert len(b_children) == 0
+    assert len(b_children) == 1  # only C
 
     # check that A subterms
     a_children = VocabularyHierarchy.get_subterms_ids(results["a"][0].id)
-    assert len(a_children) == 1  # only C
+    assert len(a_children) == 2  # B and C
 
 
 def test_hierarchy_change_parents_option7(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
@@ -468,7 +473,7 @@ def test_hierarchy_change_parents_option7(app, db, cache, lang_type, vocab_cf, s
     results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
     # Starting graph:
     # 1. a -> b -> c -> d
-    # After changes: a is deleted -> changes should propagate down
+    # We want to delete A, which is parent of B, C, D, should raise error
 
     # Check initial hierarchy
     b_updated = Vocabulary.get_record(results["b"][0].id)
@@ -513,56 +518,60 @@ def test_hierarchy_change_parents_option7(app, db, cache, lang_type, vocab_cf, s
     }
 
     a_rec, _ = results["a"]
-    a_rec.delete()
+    with pytest.raises(
+        ValidationError,
+        match=r"Cannot delete a vocabulary term with ID .* that has children. Reassign or delete children first.",
+    ):
+        a_rec.delete()
 
     b_updated = Vocabulary.get_record(results["b"][0].id)
     assert b_updated.hierarchy.to_dict() == {
-        "level": 1,
+        "level": 2,
         "titles": [
             {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
         ],
-        "ancestors": [],
-        "ancestors_or_self": ["b"],
+        "ancestors": ["a"],
+        "ancestors_or_self": ["b", "a"],
         "leaf": False,
-        "parent": None,
+        "parent": "a",
     }
     c_updated = Vocabulary.get_record(results["c"][0].id)
     assert c_updated.hierarchy.to_dict() == {
-        "level": 2,
+        "level": 3,
         "titles": [
             {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
             {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
         ],
-        "ancestors": ["b"],
-        "ancestors_or_self": ["c", "b"],
+        "ancestors": ["b", "a"],
+        "ancestors_or_self": ["c", "b", "a"],
         "leaf": False,
         "parent": "b",
     }
 
     d_updated = Vocabulary.get_record(results["d"][0].id)
     assert d_updated.hierarchy.to_dict() == {
-        "level": 3,
+        "level": 4,
         "titles": [
             {"en": "English (UK)", "da": "Engelsk (UK)"},  # d
             {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},  # c
             {"en": "English (US)", "da": "Engelsk (US)"},  # b
+            {"en": "English", "da": "Engelsk"},  # a
         ],
-        "ancestors": ["c", "b"],
-        "ancestors_or_self": ["d", "c", "b"],
+        "ancestors": ["c", "b", "a"],
+        "ancestors_or_self": ["d", "c", "b", "a"],
         "leaf": True,
         "parent": "c",
     }
+
     # check DB table
-    entries = VocabularyHierarchy.query.filter_by(id=results["b"][0].id).all()
+    entries = VocabularyHierarchy.query.filter_by(id=results["a"][0].id).all()
     assert len(entries) == 1
 
-    # check that A has no children
+    # check that A has 1 child B
     a_children = VocabularyHierarchy.get_direct_subterms_ids(results["a"][0].id)
-    assert len(a_children) == 0
-
-    # check that B has subterms
-    b_children = VocabularyHierarchy.get_subterms_ids(results["b"][0].id)
-    assert len(b_children) == 2  # C and D
+    assert len(a_children) == 1
 
 
 def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf, search_clear):
