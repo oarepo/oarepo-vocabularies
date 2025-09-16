@@ -127,20 +127,10 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
 
     def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
         """Handle deletion by setting correct parent to children in VocabularyHierarchy table."""
-        cache = self.__get__(record)
-
-        cache._previous_parent_uuid = cache.uuid  # noqa: SLF001
-        cache._parent_uuid = None  # noqa: SLF001
-        cache._parent_id = None  # noqa: SLF001
         self_uuid = record.id
 
         # If record has any children, set their parent to parent of the deleted record
         direct_children = VocabularyHierarchy.get_direct_subterms_ids(self_uuid)
-
-        for child_id in direct_children:
-            child_entry = VocabularyHierarchy.query.get(child_id)
-            if child_entry:
-                child_entry.parent_id = cache.previous_uuid
-                db.session.add(child_entry)
-
-        db.session.flush()
+        if len(direct_children) > 0:
+            # TODO: Change to marshmallow validation error if has children
+            raise ValueError("Cannot delete a vocabulary term that has children. Reassign or delete children first.")
