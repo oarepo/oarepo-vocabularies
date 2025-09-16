@@ -14,16 +14,85 @@ from typing import TYPE_CHECKING, Any
 
 from invenio_db import db
 from invenio_records.systemfields import DictField, SystemField
+from invenio_vocabularies.records.api import Vocabulary
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
-from .helpers import ParentObject
-
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from invenio_records_resources.records.api import Record
 
     from oarepo_vocabularies.records.api import Vocabulary as OarepoVocabularyRecord
+
+
+class ParentObject:
+    """Object representing the parent data of a vocabulary record.
+
+    Caches the current and previous parent UUIDs to detect changes and need for updates of Hierarchy.
+    """
+
+    def __init__(self, dict_field: DictField, record: OarepoVocabularyRecord):
+        """Initialize the ParentObject."""
+        self._dict_field = dict_field
+        self._record = record
+        self._previous_parent_uuid = None
+        self._parent_uuid = None
+        self._parent_id = None
+        self._cached = False
+
+    @property
+    def uuid(self) -> UUID | None:
+        """Get the current parent UUID."""
+        if not self._cached:
+            self._get_from_record()
+
+        return self._parent_uuid
+
+    @property
+    def previous_uuid(self) -> UUID | None:
+        """Get the previous parent UUID."""
+        if not self._cached:
+            self._get_from_record()
+        return self._previous_parent_uuid
+
+    def _get_from_record(self) -> None:
+        """Get the parent UUIDs from the record relations."""
+        parent = self._record.relations.parent()
+
+        if parent:
+            self._parent_uuid = parent.id
+            self._previous_parent_uuid = (
+                db.session.query(VocabularyHierarchy.parent_id)
+                .filter(VocabularyHierarchy.id == self._record.id)
+                .scalar()
+            )
+            self._parent_id = parent["id"]
+
+            self._cached = True
+
+    def set(self, value: Any) -> None:
+        """Set the parent value."""
+        if not self._cached:
+            self._get_from_record()
+
+        self._dict_field.__set__(self._record, value)
+        parent_id = value.get("id")
+
+        # no parent
+        if not parent_id:
+            self._previous_parent_uuid = self._parent_uuid
+            self._parent_id = None
+            self._parent_uuid = None
+            return
+
+        # changed parent
+        if parent_id != self._parent_id:
+            self._parent_id = parent_id
+            self._previous_parent_uuid = self._parent_uuid  # current will be previous
+            self._parent_uuid = Vocabulary.pid.with_type_ctx(self._record["type"]["id"]).resolve(parent_id).id  # type: ignore[attr-defined]
+            self._cached = True
 
 
 class ParentSystemField(MappingSystemFieldMixin, SystemField):

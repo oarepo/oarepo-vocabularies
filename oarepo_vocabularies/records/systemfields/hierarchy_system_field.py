@@ -14,17 +14,95 @@ from typing import TYPE_CHECKING, Any
 
 from invenio_db import db
 from invenio_records.systemfields import SystemField
+from invenio_vocabularies.records.api import Vocabulary
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
 from oarepo_runtime.records.systemfields.selectors import PathSelector
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
-from .helpers import HierarchyObject
-
 if TYPE_CHECKING:
     from invenio_records.api import RecordBase
     from invenio_records.dumpers import Dumper
     from invenio_records_resources.records.api import Record
+
+    from oarepo_vocabularies.records.api import Vocabulary as OarepoVocabularyRecord
+
+
+class HierarchyObject:
+    """Object representing the hierarchy data of a vocabulary record.
+
+    References the VocabularyHierarchy table row and provides methods to interact with it.
+    """
+
+    def __init__(self, record: OarepoVocabularyRecord):
+        """Initialize the HierarchyObject."""
+        self._record = record
+        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata  # type: ignore[union-attr]
+
+        if self._hierarchy_data is None:
+            self._hierarchy_data = VocabularyHierarchy()
+            self._hierarchy_data.id = self._record.id
+            self._hierarchy_data.parent_id = (
+                getattr(self._record.parent, "uuid", None) if hasattr(self._record, "parent") else None
+            )
+            self._hierarchy_data.pid = self._record["id"]
+            self._hierarchy_data.titles = [self._record.get("title")]
+
+    @property
+    def data(self) -> VocabularyHierarchy:
+        """Get the hierarchy data."""
+        return self._hierarchy_data
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert the hierarchy data to a dictionary."""
+        return {
+            "level": self._hierarchy_data.level,
+            "titles": self._hierarchy_data.titles,
+            "ancestors": self._hierarchy_data.ancestors,
+            "ancestors_or_self": self._hierarchy_data.ancestors_or_self,
+            "leaf": self._hierarchy_data.leaf,
+            "parent": self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None,
+        }
+
+    def query_subterms(self) -> Any:
+        """Get direct subterms of this record."""
+        subterm_ids = self._hierarchy_data.get_direct_subterms_ids(self._record.id)
+        return Vocabulary.get_records(subterm_ids)
+
+    def query_descendants(self) -> Any:
+        """Get all descendants (children, grandchildren, etc.) of this record."""
+        descendants_ids = self._hierarchy_data.get_subterms_ids(self._record.id)
+        return Vocabulary.get_records(descendants_ids)
+
+    @property
+    def level(self) -> int:
+        """Get the level of the record in the hierarchy."""
+        return self._hierarchy_data.level
+
+    @property
+    def leaf(self) -> bool:
+        """Check if the record is a leaf in the hierarchy."""
+        return self._hierarchy_data.leaf
+
+    @property
+    def titles(self) -> list[dict[str, str]]:
+        """Get the titles of the hierarchy."""
+        return self._hierarchy_data.titles
+
+    @property
+    def ancestors_ids(self) -> list[str]:
+        """Get the PIDs of the ancestors in the hierarchy."""
+        return self._hierarchy_data.ancestors
+
+    @property
+    def ancestors_or_self_ids(self) -> list[str]:
+        """Get the PIDs of the ancestors or self in the hierarchy."""
+        return self._hierarchy_data.ancestors_or_self
+
+    @property
+    def parent_id(self) -> str | None:
+        """Get the PID of the parent in the hierarchy."""
+        return self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None
 
 
 class HierarchySystemField(MappingSystemFieldMixin, SystemField):
