@@ -145,11 +145,6 @@ class HierarchyObject:
         descendants_ids = self._hierarchy_data.get_subterms_ids(self._record.id)
         return Vocabulary.get_records(descendants_ids)
 
-    def query_ancestors(self) -> Any:
-        """Get all ancestors of this record."""
-        ancestors_ids = self._hierarchy_data.get_ancestors_ids(self._record.id)
-        return Vocabulary.get_records(ancestors_ids)
-
     @property
     def level(self) -> int:
         """Get the level of the record in the hierarchy."""

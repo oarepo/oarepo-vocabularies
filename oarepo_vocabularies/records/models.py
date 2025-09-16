@@ -72,7 +72,7 @@ class VocabularyHierarchy(db.Model):
 
         self.leaf = not bool(result)
         title = self.titles[0]
-
+        # TODO: check if something changed, if not, skip
         if not parent_hierarchy:
             self.titles = [title]
             self.ancestors = []
@@ -107,28 +107,6 @@ class VocabularyHierarchy(db.Model):
         # Final query with ORDER BY depth
         q = db.session.query(hierarchy_cte.c.id).order_by(hierarchy_cte.c.depth)
         return [cid for (cid,) in q.all() if cid is not None]
-
-    @staticmethod
-    def get_ancestors_ids(start_id: UUID | None = None) -> list[UUID]:
-        """Get all ancestor IDs using recursive CTE."""
-        # Base case: direct parent of the node
-        base = select(VocabularyHierarchy.parent_id.label("id"), literal(1).label("depth")).where(
-            VocabularyHierarchy.id == start_id
-        )
-
-        # Recursive CTE
-        hierarchy_cte = base.cte(name="parents", recursive=True)
-        parent_alias = aliased(VocabularyHierarchy)
-
-        recursive = select(parent_alias.parent_id, (hierarchy_cte.c.depth + 1).label("depth")).where(
-            parent_alias.id == hierarchy_cte.c.id
-        )
-
-        hierarchy_cte = hierarchy_cte.union_all(recursive)
-
-        # Final query with ORDER BY depth (closest parents first)
-        q = db.session.query(hierarchy_cte.c.id).order_by(hierarchy_cte.c.depth)
-        return [pid for (pid,) in q.all() if pid is not None]
 
     @staticmethod
     def get_direct_subterms_ids(parent_id: UUID | None = None) -> list[UUID]:
