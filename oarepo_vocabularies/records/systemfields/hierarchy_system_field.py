@@ -162,6 +162,8 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         """Fix the parent leaf status and update children hierarchy on delete."""
         # update current record to have no parent
         hierarchy_entry = VocabularyHierarchy.query.get(record.id)
+        if hierarchy_entry is None:
+            return  # raise error? just ignore?
         hierarchy_entry.parent_id = None
 
         # fix parent leaf status

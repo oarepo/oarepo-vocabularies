@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from invenio_db import db
 from invenio_vocabularies.records.models import VocabularyMetadata
@@ -21,7 +21,7 @@ from sqlalchemy_utils.types import UUIDType
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from oarepo_vocabularies.records.systemfields.helpers import ParentObject
+    from oarepo_vocabularies.records.systemfields.parent_system_field import ParentObject
 
 
 class VocabularyHierarchy(db.Model):
@@ -138,7 +138,7 @@ class VocabularyHierarchy(db.Model):
 
     def update_parent_leaf_status(self, cache: ParentObject) -> None:
         """Update leaf status for the parent ancestor."""
-        parent_hierarchy: VocabularyHierarchy | None = self.parent_hierarchy_metadata
+        parent_hierarchy = cast("VocabularyHierarchy | None", self.parent_hierarchy_metadata)
         # current parent exists, change parent leaf if exists and if it is False
         if parent_hierarchy is not None and parent_hierarchy.leaf:
             parent_hierarchy.leaf = False
