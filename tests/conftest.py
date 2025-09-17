@@ -181,12 +181,6 @@ def app_config(app_config):
     app_config["OPENAIRE_CLIENT_ID"] = "blah"
     app_config["OPENAIRE_CLIENT_SECRET"] = "blah"  # noqa: S105
 
-    from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
-
-    from .simple_model import simple_model
-
-    app_config["OAREPO_MODELS"] = {"SimpleModel": simple_model, "VocabularyUI": InvenioVocabulariesUIResourceConfig}
-
     return app_config
 
 
