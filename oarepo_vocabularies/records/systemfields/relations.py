@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 from invenio_records.systemfields.relations.results import RelationResult
 from invenio_records_resources.records.systemfields.relations import PIDRelation
 from invenio_vocabularies.records.api import Vocabulary
@@ -33,7 +35,7 @@ class ParentVocabularyItemRelationResult(RelationResult):
         if not data:
             return None
 
-        return super()._clean_one(data, keys, attrs)
+        return cast("dict | None", super()._clean_one(data, keys, attrs))
 
 
 class ParentVocabularyItemRelation(PIDRelation):
