@@ -13,8 +13,11 @@ from __future__ import annotations
 import inspect
 from typing import TYPE_CHECKING, NamedTuple
 
+from invenio_records.dumpers import SearchDumper
+from invenio_records.dumpers.indexedat import IndexedAtDumperExt
 from invenio_records.systemfields import ConstantField, DictField, RelationsField
 from invenio_records.systemfields.relations import MultiRelationsField
+from invenio_records_resources.records.dumpers import CustomFieldsDumperExt
 from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_vocabularies.records.api import Vocabulary as InvenioVocabulary
 from invenio_vocabularies.records.pidprovider import VocabularyIdProvider
@@ -67,6 +70,8 @@ class Vocabulary(
         context_cls=SpecialVocabulariesAwarePIDFieldContext,
         create=False,
     )
+
+    dumper = SearchDumper(extensions=[IndexedAtDumperExt(), CustomFieldsDumperExt("VOCABULARIES_CF")])
 
     schema = ConstantField(
         "$schema",

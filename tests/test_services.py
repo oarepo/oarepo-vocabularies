@@ -173,3 +173,4 @@ def test_services_search(app, db, cache, lang_type, vocab_cf, search_clear):
     results = vocab_service.search(system_identity, {"q": "eng"}, type=lang_type.id)
     assert results.total == 1
     assert next(iter(results.hits))["id"] == "eng"
+    assert next(iter(results.hits))["custom_fields"]["blah"] == "Hello"

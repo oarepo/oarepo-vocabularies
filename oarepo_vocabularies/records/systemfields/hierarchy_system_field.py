@@ -39,6 +39,10 @@ class HierarchyObject:
         self._record = record
         self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata  # type: ignore[union-attr]
 
+        # Opensearch result creates transient self._record.model so that hiearchy_metadata is not loaded from the DB
+        if self._hierarchy_data is None:
+            self._hierarchy_data = db.session.query(VocabularyHierarchy).filter_by(id=self._record.id).one_or_none()
+
         if self._hierarchy_data is None:
             self._hierarchy_data = VocabularyHierarchy()
             self._hierarchy_data.id = self._record.id
