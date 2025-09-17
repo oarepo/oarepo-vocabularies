@@ -25,6 +25,19 @@ class ParentVocabularyItemRelationResult(RelationResult):
 
         return (vocabulary_type, id_)
 
+    def _clean_one(self, data: dict, keys: list, attrs: list) -> dict | None:  # noqa: ARG002
+        """Remove all but "id" key for a dereferenced related object.
+
+        Handle also when data are empty (no parent set).
+        """
+        if not data:
+            return None
+
+        relation_id = data[self.field._value_key_suffix]  # noqa: SLF001
+        data.clear()
+        data[self.field._value_key_suffix] = relation_id  # noqa: SLF001
+        return data
+
 
 class ParentVocabularyItemRelation(PIDRelation):
     """Relation to a parent vocabulary item."""

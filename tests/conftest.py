@@ -181,6 +181,12 @@ def app_config(app_config):
     app_config["OPENAIRE_CLIENT_ID"] = "blah"
     app_config["OPENAIRE_CLIENT_SECRET"] = "blah"  # noqa: S105
 
+    from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
+
+    from .simple_model import simple_model
+
+    app_config["OAREPO_MODELS"] = {"SimpleModel": simple_model, "VocabularyUI": InvenioVocabulariesUIResourceConfig}
+
     return app_config
 
 
@@ -489,6 +495,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
+            "custom_fields": {"blah": "Hello in US"},
         },
     )
     child_2 = vocab_service.create(
@@ -503,6 +510,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
+            "custom_fields": {"blah": "Hello in UK"},
         },
     )
     grand_child_2_1 = vocab_service.create(
@@ -518,6 +526,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             "type": "languages",
             "hierarchy": {"parent": "eng.UK"},
             "tags": ["featured"],
+            "custom_fields": {"blah": "Hello in Scottish"},
         },
     )
     Vocabulary.index.refresh()
@@ -611,10 +620,3 @@ def reset_babel(app):
         yield clear_babel_context
     finally:
         clear_babel_context()
-
-
-@pytest.fixture
-def cache_clear(app):
-    app.extensions["oarepo-vocabularies"].ui_cache.clear()
-    yield
-    app.extensions["oarepo-vocabularies"].ui_cache.clear()

@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from invenio_db import db
 from invenio_vocabularies.records.models import VocabularyMetadata
@@ -20,8 +20,6 @@ from sqlalchemy_utils.types import UUIDType
 
 if TYPE_CHECKING:
     from uuid import UUID
-
-    from oarepo_vocabularies.records.systemfields.parent_system_field import ParentObject
 
 
 class VocabularyHierarchy(db.Model):
@@ -82,7 +80,6 @@ class VocabularyHierarchy(db.Model):
             new_titles = [title, *parent_hierarchy.titles]
             new_ancestors = parent_hierarchy.ancestors_or_self
             new_ancestors_or_self = [self.pid, *parent_hierarchy.ancestors_or_self]
-
         # Only update if something actually changed
         changed = (
             self.leaf != new_leaf
@@ -136,23 +133,18 @@ class VocabularyHierarchy(db.Model):
             child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
             child_hierarchy.fix_hierarchy_on_self()
 
-    def update_parent_leaf_status(self, cache: ParentObject) -> None:
-        """Update leaf status for the parent ancestor."""
-        parent_hierarchy = cast("VocabularyHierarchy | None", self.parent_hierarchy_metadata)
-        # current parent exists, change parent leaf if exists and if it is False
-        if parent_hierarchy is not None and parent_hierarchy.leaf:
-            parent_hierarchy.leaf = False
-            db.session.add(parent_hierarchy)
+    def update_leaf_status(self, force_child_exists: bool = False) -> None:
+        """Update leaf status for the parent ancestor.
+
+        :param force_child_exists: If True, forces the node to be non-leaf without checking the actual DB.
+        """
+        if force_child_exists:
+            if self.leaf:
+                self.leaf = False
+                db.session.add(self)
             return
 
-        # if current parent changed
-        if cache.previous_uuid != cache.uuid and cache.previous_uuid is not None:
-            previous_parent_rec = (
-                db.session.query(VocabularyHierarchy).filter(VocabularyHierarchy.id == cache.previous_uuid).one()
-            )
-
-            parent_has_children = bool(VocabularyHierarchy.get_direct_subterms_ids(previous_parent_rec.id))
-
-            if not previous_parent_rec.leaf and not parent_has_children:
-                previous_parent_rec.leaf = True
-                db.session.add(previous_parent_rec)
+        is_leaf = not bool(VocabularyHierarchy.get_direct_subterms_ids(self.id))
+        if is_leaf != self.leaf:
+            self.leaf = is_leaf
+            db.session.add(self)
