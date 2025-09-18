@@ -10,9 +10,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
-from invenio_records.systemfields import DictField, SystemField
+from invenio_records.systemfields import SystemField
 from marshmallow import ValidationError
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
 
@@ -30,9 +30,11 @@ class ParentObject:
     Caches the current and previous parent UUIDs to detect changes and need for updates of Hierarchy.
     """
 
-    def __init__(self, dict_field: DictField, record: OarepoVocabularyRecord):
+    def __init__(self, key: str, record: OarepoVocabularyRecord):
         """Initialize the ParentObject."""
-        self._dict_field = dict_field
+        if "." in key:
+            raise ValueError("ParentObject only supports top-level keys.")
+        self._key = key
         self._record = record
         self._previous_parent_id: str | None = None
         self._parent_id: str | None = None
@@ -40,8 +42,8 @@ class ParentObject:
     @property
     def id(self) -> str | None:
         """Get the current parent ID."""
-        val = cast("dict[str, str] | None", self._dict_field.__get__(self._record))
-        return val.get("id") if val else None
+        val: dict[str, str] = self._record.get(self._key, {})
+        return val.get("id")
 
     @property
     def previous_id(self) -> str | None:
@@ -53,19 +55,19 @@ class ParentObject:
         if self._previous_parent_id is not None:
             raise ValueError("Parent value has already been set once.")
         self._previous_parent_id = self.id
-        self._dict_field.__set__(self._record, {"id": value} if value is not None else None)
+
+        if not value:
+            self._record.pop(self._key, None)
+        else:
+            self._record[self._key] = {"id": value}
 
 
 class ParentSystemField(MappingSystemFieldMixin, SystemField):
     """System field handling the VocabularyHierarchy parent column updates on create/update/delete of a record."""
 
-    def __init__(self, key: str | None = None, clear_none: bool = False, create_if_missing: bool = True):
+    def __init__(self, key: str | None = None):
         """Initialize the ParentSystemField."""
-        self.clear_none = clear_none
-        self.create_if_missing = create_if_missing
         super().__init__(key=key)
-
-        self._dict_field = DictField(key=key, clear_none=clear_none, create_if_missing=create_if_missing)
 
     @property
     def mapping(self) -> dict[str, Any]:
@@ -88,7 +90,6 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
     def __set_name__(self, owner: Any, name: str) -> None:
         """Set the name of the field."""
         super().__set_name__(owner, name)
-        self._dict_field.__set_name__(owner, name)
 
     def __get__(self, record: Record, owner: Any = None) -> Any:
         """Get the parent field value or cached value."""
@@ -96,7 +97,7 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
             return self
 
         if not hasattr(record, "_parent_cache"):
-            record._parent_cache = ParentObject(self._dict_field, record)  # noqa: SLF001 # type: ignore[attr-defined]
+            record._parent_cache = ParentObject(self.key, record)  # noqa: SLF001 # type: ignore[attr-defined]
 
         return record._parent_cache  # noqa: SLF001 # type: ignore[attr-defined]
 

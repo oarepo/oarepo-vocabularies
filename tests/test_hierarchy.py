@@ -295,7 +295,7 @@ def test_hierarchy_change_parents_set_parent_to_none(app, db, cache, lang_type, 
     c_rec.commit()
 
     c_updated = Vocabulary.get_record(c_rec.id)
-    assert c_updated["parent"] is None
+    assert "parent" not in c_updated
 
     assert c_updated.hierarchy.to_dict() == {
         "level": 1,

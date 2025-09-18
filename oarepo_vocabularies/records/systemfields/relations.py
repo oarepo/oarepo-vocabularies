@@ -10,8 +10,6 @@
 
 from __future__ import annotations
 
-from typing import cast
-
 from invenio_records.systemfields.relations.results import RelationResult
 from invenio_records_resources.records.systemfields.relations import PIDRelation
 from invenio_vocabularies.records.api import Vocabulary
@@ -26,16 +24,6 @@ class ParentVocabularyItemRelationResult(RelationResult):
         vocabulary_type = self.record["type"]["id"]
 
         return (vocabulary_type, id_)
-
-    def _clean_one(self, data: dict, keys: list, attrs: list) -> dict | None:
-        """Remove all but "id" key for a dereferenced related object.
-
-        Handle also when data are empty (no parent set).
-        """
-        if not data:
-            return None
-
-        return cast("dict | None", super()._clean_one(data, keys, attrs))
 
 
 class ParentVocabularyItemRelation(PIDRelation):
