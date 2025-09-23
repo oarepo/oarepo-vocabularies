@@ -16,7 +16,6 @@ from invenio_db import db
 from invenio_records.systemfields import SystemField
 from invenio_vocabularies.records.api import Vocabulary
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
-from oarepo_runtime.records.systemfields.selectors import PathSelector
 
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
@@ -211,29 +210,3 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         """Add the hierarchy data to the record before dumping."""
         hierarchy_obj = self.__get__(record)  # type: ignore[arg-type]
         data[self.key] = hierarchy_obj.to_dict()
-
-
-class HierarchyPartSelector(PathSelector):
-    """Selector selecting part of hierarchy."""
-
-    level = 0
-
-    def __init__(self, *paths: str, level: int | None = None) -> None:
-        """Initialize the selector."""
-        super().__init__(*paths)
-        if level is not None:
-            self.level = level
-        if not self.paths:
-            raise ValueError("At least one path must be set")
-
-    def select(self, record: dict) -> list[Any]:
-        """Select the correct part of hierarchy."""
-        parts = super().select(record)
-
-        elements = []
-        for dg in parts:
-            ids = dg["hierarchy"]["ancestors_or_self"]
-            titles = dg["hierarchy"]["title"]
-            if len(ids) > self.level:
-                elements.append({"id": ids[-1 - self.level], "title": titles[-1 - self.level]})
-        return elements

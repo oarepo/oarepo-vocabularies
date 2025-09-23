@@ -18,9 +18,6 @@ from marshmallow import ValidationError
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.records.models import VocabularyHierarchy
-from oarepo_vocabularies.records.systemfields.hierarchy_system_field import (
-    HierarchyPartSelector,
-)
 
 
 def test_hierarchy_change_leafs_after_insert(app, db, cache, lang_type, vocab_cf, search_clear):
@@ -796,30 +793,6 @@ def test_parent(sample_records, client, search_clear):
 
     for s in sample_records:
         _test_parent(s, None)
-
-
-def test_hierarchy_selector():
-    data = {
-        "authority": {
-            "@v": "95bcf144-e477-4888-b7ba-68555090d01f::1",
-            "id": "03zsq2967",
-            "title": {"en": "Association of Asian Pacific Community Health Organizations"},
-            "hierarchy": {
-                "ancestors_or_self": ["03zsq2967", "11111"],
-                "title": [
-                    {"en": "Association of Asian Pacific Community Health Organizations"},
-                    {"en": "AAAAA"},
-                ],
-            },
-        }
-    }
-    assert HierarchyPartSelector("authority", level=0).select(data) == [{"id": "11111", "title": {"en": "AAAAA"}}]
-    assert HierarchyPartSelector("authority", level=1).select(data) == [
-        {
-            "id": "03zsq2967",
-            "title": {"en": "Association of Asian Pacific Community Health Organizations"},
-        }
-    ]
 
 
 def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
