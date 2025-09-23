@@ -80,10 +80,10 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return super().edit(pid_value=pid_value, **kwargs)
 
     def _get_record(
-        self, 
-        pid_value: str, 
-        allow_draft: bool = False, 
-        include_deleted: bool = False, 
+        self,
+        pid_value: str,
+        allow_draft: bool = False,  # noqa: ARG002
+        include_deleted: bool = False,  # noqa: ARG002
         **kwargs: Any,  # noqa: ARG002
     ) -> RecordItem:
         """Get a record from the service."""
