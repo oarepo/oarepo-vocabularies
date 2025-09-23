@@ -79,7 +79,13 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         """Return edit page for a record."""
         return super().edit(pid_value=pid_value, **kwargs)
 
-    def _get_record(self, pid_value: str, allow_draft: bool = False, include_deleted: bool = False) -> RecordItem:  # noqa: ARG002
+    def _get_record(
+        self, 
+        pid_value: str, 
+        allow_draft: bool = False, 
+        include_deleted: bool = False, 
+        **kwargs: Any,  # noqa: ARG002
+    ) -> RecordItem:
         """Get a record from the service."""
         pid_value = resource_requestctx.view_args["pid_value"]
         vocabulary_type = resource_requestctx.view_args["vocabulary_type"]
