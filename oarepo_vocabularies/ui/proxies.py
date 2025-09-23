@@ -10,8 +10,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from flask import current_app
 from werkzeug.local import LocalProxy
 
-current_vocabularies_ui = LocalProxy(lambda: current_app.extensions["oarepo_vocabularies_ui"])
+if TYPE_CHECKING:
+    from .ext import InvenioVocabulariesAppExtension
+
+    current_vocabularies_ui: InvenioVocabulariesAppExtension
+
+current_vocabularies_ui = LocalProxy(lambda: current_app.extensions["oarepo_vocabularies_ui"])  # type: ignore[assignment]
 """Proxy to the instantiated ui extension."""
