@@ -1,3 +1,13 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+from __future__ import annotations
+
 import re
 
 import openpyxl
@@ -8,16 +18,13 @@ rowidx = 0
 
 
 def next_row(it):
-    global rowidx
+    global rowidx  # noqa: PLW0603
     rowidx += 1
     return [x.value for x in next(it)]
 
 
 def empty(r):
-    for val in r:
-        if val:
-            return False
-    return True
+    return all(not val for val in r)
 
 
 wb_obj = openpyxl.load_workbook("tests/complex-data/institutions_old.xlsx")
@@ -67,12 +74,12 @@ try:
                 parent, base = stack[-1]
             else:
                 parent, base = ("", "")
-            id = str(row[7] or slug)
+            id_ = str(row[7] or slug)
             split_id = []
-            if id.endswith("-cas"):
-                split_id = [id]
+            if id_.endswith("-cas"):
+                split_id = [id_]
             else:
-                for word in id.split("-"):
+                for word in id_.split("-"):
                     if word in shortcuts:
                         split_id.append(shortcuts[word])
                         continue
@@ -82,22 +89,17 @@ try:
             short_id = "".join(split_id)
 
             if base:
-                id = f"{base}-{id}"
+                id_ = f"{base}-{id_}"
                 short_id = f"{base}-{short_id}"
 
-            if short_id not in ids and len(short_id) > 2:
-                base = short_id
-            else:
-                base = id
-            id = unidecode(id.lower())
-            assert id not in ids
+            base = short_id if short_id not in ids and len(short_id) > 2 else id_
+            id_ = unidecode(id_.lower())
+            assert id_ not in ids
 
-            print(id, str(row[7] or slug))
-
-            ids.add(id)
-            stack.append((id, base))
+            ids.add(id_)
+            stack.append((id_, base))
             sheet_obj.cell(row=rowidx, column=1).value = parent
-            sheet_obj.cell(row=rowidx, column=2).value = id
+            sheet_obj.cell(row=rowidx, column=2).value = id_
 
         row = next_row(it)
 except StopIteration:

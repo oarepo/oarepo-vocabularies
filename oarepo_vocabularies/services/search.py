@@ -1,28 +1,46 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+"""Search for oarepo-vocabularies."""
+
+from __future__ import annotations
+
 from collections import defaultdict
 from functools import partial
+from typing import TYPE_CHECKING, ClassVar
 
+from invenio_i18n import get_locale
+from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.services.records import (
+    SearchOptions as InvenioSearchOptions,
+)
 from invenio_records_resources.services.records.params import (
     FilterParam,
     ParamInterpreter,
 )
 from invenio_records_resources.services.records.queryparser import QueryParser
-from oarepo_runtime.i18n import get_locale
-from oarepo_runtime.i18n import lazy_gettext as _
-from oarepo_runtime.services.search import (
-    I18nSearchOptions,
-    ICUSortOptions,
-    ICUSuggestParser,
-    SuggestField,
-)
 from opensearch_dsl import query
 from opensearch_dsl.query import Bool, Range, Term, Terms
+
+if TYPE_CHECKING:
+    from flask_principal import Identity
+    from invenio_records_resources.services.base import ServiceConfig
+    from opensearch_dsl import Search
 
 TYPE_ID_FIELD = "type.id"
 ID_FIELD = "id"
 
 
 class VocabularyQueryParser(QueryParser):
-    def parse(self, query_str):
+    """Parser for search queries."""
+
+    def parse(self, query_str: str) -> query.Query:
+        """Parse the query string, adding language-specific fields."""
         original_parsed_query = super().parse(query_str)
         current_locale = get_locale()
         if current_locale:
@@ -51,7 +69,8 @@ class VocabularyQueryParser(QueryParser):
 class SourceParam(ParamInterpreter):
     """Evaluate the 'q' or 'suggest' parameter."""
 
-    def apply(self, identity, search, params):
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+        """Apply the source parameter."""
         source = params.get("source")
         if not source:
             return search
@@ -61,19 +80,19 @@ class SourceParam(ParamInterpreter):
 class UpdatedAfterParam(ParamInterpreter):
     """Evaluate type filter."""
 
-    def __init__(self, param_name, field_name, config):
+    def __init__(self, param_name: str, field_name: str, config: ServiceConfig):
         """."""
         self.param_name = param_name
         self.field_name = field_name
         super().__init__(config)
 
     @classmethod
-    def factory(cls, param=None, field=None):
+    def factory(cls, param: str, field: str) -> partial[ParamInterpreter]:
         """Create a new filter parameter."""
         return partial(cls, param, field)
 
-    def apply(self, identity, search, params):
-        """Applies a filter to get only records for a specific type."""
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+        """Apply a filter to get only records for a specific type."""
         # Pop because we don't want it to show up in links.
         # TODO: only pop if needed.
         value = params.pop(self.param_name, None)
@@ -84,7 +103,7 @@ class UpdatedAfterParam(ParamInterpreter):
                     vocabulary_filter.append(
                         Bool(
                             must=[
-                                Range(**{self.field_name: {"gt": v}}),
+                                Range(**{self.field_name: {"gt": v}}),  # type: ignore[arg-type]
                                 Term(**{TYPE_ID_FIELD: k}),
                             ]
                         )
@@ -98,7 +117,10 @@ class UpdatedAfterParam(ParamInterpreter):
 
 
 class VocabularyIdsParam(ParamInterpreter):
-    def apply(self, identity, search, params):
+    """Evaluate type filter."""
+
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+        """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
             return search
@@ -108,19 +130,21 @@ class VocabularyIdsParam(ParamInterpreter):
             by_type[vt].append(vid)
         search_filters = []
         for vt, vids in by_type.items():
-            search_filters.append(
-                Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})])
-            )
+            search_filters.append(Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})]))  # type: ignore[arg-type]
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
-class SpecializedVocabularyIdsParam(ParamInterpreter):
 
-    def __init__(self, config, vocabulary_type = None):
+class SpecializedVocabularyIdsParam(ParamInterpreter):
+    """Evaluate type filter."""
+
+    def __init__(self, config: ServiceConfig, vocabulary_type: str | None = None):
+        """Init the param."""
         super().__init__(config)
 
         self.vocabulary_type = vocabulary_type
 
-    def apply(self, identity, search, params):
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+        """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
             return search
@@ -128,14 +152,15 @@ class SpecializedVocabularyIdsParam(ParamInterpreter):
         if not all(id_tuple[0] == self.vocabulary_type for id_tuple in ids):
             raise ValueError(f"All ids must have vocabulary type '{self.vocabulary_type}'")
 
-        return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))
+        return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))  # type: ignore[arg-type]
 
 
-class VocabularySearchOptions(I18nSearchOptions):
-    SORT_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SORT_CF"
-    SUGGEST_CUSTOM_FIELD_NAME = "OAREPO_VOCABULARIES_SUGGEST_CF"
+class VocabularySearchOptions(InvenioSearchOptions):
+    """Search options for vocabularies."""
 
-    params_interpreters_cls = [
+    params_interpreters_cls: ClassVar[
+        list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
+    ] = [
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
         VocabularyIdsParam,
@@ -143,41 +168,33 @@ class VocabularySearchOptions(I18nSearchOptions):
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
-        FilterParam.factory(
-            param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"
-        ),
+        FilterParam.factory(param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"),
         SourceParam,
-    ] + I18nSearchOptions.params_interpreters_cls
-
+        *InvenioSearchOptions.params_interpreters_cls,
+    ]
     query_parser_cls = VocabularyQueryParser
 
-    extra_sort_options = {
-        "bestmatch": dict(
-            title=_("Best match"),
-            fields=["_score"],  # ES defaults to desc on `_score` field
-        ),
-        "title": dict(
-            title=_("Title"),
-            fields=["title_sort"],
-        ),
-        "newest": dict(
-            title=_("Newest"),
-            fields=["-created"],
-        ),
-        "oldest": dict(
-            title=_("Oldest"),
-            fields=["created"],
-        ),
+    extra_sort_options: ClassVar[dict[str, dict]] = {
+        "bestmatch": {
+            "title": _("Best match"),
+            "fields": ["_score"],  # ES defaults to desc on `_score` field
+        },
+        "title": {
+            "title": _("Title"),
+            "fields": ["title_sort"],
+        },
+        "newest": {
+            "title": _("Newest"),
+            "fields": ["-created"],
+        },
+        "oldest": {
+            "title": _("Oldest"),
+            "fields": ["created"],
+        },
     }
 
-    sort_default = "bestmatch"
-    sort_default_no_query = "title"
+    # TODO: define sort_default_no_query to "title"
+    # TODO: implement suggest_parser_cls
+    # TODO: icu sort options
 
-    sort_options = ICUSortOptions("vocabularies")
-    suggest_parser_cls = ICUSuggestParser(
-        "vocabularies",
-        extra_fields=[SuggestField(field=ID_FIELD, boost=10, use_ngrams=False)],
-    )
-
-    # empty facet groups as we are inheriting from I18nSearchOptions
-    facet_groups = {}
+    facet_groups: ClassVar[dict[str, dict]] = {}

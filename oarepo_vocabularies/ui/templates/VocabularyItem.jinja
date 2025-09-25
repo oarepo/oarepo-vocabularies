@@ -1,5 +1,5 @@
 {#def vocabulary, search_link=None, searchFacet=None, vocabulary_type, hide_definition=False #}
-{% set vocabulary_dict = vocabulary | to_dict %}
+{% set vocabulary_dict = vocabulary | as_dict %}
 {% if vocabulary_dict %}
 {% if not hide_definition %}
 {% set definitionLink = "/vocabularies/" ~ vocabulary_type ~ "/" ~ vocabulary_dict.id %}

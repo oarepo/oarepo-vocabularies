@@ -1,16 +1,32 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
+#
+# oarepo-vocabularies is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+"""UI Resource for vocabularies."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar, cast
+
 import marshmallow as ma
 from flask import current_app
 from flask_resources import (
     resource_requestctx,
 )
 from invenio_records_resources.services import Link, pagination_links
+from invenio_vocabularies.records.models import VocabularyType
 from oarepo_ui.resources.components import (
-    PermissionsComponent,
     AllowedHtmlTagsComponent,
+    PermissionsComponent,
 )
-from oarepo_ui.resources.config import RecordsUIResourceConfig
-from oarepo_ui.resources.links import UIRecordLink
+from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
+from oarepo_ui.resources.records.config import RecordsUIResourceConfig
 
+from oarepo_vocabularies.errors import VocabularyTypeDoesNotExistError
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -18,39 +34,43 @@ from oarepo_vocabularies.ui.resources.components.search import VocabularySearchC
 from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
     VocabularyRecordsComponent,
 )
-from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 
-from invenio_vocabularies.records.models import VocabularyType
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+    from typing import Any, ClassVar
 
-from oarepo_vocabularies.errors import VocabularyTypeDoesNotExist
+    from flask.typing import ErrorHandlerCallable
+    from invenio_access.permissions import Identity
+    from invenio_records_resources.services.base.config import ServiceConfig
+    from invenio_records_resources.services.base.service import Service
 
 
-class VocabularyFormDepositVocabularyOptionsComponent(
-    DepositVocabularyOptionsComponent
-):
-    always_included_vocabularies = ["languages"]
+class VocabularyFormDepositVocabularyOptionsComponent(DepositVocabularyOptionsComponent):
+    """Add specific vocabularies to the deposit form."""
 
-    def form_config(self, *, form_config, **kwargs):
+    always_included_vocabularies: ClassVar[list] = ["languages"]
+
+    def form_config(self, *, form_config: dict, **kwargs: Any) -> None:
+        """Add languages vocabulary if not present, so that it is always available in the deposit form."""
         super().form_config(form_config=form_config, **kwargs)
 
         if "languages" not in form_config["vocabularies"]:
             form_config["vocabularies"]["languages"] = []
 
         if not form_config["vocabularies"]["languages"]:
-            form_config["vocabularies"]["languages"] = [
-                {"text": "English", "value": "en"}
-            ]
+            form_config["vocabularies"]["languages"] = [{"text": "English", "value": "en"}]
 
 
 class VocabularyTypeValidationSchema(ma.Schema):
+    """Vocabulary type validation schema."""
+
     vocabulary_type = ma.fields.String()
 
-    def load(self, data, *args, **kwargs):
+    def load(self, data: Mapping[str, Any], *args: Any, **kwargs: Any) -> dict | None:  # noqa: ARG002
+        """Load marshmallow data and validate vocabulary type existence."""
         vocabulary_type = data.get("vocabulary_type")
         # TODO: this will not be needed once specialized vocabs get their own resource
-        allowed_specialized_vocabularies = current_app.config.get(
-            "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", []
-        )
+        allowed_specialized_vocabularies = current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", [])
 
         try:
             if (
@@ -58,51 +78,46 @@ class VocabularyTypeValidationSchema(ma.Schema):
                 or vocabulary_type in allowed_specialized_vocabularies.values()
             ):
                 return {"vocabulary_type": vocabulary_type}
-            else:
-                raise VocabularyTypeDoesNotExist(
-                    f"Vocabulary type {vocabulary_type} does not exist."
-                )
+            raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.")
 
-        except VocabularyTypeDoesNotExist as e:
-            raise e
-        except Exception:
-            raise VocabularyTypeDoesNotExist(
-                f"Vocabulary type {vocabulary_type} does not exist."
-            )
+        except VocabularyTypeDoesNotExistError as e:
+            raise VocabularyTypeDoesNotExistError from e
+        except Exception as e:
+            raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.") from e
 
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
+    """Invenio Vocabularies UI Resource Config."""
+
     template_folder = "../templates"
     url_prefix = "/vocabularies/"
     blueprint_name = "oarepo_vocabularies_ui"
-    ui_serializer_class = (
-        "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
-    )
+    ui_serializer_class = "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
     api_service = "vocabularies"
     application_id = "OarepoVocabularies"
 
-    templates = {
+    templates: ClassVar[Mapping[str, str | None]] = {  # type: ignore[override]
         "detail": "oarepo_vocabularies_ui.VocabulariesDetail",
         "search": "oarepo_vocabularies_ui.VocabulariesSearch",
         "create": "oarepo_vocabularies_ui.VocabulariesForm",
         "edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
-    routes = {
-        "create": "/<vocabulary_type>/_new",
-        "edit": "/<vocabulary_type>/<pid_value>/edit",
-        "search": "/<vocabulary_type>/",
-        "detail": "/<vocabulary_type>/<pid_value>",
-        "export": "/<vocabulary_type>/<pid_value>/export/<export_format>",
+    routes: ClassVar[Mapping[str, str]] = {  # type: ignore[override]
+        "create": "/<type>/_new",
+        "edit": "/<type>/<pid_value>/edit",
+        "search": "/<type>/",
+        "detail": "/<type>/<pid_value>",
+        "export": "/<type>/<pid_value>/export/<export_format>",
     }
-    config_routes = {
-        "form_config": "/<vocabulary_type>/form",
+    config_routes: ClassVar[Mapping[str, str]] = {  # type: ignore[override]
+        "form_config": "/<type>/form",
     }
-    error_handlers = {
+    error_handlers: Mapping[type[Exception], str | ErrorHandlerCallable] = {
         **RecordsUIResourceConfig.error_handlers,
-        VocabularyTypeDoesNotExist: "vocabulary_type_does_not_exist",
+        VocabularyTypeDoesNotExistError: "vocabulary_type_does_not_exist",
     }
-    components = [
+    components: ClassVar[list] = [  # type: ignore[override]
         PermissionsComponent,
         VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
@@ -111,48 +126,44 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         AllowedHtmlTagsComponent,
     ]
 
-    # request_vocabulary_type_args = {"vocabulary_type": ma.fields.Str()}
     request_vocabulary_type_args = VocabularyTypeValidationSchema
 
-    request_form_config_view_args = {"vocabulary_type": ma.fields.Str()}
+    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type": ma.fields.Str()}  # type: ignore[override]
 
-    ui_links_item = {
-        "self": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}"),
-        "edit": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/{id}/edit"),
-        "search": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/"),
-        "create": UIRecordLink("{+ui}{+url_prefix}{vocabulary_type}/_new"),
-    }
+    # TODO: add ui_links_item with self, edit, search, create
 
     @property
-    def ui_links_search(self):
+    def ui_links_search(self) -> dict:
+        """UI Search links."""
         return {
-            **pagination_links("{+ui}{+url_prefix}{vocabulary_type}/{?args*}"),
-            "create": Link("{+ui}{+url_prefix}{vocabulary_type}/_new"),
+            **pagination_links("{+ui}{+url_prefix}{type}/{?args*}"),
+            "create": Link("{+ui}{+url_prefix}{type}/_new"),
         }
 
-    def vocabulary_props_config(self, vocabulary_type):
-        return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
-            vocabulary_type, {}
-        )
+    def vocabulary_props_config(self, vocabulary_type: str) -> Any:
+        """Get vocabulary properties config for a vocabulary type if available."""
+        return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabulary_type, {})
 
-    def _get_custom_fields_ui_config(self, key, view_args=None, **kwargs):
+    def _get_custom_fields_ui_config(self, key: str, **kwargs: Any) -> Any:
+        """Get custom fields config for a vocabulary type if available."""
         if key == "OAREPO_VOCABULARIES_HIERARCHY_CF":
             return []
-        return current_app.config.get("VOCABULARIES_CF_UI", {}).get(
-            view_args["vocabulary_type"], []
-        )
+        view_args = kwargs.get("view_args", {})
+        vocab_type = view_args.get("vocabulary_type") if view_args else None
+        vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
+        vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
+        if vocab_type is not None:
+            return vocabularies_cf_ui.get(vocab_type, [])
+        return []
 
-    def _get_specialized_service_config(self, vocabulary_type):
-        """
-        Get specialized service for a vocabulary type if available.
+    def _get_specialized_service_config(self, vocabulary_type: str) -> Service | None:
+        """Get specialized service for a vocabulary type if available.
+
         Returns None if no specialized service exists.
         """
         if (
             vocabulary_type
-            and vocabulary_type
-            in current_app.config.get(
-                "OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}
-            ).values()
+            and vocabulary_type in current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {}).values()
         ):
             from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 
@@ -160,20 +171,22 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         return None
 
     # adapt to search options of each specialized service if available
-    def search_available_sort_options(self, api_config, identity):
+    def search_available_sort_options(self, api_config: ServiceConfig, identity: Identity) -> dict:  # noqa: ARG002 added for inheritance
+        """Get the available sort options for the current vocabulary type."""
         vocabulary_type = resource_requestctx.view_args.get("vocabulary_type")
         specialized_service = self._get_specialized_service_config(vocabulary_type)
 
         if specialized_service:
-            return specialized_service.config.search.sort_options
+            return cast("dict", specialized_service.config.search.sort_options)
 
-        return api_config.search.sort_options
+        return cast("dict", api_config.search.sort_options)  # type: ignore[attr-defined]
 
-    def search_active_sort_options(self, api_config, identity):
+    def search_active_sort_options(self, api_config: ServiceConfig, identity: Identity) -> list:  # noqa: ARG002 added for inheritance
+        """Get the active sort options for the current vocabulary type."""
         vocabulary_type = resource_requestctx.view_args.get("vocabulary_type")
         specialized_service = self._get_specialized_service_config(vocabulary_type)
 
         if specialized_service:
             return list(specialized_service.config.search.sort_options.keys())
 
-        return list(api_config.search.sort_options.keys())
+        return list(api_config.search.sort_options.keys())  # type: ignore[attr-defined]

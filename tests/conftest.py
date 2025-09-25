@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2021 TU Wien.
@@ -12,21 +11,16 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
-import os
+
+from __future__ import annotations
+
 import shutil
 import sys
 from pathlib import Path
 
 from flask import g
-from invenio_records_permissions.generators import AnyUser, SystemProcess
-from oarepo_runtime.services.config.permissions_presets import EveryonePermissionPolicy
 
-from oarepo_vocabularies.authorities.providers.ror_provider import RORClientV2
-from oarepo_vocabularies.authorities import (
-    AuthorityProvider,
-    RORProviderV2,
-)
-from oarepo_vocabularies.services.permissions import NonDangerousVocabularyOperation
+from oarepo_vocabularies.services.service import VocabulariesService
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -42,9 +36,9 @@ try:
     # Werkzeug <2.1
     from werkzeug import security
 
-    security.safe_str_cmp
+    security.safe_str_cmp  # noqa: B018
 except AttributeError:
-    # Werkzeug >=2.1
+    # Werkzeug >=2.1  # noqa: ERA001
     import hmac
 
     from werkzeug import security
@@ -82,82 +76,19 @@ def extra_entry_points():
     return {}
 
 
-class FineGrainedPermissionPolicy(EveryonePermissionPolicy):
-    can_create_languages = [SystemProcess(), AnyUser()]
-    can_update_languages = [SystemProcess(), NonDangerousVocabularyOperation(AnyUser())]
-    can_delete_languages = [SystemProcess(), AnyUser()]
-
-    can_create_authority = [SystemProcess(), AnyUser()]
-    can_update_authority = [SystemProcess(), AnyUser()]
-    can_delete_authority = [SystemProcess(), AnyUser()]
-
-    can_create_ror_authority = [SystemProcess(), AnyUser()]
-    can_update_ror_authority = [SystemProcess(), AnyUser()]
-    can_delete_ror_authority = [SystemProcess(), AnyUser()]
-
-    can_create_access_rights = [SystemProcess(), AnyUser()]
-    can_update_access_rights = [SystemProcess(), AnyUser()]
-    can_delete_access_rights = [SystemProcess(), AnyUser()]
-
-    can_create_contributor_types = [SystemProcess(), AnyUser()]
-    can_update_contributor_types = [SystemProcess(), AnyUser()]
-    can_delete_contributor_types = [SystemProcess(), AnyUser()]
-
-    can_create_countries = [SystemProcess(), AnyUser()]
-    can_update_countries = [SystemProcess(), AnyUser()]
-    can_delete_countries = [SystemProcess(), AnyUser()]
-
-    can_create_funders = [SystemProcess(), AnyUser()]
-    can_update_funders = [SystemProcess(), AnyUser()]
-    can_delete_funders = [SystemProcess(), AnyUser()]
-
-    can_create_institutions = [SystemProcess(), AnyUser()]
-    can_update_institutions = [SystemProcess(), AnyUser()]
-    can_delete_institutions = [SystemProcess(), AnyUser()]
-
-    can_create_item_relation_types = [SystemProcess(), AnyUser()]
-    can_update_item_relation_types = [SystemProcess(), AnyUser()]
-    can_delete_item_relation_types = [SystemProcess(), AnyUser()]
-
-    can_create_licenses = [SystemProcess(), AnyUser()]
-    can_update_licenses = [SystemProcess(), AnyUser()]
-    can_delete_licenses = [SystemProcess(), AnyUser()]
-
-    can_create_resource_types = [SystemProcess(), AnyUser()]
-    can_update_resource_types = [SystemProcess(), AnyUser()]
-    can_delete_resource_types = [SystemProcess(), AnyUser()]
-
-    can_create_related_resource_types = [SystemProcess(), AnyUser()]
-    can_update_related_resource_types = [SystemProcess(), AnyUser()]
-    can_delete_related_resource_types = [SystemProcess(), AnyUser()]
-
-    can_create_subject_categories = [SystemProcess(), AnyUser()]
-    can_update_subject_categories = [SystemProcess(), AnyUser()]
-    can_delete_subject_categories = [SystemProcess(), AnyUser()]
-
-
 @pytest.fixture(scope="module")
 def app_config(app_config):
     """Mimic an instance's configuration."""
     app_config["JSONSCHEMAS_HOST"] = "localhost"
     app_config["BABEL_DEFAULT_LOCALE"] = "en"
     app_config["I18N_LANGUAGES"] = [("da", "Danish"), ("cs", "Czech")]
-    app_config["RECORDS_REFRESOLVER_CLS"] = (
-        "invenio_records.resolver.InvenioRefResolver"
-    )
-    app_config["RECORDS_REFRESOLVER_STORE"] = (
-        "invenio_jsonschemas.proxies.current_refresolver_store"
-    )
+    app_config["RECORDS_REFRESOLVER_CLS"] = "invenio_records.resolver.InvenioRefResolver"
+    app_config["RECORDS_REFRESOLVER_STORE"] = "invenio_jsonschemas.proxies.current_refresolver_store"
 
     # note: This line must always be added to the invenio.cfg file
-    from oarepo_vocabularies.authorities.resources import (
-        AuthoritativeVocabulariesResource,
-        AuthoritativeVocabulariesResourceConfig,
-    )
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
     from oarepo_vocabularies.resources.vocabulary_type import (
         VocabularyTypeResource,
-        VocabularyTypeResourceConfig,
     )
     from oarepo_vocabularies.services.config import (
         VocabulariesConfig,
@@ -171,17 +102,14 @@ def app_config(app_config):
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE"] = VocabularyTypeService
     app_config["OAREPO_VOCABULARIES_TYPE_SERVICE_CONFIG"] = VocabularyTypeServiceConfig
 
+    app_config["VOCABULARIES_TYPES_SERVICE_CONFIG_CLASS"] = VocabularyTypeServiceConfig
     app_config["OAREPO_VOCABULARY_TYPE_RESOURCE"] = VocabularyTypeResource
-    app_config["OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG"] = VocabularyTypeResourceConfig
 
-    app_config["OAREPO_VOCABULARIES_AUTHORITIES"] = AuthoritativeVocabulariesResource
-    app_config["OAREPO_VOCABULARIES_AUTHORITIES_CONFIG"] = (
-        AuthoritativeVocabulariesResourceConfig
-    )
-    app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]
-    app_config["OAREPO_PERMISSIONS_PRESETS"] = {
-        "fine-grained": FineGrainedPermissionPolicy
-    }
+    app_config["VOCABULARIES_TYPES_SERVICE_CLASS"] = VocabularyTypeService
+
+    app_config["VOCABULARIES_SERVICE_CLASS"] = VocabulariesService
+    # app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]  # noqa: ERA001
+    app_config["OAREPO_PERMISSIONS_PRESETS"] = {}
     app_config["OAREPO_VOCABULARIES_SPECIALIZED_SERVICES"] = {
         "names": "names",
     }
@@ -236,24 +164,22 @@ def app_config(app_config):
         },
         "authority": {
             "name": {"en": "authority"},
-            "authority": AuthService,
+            "authority": "TODO",
         },
         "ror-authority": {
             "name": {"en": "ROR Authority"},
-            "authority": RORProviderV2,
+            "authority": "TODO",
         },
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
-    app_config["THEME_HEADER_TEMPLATE"] = (
-        "oarepo_vocabularies_ui/test_header_template.html"
-    )
+    app_config["THEME_HEADER_TEMPLATE"] = "oarepo_vocabularies_ui/test_header_template.html"
 
-    app_config["ORCID_CLIENT_ID"] = os.environ["INVENIO_ORCID_CLIENT_ID"]
-    app_config["ORCID_CLIENT_SECRET"] = os.environ["INVENIO_ORCID_CLIENT_SECRET"]
-    
-    app_config["OPENAIRE_CLIENT_ID"] = os.environ["INVENIO_OPENAIRE_CLIENT_ID"]
-    app_config["OPENAIRE_CLIENT_SECRET"] = os.environ["INVENIO_OPENAIRE_CLIENT_SECRET"]
+    app_config["ORCID_CLIENT_ID"] = "blah"
+    app_config["ORCID_CLIENT_SECRET"] = "blah"  # noqa: S105
+
+    app_config["OPENAIRE_CLIENT_ID"] = "blah"
+    app_config["OPENAIRE_CLIENT_SECRET"] = "blah"  # noqa: S105
 
     return app_config
 
@@ -266,7 +192,7 @@ def create_app(instance_path, entry_points):
 
 @pytest.fixture(scope="module")
 def identity_simple():
-    """Simple identity fixture."""
+    """Simple identity fixture."""  # noqa: D401
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(Need(method="system_role", value="any_user"))
@@ -275,7 +201,7 @@ def identity_simple():
 
 @pytest.fixture(scope="module")
 def identity():
-    """Simple identity to interact with the service."""
+    """Simple identity to interact with the service."""  # noqa: D401
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(any_user)
@@ -286,10 +212,12 @@ def identity():
 @pytest.fixture(scope="module")
 def service(app):
     """Vocabularies service object."""
-    return app.extensions["invenio-vocabularies"].service
+    from invenio_vocabularies.proxies import current_service
+
+    return current_service
 
 
-@pytest.fixture()
+@pytest.fixture
 def lang_type(db):
     """Get a language vocabulary type."""
     v = VocabularyType.create(id="languages", pid_type="lng")
@@ -297,7 +225,7 @@ def lang_type(db):
     return v
 
 
-@pytest.fixture()
+@pytest.fixture
 def authority_type(db):
     """Get a language vocabulary type."""
     v = VocabularyType.create(id="authority", pid_type="v-auth")
@@ -305,7 +233,7 @@ def authority_type(db):
     return v
 
 
-@pytest.fixture()
+@pytest.fixture
 def ror_authority_type(db):
     """Create ROR authority vocabulary."""
     v = VocabularyType.create(id="ror-authority", pid_type="v-ror")
@@ -313,9 +241,9 @@ def ror_authority_type(db):
     return v
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def lang_data():
-    """Example data."""
+    """Example data."""  # noqa: D401
     return {
         "id": "eng",
         "title": {"en": "English", "da": "Engelsk", "cs": "Angličtina"},
@@ -329,9 +257,9 @@ def lang_data():
     }
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def lang_data_child():
-    """Example data."""
+    """Example data."""  # noqa: D401
     return {
         "id": "eng.US",
         "title": {
@@ -345,17 +273,57 @@ def lang_data_child():
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def lang_data2(lang_data):
-    """Example data for testing invalid cases."""
+    """Example data for testing invalid cases."""  # noqa: D401
     data = dict(lang_data)
     data["id"] = "new"
     return data
 
 
-@pytest.fixture()
+@pytest.fixture
+def lang_data3():
+    """Testing data."""  # noqa: D401
+    vocabulary_data = {
+        "a": {
+            "id": "a",
+            "title": {"en": "English", "da": "Engelsk"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello",
+        },
+        "b": {
+            "id": "b",
+            "title": {"en": "English (US)", "da": "Engelsk (US)"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello in american",
+        },
+        "c": {
+            "id": "c",
+            "title": {"en": "English (US Texas)", "da": "Engelsk (US Texas)"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello in american texas yeehaw",
+        },
+        "d": {
+            "id": "d",
+            "title": {"en": "English (UK)", "da": "Engelsk (UK)"},
+            "type": {"id": "languages", "pid_type": "lng"},
+            "blah": "Hello in UK",
+        },
+    }
+
+    hierarchy = {
+        "a": None,  # root node
+        "b": "a",  # b's parent is a
+        "c": "b",  # c's parent is b
+        "d": None,  # root node
+    }
+
+    return vocabulary_data, hierarchy
+
+
+@pytest.fixture
 def example_record(db, identity, service, example_data):
-    """Example record."""
+    """Record example."""
     vocabulary_type_languages = VocabularyType(name="languages")
     vocabulary_type_licenses = VocabularyType(name="licenses")
     db.session.add(vocabulary_type_languages)
@@ -371,7 +339,7 @@ def example_record(db, identity, service, example_data):
     return record
 
 
-@pytest.fixture()
+@pytest.fixture
 def example_ror_record():
     return {
         "admin": {
@@ -429,7 +397,7 @@ def example_ror_record():
     }
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def lang_data_many(lang_type, lang_data, service, identity):
     """Create many language vocabulary."""
     lang_ids = ["fr", "tr", "gr", "ger", "es"]
@@ -442,7 +410,7 @@ def lang_data_many(lang_type, lang_data, service, identity):
     return lang_ids
 
 
-@pytest.fixture()
+@pytest.fixture
 def user(app, db):
     """Create example user."""
     with db.session.begin_nested():
@@ -456,7 +424,7 @@ def user(app, db):
     return _user
 
 
-@pytest.fixture()
+@pytest.fixture
 def role(app, db):
     """Create some roles."""
     with db.session.begin_nested():
@@ -467,7 +435,7 @@ def role(app, db):
     return role
 
 
-@pytest.fixture()
+@pytest.fixture
 def client_with_credentials(db, client, user, role):
     """Log in a user to the client."""
     current_datastore.add_role_to_user(user, role)
@@ -480,9 +448,9 @@ def client_with_credentials(db, client, user, role):
     return client
 
 
-# FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30
+# FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30  # noqa: FIX001, TD001
 # Without this, success of test depends on the tests order
-@pytest.fixture()
+@pytest.fixture
 def cache():
     """Empty cache."""
     try:
@@ -491,11 +459,16 @@ def cache():
         current_cache.clear()
 
 
-@pytest.fixture()
+@pytest.fixture
 def vocab_cf(app, db, cache):
-    from oarepo_runtime.services.custom_fields.mappings import prepare_cf_indices
+    # zavolat oarepo_runtime.services.records.mapping:update_all_records_mappings
+    from oarepo_runtime.services.records.custom_fields import (
+        update_all_records_mappings_relation_fields,
+    )
+    from oarepo_runtime.services.records.mapping import update_all_records_mappings
 
-    prepare_cf_indices()
+    update_all_records_mappings_relation_fields()
+    update_all_records_mappings()
 
 
 @pytest.fixture
@@ -516,6 +489,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
+            "custom_fields": {"blah": "Hello in US"},
         },
     )
     child_2 = vocab_service.create(
@@ -530,6 +504,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             "icon": "file-o",
             "type": "languages",
             "hierarchy": {"parent": "eng"},
+            "custom_fields": {"blah": "Hello in UK"},
         },
     )
     grand_child_2_1 = vocab_service.create(
@@ -545,10 +520,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
             "type": "languages",
             "hierarchy": {"parent": "eng.UK"},
             "tags": ["featured"],
+            "custom_fields": {"blah": "Hello in Scottish"},
         },
     )
     Vocabulary.index.refresh()
-    TN = namedtuple("TN", "node,children")
+    TN = namedtuple("TN", "node,children")  # noqa: PYI024
     return [
         TN(
             parent.data,
@@ -560,7 +536,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def empty_licences(db):
     v = VocabularyType.create(id="licences", pid_type="lic")
     db.session.add(v)
@@ -569,7 +545,7 @@ def empty_licences(db):
     return v
 
 
-@pytest.fixture()
+@pytest.fixture
 def authority_rec(db, identity, authority_type, service, vocab_cf):
     return service.create(
         identity=identity,
@@ -583,50 +559,20 @@ def authority_rec(db, identity, authority_type, service, vocab_cf):
     )
 
 
-@pytest.fixture()
-def ror_client():
-    return RORClientV2(testing=True)
-
-
-class AuthService(AuthorityProvider):
-    def search(self, identity, params, **kwargs):
-        items = [
-            {
-                "id": "03zsq2967",
-                "title": {
-                    "en": "Association of Asian Pacific Community Health Organizations",
-                },
-            },
-            {
-                "id": "020bcb226",
-                "title": {
-                    "en": "Oakton Community College",
-                },
-            },
-        ]
-        return items, 2, 10
-
-    def get(self, identity, item_id, *, uow, value, **kwargs):
-        results, _, _ = self.search(identity, {"q": item_id})
-        return next(result for result in results if result["id"] == item_id)
-
-
-@pytest.fixture()
+@pytest.fixture
 def fake_manifest(app):
     python_path = Path(sys.executable)
     invenio_instance_path = python_path.parent.parent / "var" / "instance"
     manifest_path = invenio_instance_path / "static" / "dist"
     manifest_path.mkdir(parents=True, exist_ok=True)
-    shutil.copy(
-        Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
-    )
+    shutil.copy(Path(__file__).parent / "manifest.json", manifest_path / "manifest.json")
 
 
 @pytest.fixture
 def vocabularies_ui_resource_config(app):
     class Cfg(InvenioVocabulariesUIResourceConfig):
         api_service = "vocabularies"  # must be something included in oarepo, as oarepo is used in tests
-        components = [DepositVocabularyOptionsComponent]
+        components = [DepositVocabularyOptionsComponent]  # noqa: RUF012
 
     return Cfg()
 
@@ -655,23 +601,16 @@ def simple_record_ui_resource(app):
 
 @pytest.fixture
 def reset_babel(app):
-    def clear_babel_context():
+    def clear_babel_context() -> None:
         # for invenio 12
         try:
             from flask_babel import SimpleNamespace
         except ImportError:
             return
-        g._flask_babel = SimpleNamespace()
+        g._flask_babel = SimpleNamespace()  # noqa: SLF001
 
     try:
         clear_babel_context()
         yield clear_babel_context
     finally:
         clear_babel_context()
-
-
-@pytest.fixture()
-def cache_clear(app):
-    app.extensions["oarepo-vocabularies"].ui_cache.clear()
-    yield
-    app.extensions["oarepo-vocabularies"].ui_cache.clear()
