@@ -107,7 +107,6 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         identity: Identity,
     ) -> None:
         """Prefetch vocabularies to form config."""
-        prefetched_vocabularies: dict[str, dict[str, Any]] = {}
         for vocabulary_to_fetch in vocabularies_to_prefetch:
             # search instead of read_all also provides links, because template links are passed to result list init
             hits = current_service.search(identity, {}, type=vocabulary_to_fetch).hits
@@ -116,17 +115,6 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
                 form_config_vocabularies[vocabulary_to_fetch]["all"].append(item)
                 if "featured" in item.get("tags", []):
                     form_config_vocabularies[vocabulary_to_fetch]["featured"].append(item)
-
-        for vocabulary_type, items in prefetched_vocabularies.items():
-            for item_id, item in items.items():
-                by_type = form_config_vocabularies[vocabulary_type]
-                returned_item = {
-                    "value": item_id,
-                    **item,
-                }
-                by_type["all"].append(returned_item)
-                if "featured" in returned_item.get("tags", []):
-                    by_type["featured"].append(returned_item)
 
     @staticmethod
     def create_form_config_vocabularies(
