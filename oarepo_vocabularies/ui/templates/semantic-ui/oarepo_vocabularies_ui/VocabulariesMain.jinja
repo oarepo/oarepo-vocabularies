@@ -1,76 +1,17 @@
 {#def metadata, record, d, extra_context, hierarchical=False #}
-{% set vocabularyType = extra_context.get("vocabularyType", "")%}
-<div class="vocabularies-main">
-  <VocabulariesBreadcrumb extra_context={extra_context} metadata={metadata} hierarchical={hierarchical}/>
-  <VocabularyTitle metadata={metadata} record={record} />
-  <dl class="ui very basic table">
-    <dt>{{ _('vocabulary.vocabulary') }}</dt>
-    <dd>
-      <a href="/vocabularies/{{vocabularyType}}">{{ _("vocabulary." + vocabularyType) }}</a>
-    </dd>
-    {{ catalog.render_first_existing(
-      [
-          "VocabularyExtraInfo." + extra_context.vocabularyType,
-          "EmptyComponent"
-      ],
-      metadata=metadata,
-      ui=ui,
-      url_prefix=url_prefix,
-      record=record,
-      extra_context=extra_context,
-      d=d,
-      hierarchical=hierarchical
-    ) }}
-    {% if metadata.identifiers %}
-      <dt>{{_("vocabulary.identifiers")}}</dt>
-      <dd>
-        <VocabularyItemIdentifiers identifiers={metadata.identifiers} />
-      </dd>
-    {% endif %}
-    {% if metadata.affiliations %}
-    <dt>{{_("vocabulary.affiliations")}}</dt>
-    <dd>
-      {% for affiliation in metadata.affiliations %}
-        <span>{{affiliation.name}}</span>{% if not loop.last %}, {% endif %}
-      {% endfor %}
-    </dd>
-  {% endif %}
-    {% for l in (metadata.nonpreferredLabels or []) %} {% if l.en %}
-    <dt>{{_("vocabulary.nonpreferredLabels_en")}}</dt>
-    <dd>{{l.en}}</dd>
-    {% endif %} {% endfor %} {% for l in (metadata.nonpreferredLabels or []) %} {% if
-    l.cs %}
-    <dt>{{_("vocabulary.nonpreferredLabels_cs")}}</dt>
-    <dd>{{l.cs}}</dd>
-    {% endif %} {% endfor %} {% for prop, val in (metadata.props or {}).items() %}
-    <dt>{{_("vocabulary." + prop)}}</dt>
-    <dd>{{val}}</dd>
-    {% endfor %}
-    <Field label={_('Created')}>{{metadata.created}}</Field>
-    <Field label={_('Updated')}>{{metadata.updated}}</Field>
-    {% if 'hint' in metadata
-    and metadata.hint.cs %}
-    <dt>{{_("vocabulary.hint_cs")}}</dt>
-    <dd>{{metadata.hint.cs}}</dd>
-    {% endif %} {% if 'hint' in metadata and metadata.hint.en %}
-    <dt>{{_("vocabulary.hint_en")}}</dt>
-    <dd>{{metadata.hint.en}}</dd>
-    {% endif %} {% if metadata.relatedURI %} {% for t in metadata.relatedURI.items() %}
-    <dt>{{_("vocabulary.relatedURI_" + t.0)}}</dt>
-    <dd><a href={{t.1}}>{{t.1}}</a></dd>
-    {% endfor %} {% endif %}
-    {% if 'tags' in metadata and metadata.tags | length > 0 %}
-    <dt>{{_("vocabulary.tags")}}</dt>
-    <dd>
-    {% for t in metadata.tags %}
-    <span class="ui tag label {% if t =='featured' -%}red{%- endif %}">{{t}}</span>
-    {% endfor %}
-    </dd>
-    {% endif %}
-  </dl>
+<div class="debug-output">
+  <h2>metadata</h2>
+  <pre>{{ metadata | tojson(indent=2) }}</pre>
 
-  {% set custom_field_name="VOCABULARIES_CF_UI." + vocabularyType %}
-  <div class="ui vocabulary_cf">
-  <ICustomFields custom_fields={custom_field_name} d={d} />
-  </div>
+  <h2>record</h2>
+  <pre>{{ record | tojson(indent=2) }}</pre>
+
+  <h2>d</h2>
+  <pre>{{ d | tojson(indent=2) }}</pre>
+
+  <h2>extra_context</h2>
+  <pre>{{ extra_context | tojson(indent=2) }}</pre>
+
+  <h2>hierarchical</h2>
+  <pre>{{ hierarchical }}</pre>
 </div>

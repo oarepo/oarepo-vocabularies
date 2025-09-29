@@ -9,56 +9,53 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, cast
 
-from invenio_records_permissions import RecordPermissionPolicy
-from invenio_records_permissions.generators import (
-    AnyUser,
-    ConditionalGenerator,
-    Disable,
-    SystemProcess,
-)
+from invenio_search.engine import dsl
+from oarepo_runtime.services.generators import ConditionalGenerator
 
 if TYPE_CHECKING:
-    from invenio_records_permissions.generators import Generator
+    from collections.abc import Sequence
+
+    from invenio_records_permissions.generators import Generator as InvenioGenerator
 
 
-class VocabulariesPermissionPolicy(RecordPermissionPolicy):
-    """Permission policy."""
+class IfVocabularyType(ConditionalGenerator):
+    """Generator allowing operations on specific vocabulary type only (e.g. languages)."""
 
-    can_search: ClassVar[list[Generator]] = [SystemProcess(), AnyUser()]
-    can_read: ClassVar[list[Generator]] = [SystemProcess(), AnyUser()]
-    can_list_vocabularies: ClassVar[list[Generator]] = [SystemProcess(), AnyUser()]
+    def __init__(self, type_: str, then_: Sequence[InvenioGenerator], else_: Sequence[InvenioGenerator]):
+        """Init the condition with specific vocabulary type."""
+        super().__init__(then_, else_)
+        self.type = type_
 
-    can_create: ClassVar[list[Generator]] = [SystemProcess()]
-    can_update: ClassVar[list[Generator]] = [SystemProcess()]
-    can_delete: ClassVar[list[Generator]] = [SystemProcess()]
-    can_manage: ClassVar[list[Generator]] = [SystemProcess()]
+    def _condition(self, **kwargs: Any) -> bool:
+        """Check if the vocabulary type matches, if passed directly or in record."""
+        if "type" in kwargs:
+            return cast("bool", kwargs["type"] == self.type)
 
-    def __getattr__(self, item: str) -> Any:
-        """Dynamically return can_<action> lists."""
-        for mth in (
-            "can_search",
-            "can_read",
-            "can_create",
-            "can_update",
-            "can_delete",
-            "can_manage",
-        ):
-            if item.startswith(mth + "_"):
-                return getattr(self, mth)
-        raise AttributeError(item)
+        if "data" in kwargs:
+            record = kwargs["data"]
+            if record and "type" in record:
+                return cast("bool", record["type"] == self.type)
 
-    @property
-    def generators(self) -> Any:
-        """List of Needs generators for self.action.
+        if "record" in kwargs:
+            record = kwargs["record"]
+            if record and "type" in record:
+                return cast("bool", record["type"]["id"] == self.type)
 
-        Defaults to Disable() if no can_<self.action> defined.
-        """
-        return getattr(self, "can_" + self.action, [Disable()])
+        return False
+
+    def _query_instate(self, **context: Any) -> dsl.query.Query:  # noqa: ARG002
+        # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
+        return dsl.Q("match_all")
+
+    def query_filter(self, **context: Any) -> dsl.query.Query:
+        """Apply then."""
+        # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
+        return cast("dsl.query.Query", super()._make_query(self.then_, **context))
 
 
-class NonDangerousVocabularyOperation(ConditionalGenerator):
+class IfNonDangerousVocabularyOperation(ConditionalGenerator):
     """Generator allowing non-dangerous operations."""
 
     def __init__(self, then_: Any, else_: Any = ()):
@@ -81,8 +78,12 @@ class NonDangerousVocabularyOperation(ConditionalGenerator):
         record = kwargs["record"]
 
         # changing parent is a dangerous operation as indexed records that use the vocab item needs to be reindexed
-        if data.get("hierarchy", {}).get("parent") != record.get("hierarchy", {}).get("parent"):
+        if data.get("hierarchy", {}).get("parent") != record.hierarchy.to_dict().get("parent"):
             return False
 
         # changing id is a very dangerous operation as records that use the vocab item will be broken
         return data.get("id") == record.get("id")
+
+    def _query_instate(self, **context: Any) -> dsl.query.Query:  # noqa: ARG002
+        # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
+        return dsl.Q("match_all")

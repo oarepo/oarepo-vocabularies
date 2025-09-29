@@ -84,22 +84,44 @@ def test_czech_suggest(app, db, cache, lang_type, vocab_cf, sample_records, clie
     ]
 
 
-@pytest.mark.skip(reason="Suggest later")
 def test_ui_serializer(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
     data = client.get(
-        "/api/vocabularies/languages?suggest=%C5%99azen%C3%AD",
+        "/api/vocabularies/languages",
         headers=[
             ("Accept-Language", "cs"),
             ("Accept", "application/vnd.inveniordm.v1+json"),
         ],
     ).json
 
-    assert data["hits"]["hits"][0]["hierarchy"] == {
+    assert data["hits"]["hits"][0]["ui"]["hierarchy"] == {
         "parent": "eng.UK",
         "ancestors": ["eng.UK", "eng"],
         "level": 3,
         "ancestors_or_self": ["eng.UK.S", "eng.UK", "eng"],
-        "title": ["Angličtina (A pro řazení)", "Angličtina (UK)", "Angličtina"],
+        "titles": ["Angličtina (A pro řazení)", "Angličtina (UK)", "Angličtina"],
         "leaf": True,
     }
-    assert data["hits"]["hits"][0]["title"] == "Angličtina (A pro řazení)"
+    assert data["hits"]["hits"][0]["ui"]["title"] == "Angličtina (A pro řazení)"
+
+
+def test_type_ui_serializer(app, db, cache, lang_type, vocab_cf, client, search_clear):
+    data = client.get(
+        "/api/vocabularies/",
+        headers=[
+            ("Accept", "application/vnd.inveniordm.v1+json"),
+        ],
+    ).json
+
+    assert data["hits"]["hits"][0]["title_l10n"] == "languages"
+    assert data["hits"]["hits"][0]["description_l10n"] == "czech language vocabulary type."
+
+    data = client.get(
+        "/api/vocabularies/",
+        headers=[
+            ("Accept-Language", "cs"),
+            ("Accept", "application/vnd.inveniordm.v1+json"),
+        ],
+    ).json
+
+    assert data["hits"]["hits"][0]["title_l10n"] == "jazyky"
+    assert data["hits"]["hits"][0]["description_l10n"] == "slovnikovy typ ceskeho jazyka."
