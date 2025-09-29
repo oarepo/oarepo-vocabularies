@@ -93,7 +93,7 @@ def test_ui_serializer(app, db, cache, lang_type, vocab_cf, sample_records, clie
         ],
     ).json
 
-    assert data["hits"]["hits"][0]["ui"]["hierarchy"] == {
+    assert data["hits"]["hits"][0]["hierarchy"] == {
         "parent": "eng.UK",
         "ancestors": ["eng.UK", "eng"],
         "level": 3,
@@ -101,7 +101,7 @@ def test_ui_serializer(app, db, cache, lang_type, vocab_cf, sample_records, clie
         "titles": ["Angličtina (A pro řazení)", "Angličtina (UK)", "Angličtina"],
         "leaf": True,
     }
-    assert data["hits"]["hits"][0]["ui"]["title"] == "Angličtina (A pro řazení)"
+    assert data["hits"]["hits"][0]["title_l10n"] == "Angličtina (A pro řazení)"
 
 
 def test_type_ui_serializer(app, db, cache, lang_type, vocab_cf, client, search_clear):

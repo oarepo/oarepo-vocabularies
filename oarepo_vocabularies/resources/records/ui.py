@@ -25,5 +25,4 @@ class VocabularyUIJSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=VocabularyUISchema,
             list_schema_cls=BaseListSchema,
-            schema_context={"object_key": "ui"},
         )

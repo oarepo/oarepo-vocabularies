@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+from functools import cached_property
 from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import marshmallow as ma
@@ -93,13 +94,17 @@ class VocabularyMetadataList(ServiceListResult):
 class PermissionPolicyFactory:
     """Factory for permission policy to enable dynamic permissions policies."""
 
+    @cached_property
+    def current_permission_policy_class(self) -> type[RecordPermissionPolicy]:
+        """Get the current permission policy class from the app config."""
+        return cast(
+            "type[RecordPermissionPolicy]",
+            obj_or_import_string(current_app.config.get("VOCABULARIES_PERMISSIONS_POLICY", PermissionPolicy)),
+        )
+
     def __call__(self, *args: Any, **kwargs: Any) -> RecordPermissionPolicy:
         """Create the permission policy instance in runtime."""
-        cls = cast(
-            "type[RecordPermissionPolicy]",
-            obj_or_import_string(current_app.config.get("PERMISSIONS_POLICY", PermissionPolicy)),
-        )
-        return cls(*args, **kwargs)
+        return self.current_permission_policy_class(*args, **kwargs)
 
 
 class VocabularyTypeServiceConfig:
@@ -135,7 +140,8 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         *VocabulariesServiceConfig.components,
         ScanningOrderComponent,
     ]
-
+    # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
+    # As we can not have class property, we simulate it with a callable class
     permission_policy_cls = PermissionPolicyFactory()
 
     url_prefix = "/vocabularies/"

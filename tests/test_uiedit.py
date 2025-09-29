@@ -26,6 +26,7 @@ def test_uiedit(
     vocab_cf,
     fake_manifest,
     search_clear,
+    clear_vocabulary_permissions,
 ):
     for _id in range(100):
         vocab_service.create(

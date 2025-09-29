@@ -12,12 +12,16 @@ from __future__ import annotations
 
 from typing import Any
 
-from invenio_vocabularies.resources.serializer import VocabularyL10NItemSchema
+from flask_resources import BaseObjectSchema
+from invenio_vocabularies.resources.serializer import L10NString
 from marshmallow import post_dump
 
 
-class VocabularyTypeUISchema(VocabularyL10NItemSchema):
+class VocabularyTypeUISchema(BaseObjectSchema):
     """UI schema for vocabulary types."""
+
+    title = L10NString(data_key="title_l10n")
+    description = L10NString(data_key="description_l10n")
 
     @post_dump(pass_original=True)
     def keep_unknowns(self, output: dict, orig: dict, **kwargs: Any) -> dict:  # noqa: ARG002

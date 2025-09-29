@@ -12,14 +12,7 @@ from __future__ import annotations
 
 
 def test_resource_get(
-    app,
-    client,
-    db,
-    identity,
-    vocab_cf,
-    lang_data_many,
-    empty_licences,
-    search_clear,
+    app, client, db, identity, vocab_cf, lang_data_many, empty_licences, search_clear, clear_vocabulary_permissions
 ):
     resp = client.get("/api/vocabularies/").json
 
@@ -35,14 +28,7 @@ def test_resource_get(
 
 
 def test_accept_header(
-    app,
-    client,
-    db,
-    identity,
-    vocab_cf,
-    lang_data_many,
-    empty_licences,
-    search_clear,
+    app, client, db, identity, vocab_cf, lang_data_many, empty_licences, search_clear, clear_vocabulary_permissions
 ):
     invenio_json_header = "application/vnd.inveniordm.v1+json"
     resp = client.get("/api/vocabularies/", headers={"accept": invenio_json_header}).json

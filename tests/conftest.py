@@ -22,6 +22,7 @@ from flask import g
 from invenio_records_permissions import RecordPermissionPolicy
 from invenio_records_permissions.generators import AnyUser, AuthenticatedUser, SystemProcess
 
+from oarepo_vocabularies.services.config import VocabulariesConfig
 from oarepo_vocabularies.services.permissions import IfNonDangerousVocabularyOperation, IfVocabularyType
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
@@ -48,6 +49,8 @@ except AttributeError:
     security.safe_str_cmp = hmac.compare_digest
 
 
+import builtins
+import contextlib
 from collections import namedtuple
 from typing import TYPE_CHECKING, ClassVar
 
@@ -733,3 +736,9 @@ def reset_babel(app):
         yield clear_babel_context
     finally:
         clear_babel_context()
+
+
+@pytest.fixture
+def clear_vocabulary_permissions(app):
+    with contextlib.suppress(builtins.BaseException):
+        del VocabulariesConfig.permission_policy_cls.current_permission_policy_class

@@ -25,9 +25,9 @@ from .conftest import (
 
 
 def test_permissions_create_only_languages(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple
+    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
 ):
-    app.config["PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
 
     lang_object = vocab_service.create(
         system_identity,
@@ -65,9 +65,9 @@ def test_permissions_create_only_languages(
 
 
 def test_permissions_create_read_update_delete_only_languages(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple
+    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
 ):
-    app.config["PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
 
     lang_object = vocab_service.create(
         identity_simple,
@@ -106,9 +106,18 @@ def test_permissions_create_read_update_delete_only_languages(
 
 
 def test_permissions_create_read_only_languages_authenticated_user(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, authenticated_identity
+    app,
+    db,
+    cache,
+    lang_type,
+    countries_type,
+    vocab_cf,
+    search_clear,
+    identity_simple,
+    authenticated_identity,
+    clear_vocabulary_permissions,
 ):
-    app.config["PERMISSIONS_POLICY"] = AuthenticatedUserPolicyLanguages
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = AuthenticatedUserPolicyLanguages
 
     lang_object = vocab_service.create(
         authenticated_identity,
@@ -129,9 +138,9 @@ def test_permissions_create_read_only_languages_authenticated_user(
 
 
 def test_permissions_update_only_languages_non_dangerous_operation(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear
+    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, clear_vocabulary_permissions
 ):
-    app.config["PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesNonDangerousOperation
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesNonDangerousOperation
 
     child_object = vocab_service.create(
         system_identity,
@@ -210,9 +219,9 @@ def test_permissions_update_only_languages_non_dangerous_operation(
 
 
 def test_permissions_search_only_languages(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple
+    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
 ):
-    app.config["PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
 
     lang_object = vocab_service.create(
         system_identity,
@@ -251,9 +260,9 @@ def test_permissions_search_only_languages(
 
 
 def test_permissions_create_languages_and_countries(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple
+    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
 ):
-    app.config["PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesAndCountries
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesAndCountries
 
     lang_object = vocab_service.create(
         system_identity,

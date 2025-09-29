@@ -17,14 +17,10 @@ import marshmallow as ma
 from flask import current_app
 from invenio_i18n import get_locale
 from invenio_rdm_records.resources.serializers.ui.schema import FormatDate
-
-# TODO: udelat znova from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
 from invenio_records_resources.services.custom_fields.schema import (
     CustomFieldsSchemaUI as InvenioCustomFieldsSchemaUI,
 )
-from invenio_vocabularies.services.schema import (
-    VocabularySchema as InvenioVocabularySchema,
-)
+from invenio_vocabularies.resources.serializer import VocabularyL10NItemSchema
 from marshmallow import fields as ma_fields
 from marshmallow import post_dump
 
@@ -103,52 +99,27 @@ class HierarchyUISchema(ma.Schema):
     leaf = ma.fields.Boolean()
 
 
-class VocabularyUISchema(InvenioVocabularySchema):
+class VocabularyUISchema(VocabularyL10NItemSchema):
     """Vocabulary UI schema."""
 
     custom_fields = ma_fields.Nested(partial(CustomFieldsSchemaUI, fields_var="VOCABULARIES_CF"))
     hierarchy = ma_fields.Nested(HierarchyUISchema)
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the vocabulary UI schema."""
-        super().__init__(*args, **kwargs)
-
     created = LocalizedDateTime(attribute="created", dump_only=True)
     updated = LocalizedDateTime(attribute="updated", dump_only=True)
 
     links = ma.fields.Raw(dump_only=True)
-    title = VocabularyI18nStrUIField()
     type = ma.fields.Raw(dump_only=True)
-    description = VocabularyI18nStrUIField()
-    props = ma.fields.Dict(keys=ma.fields.String(), values=ma.fields.String())
-
-    @post_dump(pass_original=True)
-    def create_rdm_structure(self, data: dict, original: Any, **kwargs: Any) -> dict:  # noqa: ARG002
-        """Create Invenio RDM structure with original data and UI data under 'ui' key."""
-        # Get the context to check if we should create RDM structure
-        context = self.context or {}
-        object_key = context.get("object_key")
-
-        if object_key == "ui":
-            # Create the RDM format: {**original_record, ui: {ui_data}}
-            return {**original, "ui": {**data}}
-
-        return data
 
     @post_dump(pass_original=False)
     def flatten_localized_dates(self, data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
         """Flatten localized date fields into the UI dictionary."""
         # Only flatten if we're working on UI data (not the top-level RDM structure)
-        context = self.context or {}
-        object_key = context.get("object_key")
 
-        if object_key == "ui" and "ui" in data:
-            # If this is RDM structure, flatten dates in the UI section
-            ui_data = data["ui"]
-            for date_field in ["created", "updated"]:
-                if date_field in ui_data:
-                    date_info = ui_data.pop(date_field)
-                    if isinstance(date_info, dict):
-                        ui_data.update(date_info)
+        for date_field in ["created", "updated"]:
+            if date_field in data:
+                date_info = data.pop(date_field)
+                if isinstance(date_info, dict):
+                    data.update(date_info)
 
         return data

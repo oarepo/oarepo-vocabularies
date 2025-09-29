@@ -18,7 +18,7 @@ def remove_ws(x):
     return re.sub(r"\s+", "", x)
 
 
-def test_uidetail(client, app, db, cache, lang_type, lang_data, vocab_cf, fake_manifest):
+def test_uidetail(client, app, db, cache, lang_type, lang_data, vocab_cf, fake_manifest, clear_vocabulary_permissions):
     vocab_service.create(system_identity, lang_data)
     detail_page = client.get("/vocabularies/languages/eng")
     assert detail_page.status_code == 200
