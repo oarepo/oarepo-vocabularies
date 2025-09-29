@@ -1,55 +1,22 @@
 {#def metadata, ui, record, extra_context, d #}
 {% extends "oarepo_ui/detail.html" %}
-{%- set title = metadata.title ~ " | " ~ _("Vocabulary Detail") %}
-{% set hierarchical = extra_context.get("vocabularyProps",{}).get("hierarchical", False)%}
-
-{%- block head_links %}
-  {{ super() }}
-  {{ webpack['oarepo_vocabularies_ui_components.css'] }}
-{%- endblock %}
+{%- set title = "Debug | Vocabulary Detail" %}
 
 {% block record_main_content %}
-  {{ catalog.render_first_existing(
-    [
-        "VocabulariesMain." + extra_context.vocabularyType,
-        "VocabulariesMain"
-    ],
-    metadata=metadata,
-    ui=ui,
-    url_prefix=url_prefix,
-    record=record,
-    extra_context=extra_context,
-    d=d,
-    hierarchical=hierarchical
-  ) }}
+<div class="debug-output">
+  <h2>metadata</h2>
+  <pre>{{ metadata | tojson(indent=2) }}</pre>
 
+  <h2>ui</h2>
+  <pre>{{ ui | tojson(indent=2) }}</pre>
 
-  {% block vocabulary_descendants %}
-    {% set search_app_config = extra_context["search_app_config"] %}
-    {%- include "oarepo_vocabularies_ui/descendants.html" -%}
-  {% endblock vocabulary_descendants %}
-{% endblock record_main_content %}
+  <h2>record</h2>
+  <pre>{{ record | tojson(indent=2) }}</pre>
 
-{% block record_sidebar %}
-  {{ catalog.render_first_existing(
-    [
-        "VocabulariesSidebar." + extra_context.vocabularyType,
-        "VocabulariesSidebar"
-    ],
-    metadata=metadata,
-    ui=ui,
-    url_prefix=url_prefix,
-    record=record,
-    extra_context=extra_context,
-  ) }}
-{% endblock record_sidebar %}
+  <h2>extra_context</h2>
+  <pre>{{ extra_context | tojson(indent=2) }}</pre>
 
-
-
-{%- block javascript %}
-{{super()}}
-{% if hierarchical%}
-  {{webpack["oarepo_vocabularies_detail.js"] }}
-{% endif %}
-{{webpack['oarepo_vocabularies_ui_components.js']}}
-{%- endblock%}
+  <h2>d</h2>
+  <pre>{{ d | tojson(indent=2) }}</pre>
+</div>
+{% endblock %}

@@ -12,18 +12,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from invenio_vocabularies.services.permissions import PermissionPolicy
+
 from oarepo_vocabularies.resources.vocabulary_type import (
     VocabularyTypeResource,
     VocabularyTypeResourceConfig,
 )
 from oarepo_vocabularies.services.config import VocabularyTypeServiceConfig
-from oarepo_vocabularies.services.permissions import VocabulariesPermissionPolicy
 from oarepo_vocabularies.services.service import VocabularyTypeService
 
 if TYPE_CHECKING:
     from invenio_records_resources.services.custom_fields import BaseCF
 
-OAREPO_VOCABULARIES_PERMISSIONS_PRESETS = {"vocabularies": VocabulariesPermissionPolicy}
+OAREPO_VOCABULARIES_PERMISSIONS_PRESETS = {"vocabularies": PermissionPolicy}
 
 INVENIO_VOCABULARY_TYPE_METADATA: dict[str, dict[str, Any]] = {}
 
@@ -42,22 +43,22 @@ OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
 
 OAREPO_SPECIALIZED_VOCABULARIES_METADATA = {
     "awards": {
-        "name": {"en": "Awards", "cs": "Granty"},
+        "title": {"en": "Awards", "cs": "Granty"},
         "description": {"en": "Vocabulary of awards.", "cs": "Slovník grantů."},
     },
     "affiliations": {
-        "name": {"en": "Affiliations", "cs": "Instituce"},
+        "title": {"en": "Affiliations", "cs": "Instituce"},
         "description": {
             "en": "Vocabulary of affiliations.",
             "cs": "Slovník institucí.",
         },
     },
     "names": {
-        "name": {"en": "Names", "cs": "Jména"},
+        "title": {"en": "Names", "cs": "Jména"},
         "description": {"en": "Vocabulary of names.", "cs": "Slovník jmen."},
     },
     "funders": {
-        "name": {"en": "Funders", "cs": "Poskytovatelé financí"},
+        "title": {"en": "Funders", "cs": "Poskytovatelé financí"},
         "description": {
             "en": "Vocabulary of funders.",
             "cs": "Slovník poskytovatelů financí.",

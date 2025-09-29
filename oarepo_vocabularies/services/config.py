@@ -10,9 +10,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import marshmallow as ma
+from flask import current_app
+from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.services import pagination_endpoint_links
 from invenio_records_resources.services.base import ServiceListResult
 from invenio_records_resources.services.records.links import EndpointLink
@@ -29,6 +31,7 @@ from .components.scanning_order import ScanningOrderComponent
 
 if TYPE_CHECKING:
     from flask_principal import Identity
+    from invenio_records_permissions import RecordPermissionPolicy
     from invenio_records_resources.services.base import Service
     from invenio_records_resources.services.base.links import LinksTemplate
     from invenio_records_resources.services.records.components import ServiceComponent
@@ -87,6 +90,18 @@ class VocabularyMetadataList(ServiceListResult):
         return res
 
 
+class PermissionPolicyFactory:
+    """Factory for permission policy to enable dynamic permissions policies."""
+
+    def __call__(self, *args: Any, **kwargs: Any) -> RecordPermissionPolicy:
+        """Create the permission policy instance in runtime."""
+        cls = cast(
+            "type[RecordPermissionPolicy]",
+            obj_or_import_string(current_app.config.get("PERMISSIONS_POLICY", PermissionPolicy)),
+        )
+        return cls(*args, **kwargs)
+
+
 class VocabularyTypeServiceConfig:
     """Vocabulary types service configuration."""
 
@@ -94,7 +109,7 @@ class VocabularyTypeServiceConfig:
     schema = VocabularyMetadataSchema
     result_list_cls = VocabularyMetadataList
 
-    permission_policy_cls = PermissionPolicy
+    permission_policy_cls = PermissionPolicyFactory()
     vocabularies_listing_item: ClassVar[dict[str, EndpointLink]] = {
         "self": EndpointLink(
             "vocabularies.search",
@@ -121,8 +136,9 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ScanningOrderComponent,
     ]
 
-    url_prefix = "/vocabularies/"
+    permission_policy_cls = PermissionPolicyFactory()
 
+    url_prefix = "/vocabularies/"
     links_item: ClassVar[dict[str, EndpointLink]] = {
         "self": EndpointLink(
             "vocabularies.read",

@@ -13,14 +13,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flask import g
-from flask_resources import from_conf, request_parser, resource_requestctx
-from flask_security import login_required
-from invenio_records_resources.resources.records.resource import (
-    request_read_args,
-    request_view_args,
-)
+from flask_resources import from_conf, request_parser
 from invenio_records_resources.services import LinksTemplate
 from oarepo_ui.proxies import current_oarepo_ui
+from oarepo_ui.resources.base import pass_route_args
 from oarepo_ui.resources.records.resource import RecordsUIResource
 
 if TYPE_CHECKING:
@@ -29,70 +25,32 @@ if TYPE_CHECKING:
     from flask_principal import Identity
     from invenio_records_resources.pagination import Pagination
     from invenio_records_resources.services.records.results import RecordItem
-    from werkzeug import Response
 
-request_vocabulary_args = request_parser(from_conf("request_vocabulary_type_args"), location="view_args")
+request_vocabulary_args = request_parser(from_conf("request_type_args"), location="view_args")
 
 
 class InvenioVocabulariesUIResource(RecordsUIResource):
     """Invenio Vocabularies UI Resource."""
 
-    @request_read_args
-    @request_view_args
-    @request_vocabulary_args
-    def detail(self, pid_value: str, embed: bool = False, is_preview: bool = False, **kwargs: Any) -> Response:
-        """Return item detail page."""
-        return super().detail(pid_value=pid_value, embed=embed, is_preview=is_preview, **kwargs)
+    @pass_route_args("vocabulary_type")
+    def search(self, *args: Any, **kwargs: Any) -> Any:
+        """Search records."""
+        super().search(*args, **kwargs)
 
-    @request_read_args
-    @request_view_args
-    @request_vocabulary_args
-    def export(
+    def _get_record(  # type: ignore[override]
         self,
         pid_value: str,
-        export_format: str,
-        **kwargs: Any,
-    ) -> Any:
-        """Export a record in the specified format."""
-        return super().export(pid_value=pid_value, export_format=export_format, **kwargs)
-
-    @request_read_args
-    @request_view_args
-    @request_vocabulary_args
-    def search(self, page: int = 1, size: int = 10, **kwargs: Any) -> str | Response:
-        """Return search page."""
-        return super().search(page=page, size=size, **kwargs)
-
-    @login_required
-    @request_read_args
-    @request_view_args
-    @request_vocabulary_args
-    def create(self, **kwargs: Any) -> str | Response:
-        """Return create page for a record."""
-        return super().create(**kwargs)
-
-    @login_required
-    @request_read_args
-    @request_view_args
-    @request_vocabulary_args
-    def edit(self, pid_value: str, **kwargs: Any) -> str | Response:
-        """Return edit page for a record."""
-        return super().edit(pid_value=pid_value, **kwargs)
-
-    def _get_record(
-        self,
-        pid_value: str,
-        allow_draft: bool = False,  # noqa: ARG002
-        include_deleted: bool = False,  # noqa: ARG002
+        type_: str,
         **kwargs: Any,  # noqa: ARG002
     ) -> RecordItem:
         """Get a record from the service."""
-        pid_value = resource_requestctx.view_args["pid_value"]
-        vocabulary_type = resource_requestctx.view_args["vocabulary_type"]
+        if not type_:
+            raise ValueError("Vocabulary type is required to get a record.")
+
         return self.api_service.read(
             g.identity,
             (
-                vocabulary_type,
+                type_,
                 pid_value,
             ),
         )
@@ -101,7 +59,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         """Create an empty record with type and tags initialized."""
         record: dict[str, Any] = super().empty_record(**kwargs)
         record.pop("metadata", None)
-        record["type"] = kwargs.get("vocabulary_type")
+        record["type"] = kwargs.get("type")
         record["tags"] = []
         return record
 
@@ -111,20 +69,24 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             self.config.ui_links_item,
             {
                 "url_prefix": self.config.url_prefix,
-                "vocabulary_type": resource_requestctx.view_args["vocabulary_type"],
+                "type": record.data["type"],
             },
         )
         return tpl.expand(identity, record)
 
     def expand_search_links(self, identity: Identity, pagination: Pagination, query_args: dict[str, str]) -> Any:
         """Get links for this result item."""
+        # copy the original query args as we are going to modify them
+        query_args_copied = query_args.copy()
+        type_ = query_args_copied.pop("type_")
+
         tpl = LinksTemplate(
             self.config.ui_links_search,
             {
                 "config": self.config,
                 "url_prefix": self.config.url_prefix,
-                "vocabulary_type": resource_requestctx.view_args["vocabulary_type"],
-                "args": query_args,
+                "type": type_,
+                "args": query_args_copied,
             },
         )
         return tpl.expand(identity, pagination)
@@ -134,7 +96,6 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(
                 "no_vocabulary_type",
-                identity=g.identity,  # type: ignore[attr-defined]
                 default_macro="NoVocabularyType",
             ),
             message=str(error),

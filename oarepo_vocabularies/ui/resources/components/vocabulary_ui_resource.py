@@ -29,56 +29,91 @@ class VocabularyRecordsComponent(UIResourceComponent):
         extra_context: dict,  # noqa: ARG002
         identity: Identity,  # noqa: ARG002
         search_options: dict,
-        view_args: dict,
-        **kwargs: Any,  # noqa: ARG002
+        ui_links: dict,  # noqa: ARG002
+        **kwargs: Any,
     ) -> None:
         """Process the data before the search page is rendered."""
-        vocabulary_type = view_args["vocabulary_type"]
+        vocabulary_type = kwargs.get("type_")
+
+        if not vocabulary_type:
+            raise ValueError("Vocabulary type is required.")
+
         api_service = self.resource.api_service  # type: ignore[attr-defined]
         search_options.setdefault(
             "endpoint",
-            api_service.config.links_search["self"].expand(None, {"type": vocabulary_type, "api": "/api"}),
+            api_service.config.links_search["self"].expand(None, {"type": vocabulary_type}),
         )
         search_options.setdefault("overrides", {})
-        search_options["overrides"]["vocabularyType"] = vocabulary_type
+        search_options["overrides"]["type"] = vocabulary_type
 
     def before_ui_detail(
         self,
         *,
-        extra_context: dict,
-        identity: Identity,
-        view_args: dict,
         api_record: RecordItem,
-        **kwargs: Any,  # noqa: ARG002
+        record: dict,  # noqa: ARG002
+        identity: Identity,
+        ui_links: dict,  # noqa: ARG002
+        extra_context: dict,
+        **kwargs: Any,
     ) -> None:
         """Prepare the context for displaying a vocabulary item detail page."""
-        vocabulary_type = view_args["vocabulary_type"]
+        vocabulary_type = kwargs.get("type_")
+        if not vocabulary_type:
+            raise ValueError("Vocabulary type is required")
+
         api_service = self.resource.api_service  # type: ignore[attr-defined]
         search_options = {
             "api_config": api_service.config,
             "identity": identity,
-            "endpoint": api_service.config.links_search["self"].expand(None, {"type": vocabulary_type, "api": "/api"}),
+            "endpoint": api_service.config.links_search["self"].expand(None, {"type": vocabulary_type}),
             "initial_filters": [["h-parent", api_record["id"]]],
         }
         search_config = partial(self.config.search_app_config, **search_options)  # type: ignore[attr-defined]
         extra_context.setdefault("search_app_config", search_config)
-        extra_context["vocabularyType"] = vocabulary_type
-        extra_context["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
+        extra_context["type"] = vocabulary_type
+        extra_context["props"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
 
-    def before_ui_edit(self, *, form_config: dict, api_record: RecordItem, view_args: Any, **kwargs: Any) -> None:  # noqa: ARG002
+    def before_ui_edit(  # noqa: PLR0913
+        self,
+        *,
+        api_record: RecordItem,
+        record: dict,  # noqa: ARG002
+        data: dict,  # noqa: ARG002
+        identity: Identity,  # noqa: ARG002
+        form_config: dict,
+        ui_links: dict,  # noqa: ARG002
+        extra_context: dict,  # noqa: ARG002
+        **kwargs: Any,
+    ) -> None:
         """Prepare the form configuration for editing a vocabulary item."""
-        vocabulary_type = view_args["vocabulary_type"]
+        vocabulary_type = kwargs.get("type_")
+        if not vocabulary_type:
+            raise ValueError("Vocabulary type is required")
+
         form_config.setdefault("vocabularyProps", self.config.vocabulary_props_config(vocabulary_type))  # type: ignore[attr-defined]
         form_config.setdefault(
             "updateUrl",
             api_record["links"].get("self", None),
         )
-        form_config["vocabularyType"] = vocabulary_type
+        form_config["type"] = vocabulary_type
 
-    def before_ui_create(self, *, form_config: dict, view_args: Any, **kwargs: Any) -> None:  # noqa: ARG002
+    def before_ui_create(
+        self,
+        *,
+        data: dict,  # noqa: ARG002
+        identity: Identity,  # noqa: ARG002
+        form_config: dict,
+        ui_links: dict,  # noqa: ARG002
+        extra_context: dict,  # noqa: ARG002
+        **kwargs: Any,
+    ) -> None:
         """Prepare the form configuration for creating a new vocabulary item."""
-        vocabulary_type = view_args["vocabulary_type"]
+        vocabulary_type = kwargs.get("type_")
+
+        if not vocabulary_type:
+            raise ValueError("Vocabulary type is required")
+
         api_service = self.resource.api_service  # type: ignore[attr-defined]
-        form_config.setdefault("vocabularyProps", self.config.vocabulary_props_config(vocabulary_type))  # type: ignore[attr-defined]
+        form_config.setdefault("props", self.config.vocabulary_props_config(vocabulary_type))  # type: ignore[attr-defined]
         form_config["createUrl"] = f"/api{api_service.config.url_prefix}{vocabulary_type}"
-        form_config["vocabularyType"] = vocabulary_type
+        form_config["type"] = vocabulary_type
