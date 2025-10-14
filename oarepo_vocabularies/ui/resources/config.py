@@ -36,9 +36,6 @@ from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
 from oarepo_vocabularies.ui.resources.components.search import VocabularySearchComponent
-from oarepo_vocabularies.ui.resources.components.vocabulary_ui_resource import (
-    VocabularyRecordsComponent,
-)
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -125,7 +122,6 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
     components: ClassVar[list[UIResourceComponent]] = [  # type: ignore[override]
         PermissionsComponent,
-        VocabularyRecordsComponent,
         VocabularyFormDepositVocabularyOptionsComponent,
         VocabularySearchComponent,
         CustomFieldsComponent,
