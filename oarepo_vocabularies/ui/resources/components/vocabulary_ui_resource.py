@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING, Any
 
 from oarepo_ui.resources.components import UIResourceComponent
 
+from oarepo_vocabularies.errors import VocabularyTypeDoesNotExistError
+
 if TYPE_CHECKING:
     from flask_principal import Identity
     from invenio_records_resources.services.records.results import RecordItem
@@ -36,7 +38,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
         vocabulary_type = kwargs.get("type_")
 
         if not vocabulary_type:
-            raise ValueError("Vocabulary type is required.")
+            raise VocabularyTypeDoesNotExistError
 
         api_service = self.resource.api_service  # type: ignore[attr-defined]
         search_options.setdefault(
@@ -59,7 +61,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
         """Prepare the context for displaying a vocabulary item detail page."""
         vocabulary_type = kwargs.get("type_")
         if not vocabulary_type:
-            raise ValueError("Vocabulary type is required")
+            raise VocabularyTypeDoesNotExistError
 
         api_service = self.resource.api_service  # type: ignore[attr-defined]
         search_options = {
@@ -88,7 +90,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
         """Prepare the form configuration for editing a vocabulary item."""
         vocabulary_type = kwargs.get("type_")
         if not vocabulary_type:
-            raise ValueError("Vocabulary type is required")
+            raise VocabularyTypeDoesNotExistError
 
         form_config.setdefault("vocabularyProps", self.config.vocabulary_props_config(vocabulary_type))  # type: ignore[attr-defined]
         form_config.setdefault(
@@ -111,7 +113,7 @@ class VocabularyRecordsComponent(UIResourceComponent):
         vocabulary_type = kwargs.get("type_")
 
         if not vocabulary_type:
-            raise ValueError("Vocabulary type is required")
+            raise VocabularyTypeDoesNotExistError
 
         api_service = self.resource.api_service  # type: ignore[attr-defined]
         form_config.setdefault("props", self.config.vocabulary_props_config(vocabulary_type))  # type: ignore[attr-defined]
