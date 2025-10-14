@@ -72,14 +72,9 @@ class VocabularyTypeValidationSchema(ma.Schema):
     def load(self, data: Mapping[str, Any], *args: Any, **kwargs: Any) -> dict | None:  # noqa: ARG002
         """Load marshmallow data and validate vocabulary type existence."""
         vocabulary_type = data.get("type")
-        # TODO: this will not be needed once specialized vocabs get their own resource
-        allowed_specialized_vocabularies = current_app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", [])
 
         try:
-            if (
-                VocabularyType.query.filter_by(id=vocabulary_type).one_or_none()
-                or vocabulary_type in allowed_specialized_vocabularies.values()
-            ):
+            if VocabularyType.query.filter_by(id=vocabulary_type).one_or_none():
                 return {"type": vocabulary_type}
             raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.")
 
