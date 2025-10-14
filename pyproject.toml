@@ -37,6 +37,9 @@ tests = [
     "pytest-invenio",
     "types-requests"
 ]
+oarepo14 = [
+    "oarepo[rdm,tests]>=14.0.0,<15.0.0",
+]
 
 [tool.setuptools.packages.find]
 include = ["oarepo_vocabularies*"]

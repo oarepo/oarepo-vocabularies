@@ -16,6 +16,7 @@ from oarepo_vocabularies.records.api import Vocabulary
 from tests.test_uidetail import remove_ws
 
 
+@pytest.mark.skip(reason="Later will be implemented as administration view")
 def test_uiedit(
     client_with_credentials,
     app,

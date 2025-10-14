@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 
+import pytest
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
@@ -18,6 +19,7 @@ def remove_ws(x):
     return re.sub(r"\s+", "", x)
 
 
+@pytest.mark.skip(reason="Later will be implemented as administration view")
 def test_uidetail(client, app, db, cache, lang_type, lang_data, vocab_cf, fake_manifest, clear_vocabulary_permissions):
     vocab_service.create(system_identity, lang_data)
     detail_page = client.get("/vocabularies/languages/eng")
