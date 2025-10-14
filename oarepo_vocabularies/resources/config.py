@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import ClassVar
 
 from flask_resources import ResponseHandler
+from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_vocabularies.resources.config import (
     VocabulariesResourceConfig as InvenioVocabulariesResourceConfig,
 )
@@ -45,5 +46,5 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
 
     response_handlers: ClassVar[dict[str, ResponseHandler]] = {
         **InvenioVocabulariesResourceConfig.response_handlers,
-        "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer()),
+        "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
     }
