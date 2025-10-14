@@ -41,30 +41,5 @@ OAREPO_VOCABULARY_TYPE_RESOURCE = VocabularyTypeResource
 OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
 
 
-OAREPO_SPECIALIZED_VOCABULARIES_METADATA = {
-    "awards": {
-        "title": {"en": "Awards", "cs": "Granty"},
-        "description": {"en": "Vocabulary of awards.", "cs": "Slovník grantů."},
-    },
-    "affiliations": {
-        "title": {"en": "Affiliations", "cs": "Instituce"},
-        "description": {
-            "en": "Vocabulary of affiliations.",
-            "cs": "Slovník institucí.",
-        },
-    },
-    "names": {
-        "title": {"en": "Names", "cs": "Jména"},
-        "description": {"en": "Vocabulary of names.", "cs": "Slovník jmen."},
-    },
-    "funders": {
-        "title": {"en": "Funders", "cs": "Poskytovatelé financí"},
-        "description": {
-            "en": "Vocabulary of funders.",
-            "cs": "Slovník poskytovatelů financí.",
-        },
-    },
-}
-
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
