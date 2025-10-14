@@ -18,18 +18,18 @@ from invenio_records_resources.services import (
     LinksTemplate,
     RecordServiceConfig,
 )
-from invenio_records_resources.services.base import Service
 from invenio_records_resources.services.records import ServiceSchemaWrapper
 from invenio_search import current_search_client
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyType
+from invenio_vocabularies.services.service import VocabularyTypeService as InvenioVocabularyTypeService
 
 if TYPE_CHECKING:
     from flask_principal import Identity
     from invenio_records_resources.services.records.results import RecordList
 
 
-class VocabularyTypeService(Service):
+class VocabularyTypeService(InvenioVocabularyTypeService):
     """Vocabulary types service."""
 
     @property

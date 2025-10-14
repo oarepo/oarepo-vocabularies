@@ -78,9 +78,6 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
 
         form_config.setdefault("vocabularies", {})
 
-        if current_app.config.get("VOCABULARIES_LANGUAGES_DISABLED"):
-            return
-
         vocabulary_config = current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {})
 
         used_vocabularies = self._get_used_vocabularies(api_record)
