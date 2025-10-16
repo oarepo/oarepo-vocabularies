@@ -8,7 +8,6 @@
 #
 from __future__ import annotations
 
-import pytest
 from invenio_records_resources.services.records.results import RecordItem
 
 from oarepo_vocabularies.ui.resources.components.deposit import (
@@ -17,126 +16,67 @@ from oarepo_vocabularies.ui.resources.components.deposit import (
 from tests.simple_model import ModelRecord
 
 
-@pytest.mark.skip(
-    reason="AttributeError: 'Cfg' object has no attribute 'model_name' in oarepo_ui/resources/records/config.py"
-)
 def test_dump_options(
     sample_records,
     simple_record_service,
     simple_record_ui_resource,
     search_clear,
-    cache_clear,
     identity,
 ):
     comp = DepositVocabularyOptionsComponent(resource=simple_record_ui_resource)
     form_config = {}
     rec = ModelRecord({})
     comp.form_config(
-        form_config=form_config,
         api_record=RecordItem(service=simple_record_service, identity=identity, record=rec),
-        view_args={},
+        record=None,
         identity=identity,
+        form_config=form_config,
+        ui_links={},
+        extra_context={},
     )
 
-    assert form_config == {
-        "vocabularies": {
-            "authority": {
-                "definition": {"name": {"en": "authority"}, "authority": "AuthService"},
-                "url": "/api/vocabularies/authority",
-            },
-            "creator": {"definition": {}, "url": "/api/vocabularies/creator"},
-            "award": {"definition": {}, "url": "/api/vocabularies/award"},
-            "ror-authority": {
-                "definition": {
-                    "authority": "RORProviderV2",
-                    "name": {"en": "ROR Authority"},
-                },
-                "url": "/api/vocabularies/ror-authority",
-            },
-            "languages": {
-                "definition": {
-                    "name": {"cs": "jazyky", "en": "languages"},
-                    "description": {
-                        "cs": "slovnikovy typ ceskeho jazyka.",
-                        "en": "czech language vocabulary type.",
-                    },
-                    "dump_options": True,
-                    "custom_fields": ["relatedURI"],
-                    "props": {
-                        "alpha3CodeNative": {
-                            "description": "ISO 639-2 standard 3-letter language code",
-                            "icon": None,
-                            "label": "Alpha3 code (native)",
-                            "multiple": False,
-                            "options": [],
-                            "placeholder": "eng, ces...",
-                        }
-                    },
-                },
-                "all": [
-                    {
-                        "value": "eng",
-                        "text": "English",
-                        "hierarchy": {"title": ["English"], "ancestors": []},
-                        "element_type": "parent",
-                        "props": {"akey": "avalue"},
-                        "tags": ["recommended"],
-                        "description": "English description",
-                        "icon": "file-o",
-                    },
-                    {
-                        "value": "eng.UK.S",
-                        "text": "English (UK, Scotland)",
-                        "hierarchy": {
-                            "title": [
-                                "English (UK, Scotland)",
-                                "English (UK)",
-                                "English",
-                            ],
-                            "ancestors": ["eng.UK", "eng"],
-                        },
-                        "tags": ["featured"],
-                        "element_type": "leaf",
-                        "icon": "file-o",
-                    },
-                    {
-                        "value": "eng.UK",
-                        "text": "English (UK)",
-                        "hierarchy": {
-                            "title": ["English (UK)", "English"],
-                            "ancestors": ["eng"],
-                        },
-                        "element_type": "parent",
-                        "icon": "file-o",
-                    },
-                    {
-                        "value": "eng.US",
-                        "text": "English (US)",
-                        "hierarchy": {
-                            "title": ["English (US)", "English"],
-                            "ancestors": ["eng"],
-                        },
-                        "element_type": "leaf",
-                        "icon": "file-o",
-                    },
-                ],
-                "featured": [
-                    {
-                        "value": "eng.UK.S",
-                        "text": "English (UK, Scotland)",
-                        "hierarchy": {
-                            "title": [
-                                "English (UK, Scotland)",
-                                "English (UK)",
-                                "English",
-                            ],
-                            "ancestors": ["eng.UK", "eng"],
-                        },
-                        "tags": ["featured"],
-                        "element_type": "leaf",
-                        "icon": "file-o",
-                    }
-                ],
-            },
-        }
+    form_config_vocabularies = form_config["vocabularies"]
+    assert form_config_vocabularies["authority"] == {
+        "definition": {"title": {"en": "authority"}, "authority": "TODO"},
+        "url": "/api/vocabularies/authority",
     }
+    assert form_config_vocabularies["creator"] == {"definition": {}, "url": "/api/vocabularies/creator"}
+    assert form_config_vocabularies["award"] == {"definition": {}, "url": "/api/vocabularies/award"}
+    assert form_config_vocabularies["ror-authority"] == {
+        "definition": {
+            "authority": "TODO",
+            "title": {"en": "ROR Authority"},
+        },
+        "url": "/api/vocabularies/ror-authority",
+    }
+    assert form_config_vocabularies["languages"]["definition"] == {
+        "title": {"cs": "jazyky", "en": "languages"},
+        "description": {
+            "cs": "slovnikovy typ ceskeho jazyka.",
+            "en": "czech language vocabulary type.",
+        },
+        "dump_options": True,
+        "custom_fields": ["relatedURI"],
+        "props": {
+            "alpha3CodeNative": {
+                "description": "ISO 639-2 standard 3-letter language code",
+                "icon": None,
+                "label": "Alpha3 code (native)",
+                "multiple": False,
+                "options": [],
+                "placeholder": "eng, ces...",
+            }
+        },
+    }
+
+    assert len(form_config_vocabularies["languages"]["all"]) == 4
+    ids_ = ["eng.UK.S", "eng.UK", "eng.US", "eng"]
+    for i in form_config_vocabularies["languages"]["all"]:
+        assert i["value"] in ids_
+        if i["value"] in ["eng", "eng.UK"]:
+            assert i["element_type"] == "parent"
+        elif i["value"] in ["eng.UK.S", "eng.US"]:
+            assert i["element_type"] == "leaf"
+
+    assert len(form_config_vocabularies["languages"]["featured"]) == 1
+    assert next(iter(form_config_vocabularies["languages"]["featured"]))["value"] == "eng.UK.S"

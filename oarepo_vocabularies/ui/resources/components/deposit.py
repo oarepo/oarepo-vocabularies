@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 from flask import current_app
 from invenio_records import Record
+from invenio_vocabularies.proxies import current_service
 from oarepo_ui.resources.components import UIResourceComponent
 
 from oarepo_vocabularies.records.api import find_vocabulary_relations
@@ -33,13 +34,15 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
 
     always_included_vocabularies: ClassVar[list[str]] = []
 
-    def form_config(
+    def form_config(  # noqa: PLR0913  too many arguments
         self,
         *,
-        form_config: dict,
         api_record: RecordItem,
-        view_args: dict,  # noqa: ARG002
+        record: dict,  # noqa: ARG002
         identity: Identity,
+        form_config: dict,
+        ui_links: dict,  # noqa: ARG002
+        extra_context: dict,  # noqa: ARG002
         **kwargs: Any,  # noqa: ARG002
     ) -> None:
         """Add vocabularies to the form config as in.
@@ -75,9 +78,6 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
 
         form_config.setdefault("vocabularies", {})
 
-        if current_app.config.get("VOCABULARIES_LANGUAGES_DISABLED"):
-            return
-
         vocabulary_config = current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {})
 
         used_vocabularies = self._get_used_vocabularies(api_record)
@@ -90,16 +90,6 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
         form_config["vocabularies"] = form_config_vocabularies
         self._prefetch_vocabularies_to_form_config(form_config_vocabularies, vocabularies_to_prefetch, identity)
 
-        for vocabularies in form_config["vocabularies"].values():
-            if "all" in vocabularies:
-                for voc in vocabularies["all"]:
-                    for _voc in vocabularies["all"]:
-                        if voc["value"] in _voc["hierarchy"]["ancestors"]:
-                            voc["element_type"] = "parent"
-                            break
-                    if "element_type" not in voc:
-                        voc["element_type"] = "leaf"
-
     def _get_used_vocabularies(self, api_record: RecordItem) -> list[str]:
         used_vocabularies = [vocab_field.vocabulary_type for vocab_field in find_vocabulary_relations(api_record)]
         for v in self.always_included_vocabularies:
@@ -110,22 +100,18 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
     def _prefetch_vocabularies_to_form_config(
         self,
         form_config_vocabularies: dict,
-        vocabularies_to_prefetch: list[str],  # noqa: ARG002
-        identity: Identity,  # noqa: ARG002
+        vocabularies_to_prefetch: list[str],
+        identity: Identity,
     ) -> None:
         """Prefetch vocabularies to form config."""
-        prefetched_vocabularies: dict[str, dict[str, Any]]
-        prefetched_vocabularies = {}  # prefetch from cache or service
-        for vocabulary_type, items in prefetched_vocabularies.items():
-            for item_id, item in items.items():
-                by_type = form_config_vocabularies[vocabulary_type]
-                returned_item = {
-                    "value": item_id,
-                    **item,
-                }
-                by_type["all"].append(returned_item)
-                if "featured" in returned_item.get("tags", []):
-                    by_type["featured"].append(returned_item)
+        for vocabulary_to_fetch in vocabularies_to_prefetch:
+            # search instead of read_all also provides links, because template links are passed to result list init
+            hits = current_service.search(identity, {}, type=vocabulary_to_fetch).hits
+            for hit in hits:
+                item = {"value": hit.pop("id"), "element_type": "leaf" if hit["hierarchy"]["leaf"] else "parent", **hit}
+                form_config_vocabularies[vocabulary_to_fetch]["all"].append(item)
+                if "featured" in item.get("tags", []):
+                    form_config_vocabularies[vocabulary_to_fetch]["featured"].append(item)
 
     @staticmethod
     def create_form_config_vocabularies(

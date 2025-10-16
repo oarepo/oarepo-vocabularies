@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from flask import current_app
 from invenio_records_resources.services import (
@@ -18,27 +18,18 @@ from invenio_records_resources.services import (
     LinksTemplate,
     RecordServiceConfig,
 )
-from invenio_records_resources.services.base import Service
 from invenio_records_resources.services.records import ServiceSchemaWrapper
-from invenio_records_resources.services.uow import unit_of_work
 from invenio_search import current_search_client
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyType
-from invenio_vocabularies.services import (
-    VocabulariesService as InvenioVocabulariesService,
-)
-
-from oarepo_vocabularies.proxies import current_oarepo_vocabularies
+from invenio_vocabularies.services.service import VocabularyTypeService as InvenioVocabularyTypeService
 
 if TYPE_CHECKING:
     from flask_principal import Identity
-    from invenio_records_resources.records.api import Record
-    from invenio_records_resources.services.records.results import RecordItem, RecordList
-    from invenio_records_resources.services.records.service import RecordService
-    from invenio_records_resources.services.uow import UnitOfWork
+    from invenio_records_resources.services.records.results import RecordList
 
 
-class VocabularyTypeService(Service):
+class VocabularyTypeService(InvenioVocabularyTypeService):
     """Vocabulary types service."""
 
     @property
@@ -53,11 +44,11 @@ class VocabularyTypeService(Service):
             self.config.vocabularies_listing_item,
         )
 
-    def search(self, identity: Identity, params: dict | None = None) -> RecordList:  # noqa: ARG002
+    def search(self, identity: Identity, params: dict | None = None) -> RecordList:  # noqa: ARG002 # type: ignore[override]
         """Search for vocabulary types entries."""
         self.require_permission(identity, "list_vocabularies")
 
-        vocabulary_types = VocabularyType.query.all()
+        vocabulary_types = VocabularyType.query.all()  # type: ignore[attr-defined]
 
         config_vocab_types = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
 
@@ -107,202 +98,3 @@ class VocabularyTypeService(Service):
         buckets = search_result.aggs.to_dict()["vocabularies"]["buckets"]
 
         return {bucket["key"]: bucket["doc_count"] for bucket in buckets}
-
-
-class VocabulariesService(InvenioVocabulariesService):
-    """Vocabulary service supporting specialized services per vocabulary type."""
-
-    def search(
-        self,
-        identity: Identity,
-        params: dict | None = None,
-        search_preference: Any = None,
-        type: str | None = None,  # noqa: A002
-        **kwargs: Any,
-    ) -> RecordList:
-        """Search for vocabulary entries."""
-        specialized_service: RecordService | None = current_oarepo_vocabularies.get_specialized_service(type)
-        if specialized_service is not None:
-            return specialized_service.search(
-                identity=identity,
-                params=params,
-                search_preference=search_preference,
-                **kwargs,
-            )
-        return super().search(
-            identity=identity,
-            params=params,
-            search_preference=search_preference,
-            type=type,
-            **kwargs,
-        )
-
-    def search_many(
-        self,
-        identity: Identity,
-        params: dict,
-        search_preference: Any | None = None,
-        type: str | None = None,  # noqa: A002
-        **kwargs: Any,
-    ) -> RecordList:
-        """Search for vocabulary entries."""
-        # we are skipping Invenio vocabularies service here and calling
-        # explicitly its parent class. The reason is that invenio vocabs
-        # always filter the search by a single vocabulary type. The search_many
-        # use case is an optimization where we want to fetch multiple items
-        # from multiple vocabulary types in a single query.
-
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
-        if specialized_service:
-            return specialized_service.search(
-                identity=identity,
-                params=params,
-                search_preference=search_preference,
-                **kwargs,
-            )
-        return super(InvenioVocabulariesService, self).search(identity, params)
-
-    def read_all(
-        self,
-        identity: Identity,
-        fields: list[str],
-        type: str,  # noqa: A002
-        cache: bool = True,
-        extra_filter: str = "",
-        **kwargs: Any,
-    ) -> RecordList:
-        """Search for records matching the querystring."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
-        if specialized_service:
-            return specialized_service.read_all(
-                identity=identity,
-                fields=fields,
-                cache=cache,
-                extra_filter=extra_filter,
-                **kwargs,
-            )
-        return super().read_all(
-            identity=identity,
-            fields=fields,
-            type=type,
-            cache=cache,
-            extra_filter=extra_filter,
-            **kwargs,
-        )
-
-    def read_many(
-        self,
-        identity: Identity,
-        type: str,  # noqa: A002
-        ids: list[str],
-        fields: list[str] | None = None,
-        **kwargs: Any,
-    ) -> RecordList:
-        """Search for records matching the querystring filtered by ids."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(type)
-        if specialized_service:
-            return specialized_service.read_many(identity=identity, ids=ids, fields=fields, **kwargs)
-        return super().read_many(identity=identity, type=type, ids=ids, fields=fields, **kwargs)
-
-    @unit_of_work()
-    def create(
-        self, identity: Identity, data: dict, uow: UnitOfWork | None = None, expand: bool = False, **kwargs: Any
-    ) -> RecordItem:
-        """Public API to create a record."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(data.get("type"))
-        if specialized_service:
-            data.pop("type")
-            return specialized_service.create(identity=identity, data=data, uow=uow, expand=expand, **kwargs)
-        return super().create(identity=identity, data=data, uow=uow, expand=expand, **kwargs)
-
-    def read(
-        self, identity: Identity, id_: tuple[str, str], expand: bool = False, action: str = "read", **kwargs: Any
-    ) -> RecordItem:
-        """Retrieve a record."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
-        if specialized_service:
-            return specialized_service.read(identity=identity, id_=id_[1], expand=expand, action=action, **kwargs)
-        return super().read(identity=identity, id_=id_, expand=expand, action=action, **kwargs)
-
-    def exists(self, identity: Identity, id_: tuple[str, str], **kwargs: Any) -> Any:
-        """Check if the record exists and user has permission."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
-        if specialized_service:
-            return specialized_service.exists(identity=identity, id_=id_[1], **kwargs)
-        return super().exists(identity=identity, id_=id_, **kwargs)
-
-    def _create(  # noqa: PLR0913
-        self,
-        record_cls: Record,
-        identity: Identity,
-        data: dict,
-        raise_errors: bool = True,
-        uow: UnitOfWork | None = None,
-        expand: bool = False,
-        **kwargs: Any,
-    ) -> RecordItem:
-        """Create a record."""
-        return super()._create(
-            record_cls,
-            identity,
-            data,
-            raise_errors=raise_errors,
-            uow=uow,
-            expand=expand,
-            **kwargs,
-        )
-
-    @unit_of_work()
-    def update(  # noqa: PLR0913
-        self,
-        identity: Identity,
-        id_: tuple[str, str],
-        data: dict,
-        revision_id: int | None = None,
-        uow: UnitOfWork | None = None,
-        expand: bool = False,
-        **kwargs: Any,
-    ) -> RecordItem:
-        """Replace a record."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
-        if specialized_service:
-            return specialized_service.update(
-                identity=identity,
-                id_=id_[1],
-                data=data,
-                revision_id=revision_id,
-                uow=uow,
-                expand=expand,
-                **kwargs,
-            )
-
-        return super().update(
-            identity,
-            id_,
-            data,
-            revision_id=revision_id,
-            uow=uow,
-            expand=expand,
-            **kwargs,
-        )
-
-    @unit_of_work()
-    def delete(
-        self,
-        identity: Identity,
-        id_: tuple[str, str],
-        revision_id: int | None = None,
-        uow: UnitOfWork | None = None,
-        **kwargs: Any,
-    ) -> Any:
-        """Delete a record."""
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(id_[0])
-        if specialized_service:
-            return specialized_service.delete(
-                identity=identity,
-                id_=id_[1],
-                revision_id=revision_id,
-                uow=uow,
-                **kwargs,
-            )
-        return super().delete(identity, id_, revision_id=revision_id, uow=uow, **kwargs)

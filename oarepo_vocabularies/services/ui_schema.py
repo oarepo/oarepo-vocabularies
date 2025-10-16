@@ -10,22 +10,18 @@
 
 from __future__ import annotations
 
-import copy
 from functools import partial
 from typing import TYPE_CHECKING, Any
 
 import marshmallow as ma
 from flask import current_app
 from invenio_i18n import get_locale
-
-# TODO: udelat znova from oarepo_runtime.services.schema.cf import CustomFieldsSchemaUI
 from invenio_records_resources.services.custom_fields.schema import (
     CustomFieldsSchemaUI as InvenioCustomFieldsSchemaUI,
 )
-from invenio_vocabularies.services.schema import (
-    VocabularySchema as InvenioVocabularySchema,
-)
+from invenio_vocabularies.resources.serializer import VocabularyL10NItemSchema
 from marshmallow import fields as ma_fields
+from marshmallow import post_dump
 from marshmallow_utils.fields import FormatDate
 
 if TYPE_CHECKING:
@@ -40,24 +36,17 @@ class LocalizedDateTime(ma.fields.Field):
         super().__init__(**kwargs)
         self.attribute = attribute
 
-    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:  # noqa: ARG002
+        self.formatters = {
+            "short": FormatDate(attribute=attribute, format="short"),
+            "medium": FormatDate(attribute=attribute, format="medium"),
+            "long": FormatDate(attribute=attribute, format="long"),
+            "full": FormatDate(attribute=attribute, format="full"),
+        }
+
+    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:
         return {
-            f"{self.attribute}_l10n_long": FormatDate(
-                attribute=self.attribute,
-                format="long",
-            ),
-            f"{self.attribute}_l10n_medium": FormatDate(
-                attribute=self.attribute,
-                format="medium",
-            ),
-            f"{self.attribute}_l10n_short": FormatDate(
-                attribute=self.attribute,
-                format="short",
-            ),
-            f"{self.attribute}_l10n_full": FormatDate(
-                attribute=self.attribute,
-                format="full",
-            ),
+            f"{self.attribute}_l10n_{fmt}": formatter._serialize(value, attr, obj, **kwargs)  # noqa: SLF001
+            for fmt, formatter in self.formatters.items()
         }
 
 
@@ -104,36 +93,33 @@ class HierarchyUISchema(ma.Schema):
 
     parent = ma_fields.String()
     level = ma_fields.Integer()
-    title = ma_fields.List(VocabularyI18nStrUIField())
+    titles = ma_fields.List(VocabularyI18nStrUIField())
     ancestors = ma_fields.List(ma_fields.String())
     ancestors_or_self = ma_fields.List(ma_fields.String())
+    leaf = ma.fields.Boolean()
 
 
-class VocabularyUISchema(InvenioVocabularySchema):
+class VocabularyUISchema(VocabularyL10NItemSchema):
     """Vocabulary UI schema."""
 
-    hierarchy = ma_fields.Nested(partial(CustomFieldsSchemaUI, fields_var="OAREPO_VOCABULARIES_HIERARCHY_CF"))
+    custom_fields = ma_fields.Nested(partial(CustomFieldsSchemaUI, fields_var="VOCABULARIES_CF"))
+    hierarchy = ma_fields.Nested(HierarchyUISchema)
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the vocabulary UI schema."""
-        super().__init__(*args, **kwargs)
+    created = LocalizedDateTime(attribute="created", dump_only=True)
+    updated = LocalizedDateTime(attribute="updated", dump_only=True)
 
-    created = LocalizedDateTime("created", dump_only=True)
-    updated = LocalizedDateTime("updated", dump_only=True)
     links = ma.fields.Raw(dump_only=True)
-    title = VocabularyI18nStrUIField()
     type = ma.fields.Raw(dump_only=True)
-    description = VocabularyI18nStrUIField()
-    props = ma.fields.Dict(keys=ma.fields.String(), values=ma.fields.String())
 
+    @post_dump(pass_original=False)
+    def flatten_localized_dates(self, data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
+        """Flatten localized date fields into the UI dictionary."""
+        # Only flatten if we're working on UI data (not the top-level RDM structure)
 
-class VocabularySpecializedUISchema(VocabularyUISchema):
-    """Specialized vocabulary schema."""
+        for date_field in ["created", "updated"]:
+            if date_field in data:
+                date_info = data.pop(date_field)
+                if isinstance(date_info, dict):
+                    data.update(date_info)
 
-    @ma.post_dump(pass_many=False, pass_original=True)
-    def dump_extra_fields(self, data: dict, original_data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
-        """Dump extra fields from original data."""
-        for k, v in original_data.items():
-            if k not in data:
-                data[k] = copy.deepcopy(v)
         return data

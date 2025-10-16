@@ -10,14 +10,14 @@ authors = [
     { name = "Mirek Simek", email = "miroslav.simek@cesnet.cz" }
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
     "oarepo-runtime>=2.0.0dev0,<3.0.0",
     "openpyxl",
     "oarepo-ui>=6.0.0dev0,<7.0.0",
     "cachetools",
     "orcid",
-    "oarepo[rdm,tests]>=13,<14",
+    "oarepo[rdm,tests]>=14,<15",
     "tqdm"
 ]
 
@@ -36,6 +36,9 @@ tests = [
     "pytest-mock",
     "pytest-invenio",
     "types-requests"
+]
+oarepo14 = [
+    "oarepo[rdm,tests]>=14.0.0,<15.0.0",
 ]
 
 [tool.setuptools.packages.find]

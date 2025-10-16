@@ -19,8 +19,11 @@ import sys
 from pathlib import Path
 
 from flask import g
+from invenio_records_permissions import RecordPermissionPolicy
+from invenio_records_permissions.generators import AnyUser, AuthenticatedUser, SystemProcess
 
-from oarepo_vocabularies.services.service import VocabulariesService
+from oarepo_vocabularies.services.config import VocabulariesConfig
+from oarepo_vocabularies.services.permissions import IfNonDangerousVocabularyOperation, IfVocabularyType
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
 )
@@ -46,13 +49,16 @@ except AttributeError:
     security.safe_str_cmp = hmac.compare_digest
 
 
+import builtins
+import contextlib
 from collections import namedtuple
+from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
-from invenio_access.permissions import ActionUsers, any_user, system_process
+from invenio_access.permissions import ActionUsers, any_user, authenticated_user, system_process
 from invenio_access.proxies import current_access
 from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
@@ -60,6 +66,9 @@ from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.models import VocabularyType
+
+if TYPE_CHECKING:
+    from invenio_records_permissions.generators import Generator as InvenioGenerator
 
 pytest_plugins = ("celery.contrib.pytest",)
 
@@ -74,6 +83,91 @@ def h():
 def extra_entry_points():
     """Extra entry points to load the mock_module features."""
     return {}
+
+
+class EveryonePermissionPolicyLanguages(RecordPermissionPolicy):
+    """Permission policy allowing everyone to do everything."""
+
+    can_create: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_read: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_search: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_update: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_delete: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_manage: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_list_vocabularies: ClassVar[list[InvenioGenerator]] = [SystemProcess(), AnyUser()]
+
+
+class EveryonePermissionPolicyLanguagesAndCountries(RecordPermissionPolicy):
+    """Permission policy allowing everyone to do everything."""
+
+    can_create: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[]),
+        IfVocabularyType("countries", then_=[SystemProcess(), AnyUser()], else_=[]),
+    ]
+    can_read: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[]),
+        IfVocabularyType("countries", then_=[SystemProcess(), AnyUser()], else_=[]),
+    ]
+
+
+class AuthenticatedUserPolicyLanguages(RecordPermissionPolicy):
+    """Permission policy allowing authenticated user to do everything."""
+
+    can_create: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
+    ]
+    can_read: ClassVar[list[InvenioGenerator]] = [IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])]
+    can_search: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
+    ]
+    can_update: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
+    ]
+    can_delete: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
+    ]
+    can_manage: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
+    ]
+    can_list_vocabularies: ClassVar[list[InvenioGenerator]] = [AuthenticatedUser()]
+
+
+class EveryonePermissionPolicyLanguagesNonDangerousOperation(RecordPermissionPolicy):
+    """Permission policy allowing everyone to do everything."""
+
+    can_create: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_read: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_search: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_update: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType(
+            "languages", then_=[IfNonDangerousVocabularyOperation(then_=[SystemProcess(), AnyUser()])], else_=[]
+        ),
+    ]
+    can_delete: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_manage: ClassVar[list[InvenioGenerator]] = [
+        IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
+    ]
+    can_list_vocabularies: ClassVar[list[InvenioGenerator]] = [SystemProcess(), AnyUser()]
 
 
 @pytest.fixture(scope="module")
@@ -107,8 +201,6 @@ def app_config(app_config):
 
     app_config["VOCABULARIES_TYPES_SERVICE_CLASS"] = VocabularyTypeService
 
-    app_config["VOCABULARIES_SERVICE_CLASS"] = VocabulariesService
-    # app_config["VOCABULARIES_PERMISSIONS_PRESETS"] = ["fine-grained"]  # noqa: ERA001
     app_config["OAREPO_PERMISSIONS_PRESETS"] = {}
     app_config["OAREPO_VOCABULARIES_SPECIALIZED_SERVICES"] = {
         "names": "names",
@@ -131,7 +223,7 @@ def app_config(app_config):
 
     app_config["INVENIO_VOCABULARY_TYPE_METADATA"] = {
         "languages": {
-            "name": {
+            "title": {
                 "cs": "jazyky",
                 "en": "languages",
             },
@@ -153,7 +245,7 @@ def app_config(app_config):
             "custom_fields": ["relatedURI"],
         },
         "licenses": {
-            "name": {
+            "title": {
                 "cs": "license",
                 "en": "licenses",
             },
@@ -163,11 +255,11 @@ def app_config(app_config):
             },
         },
         "authority": {
-            "name": {"en": "authority"},
+            "title": {"en": "authority"},
             "authority": "TODO",
         },
         "ror-authority": {
-            "name": {"en": "ROR Authority"},
+            "title": {"en": "ROR Authority"},
             "authority": "TODO",
         },
     }
@@ -180,6 +272,12 @@ def app_config(app_config):
 
     app_config["OPENAIRE_CLIENT_ID"] = "blah"
     app_config["OPENAIRE_CLIENT_SECRET"] = "blah"  # noqa: S105
+
+    from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
+
+    from .simple_model import simple_model
+
+    app_config["OAREPO_MODELS"] = {"SimpleModel": simple_model, "VocabularyUI": InvenioVocabulariesUIResourceConfig}
 
     return app_config
 
@@ -210,6 +308,15 @@ def identity():
 
 
 @pytest.fixture(scope="module")
+def authenticated_identity():
+    """Simple identity to interact with the service."""  # noqa: D401
+    i = Identity(2)
+    i.provides.add(UserNeed(2))
+    i.provides.add(authenticated_user)
+    return i
+
+
+@pytest.fixture(scope="module")
 def service(app):
     """Vocabularies service object."""
     from invenio_vocabularies.proxies import current_service
@@ -221,6 +328,14 @@ def service(app):
 def lang_type(db):
     """Get a language vocabulary type."""
     v = VocabularyType.create(id="languages", pid_type="lng")
+    db.session.commit()
+    return v
+
+
+@pytest.fixture
+def countries_type(db):
+    """Get a countries vocabulary type."""
+    v = VocabularyType.create(id="countries", pid_type="cnt")
     db.session.commit()
     return v
 
@@ -254,6 +369,7 @@ def lang_data():
         },
         "tags": ["recommended"],
         "type": "languages",
+        "custom_fields": {"blah": "Hello in English"},
     }
 
 
@@ -422,6 +538,12 @@ def user(app, db):
         )
     db.session.commit()
     return _user
+
+
+@pytest.fixture
+def user_with_roles(app, db, user):
+    identity = Identity(user.id)
+    identity.provides.add(any_user)
 
 
 @pytest.fixture
@@ -614,3 +736,9 @@ def reset_babel(app):
         yield clear_babel_context
     finally:
         clear_babel_context()
+
+
+@pytest.fixture
+def clear_vocabulary_permissions(app):
+    with contextlib.suppress(builtins.BaseException):
+        del VocabulariesConfig.permission_policy_cls.current_permission_policy_class

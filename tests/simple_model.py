@@ -11,6 +11,7 @@ from __future__ import annotations
 import marshmallow as ma
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
+from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records.models import RecordMetadata
 from invenio_records.systemfields.relations.field import RelationsField
@@ -29,6 +30,7 @@ from invenio_records_resources.services import (
 )
 from invenio_records_resources.services.records.components import DataComponent
 from invenio_vocabularies.records.api import Vocabulary
+from oarepo_runtime.api import Model
 from oarepo_ui.resources import (
     BabelComponent,
     RecordsUIResource,
@@ -151,9 +153,21 @@ class ModelUIResourceConfig(RecordsUIResourceConfig):
         "detail": "TestDetail",
         "search": "TestSearch",
     }
-
+    model_name = "SimpleModel"
     components = [BabelComponent, PermissionsComponent]  # noqa: RUF012
 
 
 class ModelUIResource(RecordsUIResource):
     """Record UI resource."""
+
+
+simple_model = Model(
+    code="simple_model",
+    name=_("Simple Model"),
+    version="1.0.0",
+    service="simple_model",
+    service_config=ModelServiceConfig(),
+    record=ModelRecord,
+    resource_config=ModelUIResourceConfig(),
+    ui_model={"name": "SimpleModel", "templates": {"detail": "TestDetail", "search": "TestSearch"}},
+)

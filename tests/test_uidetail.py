@@ -19,9 +19,9 @@ def remove_ws(x):
     return re.sub(r"\s+", "", x)
 
 
-@pytest.mark.skip(reason="UI later")
-def test_uidetail(client, app, db, cache, lang_type, lang_data, vocab_cf, fake_manifest):
+@pytest.mark.skip(reason="Later will be implemented as administration view")
+def test_uidetail(client, app, db, cache, lang_type, lang_data, vocab_cf, fake_manifest, clear_vocabulary_permissions):
     vocab_service.create(system_identity, lang_data)
     detail_page = client.get("/vocabularies/languages/eng")
     assert detail_page.status_code == 200
-    assert remove_ws("""<dt>vocabulary.akey</dt><dd>avalue</dd>""") in remove_ws(detail_page.text)
+    assert remove_ws(""""props": {\n    "akey": "avalue"\n  }""") in remove_ws(detail_page.text)

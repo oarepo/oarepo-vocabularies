@@ -84,7 +84,7 @@ class UpdatedAfterParam(ParamInterpreter):
         """."""
         self.param_name = param_name
         self.field_name = field_name
-        super().__init__(config)
+        super().__init__(config)  # type: ignore[arg-type]
 
     @classmethod
     def factory(cls, param: str, field: str) -> partial[ParamInterpreter]:
@@ -134,31 +134,10 @@ class VocabularyIdsParam(ParamInterpreter):
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
 
-class SpecializedVocabularyIdsParam(ParamInterpreter):
-    """Evaluate type filter."""
-
-    def __init__(self, config: ServiceConfig, vocabulary_type: str | None = None):
-        """Init the param."""
-        super().__init__(config)
-
-        self.vocabulary_type = vocabulary_type
-
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
-        """Apply a filter to get only records for a specific type."""
-        ids = params.pop("ids", None)
-        if not ids:
-            return search
-
-        if not all(id_tuple[0] == self.vocabulary_type for id_tuple in ids):
-            raise ValueError(f"All ids must have vocabulary type '{self.vocabulary_type}'")
-
-        return search.filter(Terms(**{ID_FIELD: [id_tuple[1] for id_tuple in ids]}))  # type: ignore[arg-type]
-
-
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
-    params_interpreters_cls: ClassVar[
+    params_interpreters_cls: ClassVar[  # type: ignore[override]
         list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
     ] = [
         FilterParam.factory(param="tags", field="tags"),

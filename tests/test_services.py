@@ -15,7 +15,7 @@ from invenio_vocabularies.proxies import current_service as vocab_service
 from invenio_vocabularies.records.api import Vocabulary
 
 
-def test_services_create(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_create(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -29,7 +29,7 @@ def test_services_create(app, db, cache, lang_type, vocab_cf, search_clear):
     assert lang_object.data["custom_fields"]["blah"] == "Hello"
 
 
-def test_services_update(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_update(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -57,7 +57,7 @@ def test_services_update(app, db, cache, lang_type, vocab_cf, search_clear):
     assert lang_object2.data["custom_fields"]["blah"] == "Hello2"
 
 
-def test_services_read(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_read(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -77,7 +77,7 @@ def test_services_read(app, db, cache, lang_type, vocab_cf, search_clear):
     assert lang_object2.data["custom_fields"]["blah"] == "Hello"
 
 
-def test_services_delete(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_delete(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -95,7 +95,7 @@ def test_services_delete(app, db, cache, lang_type, vocab_cf, search_clear):
         vocab_service.read(system_identity, (lang_type.id, lang_object.id))
 
 
-def test_services_read_all(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_read_all(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -110,13 +110,14 @@ def test_services_read_all(app, db, cache, lang_type, vocab_cf, search_clear):
 
     Vocabulary.index.refresh()
 
-    results = vocab_service.read_all(system_identity, fields=["id"], type=lang_type.id, cache=False)
-
+    results = vocab_service.read_all(system_identity, fields=[], type=lang_type.id, cache=False)
     assert results.total == 1
-    assert next(iter(results.hits))["id"] == "eng"
+    first_item = next(iter(results.hits))
+    assert first_item["id"] == "eng"
+    assert first_item["custom_fields"] == {"blah": "Hello"}
 
 
-def test_services_read_many(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_read_many(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -134,10 +135,12 @@ def test_services_read_many(app, db, cache, lang_type, vocab_cf, search_clear):
     results = vocab_service.read_many(system_identity, type=lang_type.id, ids=["eng"])
 
     assert results.total == 1
-    assert next(iter(results.hits))["id"] == "eng"
+    first_item = next(iter(results.hits))
+    assert first_item["id"] == "eng"
+    assert first_item["custom_fields"] == {"blah": "Hello"}
 
 
-def test_services_exists(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_exists(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -155,7 +158,7 @@ def test_services_exists(app, db, cache, lang_type, vocab_cf, search_clear):
     assert vocab_service.exists(system_identity, (lang_type.id, lang_object.id))
 
 
-def test_services_search(app, db, cache, lang_type, vocab_cf, search_clear):
+def test_services_search(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -172,5 +175,6 @@ def test_services_search(app, db, cache, lang_type, vocab_cf, search_clear):
 
     results = vocab_service.search(system_identity, {"q": "eng"}, type=lang_type.id)
     assert results.total == 1
-    assert next(iter(results.hits))["id"] == "eng"
-    assert next(iter(results.hits))["custom_fields"]["blah"] == "Hello"
+    first_item = next(iter(results.hits))
+    assert first_item["id"] == "eng"
+    assert first_item["custom_fields"]["blah"] == "Hello"

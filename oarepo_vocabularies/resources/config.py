@@ -10,12 +10,9 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import TYPE_CHECKING, ClassVar
 
-from flask_resources import BaseListSchema, MarshmallowSerializer, ResponseHandler
-from flask_resources.serializers import JSONSerializer
-from importlib_metadata import entry_points
+from flask_resources import ResponseHandler
 from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_vocabularies.resources.config import (
     VocabulariesResourceConfig as InvenioVocabulariesResourceConfig,
@@ -23,18 +20,12 @@ from invenio_vocabularies.resources.config import (
 from invenio_vocabularies.resources.config import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
-from marshmallow import fields
-from marshmallow_oneofschema.one_of_schema import OneOfSchema
+from marshmallow import Schema, fields
 
-from oarepo_vocabularies.services.ui_schema import (
-    VocabularySpecializedUISchema,
-    VocabularyUISchema,
-)
+from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
-
-    from marshmallow import Schema
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
@@ -44,56 +35,11 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
     ancestor = fields.List(fields.String(), data_key="h-ancestor", attribute="h-ancestor")
     level = fields.List(fields.Integer(), data_key="h-level", attribute="h-level")
 
-    def _deserialize(self, *args: Any, **kwargs: Any) -> Any:
-        return super()._deserialize(*args, **kwargs)
 
+class VocabularyTypeRequestArgsSchema(Schema):
+    """Request args schema for vocabulary search."""
 
-class VocabularySchemaSelector(OneOfSchema):
-    """Select vocabulary schema based on the type."""
-
-    @cached_property
-    def type_schemas(self) -> Mapping[str, type[Schema] | Schema]:  # type: ignore[override]
-        """Get vocabulary type schemas from entry points."""
-        ui_schemas = {
-            "vocabulary": VocabularyUISchema,
-            "*": VocabularySpecializedUISchema,
-        }
-        for ep in entry_points().select(group="oarepo_vocabularies.ui_schemas"):
-            ui_schemas.update(ep.load())
-
-        return ui_schemas
-
-    def get_obj_type(self, obj: dict) -> str:
-        """Determine the type of the object for schema selection."""
-        from flask_resources import resource_requestctx
-
-        if "type" in obj:
-            return "vocabulary"
-        vocabulary_type: str = resource_requestctx.view_args.get("type")
-        if vocabulary_type in self.type_schemas:
-            return vocabulary_type
-        return "*"
-
-    def dump(self, obj: Any, *, many: bool | None = None, **kwargs: Any) -> dict:
-        """Dump the object using the selected schema."""
-        ret = cast("dict[str, Any]", super().dump(obj, many=many, **kwargs))
-        if ret.get("type") == "*":
-            ret.pop("type")
-        return ret
-
-
-class VocabulariesUIResponseHandler(ResponseHandler):
-    """UI JSON response handler."""
-
-    serializer = MarshmallowSerializer(
-        format_serializer_cls=JSONSerializer,
-        object_schema_cls=VocabularySchemaSelector,
-        list_schema_cls=BaseListSchema,
-    )
-
-    def __init__(self, headers: dict[str, str] | None = None):
-        """Initialise Response Handler."""
-        super().__init__(self.serializer, headers)
+    type_ = fields.String(data_key="type", attribute="type_")
 
 
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
@@ -101,9 +47,7 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
 
     request_search_args = VocabularySearchRequestArgsSchema
 
-    response_handlers: ClassVar[dict[str, ResponseHandler]] = {
+    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {  # type: ignore[override]
         **InvenioVocabulariesResourceConfig.response_handlers,
-        "application/vnd.inveniordm.v1+json": VocabulariesUIResponseHandler(
-            headers=etag_headers,  # type: ignore[arg-type]
-        ),
+        "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
     }
