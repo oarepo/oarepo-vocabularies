@@ -20,6 +20,7 @@ from invenio_records_resources.services import pagination_endpoint_links
 from invenio_records_resources.services.base import ServiceListResult
 from invenio_records_resources.services.records.links import EndpointLink
 from invenio_vocabularies.services import VocabulariesServiceConfig
+from invenio_vocabularies.services.config import VocabularyTypesServiceConfig as InvenioVocabularyTypesServiceConfig
 from invenio_vocabularies.services.permissions import PermissionPolicy
 from oarepo_runtime.services.records.links import pagination_endpoint_links_html
 
@@ -107,10 +108,9 @@ class PermissionPolicyFactory:
         return self.current_permission_policy_class(*args, **kwargs)
 
 
-class VocabularyTypeServiceConfig:
+class VocabularyTypeServiceConfig(InvenioVocabularyTypesServiceConfig):
     """Vocabulary types service configuration."""
 
-    service_id = "vocabulary_type"
     schema = VocabularyMetadataSchema
     result_list_cls = VocabularyMetadataList
 

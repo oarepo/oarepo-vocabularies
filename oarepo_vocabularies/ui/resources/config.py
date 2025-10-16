@@ -32,9 +32,6 @@ from oarepo_ui.resources.records.config import RecordsUIResourceConfig
 from oarepo_vocabularies.errors import VocabularyTypeDoesNotExistError
 from oarepo_vocabularies.resources.config import VocabularySearchRequestArgsSchema, VocabularyTypeRequestArgsSchema
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
-from oarepo_vocabularies.ui.resources.components.deposit import (
-    DepositVocabularyOptionsComponent,
-)
 from oarepo_vocabularies.ui.resources.components.search import VocabularySearchComponent
 
 if TYPE_CHECKING:
@@ -46,22 +43,6 @@ if TYPE_CHECKING:
     from invenio_records_resources.services import Link
     from invenio_records_resources.services.records.config import RecordServiceConfig
     from oarepo_ui.resources.components.base import UIResourceComponent
-
-
-class VocabularyFormDepositVocabularyOptionsComponent(DepositVocabularyOptionsComponent):
-    """Add specific vocabularies to the deposit form."""
-
-    always_included_vocabularies: ClassVar[list] = ["languages"]
-
-    def form_config(self, *, form_config: dict, **kwargs: Any) -> None:
-        """Add languages vocabulary if not present, so that it is always available in the deposit form."""
-        super().form_config(form_config=form_config, **kwargs)
-
-        if "languages" not in form_config["vocabularies"]:
-            form_config["vocabularies"]["languages"] = []
-
-        if not form_config["vocabularies"]["languages"]:
-            form_config["vocabularies"]["languages"] = [{"text": "English", "value": "en"}]
 
 
 class VocabularyTypeValidationSchema(ma.Schema):
@@ -117,7 +98,6 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
     components: ClassVar[list[UIResourceComponent]] = [  # type: ignore[override]
         PermissionsComponent,
-        VocabularyFormDepositVocabularyOptionsComponent,
         VocabularySearchComponent,
         CustomFieldsComponent,
         AllowedHtmlTagsComponent,
