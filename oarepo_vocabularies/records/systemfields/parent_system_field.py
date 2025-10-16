@@ -89,9 +89,9 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
 
     def __set_name__(self, owner: Any, name: str) -> None:
         """Set the name of the field."""
-        super().__set_name__(owner, name)
+        super().__set_name__(owner, name)  # type: ignore[attr-defined]
 
-    def __get__(self, record: Record, owner: Any = None) -> Any:
+    def __get__(self, record: Record, owner: Any = None) -> Any:  # type: ignore[override]
         """Get the parent field value or cached value."""
         if record is None:
             return self

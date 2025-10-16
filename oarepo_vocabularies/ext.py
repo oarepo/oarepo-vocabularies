@@ -10,11 +10,8 @@
 
 from __future__ import annotations
 
-import functools
-from functools import cached_property
 from typing import TYPE_CHECKING, Any
 
-from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.records.links import (
     RecordEndpointLink,
 )
@@ -24,7 +21,6 @@ from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
 
 if TYPE_CHECKING:
     from flask import Flask
-    from invenio_records_resources.services.records.service import RecordService
 
 
 class OARepoVocabularies:
@@ -73,20 +69,6 @@ class OARepoVocabularies:
             if k not in app.config["OAREPO_PERMISSIONS_PRESETS"]:
                 app.config["OAREPO_PERMISSIONS_PRESETS"][k] = config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
 
-    @functools.lru_cache  # noqa: B019
-    def get_specialized_service(self, _type: str) -> RecordService | None:
-        """Get specialized service for the given vocabulary type."""
-        service_name = self.specialized_services.get(_type)
-        if service_name:
-            return current_service_registry.get(service_name)
-
-        return None
-
-    @cached_property
-    def specialized_services(self) -> Any:
-        """Return specialized services configuration."""
-        return self.app.config.get("OAREPO_VOCABULARIES_SPECIALIZED_SERVICES", {})
-
     def init_resource(self, app: Flask) -> None:
         """Initialize resources."""
         self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
@@ -110,7 +92,7 @@ def finalize_app(app: Flask) -> None:
     awards_service = app.extensions["invenio-vocabularies"].awards_service
     awards_service.config.url_prefix = "/awards/"
     awards_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.detail",
+        "oarepo_vocabularies_ui.record_detail",
         vars=lambda record, vars_: vars_.update(
             {
                 "type": "awards",
@@ -123,7 +105,7 @@ def finalize_app(app: Flask) -> None:
 
     affiliations_service = app.extensions["invenio-vocabularies"].affiliations_service
     affiliations_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.detail",
+        "oarepo_vocabularies_ui.record_detail",
         vars=lambda record, vars_: vars_.update(
             {
                 "type": "affiliations",
@@ -136,7 +118,7 @@ def finalize_app(app: Flask) -> None:
 
     funders_service = app.extensions["invenio-vocabularies"].funders_service
     funders_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.detail",
+        "oarepo_vocabularies_ui.record_detail",
         vars=lambda record, vars_: vars_.update(
             {
                 "type": "funders",
@@ -153,7 +135,7 @@ def finalize_app(app: Flask) -> None:
         "fields": ["name_sort"],
     }
     names_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.detail",
+        "oarepo_vocabularies_ui.record_detail",
         vars=lambda record, vars_: vars_.update(
             {
                 "type": "names",

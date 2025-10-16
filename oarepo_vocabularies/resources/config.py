@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from flask_resources import ResponseHandler
 from invenio_records_resources.resources.records.headers import etag_headers
@@ -23,6 +23,9 @@ from invenio_vocabularies.resources.config import (
 from marshmallow import Schema, fields
 
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
@@ -44,7 +47,7 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
 
     request_search_args = VocabularySearchRequestArgsSchema
 
-    response_handlers: ClassVar[dict[str, ResponseHandler]] = {
+    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {  # type: ignore[override]
         **InvenioVocabulariesResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
     }

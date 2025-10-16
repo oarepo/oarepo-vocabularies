@@ -112,7 +112,7 @@ class HierarchyObject:
 class HierarchySystemField(MappingSystemFieldMixin, SystemField):
     """System field handling the VocabularyHierarchy hierarchy fields fixes on create/update/delete of a record."""
 
-    def __get__(self, record: Record, owner: Any = None) -> Any:
+    def __get__(self, record: Record, owner: Any = None) -> Any:  # type: ignore[override]
         """Get the hierarchy field value or cached value."""
         if record is None:
             return self

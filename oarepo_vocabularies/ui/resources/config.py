@@ -18,7 +18,7 @@ from flask_resources import (
     MultiDictSchema,
 )
 from invenio_records_resources.services import pagination_endpoint_links
-from invenio_records_resources.services.records.links import (
+from invenio_records_resources.services.base.links import (
     EndpointLink,
 )
 from invenio_vocabularies.records.models import VocabularyType
@@ -55,7 +55,7 @@ class VocabularyTypeValidationSchema(ma.Schema):
         vocabulary_type = data.get("type")
 
         try:
-            if VocabularyType.query.filter_by(id=vocabulary_type).one_or_none():
+            if VocabularyType.query.filter_by(id=vocabulary_type).one_or_none():  # type: ignore[attr-defined]
                 return {"type": vocabulary_type}
             raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.")
 
@@ -65,6 +65,7 @@ class VocabularyTypeValidationSchema(ma.Schema):
             raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.") from e
 
 
+# TODO: will be removed in favour of administration view
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     """Invenio Vocabularies UI Resource Config."""
 
@@ -83,10 +84,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     }
 
     routes: Mapping[str, str] = {
-        "create": "/<type>/_new",
-        "edit": "/<type>/<pid_value>/edit",
+        "deposit_create": "/<type>/_new",
+        "deposit_edit": "/<type>/<pid_value>/edit",
         "search": "/<type>/",
-        "detail": "/<type>/<pid_value>",
+        "record_detail": "/<type>/<pid_value>",
         "export": "/<type>/<pid_value>/export/<export_format>",
     }
     config_routes: Mapping[str, str] = {

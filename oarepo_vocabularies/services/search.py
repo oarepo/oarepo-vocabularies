@@ -84,7 +84,7 @@ class UpdatedAfterParam(ParamInterpreter):
         """."""
         self.param_name = param_name
         self.field_name = field_name
-        super().__init__(config)
+        super().__init__(config)  # type: ignore[arg-type]
 
     @classmethod
     def factory(cls, param: str, field: str) -> partial[ParamInterpreter]:
@@ -137,7 +137,7 @@ class VocabularyIdsParam(ParamInterpreter):
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
-    params_interpreters_cls: ClassVar[
+    params_interpreters_cls: ClassVar[  # type: ignore[override]
         list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
     ] = [
         FilterParam.factory(param="tags", field="tags"),

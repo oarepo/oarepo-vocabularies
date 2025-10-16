@@ -24,7 +24,6 @@ from invenio_vocabularies.records.pidprovider import VocabularyIdProvider
 from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
 from invenio_vocabularies.records.systemfields.relations import CustomFieldsRelation
 
-from oarepo_vocabularies.proxies import current_oarepo_vocabularies
 from oarepo_vocabularies.records.systemfields.hierarchy_system_field import (
     HierarchySystemField,
 )
@@ -42,23 +41,6 @@ if TYPE_CHECKING:
     from invenio_records_resources.services.records.results import RecordItem
 
 
-class SpecialVocabulariesAwarePIDFieldContext(VocabularyPIDFieldContext):
-    """A PIDFieldContext that is aware of special vocabularies."""
-
-    def resolve(self, pid_value: str | tuple[str, str]) -> RecordItem | None:
-        """Resolve the PID value to a record, considering special vocabularies."""
-        if isinstance(pid_value, str):
-            pid_type = self._type_id  # type: ignore[attr-defined]
-            item_id = pid_value
-        else:
-            pid_type, item_id = pid_value
-
-        specialized_service = current_oarepo_vocabularies.get_specialized_service(pid_type)
-        if not specialized_service:
-            return super().resolve(pid_value)
-        return specialized_service.config.record_cls.pid.resolve(item_id)
-
-
 class Vocabulary(
     InvenioVocabulary,
 ):
@@ -66,12 +48,12 @@ class Vocabulary(
 
     pid = PIDField(
         "id",
-        provider=VocabularyIdProvider,
-        context_cls=SpecialVocabulariesAwarePIDFieldContext,
+        provider=VocabularyIdProvider,  # type: ignore[arg-type]
+        context_cls=VocabularyPIDFieldContext,  # type: ignore[arg-type]
         create=False,
     )
 
-    dumper = SearchDumper(extensions=[IndexedAtDumperExt(), CustomFieldsDumperExt("VOCABULARIES_CF")])
+    dumper = SearchDumper(extensions=[IndexedAtDumperExt(), CustomFieldsDumperExt("VOCABULARIES_CF")])  # type: ignore[arg-type]
 
     schema = ConstantField(
         "$schema",
@@ -82,7 +64,7 @@ class Vocabulary(
         parent=ParentVocabularyItemRelation(
             "parent",
             keys=["title"],
-            pid_field=ParentVocabularyPIDField(),
+            pid_field=ParentVocabularyPIDField(),  # type: ignore[arg-type]
         ),
         custom_fields=CustomFieldsRelation("VOCABULARIES_CF"),
     )

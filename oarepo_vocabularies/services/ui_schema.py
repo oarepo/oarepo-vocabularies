@@ -16,13 +16,13 @@ from typing import TYPE_CHECKING, Any
 import marshmallow as ma
 from flask import current_app
 from invenio_i18n import get_locale
-from invenio_rdm_records.resources.serializers.ui.schema import FormatDate
 from invenio_records_resources.services.custom_fields.schema import (
     CustomFieldsSchemaUI as InvenioCustomFieldsSchemaUI,
 )
 from invenio_vocabularies.resources.serializer import VocabularyL10NItemSchema
 from marshmallow import fields as ma_fields
 from marshmallow import post_dump
+from marshmallow_utils.fields import FormatDate
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping

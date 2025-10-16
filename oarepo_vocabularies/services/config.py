@@ -18,7 +18,7 @@ from flask import current_app
 from invenio_base.utils import obj_or_import_string
 from invenio_records_resources.services import pagination_endpoint_links
 from invenio_records_resources.services.base import ServiceListResult
-from invenio_records_resources.services.records.links import EndpointLink
+from invenio_records_resources.services.base.links import EndpointLink
 from invenio_vocabularies.services import VocabulariesServiceConfig
 from invenio_vocabularies.services.config import VocabularyTypesServiceConfig as InvenioVocabularyTypesServiceConfig
 from invenio_vocabularies.services.permissions import PermissionPolicy
@@ -32,6 +32,8 @@ from .components.keep_vocabulary_id import KeepVocabularyIdComponent
 from .components.scanning_order import ScanningOrderComponent
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from flask_principal import Identity
     from invenio_records_permissions import RecordPermissionPolicy
     from invenio_records_resources.services.base import Service
@@ -114,7 +116,9 @@ class VocabularyTypeServiceConfig(InvenioVocabularyTypesServiceConfig):
     schema = VocabularyMetadataSchema
     result_list_cls = VocabularyMetadataList
 
-    permission_policy_cls = PermissionPolicyFactory()
+    # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
+    # As we can not have class property, we simulate it with a callable class
+    permission_policy_cls = PermissionPolicyFactory()  # type: ignore[type-arg]
     vocabularies_listing_item: ClassVar[dict[str, EndpointLink]] = {
         "self": EndpointLink(
             "vocabularies.search",
@@ -134,18 +138,18 @@ class VocabulariesConfig(VocabulariesServiceConfig):
 
     record_cls = Vocabulary
     schema = VocabularySchema
-    search = VocabularySearchOptions
-    components: ClassVar[list[type[ServiceComponent]]] = [
+    search = VocabularySearchOptions  # type: ignore[type-arg]
+    components: ClassVar[list[type[ServiceComponent]]] = [  # type: ignore[override]
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
         ScanningOrderComponent,
     ]
     # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
     # As we can not have class property, we simulate it with a callable class
-    permission_policy_cls = PermissionPolicyFactory()
+    permission_policy_cls = PermissionPolicyFactory()  # type: ignore[type-arg]
 
     url_prefix = "/vocabularies/"
-    links_item: ClassVar[dict[str, EndpointLink]] = {
+    links_item: ClassVar[Mapping[str, EndpointLink]] = {  # type: ignore[override]
         "self": EndpointLink(
             "vocabularies.read",
             vars=lambda record, _vars: _vars.update(
@@ -157,7 +161,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
             params=["type", "pid_value"],
         ),
         "self_html": EndpointLink(
-            "oarepo_vocabularies_ui.detail",
+            "oarepo_vocabularies_ui.record_detail",
             vars=lambda record, vars_: vars_.update(
                 {
                     "pid_value": record.pid.pid_value,
@@ -191,7 +195,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
             params=["type", "pid_value"],
         ),
         "parent_html": EndpointLink(
-            "oarepo_vocabularies_ui.detail",
+            "oarepo_vocabularies_ui.record_detail",
             vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
@@ -247,7 +251,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
     }
 
-    links_search: ClassVar[dict[str, EndpointLink]] = {
+    links_search: ClassVar[Mapping[str, EndpointLink]] = {  # type: ignore[override]
         **pagination_endpoint_links("vocabularies.search", params=["type"]),
         **pagination_endpoint_links_html("oarepo_vocabularies_ui.search_without_slash", params=["type"]),
     }

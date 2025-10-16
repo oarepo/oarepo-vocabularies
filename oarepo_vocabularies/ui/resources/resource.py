@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 request_vocabulary_args = request_parser(from_conf("request_type_args"), location="view_args")
 
 
+# TODO: will be removed in favour of administration view
 class InvenioVocabulariesUIResource(RecordsUIResource):
     """Invenio Vocabularies UI Resource."""
 
@@ -50,7 +51,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return self.api_service.read(
             g.identity,
             (
-                type_,
+                type_,  # type: ignore[arg-type]
                 pid_value,
             ),
         )

@@ -44,11 +44,11 @@ class VocabularyTypeService(InvenioVocabularyTypeService):
             self.config.vocabularies_listing_item,
         )
 
-    def search(self, identity: Identity, params: dict | None = None) -> RecordList:  # noqa: ARG002
+    def search(self, identity: Identity, params: dict | None = None) -> RecordList:  # noqa: ARG002 # type: ignore[override]
         """Search for vocabulary types entries."""
         self.require_permission(identity, "list_vocabularies")
 
-        vocabulary_types = VocabularyType.query.all()
+        vocabulary_types = VocabularyType.query.all()  # type: ignore[attr-defined]
 
         config_vocab_types = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
 

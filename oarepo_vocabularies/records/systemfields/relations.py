@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from invenio_records.systemfields.relations.results import RelationResult
 from invenio_records_resources.records.systemfields.relations import PIDRelation
 from invenio_vocabularies.records.api import Vocabulary
@@ -18,7 +20,7 @@ from invenio_vocabularies.records.api import Vocabulary
 class ParentVocabularyItemRelationResult(RelationResult):
     """Result of a parent vocabulary item relation."""
 
-    def _lookup_id(self) -> tuple[str, str]:
+    def _lookup_id(self, *args: Any, **kwargs: Any) -> tuple[str, str]:  # noqa: ARG002
         """Lookup the vocabulary type and ID of the related record."""
         id_ = super()._lookup_id()
         vocabulary_type = self.record["type"]["id"]
