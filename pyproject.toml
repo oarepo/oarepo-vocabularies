@@ -1,6 +1,6 @@
-[build_system]
-requires = ["setuptools", "wheel", "babel>2.8"]
-build-backend = "setuptools.build_meta"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "oarepo-vocabularies"
@@ -41,13 +41,6 @@ oarepo14 = [
     "oarepo[rdm,tests]>=14.0.0,<15.0.0",
 ]
 
-[tool.setuptools.packages.find]
-include = ["oarepo_vocabularies*"]
-exclude = ["tests"]
-
-[tool.setuptools]
-include-package-data = true
-
 [project.entry-points."invenio_base.apps"]
 oarepo_vocabularies = "oarepo_vocabularies.ext:OARepoVocabularies"
 oarepo_vocabularies_ui = "oarepo_vocabularies.ui.ext:InvenioVocabulariesAppExtension"
@@ -79,6 +72,17 @@ oarepo_vocabularies_ui = "oarepo_vocabularies.models:ui.json"
 
 [project.entry-points."invenio_i18n.translations"]
 oarepo_vocabularies_ui = "oarepo_vocabularies"
+
+[tool.hatch.version]
+path = "oarepo_vocabularies/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/oarepo_vocabularies",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.oarepo.i18n]
 languages = ["cs", "en"]
