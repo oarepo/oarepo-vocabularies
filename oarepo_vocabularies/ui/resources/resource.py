@@ -10,14 +10,20 @@
 
 from __future__ import annotations
 
+from functools import partial
 from typing import TYPE_CHECKING
 
 from flask import g
 from flask_resources import from_conf, request_parser
 from invenio_records_resources.services import LinksTemplate
+from invenio_records_resources.services.base.links import (
+    EndpointLink,
+)
 from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources.base import pass_route_args
 from oarepo_ui.resources.records.resource import RecordsUIResource
+from oarepo_ui.templating.data import FieldData
+from werkzeug import Response
 
 if TYPE_CHECKING:
     from typing import Any
@@ -36,7 +42,88 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     @pass_route_args("vocabulary_type")
     def search(self, *args: Any, **kwargs: Any) -> Any:
         """Search records."""
-        super().search(*args, **kwargs)
+        return super().search(*args, **kwargs)
+
+    @pass_route_args("vocabulary_type")
+    def deposit_create(self, *args: Any, **kwargs: Any) -> Any:
+        """Create a new deposit."""
+        return super().deposit_create(*args, **kwargs)
+
+    @pass_route_args("vocabulary_type")
+    @pass_route_args("view")
+    def record_detail(self, *args: Any, **kwargs: Any) -> Any:
+        """Record detail view."""
+        api_record = self._get_record(kwargs["pid_value"], kwargs["type"])
+
+        render_method = self.get_jinjax_macro(
+            "record_detail",
+        )
+        dict_record = api_record.to_dict()
+        record_ui = self.config.ui_serializer.dump_obj(dict_record)
+        record_ui.setdefault("links", {})
+        vocabulary_type = kwargs["type"]
+        extra_context = {}
+        extra_context["vocabularyType"] = vocabulary_type
+
+        self.run_components(
+            "before_ui_detail",
+            api_record=api_record,
+            record=api_record.to_dict(),
+            identity=g.identity,
+            extra_context=extra_context,
+            ui_links={},
+        )
+
+        search_options = dict(
+            api_config=self.api_service.config,
+            identity=g.identity,
+            endpoint=EndpointLink("vocabularies.search", params=["type"]).expand(
+                {},
+                {"type": vocabulary_type},
+            ),
+            initial_filters=[["h-parent", api_record["id"]]],
+            overrides={"type": vocabulary_type},
+        )
+        search_config = partial(self.config.search_app_config, **search_options)
+        extra_context.setdefault("search_app_config", search_config)
+        extra_context["vocabularyType"] = vocabulary_type
+        extra_context["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)
+        render_kwargs = {
+            "record": api_record,
+            "record_ui": record_ui,
+            # TODO: implement user_communities_memberships
+            "permissions": api_record.has_permissions_to(
+                [
+                    "edit",
+                    "new_version",
+                    "manage",
+                    "update_draft",
+                    "read_files",
+                    "review",
+                    "view",
+                    "media_read_files",
+                    "moderate",
+                ]
+            ),
+            "extra_context": extra_context,
+            "context": current_oarepo_ui.catalog.jinja_env.globals,
+            "d": FieldData.create(
+                api_data=api_record.to_dict(),
+                ui_data=record_ui,
+                ui_definitions=self.ui_model,
+                item_getter=self.config.field_data_item_getter,
+            ),
+        }
+        response = Response(
+            current_oarepo_ui.catalog.render(
+                render_method,
+                **render_kwargs,
+            ),
+            mimetype="text/html",
+            status=200,
+        )
+        response._api_record = api_record
+        return response
 
     def _get_record(  # type: ignore[override]
         self,
@@ -79,14 +166,14 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         """Get links for this result item."""
         # copy the original query args as we are going to modify them
         query_args_copied = query_args.copy()
-        type_ = query_args_copied.pop("type_")
+        type = query_args_copied.pop("type")  # NoQA: A001
 
         tpl = LinksTemplate(
             self.config.ui_links_search,
             {
                 "config": self.config,
                 "url_prefix": self.config.url_prefix,
-                "type": type_,
+                "type": type,
                 "args": query_args_copied,
             },
         )
@@ -101,10 +188,3 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ),
             message=str(error),
         )
-
-    def _exportable_handlers(self) -> list:
-        """Get the list of exportable handlers.
-
-        returns: list of exportable handlers (mimetype, handler)
-        """
-        return []
