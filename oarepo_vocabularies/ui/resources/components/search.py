@@ -28,7 +28,11 @@ class VocabularySearchComponent(UIResourceComponent):
         search_options: dict,
         ui_links: dict,  # noqa: ARG002
         extra_context: dict,  # noqa: ARG002
-        **kwargs: Any,  # noqa: ARG002
+        **kwargs: Any,
     ) -> None:
         """Process the data before the search page is rendered."""
+        vocabulary_type = kwargs.get("type")
         search_options["headers"] = {"Accept": "application/json"}
+        if vocabulary_type:
+            search_options["overrides"]["vocabularyType"] = vocabulary_type
+            search_options["overrides"]["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)

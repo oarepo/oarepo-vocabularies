@@ -2,7 +2,7 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { List, Icon, Label, Header } from "semantic-ui-react";
 import _join from "lodash/join";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
+import { getLocalizedValue } from "@js/oarepo_ui/util";
 
 export const ExternalResultListItem = ({
   result,
@@ -49,7 +49,7 @@ export const ExternalResultListItem = ({
     >
       <List.Content>
         <Header className="mb-5" size="small">
-          {getTitleFromMultilingualObject(title)} {uriLinks}
+          {getLocalizedValue(title)} {uriLinks}
         </Header>
         <List.Description>{propValues}</List.Description>
       </List.Content>

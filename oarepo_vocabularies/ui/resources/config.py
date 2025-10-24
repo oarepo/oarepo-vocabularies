@@ -30,7 +30,10 @@ from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
 from oarepo_ui.resources.records.config import RecordsUIResourceConfig
 
 from oarepo_vocabularies.errors import VocabularyTypeDoesNotExistError
-from oarepo_vocabularies.resources.config import VocabularySearchRequestArgsSchema, VocabularyTypeRequestArgsSchema
+from oarepo_vocabularies.resources.config import (
+    VocabularySearchRequestArgsSchema,
+    VocabularyTypeRequestArgsSchema,
+)
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
 from oarepo_vocabularies.ui.resources.components.search import VocabularySearchComponent
 
@@ -77,10 +80,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     application_id = "OarepoVocabularies"
     model_name = "vocabularies"
     templates: Mapping[str, str | None] = {
-        "detail": "oarepo_vocabularies_ui.VocabulariesDetail",
+        "record_detail": "oarepo_vocabularies_ui.VocabulariesDetail",
         "search": "oarepo_vocabularies_ui.VocabulariesSearch",
-        "create": "oarepo_vocabularies_ui.VocabulariesForm",
-        "edit": "oarepo_vocabularies_ui.VocabulariesForm",
+        "deposit_create": "oarepo_vocabularies_ui.VocabulariesForm",
+        "deposit_edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
     routes: Mapping[str, str] = {
@@ -146,7 +149,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
                 params=["type"],
             ),
             "create": EndpointLink(
-                "oarepo_vocabularies_ui.create",
+                "oarepo_vocabularies_ui.deposit_create",
                 vars=lambda record, vars_: vars_.update({"type": record.data["type"]}),
                 params=["type"],
             ),
@@ -158,7 +161,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         return {
             **pagination_endpoint_links("oarepo_vocabularies_ui.search", params=["type"]),
             "create": EndpointLink(
-                "oarepo_vocabularies_ui.create",
+                "oarepo_vocabularies_ui.deposit_create",
                 vars=lambda obj, vars_: vars_.pop("args", None),  # noqa: ARG005
                 params=["type"],
             ),
@@ -190,10 +193,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """Get the search endpoint URL for the current vocabulary type."""
         return cast(
             "str",
-            EndpointLink("oarepo_vocabularies_ui.search", params=["type"]).expand(
+            EndpointLink("vocabularies.search", params=["type"]).expand(
                 {},
                 {
-                    "type": overrides["type"] if overrides else None,
+                    "type": overrides["vocabularyType"] if overrides else None,
                 },
             ),
         )

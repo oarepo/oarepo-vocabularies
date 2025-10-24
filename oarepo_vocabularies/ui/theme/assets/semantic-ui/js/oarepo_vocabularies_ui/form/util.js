@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Breadcrumb, Popup, Icon } from "semantic-ui-react";
 import _join from "lodash/join";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
+import { getLocalizedValue } from "@js/oarepo_ui/util";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const serializeVocabularySuggestions = (suggestions) =>
@@ -16,10 +16,10 @@ export const serializeVocabularySuggestions = (suggestions) =>
           key: id,
           content:
             index === 0 ? (
-              getTitleFromMultilingualObject(item.hierarchy.title[index])
+              getLocalizedValue(item.hierarchy.title[index])
             ) : (
               <span className="ui breadcrumb vocabulary-parent-item">
-                {getTitleFromMultilingualObject(item.hierarchy.title[index])}
+                {getLocalizedValue(item.hierarchy.title[index])}
               </span>
             ),
         })),
@@ -40,7 +40,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
           hierarchy?.length > 1 ? (
             <Breadcrumb key={key} icon="left angle" sections={sections} />
           ) : (
-            getTitleFromMultilingualObject(item?.title) || item.id
+            getLocalizedValue(item?.title) || item.id
           ),
         value: item.id,
         key: key,
@@ -51,7 +51,7 @@ export const serializeVocabularySuggestions = (suggestions) =>
           typeof item?.title === "string"
             ? { [i18next.language]: item?.title }
             : item?.title,
-        name: getTitleFromMultilingualObject(item?.title),
+        name: getLocalizedValue(item?.title),
       };
     }
   });
@@ -63,19 +63,19 @@ export function serializeVocabularyItems(vocabularyItems) {
       //  Check if this makes sense?
       .filter((vocabularyItem) => vocabularyItem.id)
       .map((vocabularyItem) => {
-        const title = getTitleFromMultilingualObject(vocabularyItem.title);
+        const title = getLocalizedValue(vocabularyItem.title);
         const titlesArray = vocabularyItem?.hierarchy?.title || [];
         const sections = titlesArray.map((title, index) => {
           if (index === 0) {
             return {
-              content: <span>{getTitleFromMultilingualObject(title)}</span>,
+              content: <span>{getLocalizedValue(title)}</span>,
               key: crypto.randomUUID(),
             };
           } else {
             return {
               content: (
                 <span className="ui breadcrumb vocabulary-parent-item">
-                  {getTitleFromMultilingualObject(title)}
+                  {getLocalizedValue(title)}
                 </span>
               ),
               key: crypto.randomUUID(),
@@ -101,7 +101,7 @@ export function serializeVocabularyItems(vocabularyItems) {
               trigger={<Icon className="ml-5" name="circle info" />}
             />
           ),
-          name: getTitleFromMultilingualObject(vocabularyItem.title),
+          name: getLocalizedValue(vocabularyItem.title),
           props: vocabularyItem.props,
           hierarchy: vocabularyItem.hierarchy,
         };

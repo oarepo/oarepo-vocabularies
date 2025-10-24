@@ -1,7 +1,7 @@
 import _has from "lodash/has";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { processVocabularyItems } from "../../util";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
+import { getLocalizedValue } from "@js/oarepo_ui/util";
 
 export const isSelectable = (option) => {
   return _has(option, "selectable") ? !!option.selectable : true;
@@ -34,8 +34,8 @@ export const sortByTitle = (options) =>
     if (titleComparison !== 0) {
       return titleComparison;
     } else {
-      return getTitleFromMultilingualObject(a.hierarchy.title[0]).localeCompare(
-        getTitleFromMultilingualObject(b.hierarchy.title[0]),
+      return getLocalizedValue(a.hierarchy.title[0]).localeCompare(
+        getLocalizedValue(b.hierarchy.title[0]),
         i18next.language,
         { sensitivity: "base" }
       );

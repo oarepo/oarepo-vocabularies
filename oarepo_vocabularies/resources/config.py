@@ -39,7 +39,8 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
 class VocabularyTypeRequestArgsSchema(Schema):
     """Request args schema for vocabulary search."""
 
-    type_ = fields.String(data_key="type", attribute="type_")
+    type = fields.String()
+    pid_value = fields.String()
 
 
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):

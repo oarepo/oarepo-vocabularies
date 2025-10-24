@@ -1,4 +1,4 @@
-{#def record, api_record, form_config, extra_context, data, d #}
+{#def record, forms_config, extra_context #}
 {%- set title = "Debug | Vocabulary Form" %}
 
 {% block record_main_content %}
@@ -6,19 +6,13 @@
   <h2>record</h2>
   <pre>{{ record | tojson(indent=2) }}</pre>
 
-  <h2>api_record</h2>
-  <pre>{{ api_record | tojson(indent=2) }}</pre>
-
-  <h2>form_config</h2>
-  <pre>{{ form_config | tojson(indent=2) }}</pre>
+ 
+  <h2>forms_config</h2>
+  <pre>{{ forms_config | tojson(indent=2) }}</pre>
 
   <h2>extra_context</h2>
   <pre>{{ extra_context | tojson(indent=2) }}</pre>
 
-  <h2>data</h2>
-  <pre>{{ data | tojson(indent=2) }}</pre>
 
-  <h2>d</h2>
-  <pre>{{ d | tojson(indent=2) }}</pre>
 </div>
 {% endblock %}

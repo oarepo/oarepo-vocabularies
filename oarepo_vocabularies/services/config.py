@@ -20,7 +20,9 @@ from invenio_records_resources.services import pagination_endpoint_links
 from invenio_records_resources.services.base import ServiceListResult
 from invenio_records_resources.services.base.links import EndpointLink
 from invenio_vocabularies.services import VocabulariesServiceConfig
-from invenio_vocabularies.services.config import VocabularyTypesServiceConfig as InvenioVocabularyTypesServiceConfig
+from invenio_vocabularies.services.config import (
+    VocabularyTypesServiceConfig as InvenioVocabularyTypesServiceConfig,
+)
 from invenio_vocabularies.services.permissions import PermissionPolicy
 from oarepo_runtime.services.records.links import pagination_endpoint_links_html
 
@@ -126,7 +128,7 @@ class VocabularyTypeServiceConfig(InvenioVocabularyTypesServiceConfig):
             params=["type"],
         ),
         "self_html": EndpointLink(
-            "oarepo_vocabularies_ui.search_without_slash",
+            "oarepo_vocabularies_ui.search",
             vars=lambda vocab_type, vars_: vars_.update({"type": vocab_type["id"]}),
             params=["type"],
         ),
@@ -180,13 +182,23 @@ class VocabulariesConfig(VocabulariesServiceConfig):
             params=["type"],
         ),
         "vocabulary_html": EndpointLink(
-            "oarepo_vocabularies_ui.search_without_slash",
+            "oarepo_vocabularies_ui.search",
             vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
                 }
             ),
             params=["type"],
+        ),
+        "edit_html": EndpointLink(
+            "oarepo_vocabularies_ui.deposit_edit",
+            vars=lambda record, vars_: vars_.update(
+                {
+                    "type": record.type.id,
+                    "pid_value": record.pid.pid_value,
+                }
+            ),
+            params=["type", "pid_value"],
         ),
         "parent": EndpointLink(
             "vocabularies.read",
@@ -217,7 +229,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
             params=["type"],
         ),
         "children_html": EndpointLink(
-            "oarepo_vocabularies_ui.search_without_slash",
+            "oarepo_vocabularies_ui.search",
             vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
@@ -239,7 +251,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
             params=["type"],
         ),
         "descendants_html": EndpointLink(
-            "oarepo_vocabularies_ui.search_without_slash",
+            "oarepo_vocabularies_ui.search",
             vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
@@ -253,5 +265,5 @@ class VocabulariesConfig(VocabulariesServiceConfig):
 
     links_search: ClassVar[Mapping[str, EndpointLink]] = {  # type: ignore[override]
         **pagination_endpoint_links("vocabularies.search", params=["type"]),
-        **pagination_endpoint_links_html("oarepo_vocabularies_ui.search_without_slash", params=["type"]),
+        **pagination_endpoint_links_html("oarepo_vocabularies_ui.search", params=["type"]),
     }

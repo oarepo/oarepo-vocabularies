@@ -2,7 +2,7 @@ import * as React from "react";
 import { List, Checkbox, Button, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { isSelectable } from "./util";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
+import { getLocalizedValue } from "@js/oarepo_ui/util";
 
 export const HierarchyColumn = ({
   items = [],
@@ -62,7 +62,7 @@ export const HierarchyColumn = ({
                     }}
                   />
                 )}
-                {getTitleFromMultilingualObject(item.hierarchy.title[0])}
+                {getLocalizedValue(item.hierarchy.title[0])}
               </List.Content>
 
               {!item.hierarchy.leaf && (
