@@ -287,6 +287,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
                 "url_prefix": self.config.url_prefix,
                 "type": vocabulary_type,
                 "args": kwargs,
+
             },
         )
         return tpl.expand(identity, pagination)
