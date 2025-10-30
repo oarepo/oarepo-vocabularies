@@ -1,0 +1,68 @@
+{#def record, extra_context, d #}
+{%- extends config.BASE_TEMPLATE %}
+
+{%- set title = ui_value(d.title, "l10n") ~ " | " ~ _("Vocabulary Detail") %}
+{% set hierarchical = extra_context.get("vocabularyProps", {}).get("hierarchical", False) %}
+
+{%- block head_links %}
+  {{ super() }}
+  {{ webpack['oarepo_vocabularies_ui_components.css'] }}
+{%- endblock %}
+
+{%- block page_body %}
+
+<div class="ui main container">
+  <div class="ui relaxed grid">
+    <div class="two column row">
+      <article class="sixteen wide tablet twelve wide computer column main-record-content">
+        {% block record_main_content %}
+          {{ catalog.render_first_existing(
+            [
+              "VocabulariesMain." + extra_context.vocabularyType,
+              "VocabulariesMain"
+            ],
+            record=record,
+            extra_context=extra_context,
+            d=d,
+            hierarchical=hierarchical
+          ) }}
+
+          {% block vocabulary_descendants %}
+            {% if hierarchical %}
+              {% set search_app_config = extra_context["search_app_config"] %}
+              {%- include "oarepo_vocabularies_ui/descendants.html" -%}
+            {% endif %}
+          {% endblock vocabulary_descendants %}
+        {% endblock record_main_content %}
+      </article>
+
+      {# Sidebar #}
+      {% block record_sidebar %}
+
+        <aside
+          class="sixteen wide tablet four wide computer column sidebar"
+          aria-label="{{ _('Record details') }}"
+        >
+            {{ catalog.render_first_existing(
+              [
+                "VocabulariesSidebar." + extra_context.vocabularyType,
+                "VocabulariesSidebar"
+              ],
+              record=record,
+              extra_context=extra_context,
+            ) }}
+        </aside>
+      {% endblock record_sidebar %}
+    </div>
+  </div>
+</div>
+{%- endblock page_body %}
+
+{%- block javascript %}
+  {{ super() }}
+  {% if hierarchical %}
+    {{ webpack["oarepo_vocabularies_detail.js"] }}
+  {% endif %}
+  {{ webpack['oarepo_vocabularies_ui_components.js'] }}
+  {{ webpack["record_export.js"] }}
+{%- endblock %}

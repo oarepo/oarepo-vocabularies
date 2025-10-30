@@ -6,9 +6,9 @@ import { VocabularySelectField } from "../VocabularySelectField/VocabularySelect
 
 export const VocabularyField = forwardRef(
   ({ fieldPath, vocabularyName, ...restProps }, ref) => {
-    const { formConfig } = useFormConfig();
+    const { config } = useFormConfig();
     const hasLocalOptions =
-      formConfig?.vocabularies?.vocabularies?.[vocabularyName]?.all?.length > 0;
+      config?.vocabularies?.vocabularies?.[vocabularyName]?.all?.length > 0;
     const Field = hasLocalOptions
       ? LocalVocabularySelectField
       : VocabularySelectField;

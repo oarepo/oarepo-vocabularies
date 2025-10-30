@@ -10,7 +10,7 @@ from __future__ import annotations
 
 
 def test_empty_record(app, vocabularies_ui_resource):
-    assert vocabularies_ui_resource.empty_record(type="test") == {
+    assert vocabularies_ui_resource.empty_record(vocabulary_type="test") == {
         "created": None,
         "description": {},
         "hierarchy": {
@@ -36,8 +36,4 @@ def test_empty_record(app, vocabularies_ui_resource):
         "title": {},
         "type": "test",
         "updated": None,
-        "expanded": {},
-        "files": {"enabled": None},
-        "pids": {},
-        "status": "draft",
     }

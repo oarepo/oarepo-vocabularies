@@ -1,0 +1,69 @@
+{#def record, d, extra_context, hierarchical=False #}
+{% set vocabularyType = extra_context.get("vocabularyType", "")%}
+{% set vocabularyMetadata = config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabularyType, {}) %}
+{% set vocabularyTitle = vocabularyMetadata.get("title", {}).get(current_i18n.language) or _('vocabulary.vocabulary') %}
+<div class="vocabularies-main">
+  <VocabulariesBreadcrumb extra_context={{extra_context}} record={{record}} hierarchical={{hierarchical}}/>
+  <VocabularyTitle d={{d.title}} record={{record}} />
+  <dl class="ui very basic table">
+    <dt>{{ vocabularyTitle }}</dt>
+    <dd>
+      <a href="{{record.links.vocabulary_html}}">{{ _("Search") + " " + vocabularyTitle}}</a>
+    </dd>
+    {{ catalog.render_first_existing(
+      [
+          "VocabularyExtraInfo." + extra_context.vocabularyType,
+          "EmptyComponent"
+      ],
+      record=record,
+      extra_context=extra_context,  
+      d=d,
+      hierarchical=hierarchical
+    ) }}
+    {% if record.identifiers %}
+      <dt>{{_("vocabulary.identifiers")}}</dt>
+      <dd>
+        <VocabularyItemIdentifiers identifiers={{record.identifiers}} />
+      </dd>
+    {% endif %}
+    {% if record.affiliations %}
+    <dt>{{_("vocabulary.affiliations")}}</dt>
+    <dd>
+      {% for affiliation in record.affiliations %}
+        <span>{{affiliation.name}}</span>{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    </dd>
+  {% endif %}
+
+
+
+    {% for prop, val in (record.props or {}).items() %}
+     {% if val %}
+      <dt>{{vocabularyMetadata.get("props", {}).get("label", None) or _("vocabulary." + prop)}}</dt>
+      <dd>{{val}}</dd>
+     {% endif %}
+    {% endfor %}
+
+    <dt>{{_('Created')}} </dt>
+    <dd>{{ui_value(d.created, "l10n_short")}}</dd>
+    <dt>{{_('Updated')}} </dt>
+    <dd>{{ui_value(d.updated, "l10n_short")}}</dd>
+
+
+
+    {% if record.tags and record.tags | length > 0 %}
+    <dt>{{_("vocabulary.tags")}}</dt>
+    <dd>
+    {% for t in record.tags %}
+    <span class="ui tag label {% if t =='featured' -%}red{%- endif %}">{{t}}</span>
+    {% endfor %}
+    </dd>
+    {% endif %}
+  </dl>
+  {% set custom_field_config=config.get("VOCABULARIES_CF_UI", {}).get(vocabularyType, None) %}
+  {%if custom_field_config %}
+    <div class="ui vocabulary_cf">
+      <ICustomFields custom_fields_config={{custom_field_config}} d={{d.custom_fields}} />
+    </div>
+  {% endif %}
+</div>
