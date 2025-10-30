@@ -1,20 +1,26 @@
-import { createFormAppInit, parseFormAppConfig } from "@js/oarepo_ui/forms";
 import FormAppLayout from "./FormAppLayout";
 import {
-  VocabularyFormControlPanel,
-  VocabularyFormFields,
   VocabularyFormFieldsAwards,
   VocabularyFormFieldsNames,
   VocabularyFormFieldsFunders,
   VocabularyFormFieldsAffiliations,
 } from "./components";
+import { DepositFormApp, parseFormAppConfig } from "@js/oarepo_ui/forms";
+import React from "react";
+import { OARepoDepositSerializer } from "@js/oarepo_ui/api";
 
-const { formConfig } = parseFormAppConfig();
-const { overridableIdPrefix } = formConfig;
+import ReactDOM from "react-dom";
+
+const recordSerializer = new OARepoDepositSerializer(
+  ["errors", "expanded"],
+  ["__key"]
+);
+
+const { rootEl, config, ...rest } = parseFormAppConfig();
+const { overridableIdPrefix } = config;
 
 export const componentOverrides = {
   [`${overridableIdPrefix}.FormApp.layout`]: FormAppLayout,
-  [`${overridableIdPrefix}.FormFields.container`]: VocabularyFormFields,
   [`${overridableIdPrefix}.FormFields.container.awards`]:
     VocabularyFormFieldsAwards,
   [`${overridableIdPrefix}.FormFields.container.names`]:
@@ -23,6 +29,14 @@ export const componentOverrides = {
     VocabularyFormFieldsFunders,
   [`${overridableIdPrefix}.FormFields.container.affiliations`]:
     VocabularyFormFieldsAffiliations,
-  [`${overridableIdPrefix}.FormActions.container`]: VocabularyFormControlPanel,
 };
-createFormAppInit({ componentOverrides });
+
+ReactDOM.render(
+  <DepositFormApp
+    config={config}
+    {...rest}
+    recordSerializer={recordSerializer}
+    componentOverrides={componentOverrides}
+  />,
+  rootEl
+);
