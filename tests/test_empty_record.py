@@ -37,7 +37,5 @@ def test_empty_record(app, vocabularies_ui_resource):
         "type": "test",
         "updated": None,
         "expanded": {},
-        "files": {"enabled": None},
         "pids": {},
-        "status": "draft",
     }

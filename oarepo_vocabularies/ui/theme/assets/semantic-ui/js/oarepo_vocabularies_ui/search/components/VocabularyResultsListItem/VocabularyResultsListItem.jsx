@@ -4,16 +4,20 @@ import Overridable from "react-overridable";
 import _toPairs from "lodash/toPairs";
 import _chunk from "lodash/chunk";
 import _reverse from "lodash/reverse";
-import { Item, Table, Grid, Breadcrumb } from "semantic-ui-react";
+import { Item, Table, Grid, Breadcrumb, Label } from "semantic-ui-react";
 import { withState, AppContext } from "react-searchkit";
-import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 import { I18nString } from "@js/oarepo_ui/forms";
 import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
+import { getLocalizedValue } from "@js/oarepo_ui/util";
+import { VocabularyItemIdentifiers } from "./VocabularyItemIdentifiers";
+import { VocabularyItemAffiliations } from "./VocabularyItemAffiliations";
 
 export const VocabularyItemPropsTable = (props) => {
   // Split properties into max. 4 tables of max. 2 rows
   const tables = _chunk(_toPairs(props), 2).slice(0, 4);
-
+  const { vocabularyProps: vocabularyPropsMetadata } = useContext(
+    SearchConfigurationContext
+  );
   return (
     <Grid celled="internally" columns={tables.length} className="dense">
       {tables.map((tableData, index) => (
@@ -21,14 +25,16 @@ export const VocabularyItemPropsTable = (props) => {
         <Grid.Column key={index}>
           <Table basic="very" collapsing compact>
             <Table.Body>
-              {tableData.map(([key, value]) => (
-                <Table.Row key={key}>
-                  <Table.Cell>
-                    <b>{i18next.t(key)}</b>
-                  </Table.Cell>
-                  <Table.Cell>{value}</Table.Cell>
-                </Table.Row>
-              ))}
+              {tableData.map(([key, value]) =>
+                value ? (
+                  <Table.Row key={key}>
+                    <Table.Cell>
+                      <b>{getLocalizedValue(vocabularyPropsMetadata, key)}</b>
+                    </Table.Cell>
+                    <Table.Cell>{value}</Table.Cell>
+                  </Table.Row>
+                ) : null
+              )}
             </Table.Body>
           </Table>
         </Grid.Column>
@@ -39,8 +45,18 @@ export const VocabularyItemPropsTable = (props) => {
 
 export const VocabularyResultsListItemComponent = ({ result, appName }) => {
   const { buildUID } = useContext(AppContext);
+  const { vocabularyType } = useContext(SearchConfigurationContext);
 
-  const { title = "No title", id, props: itemProps, hierarchy, links } = result;
+  const {
+    title = "No title",
+    id,
+    props: itemProps,
+    hierarchy,
+    links,
+    funder,
+    identifiers,
+    affiliations,
+  } = result;
   const ancestorTitlesWithId = hierarchy?.title?.map(
     (ancestorTitle, index) => ({
       ...ancestorTitle,
@@ -88,6 +104,15 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
             </Item.Description>
           )}
         </Item.Content>
+        <Item.Meta>
+          {funder?.id && <Label>{funder?.name || funder.id}</Label>}
+          <VocabularyItemIdentifiers identifiers={identifiers} />
+          <VocabularyItemAffiliations affiliations={affiliations} />
+        </Item.Meta>
+        <Overridable
+          id={buildUID(`ResultsListItem.extra.${vocabularyType}`)}
+          result={result}
+        />
       </Item>
     </Overridable>
   );

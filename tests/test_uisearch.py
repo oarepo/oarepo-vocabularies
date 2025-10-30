@@ -8,14 +8,8 @@
 #
 from __future__ import annotations
 
-import re
 
-
-def remove_ws(x):
-    return re.sub(r"\s+", "", x)
-
-
-def test_uidetail(
+def test_search(
     vocabularies_ui_resource,
     identity,
     logged_in_client,
@@ -29,5 +23,8 @@ def test_uidetail(
     vocab_cf,
     lang_data_many,
 ):
-    detail_page = logged_in_client.get("/vocabularies/languages/fr")
-    assert detail_page.status_code == 200
+    search = logged_in_client.get("/vocabularies/languages/")
+    assert search.status_code == 200
+    search_without_slash = logged_in_client.get("/vocabularies/languages")
+    assert search_without_slash.status_code == 302
+    assert search_without_slash.headers["Location"] == "/vocabularies/languages/"

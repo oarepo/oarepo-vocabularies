@@ -23,8 +23,8 @@ export const VocabularyTreeSelectField = ({
   filterFunction,
   ...restProps
 }) => {
-  const { formConfig } = useFormConfig();
-  const { vocabularies } = formConfig;
+  const { config } = useFormConfig();
+  const { vocabularies } = config;
   const { values, setFieldValue } = useFormikContext();
   // it looks clunky, but unfortunately, when this field is empty, the getIn,
   // creates new object or array every time, and it causes constant rerendering
@@ -125,7 +125,7 @@ const VocabularyTreeSelectPresentation = ({
       if (multiple && Array.isArray(_value)) {
         return _value
           .map((v) => serializedOptions.find((option) => option.value === v.id))
-          .filter((v) => v);
+          .filter(Boolean);
       } else if (_value) {
         return (
           serializedOptions.find((option) => option.value === _value.id) || []

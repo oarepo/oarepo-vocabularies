@@ -27,12 +27,20 @@ from oarepo_ui.resources.components import (
     PermissionsComponent,
 )
 from oarepo_ui.resources.components.custom_fields import CustomFieldsComponent
+from oarepo_ui.resources.components.multilingual_field_languages import (
+    MultilingualFieldLanguagesComponent,
+)
 from oarepo_ui.resources.records.config import RecordsUIResourceConfig
 
 from oarepo_vocabularies.errors import VocabularyTypeDoesNotExistError
-from oarepo_vocabularies.resources.config import VocabularySearchRequestArgsSchema, VocabularyTypeRequestArgsSchema
+from oarepo_vocabularies.resources.config import (
+    VocabularySearchRequestArgsSchema,
+)
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
 from oarepo_vocabularies.ui.resources.components.search import VocabularySearchComponent
+from oarepo_vocabularies.ui.resources.components.vocabulary_type_and_props import (
+    VocabularyTypeAndProps,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -65,7 +73,6 @@ class VocabularyTypeValidationSchema(ma.Schema):
             raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.") from e
 
 
-# TODO: will be removed in favour of administration view
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     """Invenio Vocabularies UI Resource Config."""
 
@@ -77,15 +84,15 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     application_id = "OarepoVocabularies"
     model_name = "vocabularies"
     templates: Mapping[str, str | None] = {
-        "detail": "oarepo_vocabularies_ui.VocabulariesDetail",
+        "record_detail": "oarepo_vocabularies_ui.VocabulariesDetail",
         "search": "oarepo_vocabularies_ui.VocabulariesSearch",
         "create": "oarepo_vocabularies_ui.VocabulariesForm",
         "edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
     routes: Mapping[str, str] = {
-        "deposit_create": "/<type>/_new",
-        "deposit_edit": "/<type>/<pid_value>/edit",
+        "create": "/<type>/_new",
+        "edit": "/<type>/<pid_value>/edit",
         "search": "/<type>/",
         "record_detail": "/<type>/<pid_value>",
         "export": "/<type>/<pid_value>/export/<export_format>",
@@ -102,6 +109,8 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         VocabularySearchComponent,
         CustomFieldsComponent,
         AllowedHtmlTagsComponent,
+        MultilingualFieldLanguagesComponent,
+        VocabularyTypeAndProps,
     ]
     request_view_args = MultiDictSchema.from_dict(
         {"pid_value": ma.fields.Str(), "type_": ma.fields.Str(data_key="type")}
@@ -114,7 +123,8 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
     request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type_": ma.fields.Str(data_key="type")}  # type: ignore[override]
     request_search_args = VocabularySearchRequestArgsSchema
-    request_vocabulary_type_args = VocabularyTypeRequestArgsSchema
+    request_vocabulary_type_args = VocabularyTypeValidationSchema
+    request_vocabulary_pid_args: ClassVar[dict[str, ma.fields.Field]] = {"pid_value": ma.fields.Str()}
 
     @property
     def ui_links_item(self) -> Mapping[str, EndpointLink]:
@@ -171,7 +181,8 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     def _get_custom_fields_ui_config(self, key: str, **kwargs: Any) -> Any:  # noqa: ARG002
         """Get custom fields config for a vocabulary type if available."""
         vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
-        return vocabularies_cf_ui.get(key, [])
+        vocabulary_type = kwargs.get("form_config", {}).get("vocabularyType")
+        return vocabularies_cf_ui.get(vocabulary_type, [])
 
     # adapt to search options of each specialized service if available
     def search_available_sort_options(
@@ -190,10 +201,10 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """Get the search endpoint URL for the current vocabulary type."""
         return cast(
             "str",
-            EndpointLink("oarepo_vocabularies_ui.search", params=["type"]).expand(
+            EndpointLink("vocabularies.search", params=["type"]).expand(
                 {},
                 {
-                    "type": overrides["type"] if overrides else None,
+                    "type": overrides["vocabularyType"] if overrides else None,
                 },
             ),
         )
