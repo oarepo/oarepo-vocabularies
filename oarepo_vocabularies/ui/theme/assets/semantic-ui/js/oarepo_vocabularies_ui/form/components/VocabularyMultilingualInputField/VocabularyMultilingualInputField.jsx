@@ -21,42 +21,43 @@ export const VocabularyMultilingualInputField = ({
   displayFirstInputRemoveButton = true,
   helpText,
 }) => {
-  const placeholderFieldPath = useMemo(() => {
-    return fieldPath
-      .split(".")
-      .map((part, index, array) =>
-        index === array.length - 1 ? `_${part}` : part
-      )
-      .join(".");
-  }, [fieldPath]);
+  // const placeholderFieldPath = useMemo(() => {
+  //   return fieldPath
+  //     .split(".")
+  //     .map((part, index, array) =>
+  //       index === array.length - 1 ? `_${part}` : part
+  //     )
+  //     .join(".");
+  // }, [fieldPath]);
 
-  const { setFieldValue, values } = useFormikContext();
+  // const { setFieldValue, values } = useFormikContext();
 
-  useEffect(() => {
-    if (!getIn(values, placeholderFieldPath)) {
-      setFieldValue(
-        placeholderFieldPath,
-        _isEmpty(getIn(values, fieldPath))
-          ? object2array(newItemInitialValue, "lang", "name")
-          : object2array(getIn(values, fieldPath, ""), "lang", "name")
-      );
-      return;
-    }
-    setFieldValue(
-      fieldPath,
-      array2object(getIn(values, placeholderFieldPath), "lang", "name")
-    );
-    // TODO: there are issues with some other inputs that we merged, so form is crashing
-    // will need to look into the exhausting dependecies eslint issue when we get a new
-    // working repo
-    /*eslint-disable-next-line */
-  }, [values[placeholderFieldPath]]);
+  // useEffect(() => {
+  //   if (!getIn(values, placeholderFieldPath)) {
+  //     setFieldValue(
+  //       placeholderFieldPath,
+  //       _isEmpty(getIn(values, fieldPath))
+  //         ? object2array(newItemInitialValue, "lang", "name")
+  //         : object2array(getIn(values, fieldPath, ""), "lang", "name")
+  //     );
+  //     return;
+  //   }
+  //   setFieldValue(
+  //     fieldPath,
+  //     array2object(getIn(values, placeholderFieldPath), "lang", "name")
+  //   );
+  // TODO: there are issues with some other inputs that we merged, so form is crashing
+  // will need to look into the exhausting dependecies eslint issue when we get a new
+  // working repo
+  /*eslint-disable-next-line */
+  // }, [values[placeholderFieldPath]]);
 
   return (
     <ArrayField
       addButtonLabel={i18next.t("Add another language")}
       defaultNewValue={emptyNewInput}
-      fieldPath={placeholderFieldPath}
+      showEmptyValue
+      fieldPath={fieldPath}
       label={
         <FieldLabel htmlFor={fieldPath} icon={labelIcon ?? ""} label={label} />
       }
@@ -65,7 +66,7 @@ export const VocabularyMultilingualInputField = ({
       helpText={helpText}
     >
       {({ indexPath, arrayHelpers, array }) => {
-        const fieldPathPrefix = `${placeholderFieldPath}.${indexPath}`;
+        const fieldPathPrefix = `${fieldPath}.${indexPath}`;
         return (
           <ArrayFieldItem
             indexPath={indexPath}
@@ -83,7 +84,7 @@ export const VocabularyMultilingualInputField = ({
               usedLanguages={array.map((v) => v.lang)}
             />
             <TextField
-              fieldPath={`${fieldPathPrefix}.name`}
+              fieldPath={`${fieldPathPrefix}.value`}
               label={textFieldLabel}
               required={required}
               width={13}

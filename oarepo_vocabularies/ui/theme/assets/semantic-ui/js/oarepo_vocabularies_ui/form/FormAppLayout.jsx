@@ -54,7 +54,7 @@ const BaseFormLayoutComponent = ({ formikProps = {}, record, errors = {} }) => {
       <Grid>
         <Ref innerRef={formFeedbackRef}>
           <Grid.Column id="main-content" mobile={16} tablet={16} computer={11}>
-            <FormTitle />
+            {/* <FormTitle /> */}
             <Sticky context={formFeedbackRef} offset={20}>
               <Overridable
                 id={buildUID(overridableIdPrefix, "Errors.container")}
