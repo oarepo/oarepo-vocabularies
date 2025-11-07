@@ -11,11 +11,11 @@ import Overridable from "react-overridable";
 import { buildUID } from "react-searchkit";
 
 export const VocabularyFormFields = () => {
-  const { formConfig } = useFormConfig();
-  const { vocabularyProps, overridableIdPrefix, vocabularyType } = formConfig;
+  const { config } = useFormConfig();
+  const { vocabularyProps, overridableIdPrefix, vocabularyType } = config;
 
   const hasPropFields = _has(vocabularyProps, "props");
-  const isUpdateForm = _has(formConfig, "updateUrl");
+  const isUpdateForm = _has(config, "updateUrl");
   return (
     <Overridable
       id={buildUID(

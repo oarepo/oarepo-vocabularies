@@ -20,7 +20,7 @@ from invenio_vocabularies.resources.config import (
 from invenio_vocabularies.resources.config import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
-from marshmallow import Schema, fields
+from marshmallow import fields
 
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
 
@@ -34,12 +34,6 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
     parent = fields.List(fields.String(), data_key="h-parent", attribute="h-parent")
     ancestor = fields.List(fields.String(), data_key="h-ancestor", attribute="h-ancestor")
     level = fields.List(fields.Integer(), data_key="h-level", attribute="h-level")
-
-
-class VocabularyTypeRequestArgsSchema(Schema):
-    """Request args schema for vocabulary search."""
-
-    type_ = fields.String(data_key="type", attribute="type_")
 
 
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):

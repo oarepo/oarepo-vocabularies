@@ -1,6 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { getTitleFromMultilingualObject } from "@js/oarepo_ui/util";
+import { getLocalizedValue } from "@js/oarepo_ui/util";
 import { Grid, Breadcrumb, Button, Label, Icon } from "semantic-ui-react";
 
 export const TreeSelectValues = ({ selected = [], onRemove }) => {
@@ -12,7 +12,7 @@ export const TreeSelectValues = ({ selected = [], onRemove }) => {
             icon="left angle"
             sections={item.hierarchy.title.map((t, level) => ({
               key: `${t}-${level}`,
-              children: getTitleFromMultilingualObject(t),
+              children: getLocalizedValue(t),
             }))}
           />
           <Button

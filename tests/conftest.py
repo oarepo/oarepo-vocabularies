@@ -20,12 +20,22 @@ from pathlib import Path
 
 from flask import g
 from invenio_records_permissions import RecordPermissionPolicy
-from invenio_records_permissions.generators import AnyUser, AuthenticatedUser, SystemProcess
+from invenio_records_permissions.generators import (
+    AnyUser,
+    AuthenticatedUser,
+    SystemProcess,
+)
 
 from oarepo_vocabularies.services.config import VocabulariesConfig
-from oarepo_vocabularies.services.permissions import IfNonDangerousVocabularyOperation, IfVocabularyType
+from oarepo_vocabularies.services.permissions import (
+    IfNonDangerousVocabularyOperation,
+    IfVocabularyType,
+)
 from oarepo_vocabularies.ui.resources.components.deposit import (
     DepositVocabularyOptionsComponent,
+)
+from oarepo_vocabularies.ui.resources.components.vocabulary_type_and_props import (
+    VocabularyTypeAndProps,
 )
 from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
 from oarepo_vocabularies.ui.resources.resource import InvenioVocabulariesUIResource
@@ -58,7 +68,12 @@ import pytest
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
-from invenio_access.permissions import ActionUsers, any_user, authenticated_user, system_process
+from invenio_access.permissions import (
+    ActionUsers,
+    any_user,
+    authenticated_user,
+    system_process,
+)
 from invenio_access.proxies import current_access
 from invenio_accounts.proxies import current_datastore
 from invenio_accounts.testutils import login_user_via_session
@@ -106,7 +121,10 @@ class EveryonePermissionPolicyLanguages(RecordPermissionPolicy):
     can_manage: ClassVar[list[InvenioGenerator]] = [
         IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
     ]
-    can_list_vocabularies: ClassVar[list[InvenioGenerator]] = [SystemProcess(), AnyUser()]
+    can_list_vocabularies: ClassVar[list[InvenioGenerator]] = [
+        SystemProcess(),
+        AnyUser(),
+    ]
 
 
 class EveryonePermissionPolicyLanguagesAndCountries(RecordPermissionPolicy):
@@ -158,7 +176,9 @@ class EveryonePermissionPolicyLanguagesNonDangerousOperation(RecordPermissionPol
     ]
     can_update: ClassVar[list[InvenioGenerator]] = [
         IfVocabularyType(
-            "languages", then_=[IfNonDangerousVocabularyOperation(then_=[SystemProcess(), AnyUser()])], else_=[]
+            "languages",
+            then_=[IfNonDangerousVocabularyOperation(then_=[SystemProcess(), AnyUser()])],
+            else_=[],
         ),
     ]
     can_delete: ClassVar[list[InvenioGenerator]] = [
@@ -167,7 +187,10 @@ class EveryonePermissionPolicyLanguagesNonDangerousOperation(RecordPermissionPol
     can_manage: ClassVar[list[InvenioGenerator]] = [
         IfVocabularyType("languages", then_=[SystemProcess(), AnyUser()], else_=[])
     ]
-    can_list_vocabularies: ClassVar[list[InvenioGenerator]] = [SystemProcess(), AnyUser()]
+    can_list_vocabularies: ClassVar[list[InvenioGenerator]] = [
+        SystemProcess(),
+        AnyUser(),
+    ]
 
 
 @pytest.fixture(scope="module")
@@ -273,11 +296,16 @@ def app_config(app_config):
     app_config["OPENAIRE_CLIENT_ID"] = "blah"
     app_config["OPENAIRE_CLIENT_SECRET"] = "blah"  # noqa: S105
 
-    from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
+    from oarepo_vocabularies.ui.resources.config import (
+        InvenioVocabulariesUIResourceConfig,
+    )
 
     from .simple_model import simple_model
 
-    app_config["OAREPO_MODELS"] = {"SimpleModel": simple_model, "VocabularyUI": InvenioVocabulariesUIResourceConfig}
+    app_config["OAREPO_MODELS"] = {
+        "SimpleModel": simple_model,
+        "VocabularyUI": InvenioVocabulariesUIResourceConfig,
+    }
 
     return app_config
 
@@ -570,6 +598,14 @@ def client_with_credentials(db, client, user, role):
     return client
 
 
+@pytest.fixture
+def logged_in_client(db, client, user):
+    """Log in a regular user to the client (no admin, no superuser)."""
+    login_user(user, remember=True)
+    login_user_via_session(client, email=user.email)
+    return client
+
+
 # FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30  # noqa: FIX001, TD001
 # Without this, success of test depends on the tests order
 @pytest.fixture
@@ -693,8 +729,11 @@ def fake_manifest(app):
 @pytest.fixture
 def vocabularies_ui_resource_config(app):
     class Cfg(InvenioVocabulariesUIResourceConfig):
-        api_service = "vocabularies"  # must be something included in oarepo, as oarepo is used in tests
-        components = [DepositVocabularyOptionsComponent]  # noqa: RUF012
+        api_service = "vocabularies"
+        components: ClassVar[list] = [
+            DepositVocabularyOptionsComponent,
+            VocabularyTypeAndProps,
+        ]
 
     return Cfg()
 

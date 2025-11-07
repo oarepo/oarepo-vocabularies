@@ -1,11 +1,11 @@
-{#def metadata, extra_context, hierarchical=False #}
+{#def record, extra_context, hierarchical=False #}
 
 
 {% if hierarchical %}
     {% set breadcrumbData = {
         "hierarchical": hierarchical,
-        "ancestorsOrSelf": metadata.hierarchy.ancestors_or_self|reverse|list,
-        "titles": metadata.hierarchy.title|reverse|list,
+        "ancestorsOrSelf": record.hierarchy.ancestors_or_self|reverse|list,
+        "titles": record.hierarchy.title|reverse|list,
     } %}
     {% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf|length>1 %}
     <div class="ui breadcrumb">

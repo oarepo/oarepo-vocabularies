@@ -12,8 +12,10 @@ from __future__ import annotations
 
 from .deposit import DepositVocabularyOptionsComponent
 from .search import VocabularySearchComponent
+from .vocabulary_type_and_props import VocabularyTypeAndProps
 
 __all__ = (
     "DepositVocabularyOptionsComponent",
     "VocabularySearchComponent",
+    "VocabularyTypeAndProps",
 )

@@ -30,7 +30,7 @@
       <tbody>
         {% for item in list_data['hits']['hits'] %}
           <tr>
-            <td><a href={{ item.get('links', {}).get('self_html') or item.get('self_html') }}>{{ item.name or item.id }}</a></td>
+            <td><a href={{ item.get('links', {}).get('self_html') or item.get('self_html') }}>{{ item.title_l10n or item.id }}</a></td>
             <td>{{ item.count }}</td>
             <td>{{ item.get('description', '') }}</td>
             <td>{{ item.id }}</td>

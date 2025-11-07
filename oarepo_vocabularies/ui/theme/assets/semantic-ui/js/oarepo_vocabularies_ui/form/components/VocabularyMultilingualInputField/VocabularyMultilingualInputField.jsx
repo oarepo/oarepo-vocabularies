@@ -31,13 +31,14 @@ export const VocabularyMultilingualInputField = ({
   }, [fieldPath]);
 
   const { setFieldValue, values } = useFormikContext();
+
   useEffect(() => {
     if (!getIn(values, placeholderFieldPath)) {
       setFieldValue(
         placeholderFieldPath,
-        !_isEmpty(getIn(values, fieldPath))
-          ? object2array(getIn(values, fieldPath, ""), "lang", "name")
-          : object2array(newItemInitialValue, "lang", "name")
+        _isEmpty(getIn(values, fieldPath))
+          ? object2array(newItemInitialValue, "lang", "name")
+          : object2array(getIn(values, fieldPath, ""), "lang", "name")
       );
       return;
     }
