@@ -12,10 +12,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from oarepo_ui.resources.components import UIResourceComponent
 from invenio_app_rdm.records_ui.views.deposits import (
     VocabulariesOptions,
 )
+from oarepo_ui.resources.components import UIResourceComponent
 
 if TYPE_CHECKING:
     from flask_principal import Identity
@@ -37,5 +37,4 @@ class RDMVocabularyOptionsComponent(UIResourceComponent):
         **kwargs: Any,  # noqa: ARG002
     ) -> None:
         """Add smaller RDM vocabularies to form config."""
-        print(VocabulariesOptions().dump(), "vvvvvvvvvvvvvsdadavvvvvv", flush=True)
-        form_config["vocabularies"] = VocabulariesOptions().dump()
+        form_config["vocabularies"] = VocabulariesOptions().dump()  # pragma: no cover

@@ -1,4 +1,4 @@
-{#def record, form_config #}
+{#def record, form_config#}
 
 {%- extends config.BASE_TEMPLATE %}
 
@@ -15,7 +15,7 @@
       <div class="column">
       {%- block form_main_content %}
         {%- if form_config.updateUrl %}
-        <h1 class="mt-20" style="text-transform: capitalize">{{ record.title }}</h1>
+        <h1 class="mt-20" style="text-transform: capitalize">{{ record.title.get(current_i18n.language, record.title.values() | first) }}</h1>
         {%- elif form_config.createUrl -%}
         <h1 class="mt-20">{{ _("New item") }}</h1>
         {%- endif %}
