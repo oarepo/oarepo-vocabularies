@@ -7,19 +7,9 @@ import {
 } from "./components";
 import { DepositFormApp, parseFormAppConfig } from "@js/oarepo_ui/forms";
 import React from "react";
-import { OARepoDepositSerializer } from "@js/oarepo_ui/api";
 import { RDMDepositRecordSerializer } from "@js/invenio_rdm_records/src/deposit/api/DepositRecordSerializer";
-import {
-  Field,
-  SchemaField,
-  AllowAdditionsVocabularyField,
-  FundingField,
-  RightsVocabularyField,
-  VocabularyField,
-} from "@js/invenio_rdm_records/src/deposit/serializers";
+import { Field } from "@js/invenio_rdm_records/src/deposit/serializers";
 import ReactDOM from "react-dom";
-
-// i18nField.js
 import _get from "lodash/get";
 import _set from "lodash/set";
 import _cloneDeep from "lodash/cloneDeep";
@@ -36,7 +26,6 @@ export class I18nField extends Field {
       this.fieldpath,
       this.deserializedDefault
     );
-    console.log(record, "RECORDdawdwa");
     if (!rawValue || typeof rawValue !== "object" || Array.isArray(rawValue)) {
       return _set(recordClone, this.fieldpath, this.deserializedDefault);
     }
@@ -45,7 +34,6 @@ export class I18nField extends Field {
       lang,
       value,
     }));
-    console.log(arrayValue, "ARRAY VALUE");
 
     return _set(recordClone, this.fieldpath, arrayValue);
   }
@@ -73,12 +61,9 @@ export class I18nField extends Field {
   }
 }
 
-const recordSerializer = new OARepoDepositSerializer(
-  ["errors", "expanded"],
-  ["__key"]
-);
-
-class MyRDMDepositRecordSerializer extends RDMDepositRecordSerializer {
+// necessary because RDM serializer manipulates some fields that don't exist in
+// vocabulary records
+class VocabularyRecordSerializer extends RDMDepositRecordSerializer {
   get depositRecordSchema() {
     return {
       title: new I18nField({ fieldpath: "title" }),
@@ -109,7 +94,7 @@ class MyRDMDepositRecordSerializer extends RDMDepositRecordSerializer {
 
 const { rootEl, config, ...rest } = parseFormAppConfig();
 const { overridableIdPrefix } = config;
-const rdmRecordSerializer = new MyRDMDepositRecordSerializer(
+const vocabularyRecordSerializer = new VocabularyRecordSerializer(
   config.default_locale,
   config.custom_fields.vocabularies
 );
@@ -129,7 +114,7 @@ ReactDOM.render(
   <DepositFormApp
     config={config}
     {...rest}
-    recordSerializer={rdmRecordSerializer}
+    recordSerializer={vocabularyRecordSerializer}
     componentOverrides={componentOverrides}
   />,
   rootEl
