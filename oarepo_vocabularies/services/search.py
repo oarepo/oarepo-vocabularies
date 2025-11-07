@@ -69,7 +69,9 @@ class VocabularyQueryParser(QueryParser):
 class SourceParam(ParamInterpreter):
     """Evaluate the 'q' or 'suggest' parameter."""
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+    def apply(
+        self, identity: Identity, search: Search, params: dict
+    ) -> Search:  # noqa: ARG002 # type: ignore[override]
         """Apply the source parameter."""
         source = params.get("source")
         if not source:
@@ -91,7 +93,9 @@ class UpdatedAfterParam(ParamInterpreter):
         """Create a new filter parameter."""
         return partial(cls, param, field)
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+    def apply(
+        self, identity: Identity, search: Search, params: dict
+    ) -> Search:  # noqa: ARG002 # type: ignore[override]
         """Apply a filter to get only records for a specific type."""
         # Pop because we don't want it to show up in links.
         # TODO: only pop if needed.
@@ -119,7 +123,9 @@ class UpdatedAfterParam(ParamInterpreter):
 class VocabularyIdsParam(ParamInterpreter):
     """Evaluate type filter."""
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+    def apply(
+        self, identity: Identity, search: Search, params: dict
+    ) -> Search:  # noqa: ARG002 # type: ignore[override]
         """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
@@ -134,11 +140,20 @@ class VocabularyIdsParam(ParamInterpreter):
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
 
-class VocabularySearchOptions(InvenioSearchOptions):
+from invenio_vocabularies.services.config import (
+    VocabularySearchOptions as InvenioVocabularySearchOptions,
+)  # noqa: E402
+
+
+class VocabularySearchOptions(InvenioVocabularySearchOptions):
     """Search options for vocabularies."""
 
     params_interpreters_cls: ClassVar[  # type: ignore[override]
-        list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
+        list[
+            type[FilterParam | ParamInterpreter]
+            | partial[FilterParam]
+            | partial[ParamInterpreter]
+        ]
     ] = [
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
@@ -147,7 +162,9 @@ class VocabularySearchOptions(InvenioSearchOptions):
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
-        FilterParam.factory(param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"),
+        FilterParam.factory(
+            param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"
+        ),
         SourceParam,
         *InvenioSearchOptions.params_interpreters_cls,
     ]
