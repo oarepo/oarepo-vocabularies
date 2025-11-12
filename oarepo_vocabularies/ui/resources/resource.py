@@ -125,7 +125,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         record = api_record.to_dict()
 
         form_config = self._get_form_config(g.identity, createUrl=None)
-
+        form_config["updateUrl"] = record.get("links", {}).get("self", None)
         form_config["ui_model"] = self.ui_model
 
         extra_context: dict[str, Any] = {}

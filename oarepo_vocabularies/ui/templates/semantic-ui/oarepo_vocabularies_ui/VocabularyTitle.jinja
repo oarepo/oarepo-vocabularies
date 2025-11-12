@@ -1,7 +1,7 @@
 {#def record, d #}
 {% set title = ui_value(d) or record.name %}
 <div class="flex align-items-center rel-mt-1">
-    {% if record.icon %}
+    {% if record.icon and record.icon[:4] == "http" %}
       <img class="ui image rel-mr-1" src={{record.icon}}>
     {% endif %}
     <h1 class="ui header display-inline mt-0" >{{title or _("Missing title")}}</h1>

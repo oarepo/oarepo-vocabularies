@@ -38,6 +38,10 @@ from oarepo_ui.resources import (
 )
 from oarepo_ui.resources.components import PermissionsComponent
 
+from oarepo_vocabularies.ui.resources.components.rdm_vocabulary_options import (
+    RDMVocabularyOptionsComponent,
+)
+
 
 class ModelRecordIdProvider(RecordIdProviderV2):
     """Record identifier provider."""
@@ -154,7 +158,7 @@ class ModelUIResourceConfig(RecordsUIResourceConfig):
         "search": "TestSearch",
     }
     model_name = "SimpleModel"
-    components = [BabelComponent, PermissionsComponent]  # noqa: RUF012
+    components = [BabelComponent, PermissionsComponent, RDMVocabularyOptionsComponent]  # noqa: RUF012
 
 
 class ModelUIResource(RecordsUIResource):
