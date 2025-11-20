@@ -25,7 +25,7 @@ from invenio_records_resources.services.errors import (
     PermissionDeniedError,
 )
 from oarepo_ui.proxies import current_oarepo_ui
-from oarepo_ui.resources.base import pass_route_args
+from oarepo_ui.resources.decorators import pass_route_args
 from oarepo_ui.resources.records.resource import RecordsUIResource
 from oarepo_ui.templating.data import FieldData
 from oarepo_ui.utils import dump_empty
