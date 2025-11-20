@@ -92,7 +92,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "edit": "/<type>/<pid_value>/edit",
         "search": "/<type>/",
         "record_detail": "/<type>/<pid_value>",
-        "export": "/<type>/<pid_value>/export/<export_format>",
+        "record_export": "/<type>/<pid_value>/export/<export_format>",
     }
     config_routes: Mapping[str, str] = {
         "form_config": "/<type>/form",
