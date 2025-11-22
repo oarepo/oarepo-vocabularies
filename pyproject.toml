@@ -10,7 +10,7 @@ authors = [
     { name = "Mirek Simek", email = "miroslav.simek@cesnet.cz" }
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<3.15"
 dependencies = [
     "oarepo-runtime>=2.0.0dev0,<3.0.0",
     "openpyxl",
