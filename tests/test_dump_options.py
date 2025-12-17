@@ -40,8 +40,14 @@ def test_dump_options(
         "definition": {"title": {"en": "authority"}, "authority": "TODO"},
         "url": "/api/vocabularies/authority",
     }
-    assert form_config_vocabularies["creator"] == {"definition": {}, "url": "/api/vocabularies/creator"}
-    assert form_config_vocabularies["award"] == {"definition": {}, "url": "/api/vocabularies/award"}
+    assert form_config_vocabularies["creator"] == {
+        "definition": {},
+        "url": "/api/vocabularies/creator",
+    }
+    assert form_config_vocabularies["award"] == {
+        "definition": {},
+        "url": "/api/vocabularies/award",
+    }
     assert form_config_vocabularies["ror-authority"] == {
         "definition": {
             "authority": "TODO",

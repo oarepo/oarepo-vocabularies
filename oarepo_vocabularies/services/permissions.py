@@ -23,7 +23,12 @@ if TYPE_CHECKING:
 class IfVocabularyType(ConditionalGenerator):
     """Generator allowing operations on specific vocabulary type only (e.g. languages)."""
 
-    def __init__(self, type_: str, then_: Sequence[InvenioGenerator], else_: Sequence[InvenioGenerator]):
+    def __init__(
+        self,
+        type_: str,
+        then_: Sequence[InvenioGenerator],
+        else_: Sequence[InvenioGenerator],
+    ):
         """Init the condition with specific vocabulary type."""
         super().__init__(then_, else_)
         self.type = type_

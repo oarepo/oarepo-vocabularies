@@ -108,7 +108,11 @@ class DepositVocabularyOptionsComponent(UIResourceComponent):
             # search instead of read_all also provides links, because template links are passed to result list init
             hits = current_service.search(identity, {}, type=vocabulary_to_fetch).hits
             for hit in hits:
-                item = {"value": hit.pop("id"), "element_type": "leaf" if hit["hierarchy"]["leaf"] else "parent", **hit}
+                item = {
+                    "value": hit.pop("id"),
+                    "element_type": "leaf" if hit["hierarchy"]["leaf"] else "parent",
+                    **hit,
+                }
                 form_config_vocabularies[vocabulary_to_fetch]["all"].append(item)
                 if "featured" in item.get("tags", []):
                     form_config_vocabularies[vocabulary_to_fetch]["featured"].append(item)

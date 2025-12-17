@@ -12,7 +12,14 @@ from oarepo_vocabularies.proxies import current_type_service as vocabulary_type_
 
 
 def test_counts(
-    app, db, identity, vocab_cf, lang_data_many, empty_licences, search_clear, clear_vocabulary_permissions
+    app,
+    db,
+    identity,
+    vocab_cf,
+    lang_data_many,
+    empty_licences,
+    search_clear,
+    clear_vocabulary_permissions,
 ):
     search_result = vocabulary_type_service.search(identity)
     results = search_result.to_dict()
