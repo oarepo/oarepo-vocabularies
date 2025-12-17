@@ -22,7 +22,9 @@ from invenio_records_resources.services.records import ServiceSchemaWrapper
 from invenio_search import current_search_client
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyType
-from invenio_vocabularies.services.service import VocabularyTypeService as InvenioVocabularyTypeService
+from invenio_vocabularies.services.service import (
+    VocabularyTypeService as InvenioVocabularyTypeService,
+)
 
 if TYPE_CHECKING:
     from flask_principal import Identity

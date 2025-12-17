@@ -11,7 +11,10 @@ from __future__ import annotations
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_pidstore.errors import PIDDeletedError
-from invenio_records_resources.services.errors import PermissionDeniedError, RecordPermissionDeniedError
+from invenio_records_resources.services.errors import (
+    PermissionDeniedError,
+    RecordPermissionDeniedError,
+)
 from invenio_vocabularies.proxies import current_service as vocab_service
 
 from oarepo_vocabularies.records.api import Vocabulary
@@ -25,7 +28,15 @@ from .conftest import (
 
 
 def test_permissions_create_only_languages(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
+    app,
+    db,
+    cache,
+    lang_type,
+    countries_type,
+    vocab_cf,
+    search_clear,
+    identity_simple,
+    clear_vocabulary_permissions,
 ):
     app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
 
@@ -65,7 +76,15 @@ def test_permissions_create_only_languages(
 
 
 def test_permissions_create_read_update_delete_only_languages(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
+    app,
+    db,
+    cache,
+    lang_type,
+    countries_type,
+    vocab_cf,
+    search_clear,
+    identity_simple,
+    clear_vocabulary_permissions,
 ):
     app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
 
@@ -138,7 +157,14 @@ def test_permissions_create_read_only_languages_authenticated_user(
 
 
 def test_permissions_update_only_languages_non_dangerous_operation(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, clear_vocabulary_permissions
+    app,
+    db,
+    cache,
+    lang_type,
+    countries_type,
+    vocab_cf,
+    search_clear,
+    clear_vocabulary_permissions,
 ):
     app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesNonDangerousOperation
 
@@ -219,7 +245,15 @@ def test_permissions_update_only_languages_non_dangerous_operation(
 
 
 def test_permissions_search_only_languages(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
+    app,
+    db,
+    cache,
+    lang_type,
+    countries_type,
+    vocab_cf,
+    search_clear,
+    identity_simple,
+    clear_vocabulary_permissions,
 ):
     app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguages
 
@@ -260,7 +294,15 @@ def test_permissions_search_only_languages(
 
 
 def test_permissions_create_languages_and_countries(
-    app, db, cache, lang_type, countries_type, vocab_cf, search_clear, identity_simple, clear_vocabulary_permissions
+    app,
+    db,
+    cache,
+    lang_type,
+    countries_type,
+    vocab_cf,
+    search_clear,
+    identity_simple,
+    clear_vocabulary_permissions,
 ):
     app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesAndCountries
 

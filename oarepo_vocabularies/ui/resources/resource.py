@@ -51,7 +51,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
     @login_required
     @pass_route_args("vocabulary_type")
-    def create(self, *args: Any, vocabulary_type: str | None = None, **kwargs: Any) -> Any:  # NOQA: ARG002
+    def create(self, *_args: Any, vocabulary_type: str | None = None, **kwargs: Any) -> Any:
         """Create a new vocabulary item."""
         if not self.api_service.check_permission(g.identity, "create"):
             raise PermissionDeniedError(_("User does not have permission to create vocabulary item."))
@@ -251,7 +251,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ),
         )
 
-    def empty_record(self, vocabulary_type: str | None = None, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    def empty_record(self, vocabulary_type: str | None = None, **_kwargs: Any) -> dict[str, Any]:
         """Create an empty record with type and tags initialized."""
         record = cast("dict[str, Any]", dump_empty(self.api_config.schema))
         record["type"] = vocabulary_type

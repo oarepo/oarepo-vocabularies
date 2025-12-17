@@ -169,5 +169,8 @@ simple_model = Model(
     service_config=ModelServiceConfig(),
     record=ModelRecord,
     resource_config=ModelUIResourceConfig(),
-    ui_model={"name": "SimpleModel", "templates": {"detail": "TestDetail", "search": "TestSearch"}},
+    ui_model={
+        "name": "SimpleModel",
+        "templates": {"detail": "TestDetail", "search": "TestSearch"},
+    },
 )
