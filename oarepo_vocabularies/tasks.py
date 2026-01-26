@@ -86,10 +86,10 @@ def get_affiliation_records(
 ) -> typing.Generator[dict[str, typing.Any], None, None]:
     # unzip the file to get the csv file and open it
     with zipfile.ZipFile(tmp_ror_file, "r") as zip_ref:
-        zf = [x for x in zip_ref.namelist() if x.endswith("schema_v2.csv")]
+        zf = [x for x in zip_ref.namelist() if x.endswith("-ror-data.csv")]
         if not zf:
             raise click.ClickException(
-                f"Failed to find schema_v2.csv in {tmp_ror_file}"
+                f"Failed to find -ror-data.csv in {tmp_ror_file}"
             )
         click.secho(f"Processing {zf[0]}", fg="yellow")
         with zip_ref.open(zf[0], "r") as f:
