@@ -1,7 +1,11 @@
-{#def d, search_link=None, searchFacet=None, vocabulary_type, hide_definition=False #}
-{%- if ui_value(d) -%}
-    {%- set id = ui_value(d.id) -%}
-    {%- set title = localized(d.title) or "" -%}
+{#def d, search_link=None, searchFacet=None, hide_definition=False #}
+{# Renders a simple (non-hierarchical) vocabulary item or array of items. #}
+
+{# Internal macro for rendering a single vocabulary item #}
+{%- macro render_item(item) -%}
+    {%- set id = ui_value(item.id) -%}
+    {%- set title = localized(item.title) or "" -%}
+    {%- set vocabulary_type = ui_value(item.type) -%}
 
     {%- if not hide_definition -%}
         {%- set definitionLink = "/vocabularies/" ~ vocabulary_type ~ "/" ~ id -%}
@@ -22,4 +26,11 @@
     {%- else -%}
         <span>{{ title }}</span>
     {%- endif -%}
+{%- endmacro -%}
+
+{# Render array of simple vocabulary items #}
+{%- if ui_value(d) -%}
+    {%- for item in as_array(d) -%}
+        <span>{{ render_item(item) }}</span>
+    {%- endfor -%}
 {%- endif -%}

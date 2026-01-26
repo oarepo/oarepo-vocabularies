@@ -382,3 +382,6 @@ vite.config.ts.timestamp-*
 *.DS_Store?
 #
 pnpm-lock.yaml
+
+# NRP-CMD
+.nrp/

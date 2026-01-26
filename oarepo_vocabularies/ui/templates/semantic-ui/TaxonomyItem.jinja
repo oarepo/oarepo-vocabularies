@@ -1,16 +1,19 @@
 {#def d, search_link, searchFacet, hide_definition=False, vocabulary_type #}
-{%- if ui_value(d) -%}
+{# Renders a hierarchical vocabulary (taxonomy) item or array of items as breadcrumbs. #}
+
+{# Internal macro for rendering a single taxonomy item with breadcrumbs #}
+{%- macro render_taxonomy_item(item, voc_type) -%}
 <div class="ui breadcrumb">
-    {%- for title_item in as_array(d.hierarchy.title) -%}
+    {%- for title_item in as_array(item.hierarchy.title) -%}
         {%- set title = localized(title_item) or "" -%}
         {%- if loop.first -%}
-            {%- set id = ui_value(d.id) -%}
+            {%- set id = ui_value(item.id) -%}
         {%- else -%}
             {%- set ancestor_index = loop.index - 2 -%}
-            {%- set id = ui_value(d.hierarchy.ancestors[ancestor_index]) -%}
+            {%- set id = ui_value(item.hierarchy.ancestors[ancestor_index]) -%}
         {%- endif -%}
         {%- if not hide_definition -%}
-            {%- set definitionLink = "/vocabularies/" ~ vocabulary_type ~ "/" ~ id -%}
+            {%- set definitionLink = "/vocabularies/" ~ voc_type ~ "/" ~ id -%}
             <DefinitionLink href={{definitionLink}}> </DefinitionLink>
         {%- endif -%}
         {%- set aria_label = title ~ ": " ~ _("Find more records with this vocabulary term") -%}
@@ -27,4 +30,11 @@
         {%- endif -%}
     {%- endfor -%}
 </div>
+{%- endmacro -%}
+
+{# Render array of taxonomy items #}
+{%- if ui_value(d) -%}
+    {%- for item in as_array(d) -%}
+        {{ render_taxonomy_item(item, vocabulary_type) }}
+    {%- endfor -%}
 {%- endif -%}
