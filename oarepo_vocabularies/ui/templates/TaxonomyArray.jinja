@@ -1,7 +1,6 @@
-{#def taxonomy, search_link, searchFacet, vocabulary_type #}
-{% for tax in taxonomy %}
+{#def d, search_link, searchFacet, vocabulary_type #}
+{%- for item in as_array(d) -%}
 <div>
-    <TaxonomyItem taxonomy={tax} search_link={search_link} searchFacet={searchFacet} vocabulary_type={vocabulary_type}></TaxonomyItem>
+    <TaxonomyItem d={item} search_link={search_link} searchFacet={searchFacet} vocabulary_type={vocabulary_type}></TaxonomyItem>
 </div>
-
-{% endfor %}
+{%- endfor -%}

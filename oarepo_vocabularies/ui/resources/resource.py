@@ -33,6 +33,7 @@ from oarepo_ui.utils import dump_empty
 if TYPE_CHECKING:
     from typing import Any
 
+    from flask.typing import ResponseReturnValue
     from flask_principal import Identity
     from invenio_records_resources.pagination import Pagination
     from invenio_records_resources.services.records.results import RecordItem
@@ -258,7 +259,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         record["tags"] = []
         return record
 
-    def expand_detail_links(self, identity: Identity, record: RecordItem) -> Any:
+    def expand_detail_links(self, identity: Identity, record: RecordItem) -> dict[str, str]:
         """Get links for this result item."""
         tpl = LinksTemplate(
             self.config.ui_links_item,
@@ -267,7 +268,10 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
                 "type": record.data["type"],
             },
         )
-        return tpl.expand(identity, record)
+        return cast(
+            "dict[str, str]",
+            tpl.expand(identity, record),
+        )
 
     # TODO: remove this linter ignore after oarepo ui is merged because the signature changed in parent class
     def expand_search_links(  # type: ignore[reportIncompatibleMethodOverride]
@@ -276,7 +280,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         pagination: Pagination,
         vocabulary_type: str | None,
         **kwargs: dict[str, str],
-    ) -> Any:
+    ) -> dict[str, str]:
         """Get links for this result item."""
         # copy the original query args as we are going to modify them
 
@@ -289,9 +293,17 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
                 "args": kwargs,
             },
         )
-        return tpl.expand(identity, pagination)
+        return cast(
+            "dict[str, str]",
+            tpl.expand(identity, pagination),
+        )
 
-    def vocabulary_type_does_not_exist(self, error) -> Any:  # noqa: ANN001
+    def vocabulary_type_does_not_exist(
+        self,
+        error: Exception,
+        *args: Any,  # noqa: ARG002 for inheritance
+        **kwargs: Any,  # noqa: ARG002 for inheritance
+    ) -> ResponseReturnValue:
         """Render vocabulary type does not exist page."""
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(

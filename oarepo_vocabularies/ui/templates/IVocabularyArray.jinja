@@ -1,5 +1,5 @@
-{#def vocabulary, search_link=None, search_facet=None #}
+{#def d, search_link=None, search_facet=None #}
 
-{% for voc in vocabulary %}
-    <VocabularyItem item={voc} search_link={search_link} search_facet={search_facet}></VocabularyItem>
-{% endfor %}
+{%- for item in as_array(d) -%}
+    <IVocabularyItem d={item} search_link={search_link} search_facet={search_facet}></IVocabularyItem>
+{%- endfor -%}
