@@ -1,8 +1,15 @@
-{#def record, d #}
+{#def record, d, subheader=None #}
 {% set title = ui_value(d) or record.name %}
 <div class="flex align-items-center rel-mt-1">
-    {% if record.icon %}
-      <img class="ui image rel-mr-1" src={{record.icon}}>
+    {% if record.icon and record.icon|string and (record.icon.startswith("http") or record.icon.startswith("/") or record.icon.find(".") > -1) %}
+    <img class="ui image rel-mr-1" src={{record.icon}}>
+    {% elif record.icon|string %}
+    <i class="large {{record.icon or 'tags'}} icon rel-mr-1"></i>
     {% endif %}
-    <h1 class="ui header display-inline mt-0" >{{title or _("Missing title")}}</h1>
+    <h1 class="ui header display-inline mt-0" >
+      {{title or _("Missing title")}}
+      {% if subheader %}
+      <div class="sub header">{{_('vocabulary.vocabulary') + " " + subheader}}</div>
+      {% endif %}
+    </h1>
 </div>
