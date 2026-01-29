@@ -1,24 +1,34 @@
-{#def record, extra_context, hierarchical=False #}
-
-
-{% if hierarchical %}
-    {% set breadcrumbData = {
-        "hierarchical": hierarchical,
-        "ancestorsOrSelf": record.hierarchy.ancestors_or_self|reverse|list,
-        "titles": record.hierarchy.title|reverse|list,
-    } %}
-    {% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf|length>1 %}
-    <div class="ui breadcrumb">
-        {% for index in range(0, breadcrumbData.ancestorsOrSelf|length) %}
-            {% set ancestor = breadcrumbData.ancestorsOrSelf[index] %}
-            {% set title = breadcrumbData.titles[index] %}
-            {% if loop.last %}
-                <div class="active section">{{ title }}</div>
-            {% else %}
-                <a class="section" href="/vocabularies/{{ extra_context.vocabularyType }}/{{ ancestor }}">{{ title }}</a>
-                <div class="divider"> / </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+{#def record, d, extra_context, vocabularySearchTitle="", hierarchical=False #}
+{% if vocabularySearchTitle or hierarchical %}
+{% set vocabValueTitle = ui_value(d) or record.name %}
+<div class="ui breadcrumb">
+    {% if vocabularySearchTitle %}
+    <a class="section" href="{{record.links.vocabulary_html}}" title="{{_('Search') + ' ' + _('vocabulary.vocabulary')|lower + ' ' + vocabularySearchTitle }}">
+        {{ vocabularySearchTitle }}
+    </a>
     {% endif %}
+    {% if hierarchical %}
+        {% if vocabularySearchTitle %}<div class="divider"> / </div>{% endif %}
+        {% set breadcrumbData = {
+            "hierarchical": hierarchical,
+            "ancestorsOrSelf": record.hierarchy.ancestors_or_self|reverse|list,
+            "titles": record.hierarchy.title|reverse|list,
+        } %}
+        {% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf|length>1 %}
+            {% for index in range(0, breadcrumbData.ancestorsOrSelf|length) %}
+                {% set ancestor = breadcrumbData.ancestorsOrSelf[index] %}
+                {% set title = breadcrumbData.titles[index] %}
+                {% if loop.last %}
+                    <div class="active section">{{ title }}</div>
+                {% else %}
+                    <a class="section" href="/vocabularies/{{ extra_context.vocabularyType }}/{{ ancestor }}">{{ title }}</a>
+                    <div class="divider"> / </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% elif vocabularySearchTitle %}
+    <div class="divider"> / </div>
+    <div class="active section">{{ vocabValueTitle }}</div>
+    {% endif %}
+</div>
 {% endif %}

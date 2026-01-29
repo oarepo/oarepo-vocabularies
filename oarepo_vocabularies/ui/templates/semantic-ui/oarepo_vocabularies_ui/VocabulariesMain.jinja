@@ -1,15 +1,12 @@
 {#def record, d, extra_context, hierarchical=False #}
 {% set vocabularyType = extra_context.get("vocabularyType", "")%}
 {% set vocabularyMetadata = config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabularyType, {}) %}
-{% set vocabularyTitle = vocabularyMetadata.get("title", {}).get(current_i18n.language) or _('vocabulary.vocabulary') %}
+{% set vocabularyTitle = vocabularyMetadata.get("title", {}).get(current_i18n.language) %}
+{% set vocabularySearchTitle = vocabularyTitle if vocabularyTitle else '"' + vocabularyType + '"' if vocabularyType else "" %}
 <div class="vocabularies-main">
-  <VocabulariesBreadcrumb extra_context={{extra_context}} record={{record}} hierarchical={{hierarchical}}/>
-  <VocabularyTitle d={{d.title}} record={{record}} />
-  <dl class="ui very basic table">
-    <dt>{{ vocabularyTitle }}</dt>
-    <dd>
-      <a href="{{record.links.vocabulary_html}}">{{ _("Search") + " " + vocabularyTitle}}</a>
-    </dd>
+  <VocabulariesBreadcrumb extra_context={{extra_context}} record={{record}} d={{d.title}} vocabularySearchTitle={{vocabularySearchTitle}} hierarchical={{hierarchical}}/>
+  <VocabularyTitle d={{d.title}} record={{record}} subheader={{vocabularySearchTitle}} />
+  <dl class="ui very basic table vocabularies-metadata">
     {{ catalog.render_first_existing(
       [
           "VocabularyExtraInfo." + extra_context.vocabularyType,

@@ -2,9 +2,8 @@ import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import _toPairs from "lodash/toPairs";
-import _chunk from "lodash/chunk";
 import _reverse from "lodash/reverse";
-import { Item, Table, Grid, Breadcrumb, Label } from "semantic-ui-react";
+import { Item, Breadcrumb, Label } from "semantic-ui-react";
 import { withState, AppContext } from "react-searchkit";
 import { I18nString } from "@js/oarepo_ui/forms";
 import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
@@ -13,33 +12,21 @@ import { VocabularyItemIdentifiers } from "./VocabularyItemIdentifiers";
 import { VocabularyItemAffiliations } from "./VocabularyItemAffiliations";
 
 export const VocabularyItemPropsTable = (props) => {
-  // Split properties into max. 4 tables of max. 2 rows
-  const tables = _chunk(_toPairs(props), 2).slice(0, 4);
   const { vocabularyProps: vocabularyPropsMetadata } = useContext(
     SearchConfigurationContext
   );
+  const items = _toPairs(props).filter(([, value]) => value);
   return (
-    <Grid celled="internally" columns={tables.length} className="dense">
-      {tables.map((tableData, index) => (
-        /* eslint-disable react/no-array-index-key */
-        <Grid.Column key={index}>
-          <Table basic="very" collapsing compact>
-            <Table.Body>
-              {tableData.map(([key, value]) =>
-                value ? (
-                  <Table.Row key={key}>
-                    <Table.Cell>
-                      <b>{getLocalizedValue(vocabularyPropsMetadata, key)}</b>
-                    </Table.Cell>
-                    <Table.Cell>{value}</Table.Cell>
-                  </Table.Row>
-                ) : null
-              )}
-            </Table.Body>
-          </Table>
-        </Grid.Column>
+    <dl className="vocabulary-props-list">
+      {items.map(([key, value]) => (
+        <div className="vocabulary-props-item" key={key}>
+          <dt>
+            <b>{getLocalizedValue(vocabularyPropsMetadata, key)}</b>
+          </dt>
+          <dd>{value}</dd>
+        </div>
       ))}
-    </Grid>
+    </dl>
   );
 };
 
@@ -71,7 +58,7 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
       result={result}
       title={title}
     >
-      <Item key={id}>
+      <Item key={id} className="ui vocabulary-results-list-item">
         <Item.Content>
           <Item.Header as="h2">
             <a href={selfHTML}>

@@ -1,0 +1,4 @@
+dl.ui.table.vocabularies-metadata {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

@@ -2,9 +2,15 @@
  {% extends "oarepo_ui/search.html" %}
 {%- set title = _("Vocabulary search") %}
 
+{%- block css %}
+  {{ super() }}
+  {{ webpack['oarepo_vocabularies_ui_components.css'] }}
+{%- endblock %}
+
 {%- block javascript %}
 {{ super() }}
 {{ webpack['oarepo_vocabularies_search.js'] }}
+{{ webpack['oarepo_vocabularies_ui_components.js'] }}
 {%- endblock %}
 
 {%- block page_body %}
