@@ -10,6 +10,12 @@
     <dd>
       <a href="{{record.links.vocabulary_html}}">{{ _("Search") + " " + vocabularyTitle}}</a>
     </dd>
+    {% if record.id %}
+    <dt>{{ _('id')|capitalize }}</dt>
+    <dd>
+      {{ record.id }}
+    </dd>
+    {% endif %}
     {{ catalog.render_first_existing(
       [
           "VocabularyExtraInfo." + extra_context.vocabularyType,
