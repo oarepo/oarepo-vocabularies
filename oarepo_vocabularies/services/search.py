@@ -26,6 +26,10 @@ from invenio_records_resources.services.records.params import (
 from invenio_records_resources.services.records.queryparser import QueryParser
 from opensearch_dsl import query
 from opensearch_dsl.query import Bool, Range, Term, Terms
+from flask_babel import get_locale as get_current_locale
+from invenio_records_resources.services.records.queryparser.suggest import (
+    SuggestQueryParser,
+)
 
 if TYPE_CHECKING:
     from flask_principal import Identity
@@ -34,6 +38,21 @@ if TYPE_CHECKING:
 
 TYPE_ID_FIELD = "type.id"
 ID_FIELD = "id"
+
+
+class I18nSuggestQueryParser(SuggestQueryParser):
+    def __init__(self, identity=None, extra_params=None, **kwargs):
+        """Constructor."""
+        lang = get_current_locale().language
+        super().__init__(identity=identity, extra_params=extra_params)
+
+        fields = self.extra_params.get("fields")
+        if isinstance(fields, list):
+            self.extra_params["fields"] = [
+                f.replace("{lang}", lang) if isinstance(f, str) else f for f in fields
+            ]
+
+        self.extra_params.setdefault("type", "bool_prefix")
 
 
 class VocabularyQueryParser(QueryParser):
@@ -130,7 +149,9 @@ class VocabularyIdsParam(ParamInterpreter):
             by_type[vt].append(vid)
         search_filters = []
         for vt, vids in by_type.items():
-            search_filters.append(Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})]))  # type: ignore[arg-type]
+            search_filters.append(
+                Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})])
+            )  # type: ignore[arg-type]
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
 
@@ -138,7 +159,11 @@ class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
     params_interpreters_cls: ClassVar[  # type: ignore[override]
-        list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
+        list[
+            type[FilterParam | ParamInterpreter]
+            | partial[FilterParam]
+            | partial[ParamInterpreter]
+        ]
     ] = [
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
@@ -147,10 +172,24 @@ class VocabularySearchOptions(InvenioSearchOptions):
         FilterParam.factory(param="h-level", field="hierarchy.level"),
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
-        FilterParam.factory(param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"),
+        FilterParam.factory(
+            param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"
+        ),
         SourceParam,
         *InvenioSearchOptions.params_interpreters_cls,
     ]
+
+    suggest_parser_cls = I18nSuggestQueryParser.factory(
+        fields=[
+            "id.text^100",
+            "id.text._2gram",
+            "id.text._3gram",
+            "title.{lang}^5",
+            "title.{lang}._2gram",
+            "title.{lang}._3gram",
+        ],
+    )
+
     query_parser_cls = VocabularyQueryParser
 
     extra_sort_options: ClassVar[dict[str, dict]] = {

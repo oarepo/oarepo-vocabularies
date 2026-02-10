@@ -107,7 +107,11 @@ class PermissionPolicyFactory:
         """Get the current permission policy class from the app config."""
         return cast(
             "type[RecordPermissionPolicy]",
-            obj_or_import_string(current_app.config.get("VOCABULARIES_PERMISSIONS_POLICY", PermissionPolicy)),
+            obj_or_import_string(
+                current_app.config.get(
+                    "VOCABULARIES_PERMISSIONS_POLICY", PermissionPolicy
+                )
+            ),
         )
 
     def __call__(self, *args: Any, **kwargs: Any) -> RecordPermissionPolicy:
@@ -205,7 +209,9 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
         "parent": EndpointLink(
             "vocabularies.read",
-            vars=lambda record, vars_: vars_.update({"type": record.type.id, "pid_value": record.hierarchy.parent_id}),
+            vars=lambda record, vars_: vars_.update(
+                {"type": record.type.id, "pid_value": record.hierarchy.parent_id}
+            ),
             when=lambda obj, ctx: bool(obj.hierarchy.parent_id),  # noqa: ARG005
             params=["type", "pid_value"],
         ),
@@ -268,5 +274,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
 
     links_search: ClassVar[Mapping[str, EndpointLink]] = {  # type: ignore[override]
         **pagination_endpoint_links("vocabularies.search", params=["type"]),
-        **pagination_endpoint_links_html(vocabularies_search_ui_endpoint, params=["type"]),
+        **pagination_endpoint_links_html(
+            vocabularies_search_ui_endpoint, params=["type"]
+        ),
     }

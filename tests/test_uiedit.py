@@ -38,7 +38,9 @@ def test_uiedit_locale(
     Vocabulary.index.refresh()
 
     reset_babel()
-    edit_page = client_with_credentials.get("/vocabularies/languages/en/edit", headers=[("Accept-Language", "cs")])
+    edit_page = client_with_credentials.get(
+        "/vocabularies/languages/en/edit", headers=[("Accept-Language", "cs")]
+    )
     assert remove_ws(
         """
 "languages": {"all": [
@@ -48,7 +50,9 @@ def test_uiedit_locale(
     ) in remove_ws(edit_page.text)
 
     reset_babel()
-    edit_page = client_with_credentials.get("/vocabularies/languages/en/edit", headers=[("Accept-Language", "en")])
+    edit_page = client_with_credentials.get(
+        "/vocabularies/languages/en/edit", headers=[("Accept-Language", "en")]
+    )
     assert remove_ws(
         """
 "languages": {"all": [

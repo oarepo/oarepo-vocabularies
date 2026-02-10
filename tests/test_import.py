@@ -33,7 +33,9 @@ def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
     Vocabulary.index.refresh()
 
     assert current_service.read(system_identity, ("languages", "en")).data["id"] == "en"
-    assert current_service.read(system_identity, ("languages", "en.US")).data["hierarchy"]["ancestors"] == ["en"]
+    assert current_service.read(system_identity, ("languages", "en.US")).data[
+        "hierarchy"
+    ]["ancestors"] == ["en"]
 
     with tempfile.TemporaryDirectory() as d:
         # export
@@ -44,4 +46,6 @@ def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
                 {"source": "vocabulary-languages.yaml"},
             ]
         }
-        assert {x["title"]["en"] for x in read_yaml(d / "vocabulary-languages.yaml")} == {"English", "English (US)"}
+        assert {
+            x["title"]["en"] for x in read_yaml(d / "vocabulary-languages.yaml")
+        } == {"English", "English (US)"}

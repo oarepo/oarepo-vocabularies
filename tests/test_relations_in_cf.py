@@ -51,7 +51,9 @@ def test_extra_cf_relations(app, db, cache, lang_type, vocab_cf, search_clear):
     child_uuid = child_rec.id
 
     # check DB table
-    entries = VocabularyHierarchy.query.filter_by(id=child_uuid, parent_id=parent_uuid).all()
+    entries = VocabularyHierarchy.query.filter_by(
+        id=child_uuid, parent_id=parent_uuid
+    ).all()
 
     assert len(entries) == 1
 

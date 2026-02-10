@@ -12,7 +12,9 @@ import pytest
 
 
 @pytest.mark.skip(reason="Needs fixtures loading")
-def test_serialization_api(app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client):
+def test_serialization_api(
+    app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client
+):
     # load_fixtures here...
 
     with client.get("/api/vocabularies/languages") as response:
@@ -30,7 +32,9 @@ def test_serialization_api(app, db, cache, vocab_cf, reset_babel, search_clear, 
 
 
 @pytest.mark.skip(reason="Needs fixtures loading")
-def test_serialization_api_vnd(app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client):
+def test_serialization_api_vnd(
+    app, db, cache, vocab_cf, reset_babel, search_clear, cache_clear, identity, client
+):
     # load_fixtures here...
 
     with client.get(

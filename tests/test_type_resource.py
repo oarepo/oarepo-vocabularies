@@ -47,7 +47,9 @@ def test_accept_header(
     clear_vocabulary_permissions,
 ):
     invenio_json_header = "application/vnd.inveniordm.v1+json"
-    resp = client.get("/api/vocabularies/", headers={"accept": invenio_json_header}).json
+    resp = client.get(
+        "/api/vocabularies/", headers={"accept": invenio_json_header}
+    ).json
 
     results = resp
     assert results["hits"]["total"] == 2
@@ -60,7 +62,9 @@ def test_accept_header(
     assert hits_licences["count"] == 0
 
 
-def test_ui_endpoint_without_slash(app, client, db, identity, vocab_cf, lang_data_many, fake_manifest):
+def test_ui_endpoint_without_slash(
+    app, client, db, identity, vocab_cf, lang_data_many, fake_manifest
+):
     resp_1 = client.get("/vocabularies/")
     resp_2 = client.get("/vocabularies")
 

@@ -36,18 +36,26 @@ class HierarchyObject:
     def __init__(self, record: OarepoVocabularyRecord):
         """Initialize the HierarchyObject."""
         self._record = record
-        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata  # type: ignore[union-attr]
+        self._hierarchy_data: VocabularyHierarchy = (
+            self._record.model.hierarchy_metadata
+        )  # type: ignore[union-attr]
 
         if self._hierarchy_data is None:
             # Opensearch result creates transient self._record.model so that hiearchy_metadata is not loaded from the DB
-            existing = db.session.query(VocabularyHierarchy).filter_by(id=self._record.id).one_or_none()
+            existing = (
+                db.session.query(VocabularyHierarchy)
+                .filter_by(id=self._record.id)
+                .one_or_none()
+            )
             if existing is not None:
                 self._hierarchy_data = existing
             else:
                 self._hierarchy_data = VocabularyHierarchy()
                 self._hierarchy_data.id = self._record.id
                 self._hierarchy_data.parent_id = (
-                    getattr(self._record.parent, "uuid", None) if hasattr(self._record, "parent") else None
+                    getattr(self._record.parent, "uuid", None)
+                    if hasattr(self._record, "parent")
+                    else None
                 )
                 self._hierarchy_data.pid = self._record["id"]
                 self._hierarchy_data.titles = [self._record.get("title")]
@@ -65,7 +73,9 @@ class HierarchyObject:
             "ancestors": self._hierarchy_data.ancestors,
             "ancestors_or_self": self._hierarchy_data.ancestors_or_self,
             "leaf": self._hierarchy_data.leaf,
-            "parent": self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None,
+            "parent": self._hierarchy_data.ancestors[0]
+            if self._hierarchy_data.ancestors
+            else None,
         }
 
     def query_subterms(self) -> Any:
@@ -106,7 +116,11 @@ class HierarchyObject:
     @property
     def parent_id(self) -> str | None:
         """Get the PID of the parent in the hierarchy."""
-        return self._hierarchy_data.ancestors[0] if self._hierarchy_data.ancestors else None
+        return (
+            self._hierarchy_data.ancestors[0]
+            if self._hierarchy_data.ancestors
+            else None
+        )
 
 
 class HierarchySystemField(MappingSystemFieldMixin, SystemField):
@@ -153,13 +167,17 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
 
         # We have a current parent set, check if it changed
         if current_parent_id:
-            current_parent_record = Vocabulary.pid.with_type_ctx(record["type"]["id"]).resolve(current_parent_id)  # type: ignore[attr-defined]
+            current_parent_record = Vocabulary.pid.with_type_ctx(
+                record["type"]["id"]
+            ).resolve(current_parent_id)  # type: ignore[attr-defined]
 
             if hierarchy_obj.data.parent_id != current_parent_record.id:
                 # update the parent_id and parent_hierarchy_metadata, relationship will not change automatically
                 # with this current record will fix itself with fix_hierarchy_on_self correctly
                 hierarchy_obj.data.parent_id = current_parent_record.id
-                hierarchy_obj.data.parent_hierarchy_metadata = VocabularyHierarchy.query.get(current_parent_record.id)
+                hierarchy_obj.data.parent_hierarchy_metadata = (
+                    VocabularyHierarchy.query.get(current_parent_record.id)
+                )
                 db.session.flush()
 
         parent_changed = record.parent.id != record.parent.previous_id
@@ -175,7 +193,9 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         # We have new parent or we had no parent
         # Update the parent leaf status
         if hierarchy_obj.data.parent_hierarchy_metadata is not None:
-            hierarchy_obj.data.parent_hierarchy_metadata.update_leaf_status(force_child_exists=True)
+            hierarchy_obj.data.parent_hierarchy_metadata.update_leaf_status(
+                force_child_exists=True
+            )
 
         if parent_changed:
             # potentially fix our children (if we have any)
@@ -183,10 +203,14 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
 
             # potentially fix the previous parent leaf status
             if record.parent.previous_id is not None:
-                previous_parent_record = Vocabulary.pid.with_type_ctx(record["type"]["id"]).resolve(  # type: ignore[attr-defined]
+                previous_parent_record = Vocabulary.pid.with_type_ctx(
+                    record["type"]["id"]
+                ).resolve(  # type: ignore[attr-defined]
                     record.parent.previous_id
                 )
-                previous_parent_hierarchy = VocabularyHierarchy.query.get(previous_parent_record.id)
+                previous_parent_hierarchy = VocabularyHierarchy.query.get(
+                    previous_parent_record.id
+                )
                 if previous_parent_hierarchy is not None:
                     previous_parent_hierarchy.update_leaf_status()
 
@@ -206,7 +230,9 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         if parent_hierarchy_metadata is not None:
             parent_hierarchy_metadata.update_leaf_status()
 
-    def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:  # noqa: ARG002
+    def pre_dump(
+        self, record: RecordBase, data: dict, dumper: Dumper | None = None
+    ) -> None:  # noqa: ARG002
         """Add the hierarchy data to the record before dumping."""
         hierarchy_obj = self.__get__(record)  # type: ignore[arg-type]
         data[self.key] = hierarchy_obj.to_dict()

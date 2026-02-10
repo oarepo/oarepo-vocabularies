@@ -32,7 +32,9 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
     """Request args schema for vocabulary search."""
 
     parent = fields.List(fields.String(), data_key="h-parent", attribute="h-parent")
-    ancestor = fields.List(fields.String(), data_key="h-ancestor", attribute="h-ancestor")
+    ancestor = fields.List(
+        fields.String(), data_key="h-ancestor", attribute="h-ancestor"
+    )
     level = fields.List(fields.Integer(), data_key="h-level", attribute="h-level")
 
 
@@ -43,5 +45,7 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
 
     response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {  # type: ignore[override]
         **InvenioVocabulariesResourceConfig.response_handlers,
-        "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
+        "application/vnd.inveniordm.v1+json": ResponseHandler(
+            VocabularyUIJSONSerializer(), headers=etag_headers
+        ),
     }

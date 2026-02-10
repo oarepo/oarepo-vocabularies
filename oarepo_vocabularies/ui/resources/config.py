@@ -62,12 +62,16 @@ class VocabularyTypeValidationSchema(ma.Schema):
         try:
             if VocabularyType.query.filter_by(id=vocabulary_type).one_or_none():  # type: ignore[attr-defined]
                 return {"vocabulary_type": vocabulary_type}
-            raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.")
+            raise VocabularyTypeDoesNotExistError(
+                f"Vocabulary type {vocabulary_type} does not exist."
+            )
 
         except VocabularyTypeDoesNotExistError as e:
             raise VocabularyTypeDoesNotExistError from e
         except Exception as e:
-            raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.") from e
+            raise VocabularyTypeDoesNotExistError(
+                f"Vocabulary type {vocabulary_type} does not exist."
+            ) from e
 
 
 class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
@@ -76,7 +80,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     template_folder = "../templates"
     url_prefix = "/vocabularies/"
     blueprint_name = "oarepo_vocabularies_ui"
-    ui_serializer_class = "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
+    ui_serializer_class = (
+        "oarepo_vocabularies.resources.records.ui.VocabularyUIJSONSerializer"
+    )
     api_service = "vocabularies"
     application_id = "OarepoVocabularies"
     model_name = "vocabularies"
@@ -115,7 +121,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """UI serializer."""
         return VocabularyUIJSONSerializer()
 
-    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type_": ma.fields.Str(data_key="type")}  # type: ignore[override]
+    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {
+        "type_": ma.fields.Str(data_key="type")
+    }  # type: ignore[override]
     request_search_args = VocabularySearchRequestArgsSchema
     request_vocabulary_type_args = VocabularyTypeValidationSchema
 
@@ -159,7 +167,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     def ui_links_search(self) -> Mapping[str, Link | EndpointLink]:
         """UI Search links."""
         return {
-            **pagination_endpoint_links("oarepo_vocabularies_ui.search", params=["type"]),
+            **pagination_endpoint_links(
+                "oarepo_vocabularies_ui.search", params=["type"]
+            ),
             "create": EndpointLink(
                 "oarepo_vocabularies_ui.create",
                 vars=lambda obj, vars_: vars_.pop("args", None),  # noqa: ARG005
@@ -169,7 +179,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
     def vocabulary_props_config(self, vocabulary_type: str) -> Any:
         """Get vocabulary properties config for a vocabulary type if available."""
-        return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabulary_type, {})
+        return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(
+            vocabulary_type, {}
+        )
 
     def _get_custom_fields_ui_config(
         self,
@@ -190,11 +202,15 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """Get the available sort options for the current vocabulary type."""
         return cast("dict", api_config.search.sort_options)
 
-    def search_active_sort_options(self, api_config: RecordServiceConfig, identity: Identity) -> list[str]:  # noqa: ARG002 added for inheritance
+    def search_active_sort_options(
+        self, api_config: RecordServiceConfig, identity: Identity
+    ) -> list[str]:  # noqa: ARG002 added for inheritance
         """Get the active sort options for the current vocabulary type."""
         return list(api_config.search.sort_options.keys())
 
-    def search_endpoint_url(self, identity: Identity, overrides: dict[str, str] | None = None, **kwargs: Any) -> str:  # noqa: ARG002
+    def search_endpoint_url(
+        self, identity: Identity, overrides: dict[str, str] | None = None, **kwargs: Any
+    ) -> str:  # noqa: ARG002
         """Get the search endpoint URL for the current vocabulary type."""
         return cast(
             "str",

@@ -36,7 +36,9 @@ class VocabularyTypeAndProps(UIResourceComponent):
         search_options["headers"] = {"Accept": "application/json"}
         if vocabulary_type:
             search_options["overrides"]["vocabularyType"] = vocabulary_type
-            search_options["overrides"]["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
+            search_options["overrides"]["vocabularyProps"] = (
+                self.config.vocabulary_props_config(vocabulary_type)
+            )  # type: ignore[attr-defined]
 
     def form_config(  # noqa: PLR0913  too many arguments
         self,
@@ -53,7 +55,9 @@ class VocabularyTypeAndProps(UIResourceComponent):
         """Add vocabulary type and props to the form config as in."""
         if vocabulary_type:
             form_config["vocabularyType"] = vocabulary_type
-            form_config["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
+            form_config["vocabularyProps"] = self.config.vocabulary_props_config(
+                vocabulary_type
+            )  # type: ignore[attr-defined]
 
     def before_ui_detail(  # noqa: PLR0913  too many arguments
         self,
@@ -69,4 +73,6 @@ class VocabularyTypeAndProps(UIResourceComponent):
         """Process the data before the detail page is rendered."""
         extra_context["vocabularyType"] = vocabulary_type
         if vocabulary_type:
-            extra_context["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
+            extra_context["vocabularyProps"] = self.config.vocabulary_props_config(
+                vocabulary_type
+            )  # type: ignore[attr-defined]

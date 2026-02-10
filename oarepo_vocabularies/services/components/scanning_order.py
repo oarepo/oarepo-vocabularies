@@ -22,7 +22,9 @@ if TYPE_CHECKING:
 class ScanningOrderComponent(ServiceComponent):
     """Component to handle scanning order in vocabulary searches."""
 
-    def scan(self, identity: Identity, search: Search, params: dict[str, Any]) -> Search:  # noqa: ARG002
+    def scan(
+        self, identity: Identity, search: Search, params: dict[str, Any]
+    ) -> Search:  # noqa: ARG002
         """Modify the search to include scanning order if specified in params."""
         if params.get("preserve_order"):
             return search.params(preserve_order=True)

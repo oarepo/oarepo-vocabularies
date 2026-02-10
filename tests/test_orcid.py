@@ -29,7 +29,9 @@ def test_orcid_client_from_provider(app, orcid_provider):
 
     orcid_id = "0000-0002-8584-7715"
     access_token = orcid_provider.orcid_client.get_search_token_from_orcid()
-    result = orcid_provider.orcid_client.get_record(access_token=access_token, orcid_id=orcid_id)
+    result = orcid_provider.orcid_client.get_record(
+        access_token=access_token, orcid_id=orcid_id
+    )
     assert result["orcid-identifier"]["path"] == orcid_id
 
     bad_orcid_id = "0000-0000-0000-0000"
@@ -72,7 +74,9 @@ def test_orcid_provider_pagination(app, orcid_provider):
         if item is None:
             continue
         assert item["name"] != ""
-        assert item["identifiers"][0]["identifier"] not in [it["identifiers"][0]["identifier"] for it in page2_items]
+        assert item["identifiers"][0]["identifier"] not in [
+            it["identifiers"][0]["identifier"] for it in page2_items
+        ]
 
 
 @pytest.mark.skip(reason="Skip authorities for now")

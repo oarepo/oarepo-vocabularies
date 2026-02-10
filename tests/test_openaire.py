@@ -67,7 +67,9 @@ def test_openaire_provider_pagination(app, openaire_provider):
     assert total > 20
     assert len(items) == 20
 
-    page2_results = openaire_provider.search(identity=None, params={"q": query, "page": 2})
+    page2_results = openaire_provider.search(
+        identity=None, params={"q": query, "page": 2}
+    )
     page2_items, page2_total_value = page2_results
     assert page2_total_value > 20
     assert len(page2_items) == 20

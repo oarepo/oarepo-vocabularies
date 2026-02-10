@@ -28,8 +28,12 @@ def test_extra_cf(app, db, cache, lang_type, vocab_cf, search_clear):
 
 
 @pytest.mark.skip(reason="ICU sort later")
-def test_czech_sort(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
-    data = client.get("/api/vocabularies/languages?sort=title", headers=[("Accept-Language", "cs")]).json
+def test_czech_sort(
+    app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear
+):
+    data = client.get(
+        "/api/vocabularies/languages?sort=title", headers=[("Accept-Language", "cs")]
+    ).json
     titles = [d["title"]["cs"] for d in data["hits"]["hits"]]
     assert titles == [
         "Angličtina",
@@ -40,8 +44,12 @@ def test_czech_sort(app, db, cache, lang_type, vocab_cf, sample_records, client,
 
 
 @pytest.mark.skip(reason="ICU sort later")
-def test_oldest_sort(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
-    data = client.get("/api/vocabularies/languages?sort=oldest", headers=[("Accept-Language", "cs")]).json
+def test_oldest_sort(
+    app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear
+):
+    data = client.get(
+        "/api/vocabularies/languages?sort=oldest", headers=[("Accept-Language", "cs")]
+    ).json
     titles = [d["title"]["cs"] for d in data["hits"]["hits"]]
     assert titles == [
         "Angličtina",
@@ -52,8 +60,12 @@ def test_oldest_sort(app, db, cache, lang_type, vocab_cf, sample_records, client
 
 
 @pytest.mark.skip(reason="ICU sort later")
-def test_newest_sort(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
-    data = client.get("/api/vocabularies/languages?sort=newest", headers=[("Accept-Language", "cs")]).json
+def test_newest_sort(
+    app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear
+):
+    data = client.get(
+        "/api/vocabularies/languages?sort=newest", headers=[("Accept-Language", "cs")]
+    ).json
     titles = [d["title"]["cs"] for d in data["hits"]["hits"]]
     assert titles == [
         "Angličtina (A pro řazení)",
@@ -64,7 +76,9 @@ def test_newest_sort(app, db, cache, lang_type, vocab_cf, sample_records, client
 
 
 @pytest.mark.skip(reason="ICU sort later")
-def test_czech_suggest(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
+def test_czech_suggest(
+    app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear
+):
     data = client.get(
         "/api/vocabularies/languages?suggest=%C5%99azen%C3%AD",
         headers=[("Accept-Language", "cs")],
@@ -84,7 +98,9 @@ def test_czech_suggest(app, db, cache, lang_type, vocab_cf, sample_records, clie
     ]
 
 
-def test_ui_serializer(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
+def test_ui_serializer(
+    app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear
+):
     data = client.get(
         "/api/vocabularies/languages",
         headers=[
@@ -113,7 +129,9 @@ def test_type_ui_serializer(app, db, cache, lang_type, vocab_cf, client, search_
     ).json
 
     assert data["hits"]["hits"][0]["title_l10n"] == "languages"
-    assert data["hits"]["hits"][0]["description_l10n"] == "czech language vocabulary type."
+    assert (
+        data["hits"]["hits"][0]["description_l10n"] == "czech language vocabulary type."
+    )
 
     data = client.get(
         "/api/vocabularies/",
@@ -124,4 +142,6 @@ def test_type_ui_serializer(app, db, cache, lang_type, vocab_cf, client, search_
     ).json
 
     assert data["hits"]["hits"][0]["title_l10n"] == "jazyky"
-    assert data["hits"]["hits"][0]["description_l10n"] == "slovnikovy typ ceskeho jazyka."
+    assert (
+        data["hits"]["hits"][0]["description_l10n"] == "slovnikovy typ ceskeho jazyka."
+    )

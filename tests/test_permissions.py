@@ -166,7 +166,9 @@ def test_permissions_update_only_languages_non_dangerous_operation(
     search_clear,
     clear_vocabulary_permissions,
 ):
-    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesNonDangerousOperation
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = (
+        EveryonePermissionPolicyLanguagesNonDangerousOperation
+    )
 
     child_object = vocab_service.create(
         system_identity,
@@ -201,7 +203,10 @@ def test_permissions_update_only_languages_non_dangerous_operation(
             "custom_fields": {"blah": "Hello in American updated"},
         },
     )
-    assert child_object_updated.data["custom_fields"]["blah"] == "Hello in American updated"
+    assert (
+        child_object_updated.data["custom_fields"]["blah"]
+        == "Hello in American updated"
+    )
 
     # changing parent is a dangerous operation
     with pytest.raises(PermissionDeniedError):
@@ -304,7 +309,9 @@ def test_permissions_create_languages_and_countries(
     identity_simple,
     clear_vocabulary_permissions,
 ):
-    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = EveryonePermissionPolicyLanguagesAndCountries
+    app.config["VOCABULARIES_PERMISSIONS_POLICY"] = (
+        EveryonePermissionPolicyLanguagesAndCountries
+    )
 
     lang_object = vocab_service.create(
         system_identity,
