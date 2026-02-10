@@ -15,9 +15,7 @@ from invenio_vocabularies.proxies import current_service as vocab_service
 from invenio_vocabularies.records.api import Vocabulary
 
 
-def test_services_create(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_create(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -31,9 +29,7 @@ def test_services_create(
     assert lang_object.data["custom_fields"]["blah"] == "Hello"
 
 
-def test_services_update(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_update(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -61,9 +57,7 @@ def test_services_update(
     assert lang_object2.data["custom_fields"]["blah"] == "Hello2"
 
 
-def test_services_read(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_read(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -83,9 +77,7 @@ def test_services_read(
     assert lang_object2.data["custom_fields"]["blah"] == "Hello"
 
 
-def test_services_delete(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_delete(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -103,9 +95,7 @@ def test_services_delete(
         vocab_service.read(system_identity, (lang_type.id, lang_object.id))
 
 
-def test_services_read_all(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_read_all(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -120,18 +110,14 @@ def test_services_read_all(
 
     Vocabulary.index.refresh()
 
-    results = vocab_service.read_all(
-        system_identity, fields=[], type=lang_type.id, cache=False
-    )
+    results = vocab_service.read_all(system_identity, fields=[], type=lang_type.id, cache=False)
     assert results.total == 1
     first_item = next(iter(results.hits))
     assert first_item["id"] == "eng"
     assert first_item["custom_fields"] == {"blah": "Hello"}
 
 
-def test_services_read_many(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_read_many(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -154,9 +140,7 @@ def test_services_read_many(
     assert first_item["custom_fields"] == {"blah": "Hello"}
 
 
-def test_services_exists(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_exists(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {
@@ -174,9 +158,7 @@ def test_services_exists(
     assert vocab_service.exists(system_identity, (lang_type.id, lang_object.id))
 
 
-def test_services_search(
-    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
-):
+def test_services_search(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
     lang_object = vocab_service.create(
         system_identity,
         {

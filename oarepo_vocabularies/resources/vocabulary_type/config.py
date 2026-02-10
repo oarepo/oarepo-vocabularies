@@ -30,7 +30,5 @@ class VocabularyTypeResourceConfig(InvenioVocabularyTypeResourceConfig):
 
     response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {  # type: ignore[override]
         **InvenioVocabularyTypeResourceConfig.response_handlers,
-        "application/vnd.inveniordm.v1+json": ResponseHandler(
-            VocabularyTypeUIJSONSerializer()
-        ),
+        "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyTypeUIJSONSerializer()),
     }

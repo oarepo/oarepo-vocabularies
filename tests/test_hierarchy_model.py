@@ -29,9 +29,7 @@ def test_db_hierarchy_model(db):
     db.session.add(child)
     db.session.commit()
     assert child.id is not None
-    child_hierarchy = VocabularyHierarchy(
-        id=child.id, parent_id=parent.id, pid="eng-US"
-    )
+    child_hierarchy = VocabularyHierarchy(id=child.id, parent_id=parent.id, pid="eng-US")
     db.session.add(child_hierarchy)
     db.session.commit()
 

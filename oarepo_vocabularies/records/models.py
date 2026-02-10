@@ -32,13 +32,11 @@ class VocabularyHierarchy(db.Model):
         db.ForeignKey("vocabularies_metadata.id"),
         primary_key=True,
     )
-    parent_id = db.Column(
-        UUIDType, db.ForeignKey("vocabularies_hierarchy.id"), nullable=True
-    )
+    parent_id = db.Column(UUIDType, db.ForeignKey("vocabularies_hierarchy.id"), nullable=True)
 
     vocabulary_term = db.relationship(
         VocabularyMetadata,
-        foreign_keys=[id],
+        foreign_keys=[id],  # noqa: A003
         backref=db.backref(
             "hierarchy_metadata",
             uselist=False,
@@ -48,7 +46,7 @@ class VocabularyHierarchy(db.Model):
         "VocabularyHierarchy",
         foreign_keys=[parent_id],
         backref=db.backref("subterms", lazy="dynamic"),
-        remote_side=[id],
+        remote_side=[id],  # noqa: A003
     )
 
     pid = db.Column(db.String(255), nullable=False, unique=False)
@@ -68,11 +66,7 @@ class VocabularyHierarchy(db.Model):
         parent_hierarchy = self.parent_hierarchy_metadata
 
         # check if node has children
-        result = (
-            db.session.query(VocabularyHierarchy.id)
-            .filter(VocabularyHierarchy.parent_id == self.id)
-            .all()
-        )
+        result = db.session.query(VocabularyHierarchy.id).filter(VocabularyHierarchy.parent_id == self.id).all()
 
         new_leaf = not bool(result)
         title = self.titles[0]
@@ -107,17 +101,17 @@ class VocabularyHierarchy(db.Model):
     def get_subterms_ids(start_id: UUID | None = None) -> list[UUID]:
         """Get all descendant IDs using recursive CTE."""
         # Base case: direct children of the node
-        base = select(
-            VocabularyHierarchy.id.label("id"), literal(1).label("depth")
-        ).where(VocabularyHierarchy.parent_id == start_id)
+        base = select(VocabularyHierarchy.id.label("id"), literal(1).label("depth")).where(
+            VocabularyHierarchy.parent_id == start_id
+        )
 
         # Recursive CTE
         hierarchy_cte = base.cte(name="children", recursive=True)
         child_alias = aliased(VocabularyHierarchy)
 
-        recursive = select(
-            child_alias.id, (hierarchy_cte.c.depth + 1).label("depth")
-        ).where(child_alias.parent_id == hierarchy_cte.c.id)
+        recursive = select(child_alias.id, (hierarchy_cte.c.depth + 1).label("depth")).where(
+            child_alias.parent_id == hierarchy_cte.c.id
+        )
 
         hierarchy_cte = hierarchy_cte.union_all(recursive)
 
@@ -128,11 +122,7 @@ class VocabularyHierarchy(db.Model):
     @staticmethod
     def get_direct_subterms_ids(parent_id: UUID | None = None) -> list[UUID]:
         """Get direct subterms IDs."""
-        result = (
-            db.session.query(VocabularyHierarchy.id)
-            .filter(VocabularyHierarchy.parent_id == parent_id)
-            .all()
-        )
+        result = db.session.query(VocabularyHierarchy.id).filter(VocabularyHierarchy.parent_id == parent_id).all()
         return [child_id for (child_id,) in result if child_id is not None]
 
     def fix_hierarchy_down(self) -> None:
@@ -140,9 +130,7 @@ class VocabularyHierarchy(db.Model):
         children_ids = VocabularyHierarchy.get_subterms_ids(self.id)
 
         for child in children_ids:
-            child_hierarchy: VocabularyHierarchy = db.session.query(
-                VocabularyHierarchy
-            ).get(child)  # type: ignore[assignment]
+            child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
             child_hierarchy.fix_hierarchy_on_self()
 
     def update_leaf_status(self, force_child_exists: bool = False) -> None:

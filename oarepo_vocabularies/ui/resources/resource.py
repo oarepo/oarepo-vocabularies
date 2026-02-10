@@ -38,9 +38,7 @@ if TYPE_CHECKING:
     from invenio_records_resources.services.records.results import RecordItem
 
 
-request_vocabulary_args = request_parser(
-    from_conf("request_type_args"), location="view_args"
-)
+request_vocabulary_args = request_parser(from_conf("request_type_args"), location="view_args")
 
 
 class InvenioVocabulariesUIResource(RecordsUIResource):
@@ -53,14 +51,10 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
     @login_required
     @pass_route_args("vocabulary_type")
-    def create(
-        self, *_args: Any, vocabulary_type: str | None = None, **kwargs: Any
-    ) -> Any:
+    def create(self, *_args: Any, vocabulary_type: str | None = None, **kwargs: Any) -> Any:
         """Create a new vocabulary item."""
         if not self.api_service.check_permission(g.identity, "create"):
-            raise PermissionDeniedError(
-                _("User does not have permission to create vocabulary item.")
-            )
+            raise PermissionDeniedError(_("User does not have permission to create vocabulary item."))
         if vocabulary_type is None:
             raise KeyError("vocabulary_type is required")
         form_config: dict[str, Any] = {}
@@ -124,9 +118,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     ) -> Any:
         """Edit an existing vocabulary item."""
         if not self.api_service.check_permission(g.identity, "update"):
-            raise PermissionDeniedError(
-                _("User does not have permission to update vocabulary item.")
-            )
+            raise PermissionDeniedError(_("User does not have permission to update vocabulary item."))
         if vocabulary_type is None or pid_value is None:
             raise KeyError("vocabulary_type and pid_value are required")
         api_record = self._get_record(pid_value, vocabulary_type)
@@ -219,9 +211,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         }
 
         search_config = partial(self.config.search_app_config, **search_options)
-        search_config(
-            app_id="OarepoVocabularies.Search", headers={"Accept": "application/json"}
-        )
+        search_config(app_id="OarepoVocabularies.Search", headers={"Accept": "application/json"})
 
         extra_context.setdefault("search_app_config", search_config)
 
@@ -261,9 +251,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ),
         )
 
-    def empty_record(
-        self, vocabulary_type: str | None = None, **_kwargs: Any
-    ) -> dict[str, Any]:
+    def empty_record(self, vocabulary_type: str | None = None, **_kwargs: Any) -> dict[str, Any]:
         """Create an empty record with type and tags initialized."""
         record = cast("dict[str, Any]", dump_empty(self.api_config.schema))
         record["type"] = vocabulary_type

@@ -20,9 +20,7 @@ from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
 
-def test_hierarchy_change_leafs_after_insert(
-    app, db, cache, lang_type, vocab_cf, search_clear
-):
+def test_hierarchy_change_leafs_after_insert(app, db, cache, lang_type, vocab_cf, search_clear):
     parent_data = {
         "id": "a",
         "title": {"en": "English", "da": "Engelsk"},
@@ -173,9 +171,7 @@ def create_vocabulary_graph(app, db, vocabulary_data, hierarchy):
     return created_records
 
 
-def test_hierarchy_change_parents_set_parent_to_existing(
-    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
-):
+def test_hierarchy_change_parents_set_parent_to_existing(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
     vocabulary_data, hierarchy = lang_data3
     results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
     # Starting graph:
@@ -269,9 +265,7 @@ def test_hierarchy_change_parents_set_parent_to_existing_as_leaf(
     assert results["d"][0].id in c_children
 
 
-def test_hierarchy_change_parents_set_parent_to_none(
-    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
-):
+def test_hierarchy_change_parents_set_parent_to_none(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
     vocabulary_data, hierarchy = lang_data3
     results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
     # Starting graph:
@@ -331,9 +325,7 @@ def test_hierarchy_change_parents_set_parent_to_none(
     assert len(b_children) == 0
 
 
-def test_hierarchy_change_parents_set_new_root_parent(
-    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
-):
+def test_hierarchy_change_parents_set_new_root_parent(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
     vocabulary_data, hierarchy = lang_data3
     results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
     # Starting graph:
@@ -390,9 +382,7 @@ def test_hierarchy_change_parents_set_new_root_parent(
     }
 
 
-def test_hierarchy_delete_record(
-    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
-):
+def test_hierarchy_delete_record(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
     vocabulary_data, hierarchy = lang_data3
     results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
     # Starting graph:
@@ -429,9 +419,7 @@ def test_hierarchy_delete_record(
     assert len(a_children) == 1  # only B
 
 
-def test_hierarchy_delete_record_with_children(
-    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
-):
+def test_hierarchy_delete_record_with_children(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
     vocabulary_data, hierarchy = lang_data3
     results = create_vocabulary_graph(app, db, vocabulary_data, hierarchy)
     # Starting graph:
@@ -472,9 +460,7 @@ def test_hierarchy_delete_record_with_children(
     assert len(a_children) == 2  # B and C
 
 
-def test_hierarchy_delete_root_with_children(
-    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
-):
+def test_hierarchy_delete_root_with_children(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
     vocabulary_data, _ = lang_data3
     hierarchy = {
         "a": None,  # root node
@@ -651,9 +637,7 @@ def test_hierarchy_change_parents_move_under_other_branch(
     }
 
 
-def test_parent_object_change_of_parent_ids(
-    app, db, cache, lang_type, vocab_cf, search_clear, lang_data3
-):
+def test_parent_object_change_of_parent_ids(app, db, cache, lang_type, vocab_cf, search_clear, lang_data3):
     parent_data = {
         "id": "a",
         "title": {"en": "English", "da": "Engelsk"},
@@ -711,9 +695,7 @@ def test_parent_object_change_of_parent_ids(
     assert child_rec_1.parent.previous_id == "a"
 
 
-def test_hierarchy_lang(
-    app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf, search_clear
-):
+def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, vocab_cf, search_clear):
     parent = vocab_service.create(system_identity, lang_data)
     assert "parent" not in parent.links
 
@@ -728,17 +710,9 @@ def test_hierarchy_lang(
 
     child = vocab_service.create(system_identity, lang_data_child)
 
-    assert (
-        child.links["parent"] == "https://127.0.0.1:5000/api/vocabularies/languages/eng"
-    )
-    assert (
-        parent.links["children"]
-        == "https://127.0.0.1:5000/api/vocabularies/languages?h-parent=eng"
-    )
-    assert (
-        parent.links["descendants"]
-        == "https://127.0.0.1:5000/api/vocabularies/languages?h-ancestor=eng"
-    )
+    assert child.links["parent"] == "https://127.0.0.1:5000/api/vocabularies/languages/eng"
+    assert parent.links["children"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-parent=eng"
+    assert parent.links["descendants"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-ancestor=eng"
     assert child._record.hierarchy.to_dict() == {  # noqa: SLF001
         "level": 2,
         "titles": [
@@ -822,9 +796,7 @@ def test_parent(sample_records, client, search_clear):
 
 
 def test_leaf(app, db, cache, lang_type, vocab_cf, search_clear):
-    parent = vocab_service.create(
-        system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"}
-    )
+    parent = vocab_service.create(system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"})
     assert "parent" not in parent.links
     assert parent.data["hierarchy"]["leaf"]
 
@@ -871,9 +843,7 @@ def test_update_with_disallowed_hierarchy(
         )
 
 
-def test_update_with_hierarchy_change(
-    app, db, cache, lang_type, sample_records, vocab_cf, search_clear
-):
+def test_update_with_hierarchy_change(app, db, cache, lang_type, sample_records, vocab_cf, search_clear):
     vocab_service.update(
         system_identity,
         ("languages", "eng.UK.S"),

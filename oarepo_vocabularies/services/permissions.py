@@ -83,9 +83,7 @@ class IfNonDangerousVocabularyOperation(ConditionalGenerator):
         record = kwargs["record"]
 
         # changing parent is a dangerous operation as indexed records that use the vocab item needs to be reindexed
-        if data.get("hierarchy", {}).get("parent") != record.hierarchy.to_dict().get(
-            "parent"
-        ):
+        if data.get("hierarchy", {}).get("parent") != record.hierarchy.to_dict().get("parent"):
             return False
 
         # changing id is a very dangerous operation as records that use the vocab item will be broken

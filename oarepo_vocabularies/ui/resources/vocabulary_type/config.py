@@ -21,15 +21,11 @@ class VocabularyTypeUIResourceConfig(UIResourceConfig):
 
     url_prefix = "/vocabularies"
     blueprint_name = "vocabulary_type_app"
-    ui_serializer_class = (
-        "oarepo_vocabularies.resources.ui.VocabularyTypeUIJSONSerializer"
-    )
+    ui_serializer_class = "oarepo_vocabularies.resources.ui.VocabularyTypeUIJSONSerializer"
     api_service = "vocabulary_type"
     layout = "vocabulary"
 
-    templates: ClassVar[dict[str, str]] = {
-        "list": "oarepo_vocabularies_ui.VocabulariesList"
-    }
+    templates: ClassVar[dict[str, str]] = {"list": "oarepo_vocabularies_ui.VocabulariesList"}
 
     routes: ClassVar[dict[str, str]] = {"list": "/"}
 

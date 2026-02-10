@@ -35,30 +35,20 @@ class InvenioVocabulariesAppExtension:
     def init_resource(self, app: Flask) -> None:
         """Initialize vocabulary resources."""
         # Import and check for None so linter does not complain
-        resource_cls = obj_or_import_string(
-            app.config["OAREPO_VOCABULARIES_UI_RESOURCE"]
-        )
+        resource_cls = obj_or_import_string(app.config["OAREPO_VOCABULARIES_UI_RESOURCE"])
         assert resource_cls is not None, "OAREPO_VOCABULARIES_UI_RESOURCE must be set"  # noqa: S101
 
-        config_cls = obj_or_import_string(
-            app.config["OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG"]
-        )
-        assert config_cls is not None, (
-            "OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG must be set"
-        )  # noqa: S101
+        config_cls = obj_or_import_string(app.config["OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG"])
+        assert config_cls is not None, "OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG must be set"  # noqa: S101
 
         self.resource = resource_cls(
             config=config_cls(),
         )
 
-        type_resource_cls = obj_or_import_string(
-            app.config["VOCABULARY_TYPE_UI_RESOURCE"]
-        )
+        type_resource_cls = obj_or_import_string(app.config["VOCABULARY_TYPE_UI_RESOURCE"])
         assert type_resource_cls is not None, "VOCABULARY_TYPE_UI_RESOURCE must be set"  # noqa: S101
 
-        config_cls = obj_or_import_string(
-            app.config["VOCABULARY_TYPE_UI_RESOURCE_CONFIG"]
-        )
+        config_cls = obj_or_import_string(app.config["VOCABULARY_TYPE_UI_RESOURCE_CONFIG"])
         assert config_cls is not None, "VOCABULARY_TYPE_UI_RESOURCE_CONFIG must be set"  # noqa: S101
 
         self.type_resource = type_resource_cls(
@@ -72,9 +62,7 @@ class InvenioVocabulariesAppExtension:
             if re.match("^[A-Z_]*$", identifier) and not identifier.startswith("_"):
                 app.config.setdefault(identifier, getattr(config, identifier))
 
-        app.config.setdefault("OAREPO_UI_LESS_COMPONENTS", []).extend(
-            config.OAREPO_UI_LESS_COMPONENTS
-        )
+        app.config.setdefault("OAREPO_UI_LESS_COMPONENTS", []).extend(config.OAREPO_UI_LESS_COMPONENTS)
 
 
 def finalize_app(app: Flask) -> None:

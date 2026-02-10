@@ -45,9 +45,7 @@ class LocalizedDateTime(ma.fields.Field):
 
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:
         return {
-            f"{self.attribute}_l10n_{fmt}": formatter._serialize(
-                value, attr, obj, **kwargs
-            )  # noqa: SLF001
+            f"{self.attribute}_l10n_{fmt}": formatter._serialize(value, attr, obj, **kwargs)  # noqa: SLF001
             for fmt, formatter in self.formatters.items()
         }
 
@@ -59,9 +57,7 @@ class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
         self._schema.context.update(self.context)
         return super()._serialize(obj, **kwargs)
 
-    def _deserialize(
-        self, data: Mapping[str, Any] | Iterable[Mapping[str, Any]], **kwargs: Any
-    ) -> Any:
+    def _deserialize(self, data: Mapping[str, Any] | Iterable[Mapping[str, Any]], **kwargs: Any) -> Any:
         self._schema.context.update(self.context)
         return super()._deserialize(data, **kwargs)
 
@@ -106,9 +102,7 @@ class HierarchyUISchema(ma.Schema):
 class VocabularyUISchema(VocabularyL10NItemSchema):
     """Vocabulary UI schema."""
 
-    custom_fields = ma_fields.Nested(
-        partial(CustomFieldsSchemaUI, fields_var="VOCABULARIES_CF")
-    )
+    custom_fields = ma_fields.Nested(partial(CustomFieldsSchemaUI, fields_var="VOCABULARIES_CF"))
     hierarchy = ma_fields.Nested(HierarchyUISchema)
 
     created = LocalizedDateTime(attribute="created", dump_only=True)

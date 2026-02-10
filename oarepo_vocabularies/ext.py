@@ -58,24 +58,16 @@ class OARepoVocabularies:
                 app.config.setdefault(k, getattr(config, k))
             if k.startswith("VOCABULARIES"):
                 app.config.setdefault(k, getattr(config, k))
-        app.config.setdefault(
-            "VOCABULARIES_FACET_CACHE_SIZE", config.VOCABULARIES_FACET_CACHE_SIZE
-        )
-        app.config.setdefault(
-            "VOCABULARIES_FACET_CACHE_TTL", config.VOCABULARIES_FACET_CACHE_TTL
-        )
-        app.config.setdefault(
-            "INVENIO_VOCABULARY_TYPE_METADATA", config.INVENIO_VOCABULARY_TYPE_METADATA
-        )
+        app.config.setdefault("VOCABULARIES_FACET_CACHE_SIZE", config.VOCABULARIES_FACET_CACHE_SIZE)
+        app.config.setdefault("VOCABULARIES_FACET_CACHE_TTL", config.VOCABULARIES_FACET_CACHE_TTL)
+        app.config.setdefault("INVENIO_VOCABULARY_TYPE_METADATA", config.INVENIO_VOCABULARY_TYPE_METADATA)
 
         if "OAREPO_PERMISSIONS_PRESETS" not in app.config:
             app.config["OAREPO_PERMISSIONS_PRESETS"] = {}
 
         for k in config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS:
             if k not in app.config["OAREPO_PERMISSIONS_PRESETS"]:
-                app.config["OAREPO_PERMISSIONS_PRESETS"][k] = (
-                    config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
-                )
+                app.config["OAREPO_PERMISSIONS_PRESETS"][k] = config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
 
     def init_resource(self, app: Flask) -> None:
         """Initialize resources."""
@@ -91,9 +83,7 @@ class OARepoVocabularies:
         else:
             vocabulary_name = vocabulary_name_or_dict
 
-        vocabulary_type_metadata = self.app.config.get(
-            "INVENIO_VOCABULARY_TYPE_METADATA", {}
-        )
+        vocabulary_type_metadata = self.app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {})
         return vocabulary_type_metadata.get(vocabulary_name, {})
 
 

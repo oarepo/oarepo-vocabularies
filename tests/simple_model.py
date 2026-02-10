@@ -50,9 +50,7 @@ class ModelRecord(Record):
 
     index = IndexField("test_record")
     model_cls = RecordMetadata
-    pid = PIDField(
-        provider=ModelRecordIdProvider, context_cls=PIDFieldContext, create=True
-    )
+    pid = PIDField(provider=ModelRecordIdProvider, context_cls=PIDFieldContext, create=True)
     relations = RelationsField(
         authority=PIDRelation(
             "authority",

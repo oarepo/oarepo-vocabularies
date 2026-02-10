@@ -53,9 +53,7 @@ class Vocabulary(
         create=False,
     )
 
-    dumper = SearchDumper(
-        extensions=[IndexedAtDumperExt(), CustomFieldsDumperExt("VOCABULARIES_CF")]
-    )  # type: ignore[arg-type]
+    dumper = SearchDumper(extensions=[IndexedAtDumperExt(), CustomFieldsDumperExt("VOCABULARIES_CF")])  # type: ignore[arg-type]
 
     schema = ConstantField(
         "$schema",
@@ -91,12 +89,7 @@ class VocabularyRelation(NamedTuple):
 
 def find_vocabulary_relations(record: RecordItem) -> Iterable[VocabularyRelation]:
     """Find all vocabulary relations in a record."""
-    relations_field_names = [
-        x[0]
-        for x in inspect.getmembers(
-            type(record), lambda x: isinstance(x, RelationsField)
-        )
-    ]
+    relations_field_names = [x[0] for x in inspect.getmembers(type(record), lambda x: isinstance(x, RelationsField))]
 
     for relations_field_name in relations_field_names:
         # iterate all vocabularies there, check that the item exists

@@ -27,9 +27,7 @@ def test_dump_options(
     form_config = {}
     rec = ModelRecord({})
     comp.form_config(
-        api_record=RecordItem(
-            service=simple_record_service, identity=identity, record=rec
-        ),
+        api_record=RecordItem(service=simple_record_service, identity=identity, record=rec),
         record=None,
         identity=identity,
         form_config=form_config,
@@ -87,7 +85,4 @@ def test_dump_options(
             assert i["element_type"] == "leaf"
 
     assert len(form_config_vocabularies["languages"]["featured"]) == 1
-    assert (
-        next(iter(form_config_vocabularies["languages"]["featured"]))["value"]
-        == "eng.UK.S"
-    )
+    assert next(iter(form_config_vocabularies["languages"]["featured"]))["value"] == "eng.UK.S"

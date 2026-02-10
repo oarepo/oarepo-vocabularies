@@ -146,9 +146,7 @@ class AuthenticatedUserPolicyLanguages(RecordPermissionPolicy):
     can_create: ClassVar[list[InvenioGenerator]] = [
         IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
     ]
-    can_read: ClassVar[list[InvenioGenerator]] = [
-        IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
-    ]
+    can_read: ClassVar[list[InvenioGenerator]] = [IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])]
     can_search: ClassVar[list[InvenioGenerator]] = [
         IfVocabularyType("languages", then_=[AuthenticatedUser()], else_=[])
     ]
@@ -179,9 +177,7 @@ class EveryonePermissionPolicyLanguagesNonDangerousOperation(RecordPermissionPol
     can_update: ClassVar[list[InvenioGenerator]] = [
         IfVocabularyType(
             "languages",
-            then_=[
-                IfNonDangerousVocabularyOperation(then_=[SystemProcess(), AnyUser()])
-            ],
+            then_=[IfNonDangerousVocabularyOperation(then_=[SystemProcess(), AnyUser()])],
             else_=[],
         ),
     ]
@@ -203,12 +199,8 @@ def app_config(app_config):
     app_config["JSONSCHEMAS_HOST"] = "localhost"
     app_config["BABEL_DEFAULT_LOCALE"] = "en"
     app_config["I18N_LANGUAGES"] = [("da", "Danish"), ("cs", "Czech")]
-    app_config["RECORDS_REFRESOLVER_CLS"] = (
-        "invenio_records.resolver.InvenioRefResolver"
-    )
-    app_config["RECORDS_REFRESOLVER_STORE"] = (
-        "invenio_jsonschemas.proxies.current_refresolver_store"
-    )
+    app_config["RECORDS_REFRESOLVER_CLS"] = "invenio_records.resolver.InvenioRefResolver"
+    app_config["RECORDS_REFRESOLVER_STORE"] = "invenio_jsonschemas.proxies.current_refresolver_store"
 
     # note: This line must always be added to the invenio.cfg file
     from oarepo_vocabularies.resources.config import VocabulariesResourceConfig
@@ -296,9 +288,7 @@ def app_config(app_config):
     }
 
     app_config["APP_THEME"] = ["semantic-ui"]
-    app_config["THEME_HEADER_TEMPLATE"] = (
-        "oarepo_vocabularies_ui/test_header_template.html"
-    )
+    app_config["THEME_HEADER_TEMPLATE"] = "oarepo_vocabularies_ui/test_header_template.html"
 
     app_config["ORCID_CLIENT_ID"] = "blah"
     app_config["ORCID_CLIENT_SECRET"] = "blah"  # noqa: S105
@@ -733,9 +723,7 @@ def fake_manifest(app):
     invenio_instance_path = python_path.parent.parent / "var" / "instance"
     manifest_path = invenio_instance_path / "static" / "dist"
     manifest_path.mkdir(parents=True, exist_ok=True)
-    shutil.copy(
-        Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
-    )
+    shutil.copy(Path(__file__).parent / "manifest.json", manifest_path / "manifest.json")
 
 
 @pytest.fixture
