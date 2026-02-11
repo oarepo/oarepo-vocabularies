@@ -36,7 +36,7 @@ class VocabularyHierarchy(db.Model):
 
     vocabulary_term = db.relationship(
         VocabularyMetadata,
-        foreign_keys=[id],
+        foreign_keys=[id],  # noqa: A003
         backref=db.backref(
             "hierarchy_metadata",
             uselist=False,
@@ -46,7 +46,7 @@ class VocabularyHierarchy(db.Model):
         "VocabularyHierarchy",
         foreign_keys=[parent_id],
         backref=db.backref("subterms", lazy="dynamic"),
-        remote_side=[id],
+        remote_side=[id],  # noqa: A003
     )
 
     pid = db.Column(db.String(255), nullable=False, unique=False)

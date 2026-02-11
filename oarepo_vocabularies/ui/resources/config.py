@@ -55,8 +55,9 @@ class VocabularyTypeValidationSchema(ma.Schema):
 
     vocabulary_type = ma.fields.String()
 
-    def load(self, data: Mapping[str, Any], *args: Any, **kwargs: Any) -> dict | None:  # noqa: ARG002
+    def load(self, data: Mapping[str, Any], *args: Any, **kwargs: Any) -> dict | None:
         """Load marshmallow data and validate vocabulary type existence."""
+        _, _ = args, kwargs
         vocabulary_type = data.get("type")
 
         try:
@@ -173,11 +174,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
 
     def _get_custom_fields_ui_config(
         self,
-        key: str,  # noqa: ARG002
+        key: str,
         vocabulary_type: str | None = None,
-        **kwargs: Any,  # noqa: ARG002
+        **kwargs: Any,
     ) -> Any:
         """Get custom fields config for a vocabulary type if available."""
+        _, _ = key, kwargs
         vocabularies_cf_ui = current_app.config.get("VOCABULARIES_CF_UI") or {}
         return vocabularies_cf_ui.get(vocabulary_type, [])
 
@@ -185,17 +187,20 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     def search_available_sort_options(
         self,
         api_config: RecordServiceConfig,
-        identity: Identity,  # noqa: ARG002
+        identity: Identity,
     ) -> dict[str, dict[str, Any]]:
         """Get the available sort options for the current vocabulary type."""
+        _ = identity
         return cast("dict", api_config.search.sort_options)
 
-    def search_active_sort_options(self, api_config: RecordServiceConfig, identity: Identity) -> list[str]:  # noqa: ARG002 added for inheritance
+    def search_active_sort_options(self, api_config: RecordServiceConfig, identity: Identity) -> list[str]:
         """Get the active sort options for the current vocabulary type."""
+        _ = identity
         return list(api_config.search.sort_options.keys())
 
-    def search_endpoint_url(self, identity: Identity, overrides: dict[str, str] | None = None, **kwargs: Any) -> str:  # noqa: ARG002
+    def search_endpoint_url(self, identity: Identity, overrides: dict[str, str] | None = None, **kwargs: Any) -> str:
         """Get the search endpoint URL for the current vocabulary type."""
+        _ = identity, kwargs
         return cast(
             "str",
             EndpointLink("vocabularies.search", params=["type"]).expand(

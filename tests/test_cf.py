@@ -39,6 +39,21 @@ def test_czech_sort(app, db, cache, lang_type, vocab_cf, sample_records, client,
     ]
 
 
+def test_i18n_suggest_parser(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
+
+    data = client.get("/api/vocabularies/languages?suggest=e", headers=[("Accept-Language", "en")]).json
+    titles = [d["title"]["en"] for d in data["hits"]["hits"]]
+    assert titles == ["English", "English (US)", "English (UK)", "English (UK, Scotland)"]
+
+    data = client.get("/api/vocabularies/languages?suggest=a", headers=[("Accept-Language", "cs")]).json
+    titles = [d["title"]["cs"] for d in data["hits"]["hits"]]
+    assert titles == ["Angličtina", "Angličtina (US)", "Angličtina (UK)", "Angličtina (A pro řazení)"]
+
+    data = client.get("/api/vocabularies/languages?suggest=a", headers=[("Accept-Language", "en")]).json
+    titles = [d["title"]["cs"] for d in data["hits"]["hits"]]
+    assert titles == []
+
+
 @pytest.mark.skip(reason="ICU sort later")
 def test_oldest_sort(app, db, cache, lang_type, vocab_cf, sample_records, client, search_clear):
     data = client.get("/api/vocabularies/languages?sort=oldest", headers=[("Accept-Language", "cs")]).json
