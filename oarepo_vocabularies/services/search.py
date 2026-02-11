@@ -56,8 +56,6 @@ class I18nSuggestQueryParser(SuggestQueryParser):
         if isinstance(fields, list):
             self.extra_params["fields"] = [f.replace("{lang}", lang) if isinstance(f, str) else f for f in fields]
 
-        self.extra_params.setdefault("type", "bool_prefix")
-
 
 class VocabularyQueryParser(QueryParser):
     """Parser for search queries."""
