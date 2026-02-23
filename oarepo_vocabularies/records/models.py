@@ -131,7 +131,7 @@ class VocabularyHierarchy(db.Model):
 
         for child in children_ids:
             child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
-            child_hierarchy.fix_hierarchy_on_self()
+            child_hierarchy.fix_hierarchy_on_self()  # type: ignore[reportOptionalMemberAccess]
 
     def update_leaf_status(self, force_child_exists: bool = False) -> None:
         """Update leaf status for the parent ancestor.
