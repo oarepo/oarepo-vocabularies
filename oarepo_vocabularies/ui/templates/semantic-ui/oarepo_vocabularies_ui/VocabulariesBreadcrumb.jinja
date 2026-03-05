@@ -1,7 +1,11 @@
 {#def record, d, extra_context, vocabularySearchTitle="", hierarchical=False #}
 {% if vocabularySearchTitle or hierarchical %}
-{% set vocabValueTitle = ui_value(d) or record.name %}
+{% set vocabValueTitle = ui_value(d) or record.name or _('unknown') %}
 <div class="ui breadcrumb">
+    <a class="section" href="{{record.links.vocabulary_html.rstrip('/').rsplit('/', 1)[0]}}" title="{{_('Search') + ' ' + _('Vocabularies') }}">
+        {{ _('Vocabularies') }}
+    </a>
+    <div class="divider"> / </div>
     {% if vocabularySearchTitle %}
     <a class="section" href="{{record.links.vocabulary_html}}" title="{{_('Search') + ' ' + _('vocabulary.vocabulary')|lower + ' ' + vocabularySearchTitle }}">
         {{ vocabularySearchTitle }}
