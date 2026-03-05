@@ -12,8 +12,9 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import partial
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
+from flask_babel import get_locale as get_current_locale
 from invenio_i18n import get_locale
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records import (
@@ -24,6 +25,9 @@ from invenio_records_resources.services.records.params import (
     ParamInterpreter,
 )
 from invenio_records_resources.services.records.queryparser import QueryParser
+from invenio_records_resources.services.records.queryparser.suggest import (
+    SuggestQueryParser,
+)
 from opensearch_dsl import query
 from opensearch_dsl.query import Bool, Range, Term, Terms
 
@@ -34,6 +38,23 @@ if TYPE_CHECKING:
 
 TYPE_ID_FIELD = "type.id"
 ID_FIELD = "id"
+
+
+class I18nSuggestQueryParser(SuggestQueryParser):
+    """I18n Suggest query parser."""
+
+    def __init__(self, identity: Identity | None = None, extra_params: dict | None = None, **kwargs: Any):
+        """Construct suggest query parser with current language."""
+        _ = kwargs
+        current_locale = get_current_locale()
+        lang = "en"
+        if current_locale:
+            lang = current_locale.language
+        super().__init__(identity=identity, extra_params=extra_params)
+
+        fields = self.extra_params.get("fields")
+        if isinstance(fields, list):
+            self.extra_params["fields"] = [f.replace("{lang}", lang) if isinstance(f, str) else f for f in fields]
 
 
 class VocabularyQueryParser(QueryParser):
@@ -151,6 +172,18 @@ class VocabularySearchOptions(InvenioSearchOptions):
         SourceParam,
         *InvenioSearchOptions.params_interpreters_cls,
     ]
+
+    suggest_parser_cls = I18nSuggestQueryParser.factory(
+        fields=[
+            "id.text^100",
+            "id.text._2gram",
+            "id.text._3gram",
+            "title.{lang}^5",
+            "title.{lang}._2gram",
+            "title.{lang}._3gram",
+        ],
+    )  # pyright: ignore[reportAssignmentType]
+
     query_parser_cls = VocabularyQueryParser
 
     extra_sort_options: ClassVar[dict[str, dict]] = {
