@@ -15,6 +15,14 @@
 
 {%- block page_body %}
 <div class="ui main container">
+  {% if search_app_config.ui_endpoint %}
+  <div class="ui breadcrumb">
+    <div class="divider"><i class="angle left icon"></i></div>
+    <a class="section" href="{{search_app_config.ui_endpoint}}" title="{{_('Search') + ' ' + _('Vocabularies') }}">
+        {{ _('Vocabularies') }}
+    </a>
+  </div>
+  {% endif %}
     {%- block searchapp_root %}
   <div data-invenio-search-config='{{search_app_config | tojson}}'></div>    {%- endblock searchapp_root %}
 </div>

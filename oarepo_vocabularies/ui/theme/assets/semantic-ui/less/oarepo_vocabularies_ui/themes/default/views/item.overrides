@@ -1,0 +1,29 @@
+.ui.item {
+  &.vocabulary-results-list-item {
+    .vocabulary-props-list {
+      overflow: auto;
+      margin: 0;
+      max-height: 200px;
+      column-width: 200px;
+      column-gap: 2rem;
+      column-fill: auto;
+    }
+
+    .vocabulary-props-item {
+      break-inside: avoid;
+      margin: 0 0 0.75rem 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .vocabulary-props-item dt,
+    .vocabulary-props-item dd {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .vocabulary-props-item dd {
+      margin: 0 0 0.25rem 0;
+    }
+  }
+}
