@@ -53,7 +53,7 @@ def test_accept_header(
             print(f"{rule.rule} -> {rule.endpoint}")
 
     invenio_json_header = "application/vnd.inveniordm.v1+json"
-    resp = client.get("/api/vocabularies/", headers={"accept": invenio_json_header}).json
+    resp = client.get("/api/vocabularies/").json
 
     print("=== RESPONSE ===")
     print(resp)
