@@ -26,10 +26,15 @@ class VocabularyTypeUISchema(BaseObjectSchema):
     @post_dump(pass_original=True)
     def keep_unknowns(self, output: dict, orig: dict, **kwargs: Any) -> dict:  # noqa: ARG002
         """Keep unknown fields in the output."""
+        print(f"=== keep_unknowns DEBUG ===")
+        print(f"orig type: {type(orig)}")
+        print(f"orig: {orig}")
+        print(f"output: {output}")
         for key in orig:  # noqa: PLC0206
             # if output contains transformed version of the key, skip it
             if any(out_key.startswith(f"{key}_") for out_key in output):
                 continue
 
             output[key] = orig[key]
+        print(f"final output: {output}")
         return output
