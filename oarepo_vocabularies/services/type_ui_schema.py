@@ -14,7 +14,7 @@ from typing import Any
 
 from flask_resources import BaseObjectSchema
 from invenio_vocabularies.resources.serializer import L10NString
-from marshmallow import post_dump
+from marshmallow import fields, post_dump
 
 
 class VocabularyTypeUISchema(BaseObjectSchema):
@@ -22,11 +22,12 @@ class VocabularyTypeUISchema(BaseObjectSchema):
 
     title = L10NString(data_key="title_l10n")
     description = L10NString(data_key="description_l10n")
+    count = fields.Int(data_key="count")
 
     @post_dump(pass_original=True)
     def keep_unknowns(self, output: dict, orig: dict, **kwargs: Any) -> dict:  # noqa: ARG002
         """Keep unknown fields in the output."""
-        print(f"=== keep_unknowns DEBUG ===")
+        print("=== keep_unknowns DEBUG ===")
         print(f"orig type: {type(orig)}")
         print(f"orig: {orig}")
         print(f"output: {output}")
