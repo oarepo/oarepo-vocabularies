@@ -49,7 +49,7 @@ def test_accept_header(
     # Debug: print registered rules for vocabularies endpoint
     print("=== URL RULES ===")
     for rule in app.url_map.iter_rules():
-        if 'vocabularies' in rule.rule and rule.rule.endswith('/'):
+        if "vocabularies" in rule.rule:
             print(f"{rule.rule} -> {rule.endpoint}")
 
     invenio_json_header = "application/vnd.inveniordm.v1+json"
