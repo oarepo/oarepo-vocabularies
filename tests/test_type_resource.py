@@ -46,8 +46,17 @@ def test_accept_header(
     search_clear,
     clear_vocabulary_permissions,
 ):
+    # Debug: print registered rules for vocabularies endpoint
+    print("=== URL RULES ===")
+    for rule in app.url_map.iter_rules():
+        if 'vocabularies' in rule.rule and rule.rule.endswith('/'):
+            print(f"{rule.rule} -> {rule.endpoint}")
+
     invenio_json_header = "application/vnd.inveniordm.v1+json"
     resp = client.get("/api/vocabularies/", headers={"accept": invenio_json_header}).json
+
+    print("=== RESPONSE ===")
+    print(resp)
 
     results = resp
     assert results["hits"]["total"] == 2
