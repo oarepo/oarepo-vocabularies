@@ -46,8 +46,7 @@ def test_accept_header(
     search_clear,
     clear_vocabulary_permissions,
 ):
-    invenio_json_header = "application/vnd.inveniordm.v1+json"
-    resp = client.get("/api/vocabularies/", headers={"accept": invenio_json_header}).json
+    resp = client.get("/api/vocabularies/").json
 
     results = resp
     assert results["hits"]["total"] == 2
