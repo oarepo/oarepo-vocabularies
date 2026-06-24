@@ -49,7 +49,7 @@ class HierarchyObject:
                 self._hierarchy_data.parent_id = (
                     getattr(self._record.parent, "uuid", None) if hasattr(self._record, "parent") else None
                 )
-                self._hierarchy_data.pid = self._record["id"]
+                self._hierarchy_data.pid = self._record.get("id")
                 self._hierarchy_data.titles = [self._record.get("title")]
 
     @property
