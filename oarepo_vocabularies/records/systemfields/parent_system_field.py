@@ -114,7 +114,7 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         if len(direct_children) > 0:
             raise ValidationError(
                 {
-                    "parent": f"Cannot delete a vocabulary term with ID {record['id']} "
+                    "parent": f"Cannot delete a vocabulary term with ID {record.get('id')} "
                     "that has children. Reassign or delete children first."
                 }
             )
