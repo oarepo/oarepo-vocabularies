@@ -71,6 +71,14 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
         ui_links: dict[str, Any] = {}
 
+        render_kwargs = {
+            "record": empty_record,
+            "api_record": None,
+            "form_config": form_config,
+            "extra_context": extra_context,
+            "ui_links": ui_links,
+        }
+
         self.run_components(
             "form_config",
             api_record=None,
@@ -81,6 +89,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             extra_context=extra_context,
             ui_links=ui_links,
             vocabulary_type=vocabulary_type,
+            render_kwargs=render_kwargs,
             **kwargs,
         )
         self.run_components(
@@ -93,6 +102,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             extra_context=extra_context,
             ui_links=ui_links,
             vocabulary_type=vocabulary_type,
+            render_kwargs=render_kwargs,
             **kwargs,
         )
 
@@ -100,18 +110,14 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             self.get_jinjax_macro(
                 "create",
             ),
-            record=empty_record,
-            api_record=None,
-            form_config=form_config,
-            extra_context=extra_context,
-            ui_links=ui_links,
+            **render_kwargs,
         )
 
     @login_required
     @pass_route_args("vocabulary_type", "view")
     def edit(
         self,
-        *args: Any,  # noqa: ARG002
+        *args: Any,
         vocabulary_type: str | None = None,
         pid_value: str | None = None,
         **kwargs: Any,
@@ -132,6 +138,14 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
         ui_links: dict[str, Any] = {}
 
+        render_kwargs: dict[str, Any] = {
+            "record": record,
+            "api_record": api_record,
+            "form_config": form_config,
+            "extra_context": extra_context,
+            "ui_links": ui_links,
+        }
+
         self.run_components(
             "form_config",
             api_record=api_record,
@@ -142,6 +156,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             extra_context=extra_context,
             ui_links=ui_links,
             vocabulary_type=vocabulary_type,
+            render_kwargs=render_kwargs,
             **kwargs,
         )
         self.run_components(
@@ -154,23 +169,21 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             extra_context=extra_context,
             vocabulary_type=vocabulary_type,
             ui_links=ui_links,
+            render_kwargs=render_kwargs,
+            **kwargs,
         )
 
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(
                 "edit",
             ),
-            record=record,
-            api_record=api_record,
-            form_config=form_config,
-            extra_context=extra_context,
-            ui_links=ui_links,
+            **render_kwargs,
         )
 
     @pass_route_args("vocabulary_type", "view")
     def record_detail(
         self,
-        *args: Any,  # noqa: ARG002
+        *args: Any,
         vocabulary_type: str | None = None,
         pid_value: str | None = None,
         **kwargs: Any,
@@ -187,17 +200,6 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         record_ui = self.config.ui_serializer.dump_obj(dict_record)
         record_ui.setdefault("links", {})
         extra_context: dict[str, Any] = {}
-
-        self.run_components(
-            "before_ui_detail",
-            api_record=api_record,
-            record=api_record.to_dict(),
-            identity=g.identity,
-            extra_context=extra_context,
-            ui_links={},
-            vocabulary_type=vocabulary_type,
-            **kwargs,
-        )
 
         search_options = {
             "api_config": self.api_service.config,
@@ -228,6 +230,18 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ),
         }
 
+        self.run_components(
+            "before_ui_detail",
+            api_record=api_record,
+            record=api_record.to_dict(),
+            identity=g.identity,
+            extra_context=extra_context,
+            ui_links={},
+            vocabulary_type=vocabulary_type,
+            render_kwargs=render_kwargs,
+            **kwargs,
+        )
+
         return current_oarepo_ui.catalog.render(
             render_method,
             **render_kwargs,
@@ -237,7 +251,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         self,
         pid_value: str,
         type_: str,
-        **kwargs: Any,  # noqa: ARG002
+        **kwargs: Any,
     ) -> RecordItem:
         """Get a record from the service."""
         if not type_:
@@ -291,7 +305,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         )
         return tpl.expand(identity, pagination)
 
-    def vocabulary_type_does_not_exist(self, error) -> Any:  # noqa: ANN001
+    def vocabulary_type_does_not_exist(self, error) -> Any:
         """Render vocabulary type does not exist page."""
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(

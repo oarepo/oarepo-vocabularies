@@ -25,12 +25,12 @@ class VocabularyTypeAndProps(UIResourceComponent):
     def before_ui_search(
         self,
         *,
-        identity: Identity,  # noqa: ARG002
+        identity: Identity,
         search_options: dict,
-        ui_links: dict,  # noqa: ARG002
-        extra_context: dict,  # noqa: ARG002
+        ui_links: dict,
+        extra_context: dict,
         vocabulary_type: str | None = None,
-        **kwargs: Any,  # noqa: ARG002
+        **kwargs: Any,
     ) -> None:
         """Process the data before the search page is rendered."""
         search_options["headers"] = {"Accept": "application/json"}
@@ -38,33 +38,33 @@ class VocabularyTypeAndProps(UIResourceComponent):
             search_options["overrides"]["vocabularyType"] = vocabulary_type
             search_options["overrides"]["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
 
-    def form_config(  # noqa: PLR0913  too many arguments
+    def form_config(
         self,
         *,
-        api_record: RecordItem,  # noqa: ARG002
-        record: dict,  # noqa: ARG002
-        identity: Identity,  # noqa: ARG002
+        api_record: RecordItem,
+        record: dict,
+        identity: Identity,
         form_config: dict,
-        ui_links: dict,  # noqa: ARG002
-        extra_context: dict,  # noqa: ARG002
+        ui_links: dict,
+        extra_context: dict,
         vocabulary_type: str | None = None,
-        **kwargs: Any,  # noqa: ARG002
+        **kwargs: Any,
     ) -> None:
         """Add vocabulary type and props to the form config as in."""
         if vocabulary_type:
             form_config["vocabularyType"] = vocabulary_type
             form_config["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
 
-    def before_ui_detail(  # noqa: PLR0913  too many arguments
+    def before_ui_detail(
         self,
         *,
-        api_record: RecordItem,  # noqa: ARG002
-        record: dict,  # noqa: ARG002
-        identity: Identity,  # noqa: ARG002
-        ui_links: dict,  # noqa: ARG002
+        api_record: RecordItem,
+        record: dict,
+        identity: Identity,
+        ui_links: dict,
         extra_context: dict,
         vocabulary_type: str | None = None,
-        **kwargs: Any,  # noqa: ARG002
+        **kwargs: Any,
     ) -> None:
         """Process the data before the detail page is rendered."""
         extra_context["vocabularyType"] = vocabulary_type
