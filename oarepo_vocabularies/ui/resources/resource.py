@@ -30,6 +30,8 @@ from oarepo_ui.resources.records.resource import RecordsUIResource
 from oarepo_ui.templating.data import FieldData
 from oarepo_ui.utils import dump_empty
 
+from oarepo_vocabularies.resources.decorators import vocabulary_content_negotiation
+
 if TYPE_CHECKING:
     from typing import Any
 
@@ -182,6 +184,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         )
 
     @pass_route_args("vocabulary_type", "view")
+    @vocabulary_content_negotiation
     @override
     def record_detail(
         self,
