@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from oarepo_ui.resources.components import UIResourceComponent
 
@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 class VocabularyTypeAndProps(UIResourceComponent):
     """Process the data before the search page is rendered."""
 
+    @override
     def before_ui_search(
         self,
         *,
@@ -38,6 +39,7 @@ class VocabularyTypeAndProps(UIResourceComponent):
             search_options["overrides"]["vocabularyType"] = vocabulary_type
             search_options["overrides"]["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
 
+    @override
     def form_config(
         self,
         *,
@@ -55,6 +57,7 @@ class VocabularyTypeAndProps(UIResourceComponent):
             form_config["vocabularyType"] = vocabulary_type
             form_config["vocabularyProps"] = self.config.vocabulary_props_config(vocabulary_type)  # type: ignore[attr-defined]
 
+    @override
     def before_ui_detail(
         self,
         *,

@@ -85,12 +85,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "record_detail": "oarepo_vocabularies_ui.VocabulariesDetail",
         "search": "oarepo_vocabularies_ui.VocabulariesSearch",
         "create": "oarepo_vocabularies_ui.VocabulariesForm",
-        "edit": "oarepo_vocabularies_ui.VocabulariesForm",
+        "deposit_edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
     routes: Mapping[str, str] = {
         "create": "/<type>/_new",
-        "edit": "/<type>/<pid_value>/edit",
+        "deposit_edit": "/<type>/<pid_value>/edit",
         "search": "/<type>/",
         "record_detail": "/<type>/<pid_value>",
         "record_export": "/<type>/<pid_value>/export/<export_format>",
@@ -135,7 +135,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
                 params=["type", "pid_value"],
             ),
             "edit": EndpointLink(
-                "oarepo_vocabularies_ui.edit",
+                "oarepo_vocabularies_ui.deposit_edit",
                 vars=lambda record, vars_: vars_.update(
                     {
                         "type": record.data["type"],

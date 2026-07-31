@@ -11,7 +11,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, cast, override
 
 from flask import g
 from flask_resources import from_conf, request_parser
@@ -115,7 +115,8 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
     @login_required
     @pass_route_args("vocabulary_type", "view")
-    def edit(
+    @override
+    def deposit_edit(
         self,
         *args: Any,
         vocabulary_type: str | None = None,
@@ -175,12 +176,13 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(
-                "edit",
+                "deposit_edit",
             ),
             **render_kwargs,
         )
 
     @pass_route_args("vocabulary_type", "view")
+    @override
     def record_detail(
         self,
         *args: Any,
@@ -251,7 +253,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         self,
         pid_value: str,
         type_: str,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> RecordItem:
         """Get a record from the service."""
         if not type_:
@@ -305,7 +307,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         )
         return tpl.expand(identity, pagination)
 
-    def vocabulary_type_does_not_exist(self, error) -> Any:
+    def vocabulary_type_does_not_exist(self, error: Exception) -> Any:
         """Render vocabulary type does not exist page."""
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(
