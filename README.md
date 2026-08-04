@@ -70,18 +70,18 @@ VocabularyHierarchy.get_direct_subterms_ids(parent_id)
 VocabularyHierarchy.get_subterms_ids(parent_id)
 
 # Access from record
-record.hierarchy.query_subterms()        # direct children
-record.hierarchy.query_descendants()     # all descendants
+record.hierarchy.query_subterms()  # direct children
+record.hierarchy.query_descendants()  # all descendants
 ```
 
 **Hierarchy Properties**:
 
 ```python
-record.hierarchy.level              # depth in tree
-record.hierarchy.leaf               # has no children
-record.hierarchy.titles             # [self_title, parent_title, ...]
-record.hierarchy.ancestors_ids      # ['parent', 'grandparent', ...]
-record.hierarchy.parent_id          # direct parent PID
+record.hierarchy.level  # depth in tree
+record.hierarchy.leaf  # has no children
+record.hierarchy.titles  # [self_title, parent_title, ...]
+record.hierarchy.ancestors_ids  # ['parent', 'grandparent', ...]
+record.hierarchy.parent_id  # direct parent PID
 ```
 
 ### Parent Management
@@ -90,12 +90,7 @@ record.hierarchy.parent_id          # direct parent PID
 
 ```python
 # On creation
-data = {
-    "id": "eng.US",
-    "title": {"en": "English (US)"},
-    "parent": {"id": "eng"},
-    "type": "languages"
-}
+data = {"id": "eng.US", "title": {"en": "English (US)"}, "parent": {"id": "eng"}, "type": "languages"}
 vocab = Vocabulary.create(data=data)
 
 # On update
@@ -126,13 +121,7 @@ VOCABULARIES_CF = [
 
 ```python
 vocab_service.create(
-    system_identity,
-    {
-        "id": "eng",
-        "title": {"en": "English"},
-        "type": "languages",
-        "custom_fields": {"blah": "Hello"}
-    }
+    system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages", "custom_fields": {"blah": "Hello"}}
 )
 ```
 
@@ -221,9 +210,7 @@ vocab_service.create(
 - Example: Allow all users to manage "languages" but restrict "countries"
 
 ```python
-can_create = [
-    IfVocabularyType("languages", then_=[AnyUser()], else_=[])
-]
+can_create = [IfVocabularyType("languages", then_=[AnyUser()], else_=[])]
 ```
 
 `IfNonDangerousVocabularyOperation(then_, else_)`:
@@ -232,9 +219,7 @@ can_create = [
 - Example: Allow custom field updates but restrict hierarchy changes
 
 ```python
-can_update = [
-    IfNonDangerousVocabularyOperation(then_=[AnyUser()], else_=[Admin()])
-]
+can_update = [IfNonDangerousVocabularyOperation(then_=[AnyUser()], else_=[Admin()])]
 ```
 
 **Configuration**:
@@ -246,9 +231,7 @@ from invenio_vocabularies.services.permissions import PermissionPolicy
 VOCABULARIES_PERMISSIONS_POLICY = MyCustomPermissionPolicy
 
 # Or use presets
-OAREPO_PERMISSIONS_PRESETS = {
-    "vocabularies": PermissionPolicy
-}
+OAREPO_PERMISSIONS_PRESETS = {"vocabularies": PermissionPolicy}
 ```
 
 **Dangerous Operations**:
@@ -327,24 +310,12 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 
 # Create parent
-parent = vocab_service.create(
-    system_identity,
-    {
-        "id": "eng",
-        "title": {"en": "English"},
-        "type": "languages"
-    }
-)
+parent = vocab_service.create(system_identity, {"id": "eng", "title": {"en": "English"}, "type": "languages"})
 
 # Create child
 child = vocab_service.create(
     system_identity,
-    {
-        "id": "eng.US",
-        "title": {"en": "English (US)"},
-        "hierarchy": {"parent": "eng"},
-        "type": "languages"
-    }
+    {"id": "eng.US", "title": {"en": "English (US)"}, "hierarchy": {"parent": "eng"}, "type": "languages"},
 )
 
 # Access hierarchy data
@@ -363,25 +334,13 @@ print(child.data["hierarchy"])
 
 ```python
 # Get all children of a term
-results = vocab_service.search(
-    system_identity,
-    {"h-parent": "eng"},
-    type="languages"
-)
+results = vocab_service.search(system_identity, {"h-parent": "eng"}, type="languages")
 
 # Get all descendants
-results = vocab_service.search(
-    system_identity,
-    {"h-ancestor": "eng"},
-    type="languages"
-)
+results = vocab_service.search(system_identity, {"h-ancestor": "eng"}, type="languages")
 
 # Filter by level
-results = vocab_service.search(
-    system_identity,
-    {"h-level": 2},
-    type="languages"
-)
+results = vocab_service.search(system_identity, {"h-level": 2}, type="languages")
 ```
 
 ### Update Parent Relationship
@@ -391,22 +350,14 @@ results = vocab_service.search(
 vocab_service.update(
     system_identity,
     ("languages", "eng.US"),
-    {
-        "hierarchy": {"parent": "eng.UK"},
-        "title": {"en": "English (US)"},
-        "type": "languages"
-    }
+    {"hierarchy": {"parent": "eng.UK"}, "title": {"en": "English (US)"}, "type": "languages"},
 )
 
 # Remove parent (make root)
 vocab_service.update(
     system_identity,
     ("languages", "eng.US"),
-    {
-        "hierarchy": {"parent": None},
-        "title": {"en": "English (US)"},
-        "type": "languages"
-    }
+    {"hierarchy": {"parent": None}, "title": {"en": "English (US)"}, "type": "languages"},
 )
 ```
 
@@ -419,10 +370,10 @@ from oarepo_vocabularies.records.api import Vocabulary
 record = Vocabulary.pid.with_type_ctx("languages").resolve("eng.US")
 
 # Access hierarchy
-print(record.hierarchy.level)           # 2
-print(record.hierarchy.parent_id)       # "eng"
-print(record.hierarchy.leaf)            # True
-print(record.hierarchy.ancestors_ids)   # ["eng"]
+print(record.hierarchy.level)  # 2
+print(record.hierarchy.parent_id)  # "eng"
+print(record.hierarchy.leaf)  # True
+print(record.hierarchy.ancestors_ids)  # ["eng"]
 
 # Query children
 children = record.hierarchy.query_subterms()

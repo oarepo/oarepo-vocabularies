@@ -194,7 +194,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
             params=["type"],
         ),
         "edit_html": EndpointLink(
-            "oarepo_vocabularies_ui.edit",
+            "oarepo_vocabularies_ui.deposit_edit",
             vars=lambda record, vars_: vars_.update(
                 {
                     "type": record.type.id,
@@ -206,7 +206,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         "parent": EndpointLink(
             "vocabularies.read",
             vars=lambda record, vars_: vars_.update({"type": record.type.id, "pid_value": record.hierarchy.parent_id}),
-            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),  # noqa: ARG005
+            when=lambda obj, _ctx: bool(obj.hierarchy.parent_id),
             params=["type", "pid_value"],
         ),
         "parent_html": EndpointLink(
@@ -217,7 +217,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
                     "pid_value": record.hierarchy.parent_id,
                 }
             ),
-            when=lambda obj, ctx: bool(obj.hierarchy.parent_id),  # noqa: ARG005
+            when=lambda obj, _ctx: bool(obj.hierarchy.parent_id),
             params=["type", "pid_value"],
         ),
         "children": EndpointLink(
