@@ -1,18 +1,8 @@
 import * as React from "react";
-import { useSuggestionApi } from "@js/oarepo_ui/forms";
-import { serializeVocabularySuggestions } from "./util";
 import { VocabularyModalTrigger } from "./components/VocabularyModalTrigger";
 import _isEmpty from "lodash/isEmpty";
 import _isObject from "lodash/isObject";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
-
-export const useVocabularySuggestions = ({ type, ...rest }) => {
-  return useSuggestionApi({
-    suggestionAPIUrl: `/api/vocabularies/${type}`,
-    serializeSuggestions: serializeVocabularySuggestions,
-    ...rest,
-  });
-};
 
 export const useModalTrigger = ({
   value,
