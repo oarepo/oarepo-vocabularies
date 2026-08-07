@@ -31,9 +31,6 @@ from oarepo_vocabularies.services.permissions import (
     IfNonDangerousVocabularyOperation,
     IfVocabularyType,
 )
-from oarepo_vocabularies.ui.resources.components.deposit import (
-    DepositVocabularyOptionsComponent,
-)
 from oarepo_vocabularies.ui.resources.components.vocabulary_type_and_props import (
     VocabularyTypeAndProps,
 )
@@ -254,7 +251,6 @@ def app_config(app_config):
                 "cs": "slovnikovy typ ceskeho jazyka.",
                 "en": "czech language vocabulary type.",
             },
-            "dump_options": True,
             "props": {
                 "alpha3CodeNative": {
                     "description": "ISO 639-2 standard 3-letter language code",
@@ -731,7 +727,6 @@ def vocabularies_ui_resource_config(app):
     class Cfg(InvenioVocabulariesUIResourceConfig):
         api_service = "vocabularies"
         components: ClassVar[list] = [
-            DepositVocabularyOptionsComponent,
             VocabularyTypeAndProps,
         ]
 

@@ -249,7 +249,6 @@ OAREPO_PERMISSIONS_PRESETS = {"vocabularies": PermissionPolicy}
 **UI Components**:
 
 - `VocabularyTypeAndProps`: provides vocabulary type metadata to templates
-- `DepositVocabularyOptionsComponent`: vocabulary selector for deposits
 
 **Templates**:
 
