@@ -40,6 +40,8 @@ OAREPO_VOCABULARY_TYPE_SERVICE_CONFIG = VocabularyTypeServiceConfig
 OAREPO_VOCABULARY_TYPE_RESOURCE = VocabularyTypeResource
 OAREPO_VOCABULARY_TYPE_RESOURCE_CONFIG = VocabularyTypeResourceConfig
 
+OAREPO_VOCABULARY_NAMESPACE_URI: str | None = None
+"""The namespace URI which is used in RDF export for icon and props."""
 
 VOCABULARIES_FACET_CACHE_SIZE = 2048
 VOCABULARIES_FACET_CACHE_TTL = 60 * 24 * 24
