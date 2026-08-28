@@ -34,6 +34,7 @@ from oarepo_vocabularies.records.systemfields.relations import (
     ParentVocabularyItemRelation,
     ParentVocabularyPIDField,
 )
+from oarepo_vocabularies.records.systemfields.skos_mappings import SKOSMappingSystemField
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -77,6 +78,8 @@ class Vocabulary(
     # TODO: ICU suggest field for suggest hierarchy title
 
     custom_fields = DictField()
+
+    mappings = SKOSMappingSystemField()
 
 
 class VocabularyRelation(NamedTuple):

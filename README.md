@@ -125,6 +125,54 @@ vocab_service.create(
 )
 ```
 
+### SKOS Mappings
+
+Vocabulary items can declare SKOS mapping relations to concepts in other vocabularies/schemes (e.g. a local
+"languages" term mapped to an external authority like LOC or ISO 639). Mappings are stored on the `mappings`
+field as a list of objects validated by `MappingSchema`:
+
+- `identifier` (string, required): the identifier of the matched concept in the target scheme (e.g. a URI or code)
+- `scheme` (string, required): the name/identifier of the target scheme the mapping points to
+- `relation` (string, required): the SKOS relation type between this vocabulary item and the target concept.
+  Must be one of:
+  - `exactMatch`: this item matches the target exactly. Usable for both import and export.
+  - `broadMatch`: the target identifier is broader than this item. Usable for export only (not import).
+  - `narrowMatch`: the target identifier is narrower than this item. Usable for import only (not export).
+  - `closeMatch`: the target identifier is close to this item. Not usable for import or export.
+  - `relatedMatch`: the target identifier is related to this item. Not usable for import or export.
+
+**Setting mappings**:
+
+```python
+vocab_service.create(
+    system_identity,
+    {
+        "id": "eng",
+        "title": {"en": "English"},
+        "type": "languages",
+        "mappings": [
+            {"identifier": "http://id.loc.gov/vocabulary/iso639-2/eng", "scheme": "loc", "relation": "exactMatch"},
+            {"identifier": "eng-related-id", "scheme": "otherscheme", "relation": "relatedMatch"},
+        ],
+    },
+)
+```
+
+**Searching by mapping** - use the `skos` search parameter with `relation:identifier` or
+`relation:identifier@scheme` values (multiple values are OR-ed together):
+
+```python
+# Match items with an exact-match mapping to a given identifier in a given scheme
+vocab_service.search(
+    system_identity,
+    {"skos": ["exactMatch:http://id.loc.gov/vocabulary/iso639-2/eng@loc"]},
+    type="languages",
+)
+
+# scheme is optional - match on relation + identifier only
+vocab_service.search(system_identity, {"skos": ["exactMatch:http://id.loc.gov/vocabulary/iso639-2/eng"]})
+```
+
 ### Services
 
 **VocabulariesConfig** (`oarepo_vocabularies.services.config.VocabulariesConfig`):
@@ -159,6 +207,7 @@ vocab_service.create(
 - `updated_after`: filter by update timestamp
 - `ids`: list of (type, id) tuples for specific records
 - `source`: specify returned fields
+- `skos`: filter by SKOS mapping, values of form `relation:identifier` or `relation:identifier@scheme` (see [SKOS Mappings](#skos-mappings))
 
 **Sort Options**:
 
@@ -340,6 +389,29 @@ results = vocab_service.search(system_identity, {"h-ancestor": "eng"}, type="lan
 
 # Filter by level
 results = vocab_service.search(system_identity, {"h-level": 2}, type="languages")
+```
+
+### Create Vocabulary with SKOS Mappings
+
+```python
+vocab_service.create(
+    system_identity,
+    {
+        "id": "eng",
+        "title": {"en": "English"},
+        "type": "languages",
+        "mappings": [
+            {"identifier": "http://id.loc.gov/vocabulary/iso639-2/eng", "scheme": "loc", "relation": "exactMatch"},
+        ],
+    },
+)
+
+# Search for items mapped to a given identifier
+results = vocab_service.search(
+    system_identity,
+    {"skos": ["exactMatch:http://id.loc.gov/vocabulary/iso639-2/eng@loc"]},
+    type="languages",
+)
 ```
 
 ### Update Parent Relationship

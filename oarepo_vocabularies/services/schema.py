@@ -35,12 +35,39 @@ class HierarchySchema(ma.Schema):
     leaf = ma_fields.Boolean()
 
 
+class SKOSMappingSchema(ma.Schema):
+    """SKOS mapping schema."""
+
+    identifier = ma_fields.String(required=True)
+    scheme = ma_fields.String(required=True)
+    relation = ma_fields.String(
+        required=True,
+        validate=[ma.validate.OneOf(["exactMatch", "broadMatch", "narrowMatch", "closeMatch", "relatedMatch"])],
+    )
+    """Relation type for the mapping.
+
+    Meaning for the relation type:
+        - exactMatch: this vocabulary matches exactly with the target vocabulary.
+                      It can be used for both import and export.
+        - broadMatch: the identifier is broader than our vocabulary.
+                      It can be used for export and not for import.
+        - narrowMatch: the identifier is narrower than our vocabulary.
+                      It can be used for import and not for export.
+        - closeMatch: the identifier is close to our vocabulary.
+                      It can not be used for import or export.
+        - relatedMatch: the identifier is related to our vocabulary.
+                      It can not be used for import or export.
+    """
+
+
 class VocabularySchema(InvenioVocabularySchema):
     """Schema for vocabularies."""
 
     hierarchy = NestedAttribute(HierarchySchema, dump_only=True, attribute="hierarchy")
 
     custom_fields = NestedAttribute(partial(CustomFieldsSchema, fields_var="VOCABULARIES_CF"))
+
+    mappings = ma.fields.List(ma.fields.Nested(SKOSMappingSchema))
 
     @post_load(pass_original=True)
     def extract_parent_id(self, data: dict, original_data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
@@ -51,4 +78,11 @@ class VocabularySchema(InvenioVocabularySchema):
             data["parent"] = {"id": parent}
         else:
             data.pop("parent", None)
+        return data
+
+    @ma.post_dump
+    def replace_none_custom_fields(self, data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
+        """Replace None custom_fields with empty dict."""
+        if data.get("custom_fields") is None:
+            data["custom_fields"] = {}
         return data

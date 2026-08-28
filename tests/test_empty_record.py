@@ -35,5 +35,6 @@ def test_empty_record(app, vocabularies_ui_resource):
         "tags": [],
         "title": {},
         "type": "test",
+        "mappings": [],
         "updated": None,
     }
