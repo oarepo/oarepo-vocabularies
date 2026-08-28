@@ -25,6 +25,7 @@ from marshmallow import ValidationError, fields
 from marshmallow.validate import Validator
 
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
+from oarepo_vocabularies.resources.serializers.turtle import TurtleSerializer
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -71,4 +72,5 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
     response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {  # type: ignore[override]
         **InvenioVocabulariesResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
+        "text/turtle": ResponseHandler(TurtleSerializer(), headers=etag_headers),
     }
