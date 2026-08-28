@@ -6,7 +6,12 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-"""Tests for the application/ld+json (framed JSON-LD) response handler on the vocabularies resource."""
+"""Tests for the JSON-LD-specific framing behavior of the application/ld+json response handler.
+
+Basic read/redirect/search coverage lives in test_rdf_serializations.py, shared with the other
+RDF formats. This file only covers shape guarantees unique to framing: no @graph wrapper for a
+single record, inline-embedded relations, and omitted (not null) missing properties.
+"""
 
 from __future__ import annotations
 
@@ -15,11 +20,10 @@ from invenio_vocabularies.proxies import current_service as vocab_service
 from invenio_vocabularies.records.api import Vocabulary
 
 
-def test_jsonld_read(client, eng_with_mapping):
+def test_jsonld_flat_single_record(client, eng_with_mapping):
     response = client.get("/api/vocabularies/languages/eng", headers={"Accept": "application/ld+json"})
 
     assert response.status_code == 200
-    assert response.mimetype == "application/ld+json"
 
     doc = response.json
     # flat, framed object -- no @graph wrapper for a single record
@@ -38,29 +42,9 @@ def test_jsonld_read(client, eng_with_mapping):
     assert "broader" not in doc
 
 
-def test_jsonld_read_via_ui_content_negotiation(client, eng_with_mapping):
-    redirect_response = client.get(
-        "/vocabularies/languages/eng",
-        headers={"Accept": "application/ld+json"},
-        follow_redirects=False,
-    )
-    assert redirect_response.status_code == 302
-    assert "/api/vocabularies/languages/eng" in redirect_response.location
-
-    # follow the redirect explicitly, re-sending the Accept header, since the test client's
-    # follow_redirects does not resend custom request headers on the redirected request
-    response = client.get(redirect_response.location, headers={"Accept": "application/ld+json"})
-
-    assert response.status_code == 200
-    assert response.mimetype == "application/ld+json"
-
-    doc = response.json
-    assert "@graph" not in doc
-    assert doc["id"].endswith("/vocabularies/languages/eng")
-    assert doc["exactMatch"] == "https://schema.org/Book"
-
-
-def test_jsonld_search(app, db, cache, lang_type, vocab_cf, client, search_clear, clear_vocabulary_permissions):
+def test_jsonld_search_embeds_scheme_once_and_omits_missing_broader(
+    app, db, cache, lang_type, vocab_cf, client, search_clear, clear_vocabulary_permissions
+):
     vocab_service.create(
         system_identity,
         {"id": "eng", "title": {"en": "English"}, "type": "languages"},
@@ -79,7 +63,6 @@ def test_jsonld_search(app, db, cache, lang_type, vocab_cf, client, search_clear
     response = client.get("/api/vocabularies/languages", headers={"Accept": "application/ld+json"})
 
     assert response.status_code == 200
-    assert response.mimetype == "application/ld+json"
 
     doc = response.json
     # multiple records genuinely need @graph
