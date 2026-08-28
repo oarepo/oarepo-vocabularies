@@ -82,6 +82,16 @@ class Vocabulary(
     mappings = SKOSMappingSystemField()
 
 
+def represents_export(mapping: dict[str, str]) -> bool:
+    """Check if the mapping represents an export mapping (exactMatch or broaderMatch)."""
+    return mapping.get("relation") in ("exactMatch", "broadMatch")
+
+
+def represents_import(mapping: dict[str, str]) -> bool:
+    """Check if the mapping represents an import mapping (narrowMatch)."""
+    return mapping.get("relation") in ("exactMatch", "narrowMatch")
+
+
 class VocabularyRelation(NamedTuple):
     """A relation to a vocabulary field."""
 
