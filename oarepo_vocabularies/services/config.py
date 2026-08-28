@@ -26,6 +26,7 @@ from invenio_vocabularies.services.config import (
 from oarepo_runtime.services.records.links import pagination_endpoint_links_html
 
 from oarepo_vocabularies.records.api import Vocabulary
+from oarepo_vocabularies.services.components.rdm_compatibility_component import RDMCompatibilitySKOSComponent
 from oarepo_vocabularies.services.schema import VocabularySchema
 from oarepo_vocabularies.services.search import VocabularySearchOptions
 
@@ -148,6 +149,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
         ScanningOrderComponent,
+        RDMCompatibilitySKOSComponent,
     ]
     # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
     # As we can not have class property, we simulate it with a callable class
