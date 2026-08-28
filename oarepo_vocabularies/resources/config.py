@@ -34,6 +34,7 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
     parent = fields.List(fields.String(), data_key="h-parent", attribute="h-parent")
     ancestor = fields.List(fields.String(), data_key="h-ancestor", attribute="h-ancestor")
     level = fields.List(fields.Integer(), data_key="h-level", attribute="h-level")
+    skos = fields.List(fields.String(), data_key="skos", attribute="skos")
 
 
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
