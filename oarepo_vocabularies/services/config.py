@@ -23,7 +23,6 @@ from invenio_vocabularies.services import VocabulariesServiceConfig
 from invenio_vocabularies.services.config import (
     VocabularyTypesServiceConfig as InvenioVocabularyTypesServiceConfig,
 )
-from invenio_vocabularies.services.permissions import PermissionPolicy
 from oarepo_runtime.services.records.links import pagination_endpoint_links_html
 
 from oarepo_vocabularies.records.api import Vocabulary
@@ -32,6 +31,7 @@ from oarepo_vocabularies.services.search import VocabularySearchOptions
 
 from .components.keep_vocabulary_id import KeepVocabularyIdComponent
 from .components.scanning_order import ScanningOrderComponent
+from .permissions import VocabularyPermissionPolicy
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -107,7 +107,7 @@ class PermissionPolicyFactory:
         """Get the current permission policy class from the app config."""
         return cast(
             "type[RecordPermissionPolicy]",
-            obj_or_import_string(current_app.config.get("VOCABULARIES_PERMISSIONS_POLICY", PermissionPolicy)),
+            obj_or_import_string(current_app.config.get("VOCABULARIES_PERMISSIONS_POLICY", VocabularyPermissionPolicy)),
         )
 
     def __call__(self, *args: Any, **kwargs: Any) -> RecordPermissionPolicy:
