@@ -55,7 +55,8 @@ def as_graph(data: dict[str, Any]) -> Graph:
         a proprietary oarepo-vocabularies namespace, so the record (including its presentation
         logic) can be reconstructed by another oarepo-vocabularies instance. These are not
         deduplicated against the SKOS-standard triples derived from "mappings" -- some overlap
-        is expected and ignored on import.
+        is expected and ignored on import. The record's hierarchy parent/ancestors (if any) are
+        also included as skos:broader triples pointing to the ancestor concepts.
     """
     vocabulary_type = data["type"]
     pid_value = data["id"]
@@ -104,5 +105,15 @@ def as_graph(data: dict[str, Any]) -> Graph:
         predicate = _SKOS_MAPPING_PREDICATES.get(mapping.get("relation"))
         if identifier and predicate is not None:
             graph.add((subject, predicate, URIRef(identifier)))
+
+    for ancestor_id in (data.get("hierarchy") or {}).get("ancestors") or []:
+        ancestor = URIRef(
+            invenio_url_for(
+                "oarepo_vocabularies_ui.record_detail",
+                type=vocabulary_type,
+                pid_value=ancestor_id,
+            )
+        )
+        graph.add((subject, SKOS.broader, ancestor))
 
     return graph
