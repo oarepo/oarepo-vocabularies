@@ -8,7 +8,6 @@ import { withState, AppContext } from "react-searchkit";
 import { I18nString } from "@js/oarepo_ui/forms";
 import { SearchConfigurationContext } from "@js/invenio_search_ui/components";
 import { getLocalizedValue } from "@js/oarepo_ui/util";
-import { VocabularyItemIdentifiers } from "./VocabularyItemIdentifiers";
 import { VocabularyItemAffiliations } from "./VocabularyItemAffiliations";
 
 export const VocabularyItemPropsTable = (props) => {
@@ -41,7 +40,6 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
     hierarchy,
     links,
     funder,
-    identifiers,
     affiliations,
   } = result;
   const ancestorTitlesWithId = hierarchy?.title?.map(
@@ -93,7 +91,6 @@ export const VocabularyResultsListItemComponent = ({ result, appName }) => {
         </Item.Content>
         <Item.Meta>
           {funder?.id && <Label>{funder?.name || funder.id}</Label>}
-          <VocabularyItemIdentifiers identifiers={identifiers} />
           <VocabularyItemAffiliations affiliations={affiliations} />
         </Item.Meta>
         <Overridable

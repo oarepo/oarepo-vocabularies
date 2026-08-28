@@ -120,11 +120,11 @@ msgstr "Nepreferované názvy (Česky)"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:24
 msgid "vocabulary.hint_cs"
-msgstr ""
+msgstr "Poznámka (Česky)"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:27
 msgid "vocabulary.hint_en"
-msgstr ""
+msgstr "Poznámka (Anglicky)"
 
 #: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:34
 msgid "vocabulary.tags"
@@ -530,9 +530,114 @@ msgid ""
 "\n"
 "      The vocabulary type you are trying to access does not exist in repository (%(sitename)s)."
 msgstr ""
+"\n"
+"      Typ slovníku, ke kterému se pokoušíte přistoupit, neexistuje v repozitáři (%(sitename)s)."
 
 msgid "Choose Items"
 msgstr "Vyberte položky"
 
 msgid "Search..."
 msgstr "Hledat..."
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/resources/resource.py:59
+msgid "User does not have permission to create vocabulary item."
+msgstr "Uživatel nemá oprávnění k vytvoření položky slovníku."
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/resources/resource.py:130
+msgid "User does not have permission to update vocabulary item."
+msgstr "Uživatel nemá oprávnění k úpravě položky slovníku."
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesBreadcrumb.jinja:3
+msgid "unknown"
+msgstr "Neznámá položka"
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesDetail.jinja:44
+msgid "Record details"
+msgstr "Detaily záznamu"
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesForm.jinja:20
+msgid "New item"
+msgstr "Nová položka"
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:11
+msgid "id"
+msgstr "ID"
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:33
+msgid "vocabulary.crosswalks"
+msgstr "Mapování z externích systémů"
+
+msgid "e.g., wikidata, loc, bnf"
+msgstr "např. wikidata, loc, bnf"
+
+msgid "Identifier value"
+msgstr "Hodnota identifikátoru"
+
+msgid "Add identifier"
+msgstr "Přidat identifikátor"
+
+msgid "Crosswalks"
+msgstr "Mapování"
+
+msgid "Add crosswalk"
+msgstr "Přidat mapování"
+
+msgid "Vocabulary item saved successfully. Redirecting..."
+msgstr "Položka slovníku byla úspěšně uložena. Probíhá přesměrování..."
+
+msgid "Error saving vocabulary item"
+msgstr "Chyba při ukládání položky slovníku"
+
+msgid "Vocabulary item could not be saved due to validation errors: "
+msgstr "Položku slovníku nebylo možné uložit kvůli validačním chybám: "
+
+msgid "Crosswalks from external systems:"
+msgstr "Mapování z externích systémů:"
+
+msgid "IRI of the scheme"
+msgstr "IRI schématu"
+
+msgid "Identifier value (mostly as an IRI)"
+msgstr "Hodnota identifikátoru (většinou jako IRI)"
+
+msgid "Add identifiers for this vocabulary item in various external systems."
+msgstr ""
+"Přidejte identifikátory této položky slovníku v různých externích systémech."
+
+msgid "Crosswalk value"
+msgstr "Hodnota mapování"
+
+msgid ""
+"Add crosswalk mappings to equivalent terms in other vocabularies or systems."
+msgstr ""
+"Přidejte mapování na ekvivalentní termíny v jiných slovnících nebo "
+"systémech."
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:48
+msgid "Properties"
+msgstr "Vlastnosti"
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:53
+msgid "Property"
+msgstr "Vlastnost"
+
+#: /Users/m/Workspaces/repositories/feat-ccmm/oarepo-vocabularies/oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:54
+msgid "Value"
+msgstr "Hodnota"
+
+msgid "Scheme"
+msgstr "Schéma"
+
+msgid "Identifier"
+msgstr "Identifikátor"
+
+msgid ""
+"Add external identifiers that this vocabulary item maps to. The mapping is "
+"one-way: the external identifier may not map back to this item."
+msgstr ""
+
+msgid ""
+"Add crosswalk mappings from vocabulary items in other systems to this item. "
+"Mappings are one-way: the external item maps to this item, but this item may"
+" not fully map back to it."
+msgstr ""

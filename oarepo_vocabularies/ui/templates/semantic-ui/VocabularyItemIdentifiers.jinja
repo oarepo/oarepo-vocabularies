@@ -3,8 +3,14 @@
 {% if identifiers and identifiers|length > 0 %}
   <div>
     {% for identifier in identifiers %}
-      <span title="{{ identifier.scheme }}">{{ identifier.identifier }}</span>
-      <ClipboardCopyButton copyText={identifier.identifier} />
+      <div>
+        {% if identifier.identifier.startswith('http') %}
+          <a href="{{ identifier.identifier }}" target="_blank" rel="noopener noreferrer" title="{{ identifier.scheme }}">{{ identifier.identifier }}</a>
+        {% else %}
+          <span title="{{ identifier.scheme }}">{{ identifier.identifier }}</span>
+        {% endif %}
+        <ClipboardCopyButton copyText="{{ identifier.identifier }}" />
+      </div>
     {% endfor %}
   </div>
 {% endif %}

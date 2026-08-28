@@ -11,7 +11,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 import marshmallow as ma
 from flask import current_app
@@ -43,6 +43,7 @@ class LocalizedDateTime(ma.fields.Field):
             "full": FormatDate(attribute=attribute, format="full"),
         }
 
+    @override
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:
         return {
             f"{self.attribute}_l10n_{fmt}": formatter._serialize(value, attr, obj, **kwargs)  # noqa: SLF001
@@ -53,10 +54,12 @@ class LocalizedDateTime(ma.fields.Field):
 class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
     """Custom fields schema for UI."""
 
+    @override
     def _serialize(self, obj: Any, **kwargs: Any) -> Any:
         self._schema.context.update(self.context)
         return super()._serialize(obj, **kwargs)
 
+    @override
     def _deserialize(self, data: Mapping[str, Any] | Iterable[Mapping[str, Any]], **kwargs: Any) -> Any:
         self._schema.context.update(self.context)
         return super()._deserialize(data, **kwargs)
@@ -65,7 +68,8 @@ class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
 class VocabularyI18nStrUIField(ma_fields.Field):
     """A Marshmallow field that provides localized string from i18n dict."""
 
-    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> Any:  # noqa: ARG002
+    @override
+    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> Any:
         if not value:
             return None
         locale = self.get_locale()

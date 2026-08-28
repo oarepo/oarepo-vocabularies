@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from flask import current_app
 from invenio_records_resources.services import (
@@ -35,18 +35,21 @@ class VocabularyTypeService(InvenioVocabularyTypeService):
     """Vocabulary types service."""
 
     @property
+    @override
     def schema(self) -> ServiceSchemaWrapper:
         """Returns the data schema instance."""
         return ServiceSchemaWrapper(self, schema=self.config.schema)
 
     @property
+    @override
     def links_item_tpl(self) -> LinksTemplate:
         """Item links template."""
         return LinksTemplate(
             self.config.vocabularies_listing_item,
         )
 
-    def search(self, identity: Identity, params: dict | None = None) -> RecordList:  # noqa: ARG002 # type: ignore[override]
+    @override
+    def search(self, identity: Identity, params: dict | None = None) -> RecordList:  # type: ignore[override]
         """Search for vocabulary types entries."""
         self.require_permission(identity, "list_vocabularies")
 

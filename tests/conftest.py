@@ -58,8 +58,7 @@ except AttributeError:
 
 import builtins
 import contextlib
-from collections import namedtuple
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Self
 
 import pytest
 from flask_principal import Identity, Need, UserNeed
@@ -314,7 +313,7 @@ def create_app(instance_path, entry_points):
 
 @pytest.fixture(scope="module")
 def identity_simple():
-    """Simple identity fixture."""  # noqa: D401
+    """Return a simple identity fixture."""
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(Need(method="system_role", value="any_user"))
@@ -323,7 +322,7 @@ def identity_simple():
 
 @pytest.fixture(scope="module")
 def identity():
-    """Simple identity to interact with the service."""  # noqa: D401
+    """Return a simple identity to interact with the service."""
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(any_user)
@@ -333,7 +332,7 @@ def identity():
 
 @pytest.fixture(scope="module")
 def authenticated_identity():
-    """Simple identity to interact with the service."""  # noqa: D401
+    """Return an authenticated identity to interact with the service."""
     i = Identity(2)
     i.provides.add(UserNeed(2))
     i.provides.add(authenticated_user)
@@ -382,7 +381,7 @@ def ror_authority_type(db):
 
 @pytest.fixture
 def lang_data():
-    """Example data."""  # noqa: D401
+    """Return example data."""
     return {
         "id": "eng",
         "title": {"en": "English", "da": "Engelsk", "cs": "Angličtina"},
@@ -399,7 +398,7 @@ def lang_data():
 
 @pytest.fixture
 def lang_data_child():
-    """Example data."""  # noqa: D401
+    """Return example data for child."""
     return {
         "id": "eng.US",
         "title": {
@@ -415,7 +414,7 @@ def lang_data_child():
 
 @pytest.fixture
 def lang_data2(lang_data):
-    """Example data for testing invalid cases."""  # noqa: D401
+    """Return example data for testing invalid cases."""
     data = dict(lang_data)
     data["id"] = "new"
     return data
@@ -423,7 +422,7 @@ def lang_data2(lang_data):
 
 @pytest.fixture
 def lang_data3():
-    """Testing data."""  # noqa: D401
+    """Return testing data."""
     vocabulary_data = {
         "a": {
             "id": "a",
@@ -602,8 +601,6 @@ def logged_in_client(db, client, user):
     return client
 
 
-# FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30  # noqa: FIX001, TD001
-# Without this, success of test depends on the tests order
 @pytest.fixture
 def cache():
     """Empty cache."""
@@ -678,7 +675,11 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         },
     )
     Vocabulary.index.refresh()
-    TN = namedtuple("TN", "node,children")  # noqa: PYI024
+
+    class TN(NamedTuple):
+        node: Any
+        children: list[Self]
+
     return [
         TN(
             parent.data,

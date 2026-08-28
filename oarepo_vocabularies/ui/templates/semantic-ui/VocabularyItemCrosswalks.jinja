@@ -1,0 +1,16 @@
+{# def crosswalks=[] #}
+
+{% if crosswalks and crosswalks|length > 0 %}
+  <div>
+    {% for crosswalk in crosswalks %}
+      <div>
+        {% if crosswalk.identifier.startswith('http') %}
+          <a href="{{ crosswalk.identifier }}" target="_blank" rel="noopener noreferrer" title="{{ crosswalk.scheme }}">{{ crosswalk.identifier }}</a>
+        {% else %}
+          <span title="{{ crosswalk.scheme }}">{{ crosswalk.identifier }}</span>
+        {% endif %}
+        <ClipboardCopyButton copyText="{{ crosswalk.identifier }}" />
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

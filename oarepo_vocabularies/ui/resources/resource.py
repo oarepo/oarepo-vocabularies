@@ -47,13 +47,15 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     """Invenio Vocabularies UI Resource."""
 
     @pass_route_args("vocabulary_type")
+    @override
     def search(self, *args: Any, **kwargs: Any) -> Any:
         """Search records."""
         return super().search(*args, **kwargs)
 
     @login_required
     @pass_route_args("vocabulary_type")
-    def create(self, *_args: Any, vocabulary_type: str | None = None, **kwargs: Any) -> Any:
+    @override
+    def deposit_create(self, *_args: Any, vocabulary_type: str | None = None, **kwargs: Any) -> Any:
         """Create a new vocabulary item."""
         if not self.api_service.check_permission(g.identity, "create"):
             raise PermissionDeniedError(_("User does not have permission to create vocabulary item."))
@@ -110,7 +112,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
         return current_oarepo_ui.catalog.render(
             self.get_jinjax_macro(
-                "create",
+                "deposit_create",
             ),
             **render_kwargs,
         )
@@ -270,6 +272,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ),
         )
 
+    @override
     def empty_record(self, vocabulary_type: str | None = None, **_kwargs: Any) -> dict[str, Any]:
         """Create an empty record with type and tags initialized."""
         record = cast("dict[str, Any]", dump_empty(self.api_config.schema))

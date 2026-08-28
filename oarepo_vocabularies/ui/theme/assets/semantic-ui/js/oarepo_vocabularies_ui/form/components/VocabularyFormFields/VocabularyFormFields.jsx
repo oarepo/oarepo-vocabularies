@@ -3,6 +3,7 @@ import { TextField, MultiInput, FieldLabel } from "react-invenio-forms";
 import {
   PropFieldsComponent,
   VocabularyMultilingualInputField,
+  GenericIdentifiersField,
 } from "../../components";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
@@ -44,6 +45,30 @@ export const VocabularyFormFields = () => {
             "If you dont provide ID, random ID will be assigned."
           )}
           required
+        />
+        <GenericIdentifiersField
+          fieldPath="identifiers"
+          selectOnBlur={false}
+          validateOnBlur
+          label={i18next.t("Identifiers")}
+          labelIcon={null}
+          addButtonLabel={i18next.t("Add identifier")}
+          identifierPlaceholder={i18next.t("Identifier value")}
+          helpText={i18next.t(
+            "Add external identifiers that this vocabulary item maps to. The mapping is one-way: the external identifier may not map back to this item."
+          )}
+        />
+        <GenericIdentifiersField
+          fieldPath="crosswalks"
+          selectOnBlur={false}
+          validateOnBlur
+          label={i18next.t("Crosswalks")}
+          labelIcon={null}
+          addButtonLabel={i18next.t("Add crosswalk")}
+          identifierPlaceholder={i18next.t("Crosswalk value")}
+          helpText={i18next.t(
+            "Add crosswalk mappings from vocabulary items in other systems to this item. Mappings are one-way: the external item maps to this item, but this item may not fully map back to it."
+          )}
         />
         <MultiInput
           fieldPath="tags"

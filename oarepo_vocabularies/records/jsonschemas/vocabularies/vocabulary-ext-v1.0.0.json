@@ -61,6 +61,31 @@
     "custom_fields": {
       "type": "object",
       "description": "Configured additional metadata"
+    },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["identifier", "scheme", "relation"],
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "scheme": {
+            "type": "string"
+          },
+          "relation": {
+            "type": "string",
+            "enum": [
+              "exactMatch",
+              "broadMatch",
+              "narrowMatch",
+              "closeMatch",
+              "relatedMatch"
+            ]
+          }
+        }
+      }
     }
   }
 }
