@@ -6,7 +6,7 @@
 # oarepo-vocabularies is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-"""Tests for the text/turtle response handler on the vocabularies resource."""
+"""Tests for the application/n-triples response handler on the vocabularies resource."""
 
 from __future__ import annotations
 
@@ -17,23 +17,23 @@ from rdflib import Graph
 from rdflib.namespace import SKOS
 
 
-def test_turtle_read(client, eng_with_mapping):
-    response = client.get("/api/vocabularies/languages/eng", headers={"Accept": "text/turtle"})
+def test_ntriples_read(client, eng_with_mapping):
+    response = client.get("/api/vocabularies/languages/eng", headers={"Accept": "application/n-triples"})
 
     assert response.status_code == 200
-    assert response.mimetype == "text/turtle"
+    assert response.mimetype == "application/n-triples"
 
     graph = Graph()
-    graph.parse(data=response.get_data(as_text=True), format="turtle")
+    graph.parse(data=response.get_data(as_text=True), format="nt")
 
     subject = next(s for s in graph.subjects() if str(s).endswith("/vocabularies/languages/eng"))
     assert (subject, SKOS.exactMatch, None) in graph
 
 
-def test_turtle_read_via_ui_content_negotiation(client, eng_with_mapping):
+def test_ntriples_read_via_ui_content_negotiation(client, eng_with_mapping):
     redirect_response = client.get(
         "/vocabularies/languages/eng",
-        headers={"Accept": "text/turtle"},
+        headers={"Accept": "application/n-triples"},
         follow_redirects=False,
     )
     assert redirect_response.status_code == 302
@@ -41,19 +41,19 @@ def test_turtle_read_via_ui_content_negotiation(client, eng_with_mapping):
 
     # follow the redirect explicitly, re-sending the Accept header, since the test client's
     # follow_redirects does not resend custom request headers on the redirected request
-    response = client.get(redirect_response.location, headers={"Accept": "text/turtle"})
+    response = client.get(redirect_response.location, headers={"Accept": "application/n-triples"})
 
     assert response.status_code == 200
-    assert response.mimetype == "text/turtle"
+    assert response.mimetype == "application/n-triples"
 
     graph = Graph()
-    graph.parse(data=response.get_data(as_text=True), format="turtle")
+    graph.parse(data=response.get_data(as_text=True), format="nt")
 
     subject = next(s for s in graph.subjects() if str(s).endswith("/vocabularies/languages/eng"))
     assert (subject, SKOS.exactMatch, None) in graph
 
 
-def test_turtle_search(app, db, cache, lang_type, vocab_cf, client, search_clear, clear_vocabulary_permissions):
+def test_ntriples_search(app, db, cache, lang_type, vocab_cf, client, search_clear, clear_vocabulary_permissions):
     vocab_service.create(
         system_identity,
         {"id": "eng", "title": {"en": "English"}, "type": "languages"},
@@ -64,13 +64,13 @@ def test_turtle_search(app, db, cache, lang_type, vocab_cf, client, search_clear
     )
     Vocabulary.index.refresh()
 
-    response = client.get("/api/vocabularies/languages", headers={"Accept": "text/turtle"})
+    response = client.get("/api/vocabularies/languages", headers={"Accept": "application/n-triples"})
 
     assert response.status_code == 200
-    assert response.mimetype == "text/turtle"
+    assert response.mimetype == "application/n-triples"
 
     graph = Graph()
-    graph.parse(data=response.get_data(as_text=True), format="turtle")
+    graph.parse(data=response.get_data(as_text=True), format="nt")
 
     subjects = {str(s) for s in graph.subjects(SKOS.notation, None)}
     assert any(s.endswith("/vocabularies/languages/eng") for s in subjects)

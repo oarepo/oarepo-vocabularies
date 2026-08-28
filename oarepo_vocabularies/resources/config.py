@@ -23,6 +23,7 @@ from invenio_vocabularies.resources.config import (
 from marshmallow import fields
 
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
+from oarepo_vocabularies.resources.serializers.ntriples import NTriplesSerializer
 from oarepo_vocabularies.resources.serializers.turtle import TurtleSerializer
 
 if TYPE_CHECKING:
@@ -47,4 +48,5 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
         **InvenioVocabulariesResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
         "text/turtle": ResponseHandler(TurtleSerializer(), headers=etag_headers),
+        "application/n-triples": ResponseHandler(NTriplesSerializer(), headers=etag_headers),
     }

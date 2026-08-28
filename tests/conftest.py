@@ -551,6 +551,29 @@ def lang_data_many(lang_type, lang_data, service, identity):
 
 
 @pytest.fixture
+def eng_with_mapping(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
+    """Create a language vocabulary item "eng" with a SKOS exactMatch mapping to schema.org."""
+    from invenio_access.permissions import system_identity
+    from invenio_vocabularies.proxies import current_service as vocab_service
+
+    return vocab_service.create(
+        system_identity,
+        {
+            "id": "eng",
+            "title": {"en": "English", "cs": "Anglictina"},
+            "type": "languages",
+            "mappings": [
+                {
+                    "identifier": "https://schema.org/Book",
+                    "scheme": "https://schema.org/",
+                    "relation": "exactMatch",
+                },
+            ],
+        },
+    )
+
+
+@pytest.fixture
 def user(app, db):
     """Create example user."""
     with db.session.begin_nested():
