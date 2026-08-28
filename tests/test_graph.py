@@ -127,3 +127,50 @@ def test_as_graph_no_mappings(app, db, cache, lang_type, vocab_cf, search_clear,
         if p in (SKOS.exactMatch, SKOS.broadMatch, SKOS.narrowMatch, SKOS.closeMatch, SKOS.relatedMatch)
     }
     assert mapping_predicates == set()
+
+
+def test_as_graph_hierarchy_broader(app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions):
+    vocab_service.create(
+        system_identity,
+        {"id": "eng", "title": {"en": "English"}, "type": "languages"},
+    )
+    vocab_service.create(
+        system_identity,
+        {
+            "id": "eng.US",
+            "title": {"en": "English (US)"},
+            "type": "languages",
+            "hierarchy": {"parent": "eng"},
+        },
+    )
+    grand_child = vocab_service.create(
+        system_identity,
+        {
+            "id": "eng.US.TX",
+            "title": {"en": "English (US, Texas)"},
+            "type": "languages",
+            "hierarchy": {"parent": "eng.US"},
+        },
+    )
+
+    graph = as_graph(grand_child.to_dict())
+
+    subject = next(s for s in graph.subjects() if str(s).endswith("/vocabularies/languages/eng.US.TX"))
+    broader = {str(o) for o in graph.objects(subject, SKOS.broader)}
+    assert broader == {
+        "https://127.0.0.1:5000/vocabularies/languages/eng.US",
+        "https://127.0.0.1:5000/vocabularies/languages/eng",
+    }
+
+
+def test_as_graph_no_hierarchy_no_broader(
+    app, db, cache, lang_type, vocab_cf, search_clear, clear_vocabulary_permissions
+):
+    result = vocab_service.create(
+        system_identity,
+        {"id": "eng", "title": {"en": "English"}, "type": "languages"},
+    )
+    graph = as_graph(result.to_dict())
+
+    subject = next(s for s in graph.subjects() if str(s).endswith("/vocabularies/languages/eng"))
+    assert (subject, SKOS.broader, None) not in graph
