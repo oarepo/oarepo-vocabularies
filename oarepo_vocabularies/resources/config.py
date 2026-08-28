@@ -25,6 +25,7 @@ from marshmallow import ValidationError, fields
 from marshmallow.validate import Validator
 
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
+from oarepo_vocabularies.resources.serializers.jsonld import JsonLdSerializer
 from oarepo_vocabularies.resources.serializers.ntriples import NTriplesSerializer
 from oarepo_vocabularies.resources.serializers.turtle import TurtleSerializer
 
@@ -75,4 +76,5 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
         "text/turtle": ResponseHandler(TurtleSerializer(), headers=etag_headers),
         "application/n-triples": ResponseHandler(NTriplesSerializer(), headers=etag_headers),
+        "application/ld+json": ResponseHandler(JsonLdSerializer(), headers=etag_headers),
     }
