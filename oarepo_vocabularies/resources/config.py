@@ -27,6 +27,7 @@ from marshmallow.validate import Validator
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
 from oarepo_vocabularies.resources.serializers.jsonld import JsonLdSerializer
 from oarepo_vocabularies.resources.serializers.ntriples import NTriplesSerializer
+from oarepo_vocabularies.resources.serializers.rdfxml import RdfXmlSerializer
 from oarepo_vocabularies.resources.serializers.turtle import TurtleSerializer
 
 if TYPE_CHECKING:
@@ -77,4 +78,5 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
         "text/turtle": ResponseHandler(TurtleSerializer(), headers=etag_headers),
         "application/n-triples": ResponseHandler(NTriplesSerializer(), headers=etag_headers),
         "application/ld+json": ResponseHandler(JsonLdSerializer(), headers=etag_headers),
+        "application/rdf+xml": ResponseHandler(RdfXmlSerializer(), headers=etag_headers),
     }
