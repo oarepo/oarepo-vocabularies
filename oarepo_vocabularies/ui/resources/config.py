@@ -109,6 +109,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         **RecordsUIResourceConfig.response_handlers,
         "text/turtle": None,
         "application/n-triples": None,
+        "application/ld+json": None,
         "application/json": None,
     }
     components: ClassVar[list[UIResourceComponent]] = [  # type: ignore[override]
