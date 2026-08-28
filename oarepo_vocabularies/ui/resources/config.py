@@ -102,6 +102,15 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         **RecordsUIResourceConfig.error_handlers,
         VocabularyTypeDoesNotExistError: "vocabulary_type_does_not_exist",
     }
+    # Accepted here only so content negotiation lets the request through; the actual
+    # response is a redirect to the matching API endpoint (see vocabulary_content_negotiation),
+    # so no real response handler is needed for these mimetypes.
+    response_handlers: ClassVar[Mapping[str, Any]] = {  # type: ignore[override]
+        **RecordsUIResourceConfig.response_handlers,
+        "text/turtle": None,
+        "application/n-triples": None,
+        "application/json": None,
+    }
     components: ClassVar[list[UIResourceComponent]] = [  # type: ignore[override]
         PermissionsComponent,
         VocabularySearchComponent,
