@@ -36,4 +36,6 @@ def test_empty_record(app, vocabularies_ui_resource):
         "title": {},
         "type": "test",
         "updated": None,
+        "identifiers": [],
+        "crosswalks": [],
     }

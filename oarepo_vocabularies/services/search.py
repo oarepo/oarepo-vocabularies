@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import partial
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, override
 
 from flask_babel import get_locale as get_current_locale
 from invenio_i18n import get_locale
@@ -90,7 +90,8 @@ class VocabularyQueryParser(QueryParser):
 class SourceParam(ParamInterpreter):
     """Evaluate the 'q' or 'suggest' parameter."""
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+    @override
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # type: ignore[override]
         """Apply the source parameter."""
         source = params.get("source")
         if not source:
@@ -112,7 +113,8 @@ class UpdatedAfterParam(ParamInterpreter):
         """Create a new filter parameter."""
         return partial(cls, param, field)
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+    @override
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # type: ignore[override]
         """Apply a filter to get only records for a specific type."""
         # Pop because we don't want it to show up in links.
         # TODO: only pop if needed.
@@ -140,7 +142,8 @@ class UpdatedAfterParam(ParamInterpreter):
 class VocabularyIdsParam(ParamInterpreter):
     """Evaluate type filter."""
 
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # noqa: ARG002 # type: ignore[override]
+    @override
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # type: ignore[override]
         """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
@@ -169,6 +172,10 @@ class VocabularySearchOptions(InvenioSearchOptions):
         FilterParam.factory(param="h-parent", field="hierarchy.parent"),
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
         FilterParam.factory(param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"),
+        FilterParam.factory(param="identifier", field="identifiers.identifier"),
+        FilterParam.factory(param="identifier-scheme", field="identifiers.scheme"),
+        FilterParam.factory(param="crosswalk", field="crosswalks.identifier"),
+        FilterParam.factory(param="crosswalk-scheme", field="crosswalks.scheme"),
         SourceParam,
         *InvenioSearchOptions.params_interpreters_cls,
     ]

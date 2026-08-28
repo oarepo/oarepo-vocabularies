@@ -27,6 +27,7 @@ from invenio_vocabularies.records.systemfields.relations import CustomFieldsRela
 from oarepo_vocabularies.records.systemfields.hierarchy_system_field import (
     HierarchySystemField,
 )
+from oarepo_vocabularies.records.systemfields.mappings import MappingsSystemField
 from oarepo_vocabularies.records.systemfields.parent_system_field import (
     ParentSystemField,
 )
@@ -78,6 +79,8 @@ class Vocabulary(
 
     custom_fields = DictField()
 
+    mappings = MappingsSystemField()
+
 
 class VocabularyRelation(NamedTuple):
     """A relation to a vocabulary field."""
@@ -103,4 +106,4 @@ def find_vocabulary_relations(record: RecordItem) -> Iterable[VocabularyRelation
             except AttributeError:
                 continue
             if isinstance(pid_context, VocabularyPIDFieldContext):
-                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa: SLF001 # type: ignore[attr-defined]
+                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # type: ignore[attr-defined]  # noqa: SLF001

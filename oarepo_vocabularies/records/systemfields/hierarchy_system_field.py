@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from invenio_db import db
 from invenio_records.systemfields import SystemField
@@ -118,9 +118,9 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
             return self
 
         if not hasattr(record, "_hierarchy_cache"):
-            record._hierarchy_cache = HierarchyObject(record)  # noqa: SLF001 # type: ignore[attr-defined]
+            record._hierarchy_cache = HierarchyObject(record)  # type: ignore[attr-defined]  # noqa: SLF001
 
-        return record._hierarchy_cache  # noqa: SLF001 # type: ignore[attr-defined]
+        return record._hierarchy_cache  # type: ignore[attr-defined]  # noqa: SLF001
 
     @property
     def mapping(self) -> dict[str, Any]:
@@ -190,7 +190,8 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
                 if previous_parent_hierarchy is not None:
                     previous_parent_hierarchy.update_leaf_status()
 
-    def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
+    @override
+    def pre_delete(self, record: Record, force: bool = False) -> None:
         """Fix the parent leaf status and update children hierarchy on delete."""
         # update current record to have no parent
         hierarchy_entry = VocabularyHierarchy.query.get(record.id)
@@ -206,7 +207,8 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         if parent_hierarchy_metadata is not None:
             parent_hierarchy_metadata.update_leaf_status()
 
-    def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:  # noqa: ARG002
+    @override
+    def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:
         """Add the hierarchy data to the record before dumping."""
         hierarchy_obj = self.__get__(record)  # type: ignore[arg-type]
         data[self.key] = hierarchy_obj.to_dict()

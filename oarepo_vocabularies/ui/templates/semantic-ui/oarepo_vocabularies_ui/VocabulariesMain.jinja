@@ -29,6 +29,12 @@
         <VocabularyItemIdentifiers identifiers={{record.identifiers}} />
       </dd>
     {% endif %}
+    {% if record.crosswalks %}
+      <dt>{{_("vocabulary.crosswalks")}}</dt>
+      <dd>
+        <VocabularyItemCrosswalks crosswalks={{record.crosswalks}} />
+      </dd>
+    {% endif %}
     {% if record.affiliations %}
     <dt>{{_("vocabulary.affiliations")}}</dt>
     <dd>
@@ -38,14 +44,29 @@
     </dd>
   {% endif %}
 
-
-
-    {% for prop, val in (record.props or {}).items() %}
-     {% if val %}
-      <dt>{{vocabularyMetadata.get("props", {}).get("label", None) or _("vocabulary." + prop)}}</dt>
-      <dd>{{val}}</dd>
-     {% endif %}
-    {% endfor %}
+  {% if record.props and record.props | length > 0 %}
+    <dt>{{_('Properties')}}</dt>
+    <dd>
+      <table class="ui celled table">
+        <thead>
+          <tr>
+            <th style="padding: 0.8em 1em;">{{_('Property')}}</th>
+            <th style="padding: 0.8em 1em;">{{_('Value')}}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for prop, val in record.props.items() %}
+         {% if val %}
+          <tr>
+            <td style="padding: 0.8em 1em;"><strong>{{prop}}</strong></td>
+            <td style="padding: 0.8em 1em;">{{val}}</td>
+          </tr>
+         {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </dd>
+  {% endif %}
 
     <dt>{{_('Created')}} </dt>
     <dd>{{ui_value(d.created, "l10n_short")}}</dd>

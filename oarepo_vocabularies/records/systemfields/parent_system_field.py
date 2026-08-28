@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from invenio_records.systemfields import SystemField
 from marshmallow import ValidationError
@@ -97,15 +97,16 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
             return self
 
         if not hasattr(record, "_parent_cache"):
-            record._parent_cache = ParentObject(self.key, record)  # noqa: SLF001 # type: ignore[attr-defined]
+            record._parent_cache = ParentObject(self.key, record)  # type: ignore[attr-defined]  # noqa: SLF001
 
-        return record._parent_cache  # noqa: SLF001 # type: ignore[attr-defined]
+        return record._parent_cache  # type: ignore[attr-defined]  # noqa: SLF001
 
     def __set__(self, record: Record, value: str | None):  # type: ignore[override]
         """Set the parent field value."""
         self.__get__(record).set(value if value is not None else None)
 
-    def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
+    @override
+    def pre_delete(self, record: Record, force: bool = False) -> None:
         """Handle deletion by setting correct parent to children in VocabularyHierarchy table."""
         self_uuid = record.id
 

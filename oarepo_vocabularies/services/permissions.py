@@ -11,7 +11,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, cast
 
+from invenio_administration.generators import Administration
 from invenio_search.engine import dsl
+from invenio_vocabularies.services.permissions import PermissionPolicy as InvenioVocabularyPermissionPolicy
 from oarepo_runtime.services.generators import ConditionalGenerator
 
 if TYPE_CHECKING:
@@ -92,3 +94,10 @@ class IfNonDangerousVocabularyOperation(ConditionalGenerator):
     def _query_instate(self, **context: Any) -> dsl.query.Query:  # noqa: ARG002
         # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
         return dsl.Q("match_all")
+
+
+class VocabularyPermissionPolicy(InvenioVocabularyPermissionPolicy):
+    """Permission policy for vocabularies that allows administrators to create and update vocabularies."""
+
+    can_create = (*InvenioVocabularyPermissionPolicy.can_create, Administration())
+    can_update = (*InvenioVocabularyPermissionPolicy.can_update, Administration())

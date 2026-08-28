@@ -84,12 +84,12 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     templates: Mapping[str, str | None] = {
         "record_detail": "oarepo_vocabularies_ui.VocabulariesDetail",
         "search": "oarepo_vocabularies_ui.VocabulariesSearch",
-        "create": "oarepo_vocabularies_ui.VocabulariesForm",
+        "deposit_create": "oarepo_vocabularies_ui.VocabulariesForm",
         "deposit_edit": "oarepo_vocabularies_ui.VocabulariesForm",
     }
 
     routes: Mapping[str, str] = {
-        "create": "/<type>/_new",
+        "deposit_create": "/<type>/_new",
         "deposit_edit": "/<type>/<pid_value>/edit",
         "search": "/<type>/",
         "record_detail": "/<type>/<pid_value>",
@@ -149,11 +149,6 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
                 vars=lambda record, vars_: vars_.update({"type": record.data["type"]}),
                 params=["type"],
             ),
-            "create": EndpointLink(
-                "oarepo_vocabularies_ui.create",
-                vars=lambda record, vars_: vars_.update({"type": record.data["type"]}),
-                params=["type"],
-            ),
         }
 
     @property
@@ -161,9 +156,9 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """UI Search links."""
         return {
             **pagination_endpoint_links("oarepo_vocabularies_ui.search", params=["type"]),
-            "create": EndpointLink(
-                "oarepo_vocabularies_ui.create",
-                vars=lambda obj, vars_: vars_.pop("args", None),  # noqa: ARG005
+            "deposit_create": EndpointLink(
+                "oarepo_vocabularies_ui.deposit_create",
+                vars=lambda _obj, vars_: vars_.pop("args", None),
                 params=["type"],
             ),
         }

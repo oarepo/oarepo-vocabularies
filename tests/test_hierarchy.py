@@ -15,6 +15,7 @@ from flask_principal import PermissionDenied
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocab_service
 from marshmallow import ValidationError
+from oarepo_runtime.typing import record_from_result
 
 from oarepo_vocabularies.records.api import Vocabulary
 from oarepo_vocabularies.records.models import VocabularyHierarchy
@@ -699,7 +700,7 @@ def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, v
     parent = vocab_service.create(system_identity, lang_data)
     assert "parent" not in parent.links
 
-    assert parent._record.hierarchy.to_dict() == {  # noqa: SLF001
+    assert record_from_result(parent).hierarchy.to_dict() == {
         "level": 1,
         "titles": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
         "ancestors": [],
@@ -713,7 +714,7 @@ def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, v
     assert child.links["parent"] == "https://127.0.0.1:5000/api/vocabularies/languages/eng"
     assert parent.links["children"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-parent=eng"
     assert parent.links["descendants"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-ancestor=eng"
-    assert child._record.hierarchy.to_dict() == {  # noqa: SLF001
+    assert record_from_result(child).hierarchy.to_dict() == {
         "level": 2,
         "titles": [
             {

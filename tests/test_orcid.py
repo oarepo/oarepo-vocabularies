@@ -87,5 +87,5 @@ def test_json_schema_validation(app, orcid_provider):
             continue
         try:
             jsonschema.validate(item, schema)
-        except jsonschema.ValidationError:
-            raise AssertionError  # noqa: B904
+        except jsonschema.ValidationError as e:
+            raise AssertionError from e

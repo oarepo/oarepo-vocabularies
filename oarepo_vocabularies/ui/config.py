@@ -21,3 +21,11 @@ VOCABULARY_TYPE_UI_RESOURCE_CONFIG = (
 OAREPO_UI_LESS_COMPONENTS = [
     "dl_table",
 ]
+
+# Example vocabulary crosswalks
+VOCABULARY_CROSSWALKS_PROPERTIES = {
+    "resourcetypes": {
+        "mapping_in": [{"prop": "ccmm_crosswalk", "uri": "https://vocabs.techlib.cz/resourcetypes/"}],
+        "mapping_out": [{"prop": "ccmm", "uri": "https://vocabs.techlib.cz/resourcetypes/"}],
+    }
+}
