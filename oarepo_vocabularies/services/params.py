@@ -13,7 +13,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, override
 
 from invenio_records_resources.services.records.params import ParamInterpreter
-from opensearch_dsl.query import Bool, MatchNone, Nested, Term
+from opensearch_dsl.query import Bool, MatchNone, Nested, Range, Term
 
 if TYPE_CHECKING:
     from flask_principal import Identity
@@ -59,3 +59,14 @@ class SKOSMappingParam(ParamInterpreter):
             return Nested(path="mappings", query=Bool(must=musts))
 
         return search.filter(Bool(should=[create_skos_filter(param) for param in skos_params], minimum_should_match=1))
+
+
+class NewerThanParam(ParamInterpreter):
+    """Param interpreter for newer than parameters."""
+
+    @override
+    def apply(self, identity: Identity, search: RecordsSearchV2, params: dict[str, Any]) -> RecordsSearchV2:
+        newer_than = params.get("newer")
+        if not newer_than:
+            return search
+        return search.filter(Range(updated={"gte": newer_than}))

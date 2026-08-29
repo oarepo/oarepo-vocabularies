@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING, ClassVar
 
 from flask_resources import ResponseHandler
@@ -20,12 +21,36 @@ from invenio_vocabularies.resources.config import (
 from invenio_vocabularies.resources.config import (
     VocabularySearchRequestArgsSchema as InvenioVocabularySearchRequestArgsSchema,
 )
-from marshmallow import fields
+from marshmallow import ValidationError, fields
+from marshmallow.validate import Validator
 
 from oarepo_vocabularies.resources.records.ui import VocabularyUIJSONSerializer
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
+
+
+class ISO8601Validator(Validator):
+    """Validate that a string is an ISO8601-formatted date or datetime.
+
+    Mirrors marshmallow_utils.fields.edtfdatestring.EDTFValidator: it validates the string
+    in place rather than converting it to a date/datetime object, so callers that only need
+    to pass the value through (e.g. into an OpenSearch range query) keep it as a plain string.
+    """
+
+    default_message = "Please provide a valid ISO8601-formatted date or datetime."
+
+    def __init__(self, error: str | None = None) -> None:
+        """Create an instance of the validator."""
+        self._error = error or self.default_message
+
+    def __call__(self, value: str) -> str:
+        """Validate."""
+        try:
+            datetime.fromisoformat(value)
+        except ValueError as e:
+            raise ValidationError(self._error) from e
+        return value
 
 
 class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema):
@@ -35,6 +60,7 @@ class VocabularySearchRequestArgsSchema(InvenioVocabularySearchRequestArgsSchema
     ancestor = fields.List(fields.String(), data_key="h-ancestor", attribute="h-ancestor")
     level = fields.List(fields.Integer(), data_key="h-level", attribute="h-level")
     skos = fields.List(fields.String(), data_key="skos", attribute="skos")
+    newer = fields.String(data_key="newer", attribute="newer", validate=ISO8601Validator())
 
 
 class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):

@@ -31,7 +31,7 @@ from invenio_records_resources.services.records.queryparser.suggest import (
 from opensearch_dsl import query
 from opensearch_dsl.query import Bool, Range, Term, Terms
 
-from oarepo_vocabularies.services.params import SKOSMappingParam
+from oarepo_vocabularies.services.params import NewerThanParam, SKOSMappingParam
 
 if TYPE_CHECKING:
     from flask_principal import Identity
@@ -175,6 +175,7 @@ class VocabularySearchOptions(InvenioSearchOptions):
         FilterParam.factory(param="h-ancestor", field="hierarchy.ancestors"),
         FilterParam.factory(param="h-ancestor-or-self", field="hierarchy.ancestors_or_self"),
         SKOSMappingParam,
+        NewerThanParam,
         SourceParam,
         *InvenioSearchOptions.params_interpreters_cls,
     ]
