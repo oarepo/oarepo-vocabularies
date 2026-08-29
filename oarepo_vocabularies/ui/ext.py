@@ -60,6 +60,11 @@ class InvenioVocabulariesAppExtension:
         """Initialize configuration."""
         for identifier in dir(config):
             if re.match("^[A-Z_]*$", identifier) and not identifier.startswith("_"):
+                # do not set OAREPO_UI_LESS_COMPONENTS as default to app config
+                # as this breaks the tests - it will duplicate the list
+                # any time app is initialized
+                if identifier == "OAREPO_UI_LESS_COMPONENTS":
+                    continue
                 app.config.setdefault(identifier, getattr(config, identifier))
 
         app.config.setdefault("OAREPO_UI_LESS_COMPONENTS", []).extend(config.OAREPO_UI_LESS_COMPONENTS)
