@@ -10,17 +10,92 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from copy import deepcopy
+from typing import TYPE_CHECKING, Any, cast
 
 from invenio_records_resources.services.records.links import (
     RecordEndpointLink,
+)
+from invenio_vocabularies import factories
+from invenio_vocabularies.contrib.affiliations import (
+    datastreams as affiliations_datastreams,
+)
+from invenio_vocabularies.contrib.funders import datastreams as funders_datastreams
+from invenio_vocabularies.jobs import (
+    ProcessRORAffiliationsJob,
+    ProcessRORFundersJob,
 )
 from invenio_vocabularies.services.permissions import PermissionPolicy
 
 from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
     from flask import Flask
+
+
+def enable_datastream_updates() -> None:
+    """Update existing ROR affiliations and funders during imports."""
+    affiliations_config = deepcopy(affiliations_datastreams.DATASTREAM_CONFIG)
+    writer = affiliations_config["writers"][0]["args"]["writer"]
+    writer.setdefault("args", {})["update"] = True
+
+    affiliations_datastreams.DATASTREAM_CONFIG = affiliations_config
+    factories.AffiliationsVocabularyConfig.config = affiliations_config
+
+    funders_config = deepcopy(funders_datastreams.DATASTREAM_CONFIG)
+    writer = funders_config["writers"][0]["args"]["writer"]
+    writer.setdefault("args", {})["update"] = True
+
+    funders_datastreams.DATASTREAM_CONFIG = funders_config
+    factories.FundersVocabularyConfig.config = funders_config
+
+    if not getattr(ProcessRORAffiliationsJob, "patched", False):
+        original_affiliations_arguments = ProcessRORAffiliationsJob.build_task_arguments
+
+        def build_affiliations_arguments(
+            job_obj: Any,
+            since: datetime | None = None,
+            **kwargs: Any,
+        ) -> dict[str, Any]:
+            arguments = cast(
+                "dict[str, Any]",
+                original_affiliations_arguments(job_obj, since=since, **kwargs),
+            )
+            writer = arguments["config"]["writers"][0]["args"]["writer"]
+            writer.setdefault("args", {})["update"] = True
+            return arguments
+
+        type.__setattr__(
+            ProcessRORAffiliationsJob,
+            "build_task_arguments",
+            staticmethod(build_affiliations_arguments),
+        )
+        type.__setattr__(ProcessRORAffiliationsJob, "patched", True)
+
+    if not getattr(ProcessRORFundersJob, "patched", False):
+        original_funders_arguments = ProcessRORFundersJob.build_task_arguments
+
+        def build_funders_arguments(
+            job_obj: Any,
+            since: datetime | None = None,
+            **kwargs: Any,
+        ) -> dict[str, Any]:
+            arguments = cast(
+                "dict[str, Any]",
+                original_funders_arguments(job_obj, since=since, **kwargs),
+            )
+            writer = arguments["config"]["writers"][0]["args"]["writer"]
+            writer.setdefault("args", {})["update"] = True
+            return arguments
+
+        type.__setattr__(
+            ProcessRORFundersJob,
+            "build_task_arguments",
+            staticmethod(build_funders_arguments),
+        )
+        type.__setattr__(ProcessRORFundersJob, "patched", True)
 
 
 class OARepoVocabularies:
@@ -89,6 +164,8 @@ class OARepoVocabularies:
 
 def finalize_app(app: Flask) -> None:
     """Finalize app."""
+    enable_datastream_updates()
+
     awards_service = app.extensions["invenio-vocabularies"].awards_service
     awards_service.config.url_prefix = "/awards/"
     awards_service.config.links_item["self_html"] = RecordEndpointLink(
