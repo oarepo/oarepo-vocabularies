@@ -10,13 +10,11 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
 from typing import TYPE_CHECKING, Any, cast
 
 from invenio_records_resources.services.records.links import (
     RecordEndpointLink,
 )
-from invenio_vocabularies import factories
 from invenio_vocabularies.contrib.affiliations import (
     datastreams as affiliations_datastreams,
 )
@@ -37,19 +35,11 @@ if TYPE_CHECKING:
 
 def enable_datastream_updates() -> None:
     """Update existing ROR affiliations and funders during imports."""
-    affiliations_config = deepcopy(affiliations_datastreams.DATASTREAM_CONFIG)
-    writer = affiliations_config["writers"][0]["args"]["writer"]
+    writer = affiliations_datastreams.DATASTREAM_CONFIG["writers"][0]["args"]["writer"]
     writer.setdefault("args", {})["update"] = True
 
-    affiliations_datastreams.DATASTREAM_CONFIG = affiliations_config
-    factories.AffiliationsVocabularyConfig.config = affiliations_config
-
-    funders_config = deepcopy(funders_datastreams.DATASTREAM_CONFIG)
-    writer = funders_config["writers"][0]["args"]["writer"]
+    writer = funders_datastreams.DATASTREAM_CONFIG["writers"][0]["args"]["writer"]
     writer.setdefault("args", {})["update"] = True
-
-    funders_datastreams.DATASTREAM_CONFIG = funders_config
-    factories.FundersVocabularyConfig.config = funders_config
 
     if not getattr(ProcessRORAffiliationsJob, "patched", False):
         original_affiliations_arguments = ProcessRORAffiliationsJob.build_task_arguments
