@@ -12,19 +12,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, cast
 
-from invenio_records_resources.services.records.links import (
-    RecordEndpointLink,
-)
-from invenio_vocabularies.contrib.affiliations import (
-    datastreams as affiliations_datastreams,
-)
-from invenio_vocabularies.contrib.funders import datastreams as funders_datastreams
-from invenio_vocabularies.jobs import (
-    ProcessRORAffiliationsJob,
-    ProcessRORFundersJob,
-)
-from invenio_vocabularies.services.permissions import PermissionPolicy
-
 from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
 
 if TYPE_CHECKING:
@@ -35,6 +22,15 @@ if TYPE_CHECKING:
 
 def enable_datastream_updates() -> None:
     """Update existing ROR affiliations and funders during imports."""
+    from invenio_vocabularies.contrib.affiliations import (
+        datastreams as affiliations_datastreams,
+    )
+    from invenio_vocabularies.contrib.funders import datastreams as funders_datastreams
+    from invenio_vocabularies.jobs import (
+        ProcessRORAffiliationsJob,
+        ProcessRORFundersJob,
+    )
+
     writer = affiliations_datastreams.DATASTREAM_CONFIG["writers"][0]["args"]["writer"]
     writer.setdefault("args", {})["update"] = True
 
@@ -154,61 +150,67 @@ class OARepoVocabularies:
 
 def finalize_app(app: Flask) -> None:
     """Finalize app."""
-    enable_datastream_updates()
-
-    awards_service = app.extensions["invenio-vocabularies"].awards_service
-    awards_service.config.url_prefix = "/awards/"
-    awards_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.record_detail",
-        vars=lambda record, vars_: vars_.update(
-            {
-                "type": "awards",
-                "pid_value": record.pid.pid_value,
-            }
-        ),
-        params=["type", "pid_value"],
+    from invenio_records_resources.services.records.links import (
+        RecordEndpointLink,
     )
-    awards_service.config.permission_policy_cls = PermissionPolicy
+    from invenio_vocabularies.services.permissions import PermissionPolicy
 
-    affiliations_service = app.extensions["invenio-vocabularies"].affiliations_service
-    affiliations_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.record_detail",
-        vars=lambda record, vars_: vars_.update(
-            {
-                "type": "affiliations",
-                "pid_value": record.pid.pid_value,
-            }
-        ),
-        params=["type", "pid_value"],
-    )
-    affiliations_service.config.permission_policy_cls = PermissionPolicy
+    with app.app_context():
+        enable_datastream_updates()
 
-    funders_service = app.extensions["invenio-vocabularies"].funders_service
-    funders_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.record_detail",
-        vars=lambda record, vars_: vars_.update(
-            {
-                "type": "funders",
-                "pid_value": record.pid.pid_value,
-            }
-        ),
-        params=["type", "pid_value"],
-    )
-    funders_service.config.permission_policy_cls = PermissionPolicy
+        awards_service = app.extensions["invenio-vocabularies"].awards_service
+        awards_service.config.url_prefix = "/awards/"
+        awards_service.config.links_item["self_html"] = RecordEndpointLink(
+            "oarepo_vocabularies_ui.record_detail",
+            vars=lambda record, vars_: vars_.update(
+                {
+                    "type": "awards",
+                    "pid_value": record.pid.pid_value,
+                }
+            ),
+            params=["type", "pid_value"],
+        )
+        awards_service.config.permission_policy_cls = PermissionPolicy
 
-    names_service = app.extensions["invenio-vocabularies"].names_service
-    names_service.config.search.sort_options["name"] = {
-        "title": ("Name"),
-        "fields": ["name_sort"],
-    }
-    names_service.config.links_item["self_html"] = RecordEndpointLink(
-        "oarepo_vocabularies_ui.record_detail",
-        vars=lambda record, vars_: vars_.update(
-            {
-                "type": "names",
-                "pid_value": record.pid.pid_value,
-            }
-        ),
-        params=["type", "pid_value"],
-    )
-    names_service.config.permission_policy_cls = PermissionPolicy
+        affiliations_service = app.extensions["invenio-vocabularies"].affiliations_service
+        affiliations_service.config.links_item["self_html"] = RecordEndpointLink(
+            "oarepo_vocabularies_ui.record_detail",
+            vars=lambda record, vars_: vars_.update(
+                {
+                    "type": "affiliations",
+                    "pid_value": record.pid.pid_value,
+                }
+            ),
+            params=["type", "pid_value"],
+        )
+        affiliations_service.config.permission_policy_cls = PermissionPolicy
+
+        funders_service = app.extensions["invenio-vocabularies"].funders_service
+        funders_service.config.links_item["self_html"] = RecordEndpointLink(
+            "oarepo_vocabularies_ui.record_detail",
+            vars=lambda record, vars_: vars_.update(
+                {
+                    "type": "funders",
+                    "pid_value": record.pid.pid_value,
+                }
+            ),
+            params=["type", "pid_value"],
+        )
+        funders_service.config.permission_policy_cls = PermissionPolicy
+
+        names_service = app.extensions["invenio-vocabularies"].names_service
+        names_service.config.search.sort_options["name"] = {
+            "title": ("Name"),
+            "fields": ["name_sort"],
+        }
+        names_service.config.links_item["self_html"] = RecordEndpointLink(
+            "oarepo_vocabularies_ui.record_detail",
+            vars=lambda record, vars_: vars_.update(
+                {
+                    "type": "names",
+                    "pid_value": record.pid.pid_value,
+                }
+            ),
+            params=["type", "pid_value"],
+        )
+        names_service.config.permission_policy_cls = PermissionPolicy
