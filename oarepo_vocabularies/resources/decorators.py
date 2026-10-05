@@ -5,19 +5,20 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 from functools import wraps
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from flask import redirect, request
 from invenio_base import invenio_url_for
 from werkzeug.http import parse_accept_header
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from werkzeug import Response
 
 
-def vocabulary_content_negotiation[T: Callable](f: T) -> T:
+def vocabulary_content_negotiation[**P, R](f: Callable[P, R]) -> Callable[P, R | Response]:
     """Handle content negotiation.
 
      Handle content negotiation and redirect to appropriate URLs
@@ -27,7 +28,7 @@ def vocabulary_content_negotiation[T: Callable](f: T) -> T:
     """
 
     @wraps(f)
-    def inner(*args: Any, **kwargs: Any) -> Response:
+    def inner(*args: P.args, **kwargs: P.kwargs) -> R | Response:
         parsed_accept_header = parse_accept_header(request.headers.get("accept", "text/html"))
         landing_page_accept_header_types = {"text/html", "application/xhtml+xml"}
         if parsed_accept_header.best_match(landing_page_accept_header_types):

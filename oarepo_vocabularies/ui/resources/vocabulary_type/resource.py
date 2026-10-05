@@ -13,8 +13,11 @@ from oarepo_ui.proxies import current_oarepo_ui
 from oarepo_ui.resources import RecordsUIResourceConfig, UIResource
 
 if TYPE_CHECKING:
+    import builtins
+
     from flask_resources import ResourceConfig
-    from invenio_records_resources.services.base.service import Service
+
+    from oarepo_vocabularies.services.service import VocabularyTypeService
 
 
 class VocabularyTypeUIResource(UIResource):
@@ -22,13 +25,13 @@ class VocabularyTypeUIResource(UIResource):
 
     config: RecordsUIResourceConfig
 
-    def __init__(self, config: ResourceConfig, service: Service) -> None:
+    def __init__(self, config: ResourceConfig, service: VocabularyTypeService) -> None:
         """Initialize the VocabularyTypeUIResource."""
         super().__init__(config)
         self.service = service
 
     @override
-    def create_url_rules(self) -> list[Any]:
+    def create_url_rules(self) -> builtins.list[dict[str, Any]]:
         """Create the URL rules for the record resource."""
         routes = self.config.routes
         list_route = routes["list"]

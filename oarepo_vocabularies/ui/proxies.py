@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from flask import current_app
 from werkzeug.local import LocalProxy
@@ -13,7 +13,7 @@ from werkzeug.local import LocalProxy
 if TYPE_CHECKING:
     from .ext import InvenioVocabulariesAppExtension
 
-    current_vocabularies_ui: InvenioVocabulariesAppExtension
-
-current_vocabularies_ui = LocalProxy(lambda: current_app.extensions["oarepo_vocabularies_ui"])
+current_vocabularies_ui = cast(
+    "InvenioVocabulariesAppExtension", LocalProxy(lambda: current_app.extensions["oarepo_vocabularies_ui"])
+)
 """Proxy to the instantiated ui extension."""

@@ -140,18 +140,18 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     record_cls = Vocabulary
     schema = VocabularySchema
     search = VocabularySearchOptions
-    components: ClassVar[list[type[ServiceComponent]]] = [
+    components: tuple[type[ServiceComponent], ...] = (
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
         ScanningOrderComponent,
         RDMCompatibilitySKOSComponent,
-    ]
+    )
     # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
     # As we can not have class property, we simulate it with a callable class
     permission_policy_cls = PermissionPolicyFactory()
 
     url_prefix = "/vocabularies/"
-    links_item: ClassVar[Mapping[str, EndpointLink]] = {
+    links_item: Mapping[str, EndpointLink] = {
         "self": EndpointLink(
             "vocabularies.read",
             vars=lambda record, _vars: _vars.update(
@@ -263,7 +263,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
     }
 
-    links_search: ClassVar[Mapping[str, EndpointLink]] = {
+    links_search: Mapping[str, EndpointLink] = {
         **pagination_endpoint_links("vocabularies.search", params=["type"]),
         **pagination_endpoint_links_html(vocabularies_search_ui_endpoint, params=["type"]),
     }

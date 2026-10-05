@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     from flask_principal import Identity
     from invenio_records_resources.pagination import Pagination
     from invenio_records_resources.services.records.results import RecordItem
+    from invenio_vocabularies.services import VocabulariesService
 
 
 request_vocabulary_args = request_parser(from_conf("request_type_args"), location="view_args")
@@ -40,6 +41,8 @@ request_vocabulary_args = request_parser(from_conf("request_type_args"), locatio
 
 class InvenioVocabulariesUIResource(RecordsUIResource):
     """Invenio Vocabularies UI Resource."""
+
+    api_service: VocabulariesService
 
     @pass_route_args("vocabulary_type")
     @override
@@ -69,7 +72,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
         ui_links: dict[str, Any] = {}
 
-        render_kwargs = {
+        render_kwargs: dict[str, Any] = {
             "record": empty_record,
             "api_record": None,
             "form_config": form_config,
@@ -126,7 +129,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             raise PermissionDeniedError(_("User does not have permission to update vocabulary item."))
         if vocabulary_type is None or pid_value is None:
             raise KeyError("vocabulary_type and pid_value are required")
-        api_record = self._get_record(pid_value, vocabulary_type)
+        api_record = self._get_record(pid_value, vocabulary_type=vocabulary_type)
         record = api_record.to_dict()
 
         form_config = self._get_form_config(g.identity, createUrl=None)
@@ -193,7 +196,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         # TODO: look into exports
         if vocabulary_type is None or pid_value is None:
             raise KeyError("vocabulary_type and pid_value are required")
-        api_record = self._get_record(pid_value, vocabulary_type)
+        api_record = self._get_record(pid_value, vocabulary_type=vocabulary_type)
         render_method = self.get_jinjax_macro(
             "record_detail",
         )
@@ -218,7 +221,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
 
         extra_context.setdefault("search_app_config", search_config)
 
-        render_kwargs = {
+        render_kwargs: dict[str, Any] = {
             "record": api_record,
             "record_ui": record_ui,
             "extra_context": extra_context,
@@ -252,17 +255,19 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     def _get_record(
         self,
         pid_value: str,
-        type_: str,
+        allow_draft: bool = False,
+        include_deleted: bool = False,
+        vocabulary_type: str | None = None,
         **kwargs: Any,
     ) -> RecordItem:
         """Get a record from the service."""
-        if not type_:
+        if not vocabulary_type:
             raise ValueError("Vocabulary type is required to get a record.")
 
         return self.api_service.read(
             g.identity,
             (
-                type_,
+                vocabulary_type,
                 pid_value,
             ),
         )
@@ -293,9 +298,10 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         self,
         identity: Identity,
         pagination: Pagination,
-        vocabulary_type: str | None,
-        **kwargs: dict[str, str],
-    ) -> Any:
+        *,
+        vocabulary_type: str | None = None,
+        **kwargs: dict[str, Any],
+    ) -> dict[str, str]:
         """Get links for this result item."""
         # copy the original query args as we are going to modify them
 
