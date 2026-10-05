@@ -5,9 +5,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Any, override
 
 from flask import current_app
+from invenio_db import db
 from invenio_records_resources.services import (
     EndpointLink,
     LinksTemplate,
@@ -44,11 +45,18 @@ class VocabularyTypeService(InvenioVocabularyTypeService):
         )
 
     @override
-    def search(self, identity: Identity, params: dict | None = None) -> RecordList:
+    def search(
+        self,
+        identity: Identity,
+        params: dict[str, Any] | None = None,
+        search_preference: str | None = None,
+        expand: bool = False,
+        **kwargs: Any,
+    ) -> RecordList:
         """Search for vocabulary types entries."""
         self.require_permission(identity, "list_vocabularies")
 
-        vocabulary_types = VocabularyType.query.all()
+        vocabulary_types = db.session.query(VocabularyType).all()
 
         config_vocab_types = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
 

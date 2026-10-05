@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING
 
 from flask_resources import ResponseHandler
 from invenio_vocabularies.resources import (
@@ -23,7 +23,7 @@ class VocabularyTypeResourceConfig(InvenioVocabularyTypeResourceConfig):
 
     blueprint_name = "oarepo_vocabulary_type"
 
-    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {
+    response_handlers: Mapping[str, ResponseHandler] = {
         **InvenioVocabularyTypeResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyTypeUIJSONSerializer()),
     }

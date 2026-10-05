@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import partial
-from typing import TYPE_CHECKING, Any, ClassVar, override
+from typing import TYPE_CHECKING, Any, ClassVar, Self, cast, override
 
 from flask_babel import get_locale as get_current_locale
 from invenio_i18n import get_locale
@@ -30,8 +30,7 @@ from oarepo_vocabularies.services.params import NewerThanParam, SKOSMappingParam
 
 if TYPE_CHECKING:
     from flask_principal import Identity
-    from invenio_records_resources.services.base import ServiceConfig
-    from opensearch_dsl import Search
+    from invenio_search import RecordsSearchV2
 
 TYPE_ID_FIELD = "type.id"
 ID_FIELD = "id"
@@ -89,7 +88,7 @@ class SourceParam(ParamInterpreter):
     """Evaluate the 'q' or 'suggest' parameter."""
 
     @override
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:
+    def apply(self, identity: Identity, search: RecordsSearchV2, params: dict[str, Any]) -> RecordsSearchV2:
         """Apply the source parameter."""
         source = params.get("source")
         if not source:
@@ -100,19 +99,20 @@ class SourceParam(ParamInterpreter):
 class UpdatedAfterParam(ParamInterpreter):
     """Evaluate type filter."""
 
-    def __init__(self, param_name: str, field_name: str, config: ServiceConfig):
+    def __init__(self, param_name: str, field_name: str, config: type[InvenioSearchOptions]):
         """."""
         self.param_name = param_name
         self.field_name = field_name
         super().__init__(config)
 
     @classmethod
-    def factory(cls, param: str, field: str) -> partial[ParamInterpreter]:
+    def factory(cls, param: str, field: str) -> type[Self]:
         """Create a new filter parameter."""
-        return partial(cls, param, field)
+        # the partial is used in place of the class - it is called with the search options config
+        return cast("type[Self]", partial(cls, param, field))
 
     @override
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:
+    def apply(self, identity: Identity, search: RecordsSearchV2, params: dict[str, Any]) -> RecordsSearchV2:
         """Apply a filter to get only records for a specific type."""
         # Pop because we don't want it to show up in links.
         # TODO: only pop if needed.
@@ -141,7 +141,7 @@ class VocabularyIdsParam(ParamInterpreter):
     """Evaluate type filter."""
 
     @override
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:
+    def apply(self, identity: Identity, search: RecordsSearchV2, params: dict[str, Any]) -> RecordsSearchV2:
         """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
@@ -159,9 +159,7 @@ class VocabularyIdsParam(ParamInterpreter):
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
-    params_interpreters_cls: ClassVar[
-        list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
-    ] = [
+    params_interpreters_cls: tuple[type[ParamInterpreter], ...] = (
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
         VocabularyIdsParam,
@@ -174,7 +172,7 @@ class VocabularySearchOptions(InvenioSearchOptions):
         NewerThanParam,
         SourceParam,
         *InvenioSearchOptions.params_interpreters_cls,
-    ]
+    )
 
     suggest_parser_cls = I18nSuggestQueryParser.factory(
         fields=[

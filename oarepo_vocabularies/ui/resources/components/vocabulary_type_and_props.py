@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, Any, cast, override
 
 from oarepo_ui.resources.components import UIResourceComponent
 
@@ -13,9 +13,17 @@ if TYPE_CHECKING:
     from flask_principal import Identity
     from invenio_records_resources.services.records.results import RecordItem
 
+    from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
+
 
 class VocabularyTypeAndProps(UIResourceComponent):
     """Process the data before the search page is rendered."""
+
+    @property
+    @override
+    def config(self) -> InvenioVocabulariesUIResourceConfig:
+        """The vocabularies UI configuration."""
+        return cast("InvenioVocabulariesUIResourceConfig", super().config)
 
     @override
     def before_ui_search(

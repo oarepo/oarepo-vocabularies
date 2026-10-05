@@ -84,10 +84,6 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
             }
         }
 
-    def __set_name__(self, owner: Any, name: str) -> None:
-        """Set the name of the field."""
-        super().__set_name__(owner, name)
-
     @override
     def __get__(self, record: RecordBase | None, owner: Any = None) -> Any:
         """Get the parent field value or cached value."""
@@ -102,9 +98,9 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         return record._parent_cache  # noqa:SLF001
 
     @override
-    def __set__(self, record: RecordBase | None, value: str | None):
-        """Set the parent field value."""
-        self.__get__(record).set(value if value is not None else None)
+    def __set__(self, record: RecordBase | None, value: Any) -> None:
+        """Set the parent field value (parent id or None)."""
+        self.__get__(record).set(value)
 
     @override
     def pre_delete(self, record: Record, force: bool = False) -> None:

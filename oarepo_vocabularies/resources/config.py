@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, ClassVar, override
+from typing import TYPE_CHECKING, override
 
 from flask_resources import ResponseHandler
 from invenio_records_resources.resources.records.headers import etag_headers
@@ -68,7 +68,7 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
 
     request_search_args = VocabularySearchRequestArgsSchema
 
-    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {
+    response_handlers: Mapping[str, ResponseHandler] = {
         **InvenioVocabulariesResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
         "text/turtle": ResponseHandler(TurtleSerializer(), headers=etag_headers),

@@ -5,10 +5,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, cast, override
+from typing import TYPE_CHECKING, cast, override
 
 import marshmallow as ma
 from flask import current_app
+from invenio_db import db
 from invenio_records_resources.services import pagination_endpoint_links
 from invenio_records_resources.services.base.links import (
     EndpointLink,
@@ -36,13 +37,12 @@ from oarepo_vocabularies.ui.resources.components.vocabulary_type_and_props impor
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
-    from typing import Any, ClassVar
+    from typing import Any
 
     from flask.typing import ErrorHandlerCallable
     from invenio_access.permissions import Identity
     from invenio_records_resources.services import Link
     from invenio_records_resources.services.records.config import RecordServiceConfig
-    from oarepo_ui.resources.components.base import UIResourceComponent
 
 
 class VocabularyTypeValidationSchema(ma.Schema):
@@ -57,7 +57,7 @@ class VocabularyTypeValidationSchema(ma.Schema):
         vocabulary_type = data.get("type")
 
         try:
-            if VocabularyType.query.filter_by(id=vocabulary_type).one_or_none():
+            if db.session.query(VocabularyType).filter_by(id=vocabulary_type).one_or_none():
                 return {"vocabulary_type": vocabulary_type}
             raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.")
 
@@ -101,7 +101,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     # Accepted here only so content negotiation lets the request through; the actual
     # response is a redirect to the matching API endpoint (see vocabulary_content_negotiation),
     # so no real response handler is needed for these mimetypes.
-    response_handlers: ClassVar[Mapping[str, Any]] = {
+    response_handlers: Mapping[str, Any] = {
         **RecordsUIResourceConfig.response_handlers,
         "text/turtle": None,
         "application/n-triples": None,
@@ -109,14 +109,14 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "application/rdf+xml": None,
         "application/json": None,
     }
-    components: ClassVar[list[UIResourceComponent]] = [
+    components = (
         PermissionsComponent,
         VocabularySearchComponent,
         CustomFieldsComponent,
         AllowedHtmlTagsComponent,
         MultilingualFieldLanguagesComponent,
         VocabularyTypeAndProps,
-    ]
+    )
 
     @property
     @override
@@ -124,7 +124,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """UI serializer."""
         return VocabularyUIJSONSerializer()
 
-    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type_": ma.fields.Str(data_key="type")}
+    request_form_config_view_args: type[ma.Schema] = ma.Schema.from_dict({"type_": ma.fields.Str(data_key="type")})
     request_search_args = VocabularySearchRequestArgsSchema
     request_vocabulary_type_args = VocabularyTypeValidationSchema
 
