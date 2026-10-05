@@ -9,12 +9,11 @@ import openpyxl
 from unidecode import unidecode
 
 # nasty
-rowidx = 0
+rowidx = [0]
 
 
 def next_row(it):
-    global rowidx
-    rowidx += 1
+    rowidx[0] += 1
     return [x.value for x in next(it)]
 
 
@@ -55,8 +54,8 @@ try:
                 assert row[1] == "slug"
                 assert row[7] == "props.acronym"
 
-                sheet_obj.cell(row=rowidx, column=1).value = "hierarchy.parent"
-                sheet_obj.cell(row=rowidx, column=2).value = "id"
+                sheet_obj.cell(row=rowidx[0], column=1).value = "hierarchy.parent"
+                sheet_obj.cell(row=rowidx[0], column=2).value = "id"
                 header = False
                 row = next_row(it)
                 continue
@@ -93,8 +92,8 @@ try:
 
             ids.add(id_)
             stack.append((id_, base))
-            sheet_obj.cell(row=rowidx, column=1).value = parent
-            sheet_obj.cell(row=rowidx, column=2).value = id_
+            sheet_obj.cell(row=rowidx[0], column=1).value = parent
+            sheet_obj.cell(row=rowidx[0], column=2).value = id_
 
         row = next_row(it)
 except StopIteration:

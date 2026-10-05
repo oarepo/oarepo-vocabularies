@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, override
 
 from invenio_records.systemfields import DictField
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
@@ -15,6 +15,7 @@ class VocabularyCustomFieldsSystemField(MappingSystemFieldMixin, DictField):
     """Dict system field for custom fields, mapped as a dynamic object."""
 
     @property
+    @override
     def mapping(self) -> dict[str, Any]:
         """Get the mapping for the custom fields field."""
         key = self.key

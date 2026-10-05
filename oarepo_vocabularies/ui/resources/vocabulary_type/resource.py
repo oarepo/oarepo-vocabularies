@@ -5,12 +5,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast, override
 
 from flask import current_app, g
 from flask_resources import route
 from oarepo_ui.proxies import current_oarepo_ui
-from oarepo_ui.resources import UIResource
+from oarepo_ui.resources import RecordsUIResourceConfig, UIResource
 
 if TYPE_CHECKING:
     from flask_resources import ResourceConfig
@@ -20,12 +20,15 @@ if TYPE_CHECKING:
 class VocabularyTypeUIResource(UIResource):
     """Vocabulary Type UI Resource."""
 
+    config: RecordsUIResourceConfig
+
     def __init__(self, config: ResourceConfig, service: Service) -> None:
         """Initialize the VocabularyTypeUIResource."""
         super().__init__(config)
         self.service = service
 
-    def create_url_rules(self) -> list:
+    @override
+    def create_url_rules(self) -> list[Any]:
         """Create the URL rules for the record resource."""
         routes = self.config.routes
         list_route = routes["list"]
@@ -71,6 +74,6 @@ class VocabularyTypeUIResource(UIResource):
         _catalog = current_oarepo_ui.catalog
 
         return _catalog.render(
-            self.config.templates["list"],
+            cast("str", self.config.templates["list"]),
             list_data=serialized_list_data,
         )

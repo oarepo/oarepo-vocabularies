@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, override
 
 from flask_resources import ResponseHandler
 from invenio_records_resources.resources.records.headers import etag_headers
@@ -43,6 +43,7 @@ class ISO8601Validator(Validator):
         """Create an instance of the validator."""
         self._error = error or self.default_message
 
+    @override
     def __call__(self, value: str) -> str:
         """Validate."""
         try:

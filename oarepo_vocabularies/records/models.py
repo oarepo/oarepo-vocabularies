@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from invenio_db import db
 from invenio_vocabularies.records.models import VocabularyMetadata
@@ -31,7 +31,7 @@ class VocabularyHierarchy(db.Model):
 
     vocabulary_term = db.relationship(
         VocabularyMetadata,
-        foreign_keys=[id],
+        foreign_keys=[id],  # noqa A003
         backref=db.backref(
             "hierarchy_metadata",
             uselist=False,
@@ -41,7 +41,7 @@ class VocabularyHierarchy(db.Model):
         "VocabularyHierarchy",
         foreign_keys=[parent_id],
         backref=db.backref("subterms", lazy="dynamic"),
-        remote_side=[id],
+        remote_side=[id],  # noqa A003
     )
 
     pid = db.Column(db.String(255), nullable=False, unique=False)
@@ -125,7 +125,8 @@ class VocabularyHierarchy(db.Model):
         children_ids = VocabularyHierarchy.get_subterms_ids(self.id)
 
         for child in children_ids:
-            child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)
+            # we know it is not None from the get_subterms_ids query, so can safely cast
+            child_hierarchy = cast("VocabularyHierarchy", db.session.query(VocabularyHierarchy).get(child))
             child_hierarchy.fix_hierarchy_on_self()
 
     def update_leaf_status(self, force_child_exists: bool = False) -> None:

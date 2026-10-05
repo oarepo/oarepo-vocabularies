@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, cast, override
 
 from invenio_administration.generators import Administration
 from invenio_search.engine import dsl
@@ -31,6 +31,7 @@ class IfVocabularyType(ConditionalGenerator):
         super().__init__(then_, else_)
         self.type = type_
 
+    @override
     def _condition(self, **kwargs: Any) -> bool:
         """Check if the vocabulary type matches, if passed directly or in record."""
         if "type" in kwargs:
@@ -48,10 +49,12 @@ class IfVocabularyType(ConditionalGenerator):
 
         return False
 
+    @override
     def _query_instate(self, **context: Any) -> dsl.query.Query:
         # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
         return dsl.Q("match_all")
 
+    @override
     def query_filter(self, **context: Any) -> dsl.query.Query:
         """Apply then."""
         # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
@@ -69,6 +72,7 @@ class IfNonDangerousVocabularyOperation(ConditionalGenerator):
             else_ = [else_]
         super().__init__(then_, else_)
 
+    @override
     def _condition(self, **kwargs: Any) -> Any:
         """Condition to choose generators set."""
         if "data" not in kwargs:
@@ -87,6 +91,7 @@ class IfNonDangerousVocabularyOperation(ConditionalGenerator):
         # changing id is a very dangerous operation as records that use the vocab item will be broken
         return data.get("id") == record.get("id")
 
+    @override
     def _query_instate(self, **context: Any) -> dsl.query.Query:
         # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
         return dsl.Q("match_all")

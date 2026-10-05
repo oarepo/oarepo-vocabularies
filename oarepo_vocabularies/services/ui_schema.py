@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 import marshmallow as ma
 from flask import current_app
@@ -38,20 +38,22 @@ class LocalizedDateTime(ma.fields.Field):
             "full": FormatDate(attribute=attribute, format="full"),
         }
 
+    @override
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:
         return {
-            f"{self.attribute}_l10n_{fmt}": formatter._serialize(value, attr, obj, **kwargs)
-            for fmt, formatter in self.formatters.items()
+            f"{self.attribute}_l10n_{fmt}": formatter.format_value(value) for fmt, formatter in self.formatters.items()
         }
 
 
 class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
     """Custom fields schema for UI."""
 
+    @override
     def _serialize(self, obj: Any, **kwargs: Any) -> Any:
         self._schema.context.update(self.context)
         return super()._serialize(obj, **kwargs)
 
+    @override
     def _deserialize(self, data: Mapping[str, Any] | Iterable[Mapping[str, Any]], **kwargs: Any) -> Any:
         self._schema.context.update(self.context)
         return super()._deserialize(data, **kwargs)
@@ -60,6 +62,7 @@ class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
 class VocabularyI18nStrUIField(ma_fields.Field):
     """A Marshmallow field that provides localized string from i18n dict."""
 
+    @override
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> Any:
         if not value:
             return None
@@ -107,7 +110,7 @@ class VocabularyUISchema(VocabularyL10NItemSchema):
     type = ma.fields.Raw(dump_only=True)
 
     @post_dump(pass_original=False)
-    def flatten_localized_dates(self, data: dict, **kwargs: Any) -> dict:
+    def flatten_localized_dates(self, data: dict, **_kwargs: Any) -> dict:
         """Flatten localized date fields into the UI dictionary."""
         # Only flatten if we're working on UI data (not the top-level RDM structure)
 

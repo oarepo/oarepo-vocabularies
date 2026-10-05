@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Any, ClassVar, cast
+from typing import Any, ClassVar, override
 
 from flask_resources.serializers.base import BaseSerializer
 from rdflib import Graph
@@ -22,13 +22,15 @@ class RDFSerializer(BaseSerializer):
 
     rdflib_format: ClassVar[str]
 
+    @override
     def serialize_object(self, obj: dict[str, Any]) -> str:
         """Serialize a single vocabulary record."""
-        return cast("str", as_graph(obj).serialize(format=self.rdflib_format))
+        return as_graph(obj).serialize(format=self.rdflib_format)
 
+    @override
     def serialize_object_list(self, obj_list: dict[str, Any]) -> str:
         """Serialize a search result of vocabulary records as a single merged document."""
         graph = Graph()
         for hit in obj_list["hits"]["hits"]:
             graph += as_graph(hit)
-        return cast("str", graph.serialize(format=self.rdflib_format))
+        return graph.serialize(format=self.rdflib_format)

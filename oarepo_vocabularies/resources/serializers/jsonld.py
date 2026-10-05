@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, cast, override
 
 from flask_resources.serializers.base import BaseSerializer
 from pyld import jsonld
@@ -72,10 +72,12 @@ def _as_jsonld(graph: Graph) -> dict[str, Any]:
 class JsonLdSerializer(BaseSerializer):
     """Serializer converting vocabulary records to a framed, SKOS-compliant JSON-LD document."""
 
+    @override
     def serialize_object(self, obj: dict[str, Any]) -> str:
         """Serialize a single vocabulary record."""
         return json.dumps(_as_jsonld(as_graph(obj)))
 
+    @override
     def serialize_object_list(self, obj_list: dict[str, Any]) -> str:
         """Serialize a search result of vocabulary records as a single framed JSON-LD document."""
         graph = Graph()

@@ -57,6 +57,7 @@ class I18nSuggestQueryParser(SuggestQueryParser):
 class VocabularyQueryParser(QueryParser):
     """Parser for search queries."""
 
+    @override
     def parse(self, query_str: str) -> query.Query:
         """Parse the query string, adding language-specific fields."""
         original_parsed_query = super().parse(query_str)

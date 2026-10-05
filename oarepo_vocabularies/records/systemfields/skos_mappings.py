@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, override
 
 from invenio_records.systemfields import SystemField
 from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
@@ -15,6 +15,7 @@ class SKOSMappingSystemField(MappingSystemFieldMixin, SystemField):
     """System field handling the mapping of identifiers."""
 
     @property
+    @override
     def mapping(self) -> dict[str, Any]:
         """Get the mapping for the identifiers field."""
         key = self.key

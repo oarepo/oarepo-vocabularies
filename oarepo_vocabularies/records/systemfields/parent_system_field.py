@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast, override
 
 from invenio_records.systemfields import SystemField
 from marshmallow import ValidationError
@@ -14,6 +14,7 @@ from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
 if TYPE_CHECKING:
+    from invenio_records.api import Record as RecordBase
     from invenio_records_resources.records.api import Record
 
     from oarepo_vocabularies.records.api import Vocabulary as OarepoVocabularyRecord
@@ -65,6 +66,7 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         super().__init__(key=key)
 
     @property
+    @override
     def mapping(self) -> dict[str, Any]:
         """Get the mapping for the parent field."""
         key = self.key
@@ -86,20 +88,25 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
         """Set the name of the field."""
         super().__set_name__(owner, name)
 
-    def __get__(self, record: Record, owner: Any = None) -> Any:
+    @override
+    def __get__(self, record: RecordBase | None, owner: Any = None) -> Any:
         """Get the parent field value or cached value."""
         if record is None:
             return self
 
+        record = cast("OarepoVocabularyRecord", record)
+
         if not hasattr(record, "_parent_cache"):
-            record._parent_cache = ParentObject(self.key, record)
+            record._parent_cache = ParentObject(self.key, record)  # noqa:SLF001
 
-        return record._parent_cache
+        return record._parent_cache  # noqa:SLF001
 
-    def __set__(self, record: Record, value: str | None):
+    @override
+    def __set__(self, record: RecordBase | None, value: str | None):
         """Set the parent field value."""
         self.__get__(record).set(value if value is not None else None)
 
+    @override
     def pre_delete(self, record: Record, force: bool = False) -> None:
         """Handle deletion by setting correct parent to children in VocabularyHierarchy table."""
         self_uuid = record.id
