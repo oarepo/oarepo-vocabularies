@@ -33,5 +33,5 @@ class VocabularyTypeResource(Resource):
     def list(self) -> tuple[dict, int]:
         """Perform a search over the items."""
         identity = g.identity
-        hits = self.service.search(identity=identity)  # type: ignore[attr-defined]
+        hits = self.service.search(identity=identity)
         return hits.to_dict(), 200

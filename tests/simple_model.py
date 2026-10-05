@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import marshmallow as ma
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
@@ -32,6 +34,9 @@ from oarepo_ui.resources import (
     RecordsUIResourceConfig,
 )
 from oarepo_ui.resources.components import PermissionsComponent
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 class ModelRecordIdProvider(RecordIdProviderV2):
@@ -78,10 +83,10 @@ class ModelRecord(Record):
 class ModelPermissionPolicy(RecordPermissionPolicy):
     """Permission policy for records."""
 
-    can_create = [AnyUser(), SystemProcess()]  # noqa: RUF012
-    can_update = [AnyUser(), SystemProcess()]  # noqa: RUF012
-    can_search = [AnyUser(), SystemProcess()]  # noqa: RUF012
-    can_read = [AnyUser(), SystemProcess()]  # noqa: RUF012
+    can_create = (AnyUser(), SystemProcess())
+    can_update = (AnyUser(), SystemProcess())
+    can_search = (AnyUser(), SystemProcess())
+    can_read = (AnyUser(), SystemProcess())
 
 
 class ModelSchema(ma.Schema):
@@ -105,7 +110,7 @@ class ModelServiceConfig(RecordServiceConfig):
     record_cls = ModelRecord
     permission_policy_cls = ModelPermissionPolicy
     schema = ModelSchema
-    components = [DataComponent]  # noqa: RUF012
+    components = (DataComponent,)
 
     url_prefix = "/simple-model"
 
@@ -143,13 +148,13 @@ class ModelUIResourceConfig(RecordsUIResourceConfig):
     blueprint_name = "simple_model"
     url_prefix = "/simple-model"
     ui_serializer_class = ModelUISerializer
-    templates = {  # noqa: RUF012
+    templates: Mapping[str, str] = {
         **RecordsUIResourceConfig.templates,
         "detail": "TestDetail",
         "search": "TestSearch",
     }
     model_name = "SimpleModel"
-    components = [BabelComponent, PermissionsComponent]  # noqa: RUF012
+    components = (BabelComponent, PermissionsComponent)
 
 
 class ModelUIResource(RecordsUIResource):

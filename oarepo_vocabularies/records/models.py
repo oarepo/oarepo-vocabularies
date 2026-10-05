@@ -31,7 +31,7 @@ class VocabularyHierarchy(db.Model):
 
     vocabulary_term = db.relationship(
         VocabularyMetadata,
-        foreign_keys=[id],  # noqa: A003
+        foreign_keys=[id],
         backref=db.backref(
             "hierarchy_metadata",
             uselist=False,
@@ -41,7 +41,7 @@ class VocabularyHierarchy(db.Model):
         "VocabularyHierarchy",
         foreign_keys=[parent_id],
         backref=db.backref("subterms", lazy="dynamic"),
-        remote_side=[id],  # noqa: A003
+        remote_side=[id],
     )
 
     pid = db.Column(db.String(255), nullable=False, unique=False)
@@ -125,8 +125,8 @@ class VocabularyHierarchy(db.Model):
         children_ids = VocabularyHierarchy.get_subterms_ids(self.id)
 
         for child in children_ids:
-            child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)  # type: ignore[assignment]
-            child_hierarchy.fix_hierarchy_on_self()  # type: ignore[reportOptionalMemberAccess]
+            child_hierarchy: VocabularyHierarchy = db.session.query(VocabularyHierarchy).get(child)
+            child_hierarchy.fix_hierarchy_on_self()
 
     def update_leaf_status(self, force_child_exists: bool = False) -> None:
         """Update leaf status for the parent ancestor.

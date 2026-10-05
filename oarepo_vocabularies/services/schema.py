@@ -65,7 +65,7 @@ class VocabularySchema(InvenioVocabularySchema):
     mappings = ma.fields.List(ma.fields.Nested(SKOSMappingSchema))
 
     @post_load(pass_original=True)
-    def extract_parent_id(self, data: dict, original_data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
+    def extract_parent_id(self, data: dict, original_data: dict, **kwargs: Any) -> dict:
         """Extract and set parent id from hierarchy."""
         hierarchy = original_data.get("hierarchy", {})
         parent = hierarchy.get("parent")
@@ -76,7 +76,7 @@ class VocabularySchema(InvenioVocabularySchema):
         return data
 
     @ma.post_dump
-    def replace_none_custom_fields(self, data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
+    def replace_none_custom_fields(self, data: dict, **kwargs: Any) -> dict:
         """Replace None custom_fields with empty dict."""
         if data.get("custom_fields") is None:
             data["custom_fields"] = {}

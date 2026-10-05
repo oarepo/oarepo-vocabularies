@@ -15,5 +15,5 @@ if TYPE_CHECKING:
 
     current_vocabularies_ui: InvenioVocabulariesAppExtension
 
-current_vocabularies_ui = LocalProxy(lambda: current_app.extensions["oarepo_vocabularies_ui"])  # type: ignore[assignment]
+current_vocabularies_ui = LocalProxy(lambda: current_app.extensions["oarepo_vocabularies_ui"])
 """Proxy to the instantiated ui extension."""

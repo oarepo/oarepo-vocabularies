@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, cast
 
-from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa
-
 if TYPE_CHECKING:
     from datetime import datetime
 

@@ -22,7 +22,7 @@ def _ext_proxy(attr: str) -> LocalProxy:
     return LocalProxy(lambda: getattr(current_app.extensions["oarepo-vocabularies"], attr))
 
 
-current_oarepo_vocabularies = LocalProxy(lambda: current_app.extensions["oarepo-vocabularies"])  # type: ignore[assignment]
+current_oarepo_vocabularies = LocalProxy(lambda: current_app.extensions["oarepo-vocabularies"])
 
-current_type_service = _ext_proxy("type_service")  # type: ignore[assignment]
+current_type_service = _ext_proxy("type_service")
 """Proxy to the instantiated vocabulary type service."""

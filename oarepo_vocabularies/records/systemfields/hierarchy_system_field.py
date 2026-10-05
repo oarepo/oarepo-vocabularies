@@ -31,7 +31,7 @@ class HierarchyObject:
     def __init__(self, record: OarepoVocabularyRecord):
         """Initialize the HierarchyObject."""
         self._record = record
-        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata  # type: ignore[union-attr]
+        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata
 
         if self._hierarchy_data is None:
             # Opensearch result creates transient self._record.model so that hiearchy_metadata is not loaded from the DB
@@ -107,15 +107,15 @@ class HierarchyObject:
 class HierarchySystemField(MappingSystemFieldMixin, SystemField):
     """System field handling the VocabularyHierarchy hierarchy fields fixes on create/update/delete of a record."""
 
-    def __get__(self, record: Record, owner: Any = None) -> Any:  # type: ignore[override]
+    def __get__(self, record: Record, owner: Any = None) -> Any:
         """Get the hierarchy field value or cached value."""
         if record is None:
             return self
 
         if not hasattr(record, "_hierarchy_cache"):
-            record._hierarchy_cache = HierarchyObject(record)  # noqa: SLF001 # type: ignore[attr-defined]
+            record._hierarchy_cache = HierarchyObject(record)
 
-        return record._hierarchy_cache  # noqa: SLF001 # type: ignore[attr-defined]
+        return record._hierarchy_cache
 
     @property
     def mapping(self) -> dict[str, Any]:
@@ -148,7 +148,7 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
 
         # We have a current parent set, check if it changed
         if current_parent_id:
-            current_parent_record = Vocabulary.pid.with_type_ctx(record["type"]["id"]).resolve(current_parent_id)  # type: ignore[attr-defined]
+            current_parent_record = Vocabulary.pid.with_type_ctx(record["type"]["id"]).resolve(current_parent_id)
 
             if hierarchy_obj.data.parent_id != current_parent_record.id:
                 # update the parent_id and parent_hierarchy_metadata, relationship will not change automatically
@@ -178,14 +178,14 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
 
             # potentially fix the previous parent leaf status
             if record.parent.previous_id is not None:
-                previous_parent_record = Vocabulary.pid.with_type_ctx(record["type"]["id"]).resolve(  # type: ignore[attr-defined]
+                previous_parent_record = Vocabulary.pid.with_type_ctx(record["type"]["id"]).resolve(
                     record.parent.previous_id
                 )
                 previous_parent_hierarchy = VocabularyHierarchy.query.get(previous_parent_record.id)
                 if previous_parent_hierarchy is not None:
                     previous_parent_hierarchy.update_leaf_status()
 
-    def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
+    def pre_delete(self, record: Record, force: bool = False) -> None:
         """Fix the parent leaf status and update children hierarchy on delete."""
         # update current record to have no parent
         hierarchy_entry = VocabularyHierarchy.query.get(record.id)
@@ -201,7 +201,7 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         if parent_hierarchy_metadata is not None:
             parent_hierarchy_metadata.update_leaf_status()
 
-    def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:  # noqa: ARG002
+    def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:
         """Add the hierarchy data to the record before dumping."""
-        hierarchy_obj = self.__get__(record)  # type: ignore[arg-type]
+        hierarchy_obj = self.__get__(record)
         data[self.key] = hierarchy_obj.to_dict()

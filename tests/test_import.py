@@ -30,9 +30,9 @@ def test_import_export_hierarchy_data(app, db, cache, vocab_cf):
     assert current_service.read(system_identity, ("languages", "en")).data["id"] == "en"
     assert current_service.read(system_identity, ("languages", "en.US")).data["hierarchy"]["ancestors"] == ["en"]
 
-    with tempfile.TemporaryDirectory() as d:
+    with tempfile.TemporaryDirectory() as tmpdir:
         # export
-        d = Path(d)  # noqa: PLW2901
+        d = Path(tmpdir)
         assert read_yaml(d / "catalogue.yaml") == {
             "vocabulary-languages": [
                 {"pid_type": "lng", "vocabulary": "languages", "writer": "vocabulary"},

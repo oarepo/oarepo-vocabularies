@@ -13,7 +13,7 @@ rowidx = 0
 
 
 def next_row(it):
-    global rowidx  # noqa: PLW0603
+    global rowidx
     rowidx += 1
     return [x.value for x in next(it)]
 

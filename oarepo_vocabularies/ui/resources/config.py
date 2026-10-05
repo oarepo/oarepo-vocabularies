@@ -56,7 +56,7 @@ class VocabularyTypeValidationSchema(ma.Schema):
         vocabulary_type = data.get("type")
 
         try:
-            if VocabularyType.query.filter_by(id=vocabulary_type).one_or_none():  # type: ignore[attr-defined]
+            if VocabularyType.query.filter_by(id=vocabulary_type).one_or_none():
                 return {"vocabulary_type": vocabulary_type}
             raise VocabularyTypeDoesNotExistError(f"Vocabulary type {vocabulary_type} does not exist.")
 
@@ -100,7 +100,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     # Accepted here only so content negotiation lets the request through; the actual
     # response is a redirect to the matching API endpoint (see vocabulary_content_negotiation),
     # so no real response handler is needed for these mimetypes.
-    response_handlers: ClassVar[Mapping[str, Any]] = {  # type: ignore[override]
+    response_handlers: ClassVar[Mapping[str, Any]] = {
         **RecordsUIResourceConfig.response_handlers,
         "text/turtle": None,
         "application/n-triples": None,
@@ -108,7 +108,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "application/rdf+xml": None,
         "application/json": None,
     }
-    components: ClassVar[list[UIResourceComponent]] = [  # type: ignore[override]
+    components: ClassVar[list[UIResourceComponent]] = [
         PermissionsComponent,
         VocabularySearchComponent,
         CustomFieldsComponent,
@@ -122,7 +122,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """UI serializer."""
         return VocabularyUIJSONSerializer()
 
-    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type_": ma.fields.Str(data_key="type")}  # type: ignore[override]
+    request_form_config_view_args: ClassVar[dict[str, ma.fields.Field]] = {"type_": ma.fields.Str(data_key="type")}
     request_search_args = VocabularySearchRequestArgsSchema
     request_vocabulary_type_args = VocabularyTypeValidationSchema
 
@@ -169,7 +169,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
             **pagination_endpoint_links("oarepo_vocabularies_ui.search", params=["type"]),
             "create": EndpointLink(
                 "oarepo_vocabularies_ui.create",
-                vars=lambda obj, vars_: vars_.pop("args", None),  # noqa: ARG005
+                vars=lambda obj, vars_: vars_.pop("args", None),
                 params=["type"],
             ),
         }

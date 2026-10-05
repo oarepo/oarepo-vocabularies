@@ -42,7 +42,7 @@ _JSONLD_CONTEXT: dict[str, Any] = {
 # no value for them, rather than emitting them as null.
 # pyld's FrameOptions.embed Literal omits "@once", even though pyld's own implementation
 # uses it as the actual default (see pyld.jsonld.frame's `options.setdefault('embed', '@once')`).
-_FRAME_OPTIONS: FrameOptions = {"embed": "@once", "omitDefault": True}  # type: ignore[assignment]
+_FRAME_OPTIONS: FrameOptions = {"embed": "@once", "omitDefault": True}
 
 
 def _jsonld_context() -> dict[str, Any]:

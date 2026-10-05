@@ -40,7 +40,7 @@ class LocalizedDateTime(ma.fields.Field):
 
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> dict:
         return {
-            f"{self.attribute}_l10n_{fmt}": formatter._serialize(value, attr, obj, **kwargs)  # noqa: SLF001
+            f"{self.attribute}_l10n_{fmt}": formatter._serialize(value, attr, obj, **kwargs)
             for fmt, formatter in self.formatters.items()
         }
 
@@ -60,7 +60,7 @@ class CustomFieldsSchemaUI(InvenioCustomFieldsSchemaUI):
 class VocabularyI18nStrUIField(ma_fields.Field):
     """A Marshmallow field that provides localized string from i18n dict."""
 
-    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> Any:  # noqa: ARG002
+    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: Any) -> Any:
         if not value:
             return None
         locale = self.get_locale()
@@ -107,7 +107,7 @@ class VocabularyUISchema(VocabularyL10NItemSchema):
     type = ma.fields.Raw(dump_only=True)
 
     @post_dump(pass_original=False)
-    def flatten_localized_dates(self, data: dict, **kwargs: Any) -> dict:  # noqa: ARG002
+    def flatten_localized_dates(self, data: dict, **kwargs: Any) -> dict:
         """Flatten localized date fields into the UI dictionary."""
         # Only flatten if we're working on UI data (not the top-level RDM structure)
 

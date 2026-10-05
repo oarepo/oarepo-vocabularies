@@ -27,5 +27,5 @@ def init_create_api_blueprint(state: BlueprintSetupState) -> None:
     # Register service.
     sregistry = app.extensions["invenio-records-resources"].registry
 
-    if ext.type_service.config.service_id not in sregistry._services:  # noqa: SLF001
+    if ext.type_service.config.service_id not in sregistry._services:
         sregistry.register(ext.type_service, service_id=ext.type_service.config.service_id)

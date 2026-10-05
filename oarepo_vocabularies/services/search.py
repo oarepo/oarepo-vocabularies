@@ -88,7 +88,7 @@ class SourceParam(ParamInterpreter):
     """Evaluate the 'q' or 'suggest' parameter."""
 
     @override
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # type: ignore[override]
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:
         """Apply the source parameter."""
         source = params.get("source")
         if not source:
@@ -103,7 +103,7 @@ class UpdatedAfterParam(ParamInterpreter):
         """."""
         self.param_name = param_name
         self.field_name = field_name
-        super().__init__(config)  # type: ignore[arg-type]
+        super().__init__(config)
 
     @classmethod
     def factory(cls, param: str, field: str) -> partial[ParamInterpreter]:
@@ -111,7 +111,7 @@ class UpdatedAfterParam(ParamInterpreter):
         return partial(cls, param, field)
 
     @override
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # type: ignore[override]
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:
         """Apply a filter to get only records for a specific type."""
         # Pop because we don't want it to show up in links.
         # TODO: only pop if needed.
@@ -123,7 +123,7 @@ class UpdatedAfterParam(ParamInterpreter):
                     vocabulary_filter.append(
                         Bool(
                             must=[
-                                Range(**{self.field_name: {"gt": v}}),  # type: ignore[arg-type]
+                                Range(**{self.field_name: {"gt": v}}),
                                 Term(**{TYPE_ID_FIELD: k}),
                             ]
                         )
@@ -140,7 +140,7 @@ class VocabularyIdsParam(ParamInterpreter):
     """Evaluate type filter."""
 
     @override
-    def apply(self, identity: Identity, search: Search, params: dict) -> Search:  # type: ignore[override]
+    def apply(self, identity: Identity, search: Search, params: dict) -> Search:
         """Apply a filter to get only records for a specific type."""
         ids = params.pop("ids", None)
         if not ids:
@@ -151,14 +151,14 @@ class VocabularyIdsParam(ParamInterpreter):
             by_type[vt].append(vid)
         search_filters = []
         for vt, vids in by_type.items():
-            search_filters.append(Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})]))  # type: ignore[arg-type]
+            search_filters.append(Bool(must=[Term(**{TYPE_ID_FIELD: vt}), Terms(**{ID_FIELD: vids})]))
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
 
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
-    params_interpreters_cls: ClassVar[  # type: ignore[override]
+    params_interpreters_cls: ClassVar[
         list[type[FilterParam | ParamInterpreter] | partial[FilterParam] | partial[ParamInterpreter]]
     ] = [
         FilterParam.factory(param="tags", field="tags"),

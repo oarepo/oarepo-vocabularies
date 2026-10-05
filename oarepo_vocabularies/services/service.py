@@ -41,11 +41,11 @@ class VocabularyTypeService(InvenioVocabularyTypeService):
             self.config.vocabularies_listing_item,
         )
 
-    def search(self, identity: Identity, params: dict | None = None) -> RecordList:  # noqa: ARG002 # type: ignore[override]
+    def search(self, identity: Identity, params: dict | None = None) -> RecordList:
         """Search for vocabulary types entries."""
         self.require_permission(identity, "list_vocabularies")
 
-        vocabulary_types = VocabularyType.query.all()  # type: ignore[attr-defined]
+        vocabulary_types = VocabularyType.query.all()
 
         config_vocab_types = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
 
@@ -86,7 +86,7 @@ class VocabularyTypeService(InvenioVocabularyTypeService):
 
         search = search_opts.search_cls(
             using=current_search_client,
-            index=config.record_cls.index.search_alias,  # type: ignore[attr-defined]
+            index=config.record_cls.index.search_alias,
         )
 
         search.aggs.bucket("vocabularies", {"terms": {"field": "type.id", "size": 100}})

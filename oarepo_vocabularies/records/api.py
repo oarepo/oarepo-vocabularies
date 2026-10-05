@@ -47,12 +47,12 @@ class Vocabulary(
 
     pid = PIDField(
         "id",
-        provider=VocabularyIdProvider,  # type: ignore[arg-type]
-        context_cls=VocabularyPIDFieldContext,  # type: ignore[arg-type]
+        provider=VocabularyIdProvider,
+        context_cls=VocabularyPIDFieldContext,
         create=False,
     )
 
-    dumper = SearchDumper(extensions=[IndexedAtDumperExt(), CustomFieldsDumperExt("VOCABULARIES_CF")])  # type: ignore[arg-type]
+    dumper = SearchDumper(extensions=[IndexedAtDumperExt(), CustomFieldsDumperExt("VOCABULARIES_CF")])
 
     schema = ConstantField(
         "$schema",
@@ -63,7 +63,7 @@ class Vocabulary(
         parent=ParentVocabularyItemRelation(
             "parent",
             keys=["title"],
-            pid_field=ParentVocabularyPIDField(),  # type: ignore[arg-type]
+            pid_field=ParentVocabularyPIDField(),
         ),
         custom_fields=CustomFieldsRelation("VOCABULARIES_CF"),
     )
@@ -114,4 +114,4 @@ def find_vocabulary_relations(record: RecordItem) -> Iterable[VocabularyRelation
             except AttributeError:
                 continue
             if isinstance(pid_context, VocabularyPIDFieldContext):
-                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa: SLF001 # type: ignore[attr-defined]
+                yield VocabularyRelation(fld_name, fld, pid_context._type_id)

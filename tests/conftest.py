@@ -41,9 +41,9 @@ try:
     # Werkzeug <2.1
     from werkzeug import security
 
-    security.safe_str_cmp  # noqa: B018
+    security.safe_str_cmp
 except AttributeError:
-    # Werkzeug >=2.1  # noqa: ERA001
+    # Werkzeug >=2.1
     import hmac
 
     from werkzeug import security
@@ -282,10 +282,10 @@ def app_config(app_config):
     app_config["THEME_HEADER_TEMPLATE"] = "oarepo_vocabularies_ui/test_header_template.html"
 
     app_config["ORCID_CLIENT_ID"] = "blah"
-    app_config["ORCID_CLIENT_SECRET"] = "blah"  # noqa: S105
+    app_config["ORCID_CLIENT_SECRET"] = "blah"
 
     app_config["OPENAIRE_CLIENT_ID"] = "blah"
-    app_config["OPENAIRE_CLIENT_SECRET"] = "blah"  # noqa: S105
+    app_config["OPENAIRE_CLIENT_SECRET"] = "blah"
 
     from oarepo_vocabularies.ui.resources.config import (
         InvenioVocabulariesUIResourceConfig,
@@ -309,7 +309,7 @@ def create_app(instance_path, entry_points):
 
 @pytest.fixture(scope="module")
 def identity_simple():
-    """Simple identity fixture."""  # noqa: D401
+    """Simple identity fixture."""
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(Need(method="system_role", value="any_user"))
@@ -318,7 +318,7 @@ def identity_simple():
 
 @pytest.fixture(scope="module")
 def identity():
-    """Simple identity to interact with the service."""  # noqa: D401
+    """Simple identity to interact with the service."""
     i = Identity(1)
     i.provides.add(UserNeed(1))
     i.provides.add(any_user)
@@ -328,7 +328,7 @@ def identity():
 
 @pytest.fixture(scope="module")
 def authenticated_identity():
-    """Simple identity to interact with the service."""  # noqa: D401
+    """Simple identity to interact with the service."""
     i = Identity(2)
     i.provides.add(UserNeed(2))
     i.provides.add(authenticated_user)
@@ -377,7 +377,7 @@ def ror_authority_type(db):
 
 @pytest.fixture
 def lang_data():
-    """Example data."""  # noqa: D401
+    """Example data."""
     return {
         "id": "eng",
         "title": {"en": "English", "da": "Engelsk", "cs": "Angličtina"},
@@ -394,7 +394,7 @@ def lang_data():
 
 @pytest.fixture
 def lang_data_child():
-    """Example data."""  # noqa: D401
+    """Example data."""
     return {
         "id": "eng.US",
         "title": {
@@ -410,7 +410,7 @@ def lang_data_child():
 
 @pytest.fixture
 def lang_data2(lang_data):
-    """Example data for testing invalid cases."""  # noqa: D401
+    """Example data for testing invalid cases."""
     data = dict(lang_data)
     data["id"] = "new"
     return data
@@ -418,7 +418,7 @@ def lang_data2(lang_data):
 
 @pytest.fixture
 def lang_data3():
-    """Testing data."""  # noqa: D401
+    """Testing data."""
     vocabulary_data = {
         "a": {
             "id": "a",
@@ -620,7 +620,7 @@ def logged_in_client(db, client, user):
     return client
 
 
-# FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30  # noqa: FIX001, TD001
+# FIXME: https://github.com/inveniosoftware/pytest-invenio/issues/30
 # Without this, success of test depends on the tests order
 @pytest.fixture
 def cache():
@@ -696,7 +696,7 @@ def sample_records(app, db, cache, lang_type, lang_data, lang_data_child, vocab_
         },
     )
     Vocabulary.index.refresh()
-    TN = namedtuple("TN", "node,children")  # noqa: PYI024
+    TN = namedtuple("TN", "node,children")
     return [
         TN(
             parent.data,
@@ -781,7 +781,7 @@ def reset_babel(app):
             from flask_babel import SimpleNamespace
         except ImportError:
             return
-        g._flask_babel = SimpleNamespace()  # noqa: SLF001
+        g._flask_babel = SimpleNamespace()
 
     try:
         clear_babel_context()
