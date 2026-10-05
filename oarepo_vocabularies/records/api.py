@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, NamedTuple
 
 from invenio_records.dumpers import SearchDumper
 from invenio_records.dumpers.indexedat import IndexedAtDumperExt
-from invenio_records.systemfields import ConstantField, DictField, RelationsField
+from invenio_records.systemfields import ConstantField, RelationsField
 from invenio_records.systemfields.relations import MultiRelationsField
 from invenio_records_resources.records.dumpers import CustomFieldsDumperExt
 from invenio_records_resources.records.systemfields.pid import PIDField
@@ -24,6 +24,9 @@ from invenio_vocabularies.records.pidprovider import VocabularyIdProvider
 from invenio_vocabularies.records.systemfields import VocabularyPIDFieldContext
 from invenio_vocabularies.records.systemfields.relations import CustomFieldsRelation
 
+from oarepo_vocabularies.records.systemfields.custom_fields import (
+    VocabularyCustomFieldsSystemField,
+)
 from oarepo_vocabularies.records.systemfields.hierarchy_system_field import (
     HierarchySystemField,
 )
@@ -77,7 +80,7 @@ class Vocabulary(
     # TODO: ICU suggest field for title
     # TODO: ICU suggest field for suggest hierarchy title
 
-    custom_fields = DictField()
+    custom_fields = VocabularyCustomFieldsSystemField()
 
     mappings = SKOSMappingSystemField()
 
