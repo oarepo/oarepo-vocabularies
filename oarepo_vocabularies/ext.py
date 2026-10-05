@@ -7,6 +7,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+# Import registers the `vocabularies` CLI group via its @oarepo.group decorator (side effect).
+from oarepo_vocabularies.cli import vocabularies as vocabularies_cli  # noqa: F401
+
 if TYPE_CHECKING:
     from datetime import datetime
 
