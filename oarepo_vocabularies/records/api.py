@@ -121,4 +121,4 @@ def find_vocabulary_relations(record: RecordItem) -> Iterable[VocabularyRelation
             except AttributeError:
                 continue
             if isinstance(pid_context, VocabularyPIDFieldContext):
-                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa SLF001
+                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa: SLF001
