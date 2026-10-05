@@ -8,7 +8,7 @@ in the [OARepo documentation](https://nrp-cz.github.io/docs/).
 
 ### Report Bugs
 
-Report bugs at <https://github.com/oarepo/oarepo-doi/issues>.
+Report bugs at <https://github.com/oarepo/oarepo-vocabularies/issues>.
 
 If you are reporting a bug, please include:
 
@@ -35,7 +35,7 @@ the web in blog posts, articles, and such.
 ### Submit Feedback
 
 The best way to send feedback is to file an issue at
-<https://github.com/oarepo/oarepo-doi/issues>.
+<https://github.com/oarepo/oarepo-vocabularies/issues>.
 
 If you are proposing a feature:
 
@@ -46,21 +46,21 @@ If you are proposing a feature:
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `oarepo-doi` for local
+Ready to contribute? Here's how to set up `oarepo-vocabularies` for local
 development.
 
-1. Fork the `oarepo/oarepo-doi` repo on GitHub.
+1. Fork the `oarepo/oarepo-vocabularies` repo on GitHub.
 
 2. Clone your fork locally:
 
    ```console
-   git clone git@github.com:your_name_here/oarepo-doi.git
+   git clone git@github.com:your_name_here/oarepo-vocabularies.git
    ```
 
 3. Install your local copy into a virtual environment:
 
    ```console
-   cd oarepo-doi/
+   cd oarepo-vocabularies/
    ./run.sh venv
    ```
 
