@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import * as React from "react";
 import { VocabularyModalTrigger } from "./components/VocabularyModalTrigger";
 import _isEmpty from "lodash/isEmpty";

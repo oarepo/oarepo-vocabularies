@@ -1,6 +1,6 @@
-# Copyright (c) 2022 CESNET
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# SPDX-FileCopyrightText: 2022-2026 CESNET
+# SPDX-License-Identifier: MIT
+
 """oarepo-vocabularies UI package."""
 
 from __future__ import annotations

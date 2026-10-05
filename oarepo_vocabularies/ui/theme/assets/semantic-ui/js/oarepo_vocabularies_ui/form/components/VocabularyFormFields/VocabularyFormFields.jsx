@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import React from "react";
 import { TextField, MultiInput, FieldLabel } from "react-invenio-forms";
 import {

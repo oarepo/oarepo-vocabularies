@@ -1,3 +1,7 @@
+{#
+SPDX-FileCopyrightText: 2024-2026 CESNET z.s.p.o.
+SPDX-License-Identifier: MIT
+#}
 {#def record, d, extra_context, vocabularySearchTitle="", hierarchical=False #}
 {% if vocabularySearchTitle or hierarchical %}
 {% set vocabValueTitle = ui_value(d) or record.name or _('unknown') %}

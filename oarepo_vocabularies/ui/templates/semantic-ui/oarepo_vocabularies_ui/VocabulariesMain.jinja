@@ -1,3 +1,7 @@
+{#
+SPDX-FileCopyrightText: 2023-2026 CESNET z.s.p.o.
+SPDX-License-Identifier: MIT
+#}
 {#def record, d, extra_context, hierarchical=False #}
 {% set vocabularyType = extra_context.get("vocabularyType", "")%}
 {% set vocabularyMetadata = config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabularyType, {}) %}

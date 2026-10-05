@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import React from "react";
 import { Card, Grid } from "semantic-ui-react";
 import { PublishButton, ResetButton, FeaturedButton } from "../../components";

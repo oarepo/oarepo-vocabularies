@@ -1,7 +1,6 @@
-# Copyright (c) 2022 Miroslav Bauer
-#
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# SPDX-FileCopyrightText: 2022-2026 Miroslav Bauer
+# SPDX-License-Identifier: MIT
+
 """oarepo-vocabularies UI extension."""
 
 from __future__ import annotations

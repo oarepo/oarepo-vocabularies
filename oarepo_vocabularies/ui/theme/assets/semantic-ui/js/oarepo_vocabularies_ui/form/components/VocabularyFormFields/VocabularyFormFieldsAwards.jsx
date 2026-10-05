@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import React, { useEffect } from "react";
 import { TextField, FieldLabel, RemoteSelectField } from "react-invenio-forms";
 import { VocabularyMultilingualInputField } from "../VocabularyMultilingualInputField";
