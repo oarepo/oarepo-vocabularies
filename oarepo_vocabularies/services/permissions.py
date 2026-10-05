@@ -48,7 +48,7 @@ class IfVocabularyType(ConditionalGenerator):
 
         return False
 
-    def _query_instate(self, **context: Any) -> dsl.query.Query:  # noqa: ARG002
+    def _query_instate(self, **context: Any) -> dsl.query.Query:
         # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
         return dsl.Q("match_all")
 
@@ -87,7 +87,7 @@ class IfNonDangerousVocabularyOperation(ConditionalGenerator):
         # changing id is a very dangerous operation as records that use the vocab item will be broken
         return data.get("id") == record.get("id")
 
-    def _query_instate(self, **context: Any) -> dsl.query.Query:  # noqa: ARG002
+    def _query_instate(self, **context: Any) -> dsl.query.Query:
         # Vocabulary type is already filtered in invenio_vocabularies/services/services.py by passing extra filter."""
         return dsl.Q("match_all")
 

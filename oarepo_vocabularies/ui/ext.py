@@ -35,20 +35,20 @@ class InvenioVocabulariesAppExtension:
         """Initialize vocabulary resources."""
         # Import and check for None so linter does not complain
         resource_cls = obj_or_import_string(app.config["OAREPO_VOCABULARIES_UI_RESOURCE"])
-        assert resource_cls is not None, "OAREPO_VOCABULARIES_UI_RESOURCE must be set"  # noqa: S101
+        assert resource_cls is not None, "OAREPO_VOCABULARIES_UI_RESOURCE must be set"
 
         config_cls = obj_or_import_string(app.config["OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG"])
-        assert config_cls is not None, "OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG must be set"  # noqa: S101
+        assert config_cls is not None, "OAREPO_VOCABULARIES_UI_RESOURCE_CONFIG must be set"
 
         self.resource = resource_cls(
             config=config_cls(),
         )
 
         type_resource_cls = obj_or_import_string(app.config["VOCABULARY_TYPE_UI_RESOURCE"])
-        assert type_resource_cls is not None, "VOCABULARY_TYPE_UI_RESOURCE must be set"  # noqa: S101
+        assert type_resource_cls is not None, "VOCABULARY_TYPE_UI_RESOURCE must be set"
 
         config_cls = obj_or_import_string(app.config["VOCABULARY_TYPE_UI_RESOURCE_CONFIG"])
-        assert config_cls is not None, "VOCABULARY_TYPE_UI_RESOURCE_CONFIG must be set"  # noqa: S101
+        assert config_cls is not None, "VOCABULARY_TYPE_UI_RESOURCE_CONFIG must be set"
 
         self.type_resource = type_resource_cls(
             config=config_cls(),

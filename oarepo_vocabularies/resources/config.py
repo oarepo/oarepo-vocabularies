@@ -67,7 +67,7 @@ class VocabulariesResourceConfig(InvenioVocabulariesResourceConfig):
 
     request_search_args = VocabularySearchRequestArgsSchema
 
-    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {  # type: ignore[override]
+    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {
         **InvenioVocabulariesResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyUIJSONSerializer(), headers=etag_headers),
         "text/turtle": ResponseHandler(TurtleSerializer(), headers=etag_headers),

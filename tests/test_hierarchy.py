@@ -694,7 +694,7 @@ def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, v
     parent = vocab_service.create(system_identity, lang_data)
     assert "parent" not in parent.links
 
-    assert parent._record.hierarchy.to_dict() == {  # noqa: SLF001
+    assert parent._record.hierarchy.to_dict() == {
         "level": 1,
         "titles": [{"cs": "Angličtina", "da": "Engelsk", "en": "English"}],
         "ancestors": [],
@@ -708,7 +708,7 @@ def test_hierarchy_lang(app, db, cache, lang_type, lang_data, lang_data_child, v
     assert child.links["parent"] == "https://127.0.0.1:5000/api/vocabularies/languages/eng"
     assert parent.links["children"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-parent=eng"
     assert parent.links["descendants"] == "https://127.0.0.1:5000/api/vocabularies/languages?h-ancestor=eng"
-    assert child._record.hierarchy.to_dict() == {  # noqa: SLF001
+    assert child._record.hierarchy.to_dict() == {
         "level": 2,
         "titles": [
             {

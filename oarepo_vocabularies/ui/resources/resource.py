@@ -247,11 +247,12 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             **render_kwargs,
         )
 
-    def _get_record(  # type: ignore[override]
+    @override
+    def _get_record(
         self,
         pid_value: str,
         type_: str,
-        **kwargs: Any,  # noqa: ARG002
+        **kwargs: Any,
     ) -> RecordItem:
         """Get a record from the service."""
         if not type_:
@@ -260,7 +261,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return self.api_service.read(
             g.identity,
             (
-                type_,  # type: ignore[arg-type]
+                type_,
                 pid_value,
             ),
         )
@@ -284,7 +285,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return tpl.expand(identity, record)
 
     # TODO: remove this linter ignore after oarepo ui is merged because the signature changed in parent class
-    def expand_search_links(  # type: ignore[reportIncompatibleMethodOverride]
+    def expand_search_links(
         self,
         identity: Identity,
         pagination: Pagination,

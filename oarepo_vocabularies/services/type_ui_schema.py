@@ -19,9 +19,9 @@ class VocabularyTypeUISchema(BaseObjectSchema):
     description = L10NString(data_key="description_l10n")
 
     @post_dump(pass_original=True)
-    def keep_unknowns(self, output: dict, orig: dict, **kwargs: Any) -> dict:  # noqa: ARG002
+    def keep_unknowns(self, output: dict, orig: dict, **kwargs: Any) -> dict:
         """Keep unknown fields in the output."""
-        for key in orig:  # noqa: PLC0206
+        for key in orig:
             # if output contains transformed version of the key, skip it
             if any(out_key.startswith(f"{key}_") for out_key in output):
                 continue

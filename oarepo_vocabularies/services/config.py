@@ -119,7 +119,7 @@ class VocabularyTypeServiceConfig(InvenioVocabularyTypesServiceConfig):
 
     # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
     # As we can not have class property, we simulate it with a callable class
-    permission_policy_cls = PermissionPolicyFactory()  # type: ignore[type-arg]
+    permission_policy_cls = PermissionPolicyFactory()
     vocabularies_listing_item: ClassVar[dict[str, EndpointLink]] = {
         "self": EndpointLink(
             "vocabularies.search",
@@ -139,8 +139,8 @@ class VocabulariesConfig(VocabulariesServiceConfig):
 
     record_cls = Vocabulary
     schema = VocabularySchema
-    search = VocabularySearchOptions  # type: ignore[type-arg]
-    components: ClassVar[list[type[ServiceComponent]]] = [  # type: ignore[override]
+    search = VocabularySearchOptions
+    components: ClassVar[list[type[ServiceComponent]]] = [
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
         ScanningOrderComponent,
@@ -148,10 +148,10 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     ]
     # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
     # As we can not have class property, we simulate it with a callable class
-    permission_policy_cls = PermissionPolicyFactory()  # type: ignore[type-arg]
+    permission_policy_cls = PermissionPolicyFactory()
 
     url_prefix = "/vocabularies/"
-    links_item: ClassVar[Mapping[str, EndpointLink]] = {  # type: ignore[override]
+    links_item: ClassVar[Mapping[str, EndpointLink]] = {
         "self": EndpointLink(
             "vocabularies.read",
             vars=lambda record, _vars: _vars.update(
@@ -263,7 +263,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
     }
 
-    links_search: ClassVar[Mapping[str, EndpointLink]] = {  # type: ignore[override]
+    links_search: ClassVar[Mapping[str, EndpointLink]] = {
         **pagination_endpoint_links("vocabularies.search", params=["type"]),
         **pagination_endpoint_links_html(vocabularies_search_ui_endpoint, params=["type"]),
     }

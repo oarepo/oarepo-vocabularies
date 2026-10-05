@@ -27,7 +27,7 @@ class VocabularyTypeUIResource(UIResource):
 
     def create_url_rules(self) -> list:
         """Create the URL rules for the record resource."""
-        routes = self.config.routes  # type: ignore[attr-defined]
+        routes = self.config.routes
         list_route = routes["list"]
         if not list_route.endswith("/"):
             list_route += "/"
@@ -44,7 +44,7 @@ class VocabularyTypeUIResource(UIResource):
 
     def list(self) -> Any:
         """Return vocabulary types page."""
-        list_data = self.service.search(g.identity).to_dict()  # type: ignore[attr-defined]
+        list_data = self.service.search(g.identity).to_dict()
 
         config_metadata = current_app.config["INVENIO_VOCABULARY_TYPE_METADATA"]
         for item in list_data["hits"]["hits"]:
@@ -54,7 +54,7 @@ class VocabularyTypeUIResource(UIResource):
                         item[key] = value
 
         # TODO: handle permissions UI way - better response than generic error
-        serialized_list_data = self.config.ui_serializer.dump_list(list_data)  # type: ignore[attr-defined]
+        serialized_list_data = self.config.ui_serializer.dump_list(list_data)
 
         extra_context: dict = {}
         self.run_components(
@@ -71,6 +71,6 @@ class VocabularyTypeUIResource(UIResource):
         _catalog = current_oarepo_ui.catalog
 
         return _catalog.render(
-            self.config.templates["list"],  # type: ignore[attr-defined]
+            self.config.templates["list"],
             list_data=serialized_list_data,
         )

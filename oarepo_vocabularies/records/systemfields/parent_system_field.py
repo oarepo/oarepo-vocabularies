@@ -84,23 +84,23 @@ class ParentSystemField(MappingSystemFieldMixin, SystemField):
 
     def __set_name__(self, owner: Any, name: str) -> None:
         """Set the name of the field."""
-        super().__set_name__(owner, name)  # type: ignore[attr-defined]
+        super().__set_name__(owner, name)
 
-    def __get__(self, record: Record, owner: Any = None) -> Any:  # type: ignore[override]
+    def __get__(self, record: Record, owner: Any = None) -> Any:
         """Get the parent field value or cached value."""
         if record is None:
             return self
 
         if not hasattr(record, "_parent_cache"):
-            record._parent_cache = ParentObject(self.key, record)  # noqa: SLF001 # type: ignore[attr-defined]
+            record._parent_cache = ParentObject(self.key, record)
 
-        return record._parent_cache  # noqa: SLF001 # type: ignore[attr-defined]
+        return record._parent_cache
 
-    def __set__(self, record: Record, value: str | None):  # type: ignore[override]
+    def __set__(self, record: Record, value: str | None):
         """Set the parent field value."""
         self.__get__(record).set(value if value is not None else None)
 
-    def pre_delete(self, record: Record, force: bool = False) -> None:  # noqa: ARG002
+    def pre_delete(self, record: Record, force: bool = False) -> None:
         """Handle deletion by setting correct parent to children in VocabularyHierarchy table."""
         self_uuid = record.id
 

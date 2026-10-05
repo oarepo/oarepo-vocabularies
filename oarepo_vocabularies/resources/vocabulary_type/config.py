@@ -23,7 +23,7 @@ class VocabularyTypeResourceConfig(InvenioVocabularyTypeResourceConfig):
 
     blueprint_name = "oarepo_vocabulary_type"
 
-    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {  # type: ignore[override]
+    response_handlers: ClassVar[Mapping[str, ResponseHandler]] = {
         **InvenioVocabularyTypeResourceConfig.response_handlers,
         "application/vnd.inveniordm.v1+json": ResponseHandler(VocabularyTypeUIJSONSerializer()),
     }

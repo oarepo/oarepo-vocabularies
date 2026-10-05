@@ -36,4 +36,4 @@ def vocabulary_content_negotiation[T: Callable](f: T) -> T:
         api_url = invenio_url_for("vocabularies.read", type=kwargs["vocabulary_type"], pid_value=kwargs["pid_value"])
         return redirect(api_url)
 
-    return inner  # type: ignore[return-value]
+    return inner
