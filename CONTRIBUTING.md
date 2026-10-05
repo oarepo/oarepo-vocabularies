@@ -28,7 +28,7 @@ is open to whoever wants to implement it.
 
 ### Write Documentation
 
-OARepo Theme could always use more documentation, whether as part of the
+OARepo Vocabularies could always use more documentation, whether as part of the
 official [NRP docs](https://nrp-cz.github.io/docs/), in README.md, docstrings, or even on
 the web in blog posts, articles, and such.
 
@@ -112,5 +112,5 @@ Before you submit a pull request, check that it meets these guidelines:
 
 ## License
 
-By contributing to OARepo Theme, you agree that your contributions will be
+By contributing to OARepo Vocabularies, you agree that your contributions will be
 licensed under the terms of the [MIT License](LICENSE).
