@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import React from "react";
 import { TextField, FieldLabel, RemoteSelectField } from "react-invenio-forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";

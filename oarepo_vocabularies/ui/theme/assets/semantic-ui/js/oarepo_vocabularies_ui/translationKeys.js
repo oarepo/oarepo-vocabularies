@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 // This file is used purely for translation keys extraction
 
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import * as React from "react";
 import { Icon, Form } from "semantic-ui-react";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";

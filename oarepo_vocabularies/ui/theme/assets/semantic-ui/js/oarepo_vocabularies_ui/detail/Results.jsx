@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import PropTypes from "prop-types";
 import React from "react";
 import { Grid } from "semantic-ui-react";

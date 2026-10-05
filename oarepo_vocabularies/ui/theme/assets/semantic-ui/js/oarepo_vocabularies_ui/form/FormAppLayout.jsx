@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import React from "react";
 import { Container, Grid, Ref, Sticky } from "semantic-ui-react";
 import { useFormConfig, FormFeedback, FormTitle } from "@js/oarepo_ui/forms";

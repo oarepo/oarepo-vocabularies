@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import {
   DRAFT_HAS_VALIDATION_ERRORS,
   DRAFT_SAVE_FAILED,

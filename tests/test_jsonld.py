@@ -1,11 +1,6 @@
-#
-# Copyright (c) 2025 CESNET z.s.p.o.
-#
-# This file is a part of oarepo-vocabularies (see https://github.com/oarepo/oarepo-vocabularies).
-#
-# oarepo-vocabularies is free software; you can redistribute it and/or modify it
-# under the terms of the MIT License; see LICENSE file for more details.
-#
+# SPDX-FileCopyrightText: 2025-2026 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """Tests for the JSON-LD-specific framing behavior of the application/ld+json response handler.
 
 Basic read/redirect/search coverage lives in test_rdf_serializations.py, shared with the other

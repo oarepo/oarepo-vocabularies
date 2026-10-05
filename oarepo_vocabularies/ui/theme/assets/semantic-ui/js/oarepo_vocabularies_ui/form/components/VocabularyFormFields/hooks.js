@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 CESNET z.s.p.o.
+// SPDX-License-Identifier: MIT
+
 import { useEffect } from "react";
 import { useFormikContext, getIn } from "formik";
 
