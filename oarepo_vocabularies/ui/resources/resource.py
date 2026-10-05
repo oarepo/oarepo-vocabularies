@@ -42,6 +42,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
     """Invenio Vocabularies UI Resource."""
 
     @pass_route_args("vocabulary_type")
+    @override
     def search(self, *args: Any, **kwargs: Any) -> Any:
         """Search records."""
         return super().search(*args, **kwargs)
@@ -266,6 +267,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
             ),
         )
 
+    @override
     def empty_record(self, vocabulary_type: str | None = None, **_kwargs: Any) -> dict[str, Any]:
         """Create an empty record with type and tags initialized."""
         record = cast("dict[str, Any]", dump_empty(self.api_config.schema))
@@ -273,6 +275,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         record["tags"] = []
         return record
 
+    @override
     def expand_detail_links(self, identity: Identity, record: RecordItem) -> Any:
         """Get links for this result item."""
         tpl = LinksTemplate(
@@ -285,6 +288,7 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return tpl.expand(identity, record)
 
     # TODO: remove this linter ignore after oarepo ui is merged because the signature changed in parent class
+    @override
     def expand_search_links(
         self,
         identity: Identity,

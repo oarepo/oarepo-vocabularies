@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, cast
+from typing import TYPE_CHECKING, ClassVar, cast, override
 
 import marshmallow as ma
 from flask import current_app
@@ -50,6 +50,7 @@ class VocabularyTypeValidationSchema(ma.Schema):
 
     vocabulary_type = ma.fields.String()
 
+    @override
     def load(self, data: Mapping[str, Any], *args: Any, **kwargs: Any) -> dict | None:
         """Load marshmallow data and validate vocabulary type existence."""
         _, _ = args, kwargs
@@ -118,6 +119,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     ]
 
     @property
+    @override
     def ui_serializer(self) -> VocabularyUIJSONSerializer:
         """UI serializer."""
         return VocabularyUIJSONSerializer()
@@ -127,6 +129,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
     request_vocabulary_type_args = VocabularyTypeValidationSchema
 
     @property
+    @override
     def ui_links_item(self) -> Mapping[str, EndpointLink]:
         """UI Item links."""
         return {
@@ -163,13 +166,14 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         }
 
     @property
+    @override
     def ui_links_search(self) -> Mapping[str, Link | EndpointLink]:
         """UI Search links."""
         return {
             **pagination_endpoint_links("oarepo_vocabularies_ui.search", params=["type"]),
             "create": EndpointLink(
                 "oarepo_vocabularies_ui.create",
-                vars=lambda obj, vars_: vars_.pop("args", None),
+                vars=lambda _obj, vars_: vars_.pop("args", None),
                 params=["type"],
             ),
         }
@@ -178,6 +182,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """Get vocabulary properties config for a vocabulary type if available."""
         return current_app.config.get("INVENIO_VOCABULARY_TYPE_METADATA", {}).get(vocabulary_type, {})
 
+    @override
     def _get_custom_fields_ui_config(
         self,
         key: str,
@@ -190,6 +195,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         return vocabularies_cf_ui.get(vocabulary_type, [])
 
     # adapt to search options of each specialized service if available
+    @override
     def search_available_sort_options(
         self,
         api_config: RecordServiceConfig,
@@ -199,20 +205,19 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         _ = identity
         return cast("dict", api_config.search.sort_options)
 
+    @override
     def search_active_sort_options(self, api_config: RecordServiceConfig, identity: Identity) -> list[str]:
         """Get the active sort options for the current vocabulary type."""
         _ = identity
         return list(api_config.search.sort_options.keys())
 
+    @override
     def search_endpoint_url(self, identity: Identity, overrides: dict[str, str] | None = None, **kwargs: Any) -> str:
         """Get the search endpoint URL for the current vocabulary type."""
         _ = identity, kwargs
-        return cast(
-            "str",
-            EndpointLink("vocabularies.search", params=["type"]).expand(
-                {},
-                {
-                    "type": overrides["vocabularyType"] if overrides else None,
-                },
-            ),
+        return EndpointLink("vocabularies.search", params=["type"]).expand(
+            {},
+            {
+                "type": overrides["vocabularyType"] if overrides else None,
+            },
         )

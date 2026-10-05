@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from flask import g
 from flask_resources import Resource, response_handler, route
@@ -23,6 +23,7 @@ class VocabularyTypeResource(Resource):
         super().__init__(config)
         self.service = service
 
+    @override
     def create_url_rules(self) -> list:
         """Create the URL rules for the resource."""
         routes = self.config.routes

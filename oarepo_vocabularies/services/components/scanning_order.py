@@ -14,10 +14,11 @@ if TYPE_CHECKING:
     from opensearch_dsl import Search
 
 
+# REVIEW: check if there is a "scan" run_components ever called
 class ScanningOrderComponent(ServiceComponent):
     """Component to handle scanning order in vocabulary searches."""
 
-    def scan(self, identity: Identity, search: Search, params: dict[str, Any]) -> Search:
+    def scan(self, _identity: Identity, search: Search, params: dict[str, Any]) -> Search:
         """Modify the search to include scanning order if specified in params."""
         if params.get("preserve_order"):
             return search.params(preserve_order=True)

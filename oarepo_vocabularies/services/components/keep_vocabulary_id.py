@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from invenio_records_resources.services.records.components import ServiceComponent
 
@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 class KeepVocabularyIdComponent(ServiceComponent):
     """Component to keep the vocabulary ID unchanged on updates."""
 
+    @override
     def update(self, identity: Identity, **kwargs: Any) -> None:
         """Keep the vocabulary ID unchanged on updates."""
         data: dict[str, Any] = kwargs.get("data", {})

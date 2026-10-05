@@ -23,9 +23,11 @@ from oarepo_vocabularies.records.systemfields.custom_fields import (
     VocabularyCustomFieldsSystemField,
 )
 from oarepo_vocabularies.records.systemfields.hierarchy_system_field import (
+    HierarchyObject,
     HierarchySystemField,
 )
 from oarepo_vocabularies.records.systemfields.parent_system_field import (
+    ParentObject,
     ParentSystemField,
 )
 from oarepo_vocabularies.records.systemfields.relations import (
@@ -45,6 +47,10 @@ class Vocabulary(
 ):
     """Vocabulary record class with hierarchy and parent system fields."""
 
+    # internal fields
+    _hierarchy_cache: HierarchyObject
+    _parent_cache: ParentObject
+
     pid = PIDField(
         "id",
         provider=VocabularyIdProvider,
@@ -63,7 +69,8 @@ class Vocabulary(
         parent=ParentVocabularyItemRelation(
             "parent",
             keys=["title"],
-            pid_field=ParentVocabularyPIDField(),
+            #  duck typed to provide resolve(), not a real PIDField
+            pid_field=ParentVocabularyPIDField(),  # ty: ignore[invalid-argument-type]
         ),
         custom_fields=CustomFieldsRelation("VOCABULARIES_CF"),
     )
@@ -114,4 +121,4 @@ def find_vocabulary_relations(record: RecordItem) -> Iterable[VocabularyRelation
             except AttributeError:
                 continue
             if isinstance(pid_context, VocabularyPIDFieldContext):
-                yield VocabularyRelation(fld_name, fld, pid_context._type_id)
+                yield VocabularyRelation(fld_name, fld, pid_context._type_id)  # noqa SLF001

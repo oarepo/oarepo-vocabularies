@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast, override
 
 from invenio_db import db
 from invenio_records.systemfields import SystemField
@@ -15,7 +15,7 @@ from oarepo_runtime.records.systemfields.mapping import MappingSystemFieldMixin
 from oarepo_vocabularies.records.models import VocabularyHierarchy
 
 if TYPE_CHECKING:
-    from invenio_records.api import RecordBase
+    from invenio_records.api import Record as RecordBase
     from invenio_records.dumpers import Dumper
     from invenio_records_resources.records.api import Record
 
@@ -31,7 +31,12 @@ class HierarchyObject:
     def __init__(self, record: OarepoVocabularyRecord):
         """Initialize the HierarchyObject."""
         self._record = record
-        self._hierarchy_data: VocabularyHierarchy = self._record.model.hierarchy_metadata
+        _model = self._record.model
+        if _model is None:
+            raise ValueError("Record must have a database model to be able to access hierarchy data")
+
+        # the hierarchy_metadata is a reverse relationship which ty does not see, so we ignore the unresolved-attribute
+        self._hierarchy_data: VocabularyHierarchy = _model.hierarchy_metadata  # ty: ignore[unresolved-attribute]
 
         if self._hierarchy_data is None:
             # Opensearch result creates transient self._record.model so that hiearchy_metadata is not loaded from the DB
@@ -107,17 +112,21 @@ class HierarchyObject:
 class HierarchySystemField(MappingSystemFieldMixin, SystemField):
     """System field handling the VocabularyHierarchy hierarchy fields fixes on create/update/delete of a record."""
 
-    def __get__(self, record: Record, owner: Any = None) -> Any:
+    @override
+    def __get__(self, record: RecordBase | None, owner: Any = None) -> Any:
         """Get the hierarchy field value or cached value."""
         if record is None:
             return self
 
-        if not hasattr(record, "_hierarchy_cache"):
-            record._hierarchy_cache = HierarchyObject(record)
+        record = cast("OarepoVocabularyRecord", record)
 
-        return record._hierarchy_cache
+        if not hasattr(record, "_hierarchy_cache"):
+            record._hierarchy_cache = HierarchyObject(record)  # noqa: SLF001
+
+        return record._hierarchy_cache  # noqa: SLF001
 
     @property
+    @override
     def mapping(self) -> dict[str, Any]:
         """Get the mapping for the hierarchy field."""
         key = self.key
@@ -141,6 +150,7 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
             }
         }
 
+    @override
     def pre_commit(self, record: OarepoVocabularyRecord) -> None:
         """Fix the parent leaf status and update children hierarchy on create/update."""
         hierarchy_obj = self.__get__(record)
@@ -185,6 +195,7 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
                 if previous_parent_hierarchy is not None:
                     previous_parent_hierarchy.update_leaf_status()
 
+    @override
     def pre_delete(self, record: Record, force: bool = False) -> None:
         """Fix the parent leaf status and update children hierarchy on delete."""
         # update current record to have no parent
@@ -201,6 +212,7 @@ class HierarchySystemField(MappingSystemFieldMixin, SystemField):
         if parent_hierarchy_metadata is not None:
             parent_hierarchy_metadata.update_leaf_status()
 
+    @override
     def pre_dump(self, record: RecordBase, data: dict, dumper: Dumper | None = None) -> None:
         """Add the hierarchy data to the record before dumping."""
         hierarchy_obj = self.__get__(record)

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from flask.sansio.blueprints import BlueprintSetupState
 
 
-def create_app_blueprint(app: Flask) -> Blueprint:
+def create_app_blueprint(_app: Flask) -> Blueprint:
     """Create app blueprint."""
     blueprint = Blueprint("oarepo_vocabularies", __name__, template_folder="templates")
     blueprint.record_once(init_create_app_blueprint)
@@ -28,5 +28,5 @@ def init_create_app_blueprint(state: BlueprintSetupState) -> None:
 
     # Register service.
     sregistry = app.extensions["invenio-records-resources"].registry
-    if ext.type_service.config.service_id not in sregistry._services:
+    if ext.type_service.config.service_id not in sregistry._services:  # noqa: SLF001 there is no public call to get all services
         sregistry.register(ext.type_service, service_id=ext.type_service.config.service_id)

@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -38,10 +38,7 @@ def enable_datastream_updates() -> None:
             since: datetime | None = None,
             **kwargs: Any,
         ) -> dict[str, Any]:
-            arguments = cast(
-                "dict[str, Any]",
-                original_affiliations_arguments(job_obj, since=since, **kwargs),
-            )
+            arguments = original_affiliations_arguments(job_obj, since=since, **kwargs)
             writer = arguments["config"]["writers"][0]["args"]["writer"]
             writer.setdefault("args", {})["update"] = True
             return arguments
@@ -61,10 +58,7 @@ def enable_datastream_updates() -> None:
             since: datetime | None = None,
             **kwargs: Any,
         ) -> dict[str, Any]:
-            arguments = cast(
-                "dict[str, Any]",
-                original_funders_arguments(job_obj, since=since, **kwargs),
-            )
+            arguments = original_funders_arguments(job_obj, since=since, **kwargs)
             writer = arguments["config"]["writers"][0]["args"]["writer"]
             writer.setdefault("args", {})["update"] = True
             return arguments
