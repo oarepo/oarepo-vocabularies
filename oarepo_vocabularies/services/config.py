@@ -119,7 +119,7 @@ class VocabularyTypeServiceConfig(InvenioVocabularyTypesServiceConfig):
 
     # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
     # As we can not have class property, we simulate it with a callable class
-    permission_policy_cls = PermissionPolicyFactory()
+    permission_policy_cls = PermissionPolicyFactory()  # ty: ignore[invalid-assignment]
     vocabularies_listing_item: ClassVar[dict[str, EndpointLink]] = {
         "self": EndpointLink(
             "vocabularies.search",
@@ -139,7 +139,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
 
     record_cls = Vocabulary
     schema = VocabularySchema
-    search = VocabularySearchOptions
+    search = VocabularySearchOptions  # ty: ignore[invalid-assignment]
     components: tuple[type[ServiceComponent], ...] = (
         KeepVocabularyIdComponent,
         *VocabulariesServiceConfig.components,
@@ -148,7 +148,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     )
     # TODO: Invenio vocabularies service uses vocabularies config as a class, not as an instance
     # As we can not have class property, we simulate it with a callable class
-    permission_policy_cls = PermissionPolicyFactory()
+    permission_policy_cls = PermissionPolicyFactory()  # ty: ignore[invalid-assignment]
 
     url_prefix = "/vocabularies/"
     links_item: Mapping[str, EndpointLink] = {

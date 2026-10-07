@@ -43,6 +43,7 @@ if TYPE_CHECKING:
     from invenio_access.permissions import Identity
     from invenio_records_resources.services import Link
     from invenio_records_resources.services.records.config import RecordServiceConfig
+    from oarepo_ui.resources import UIResourceComponent
 
 
 class VocabularyTypeValidationSchema(ma.Schema):
@@ -109,7 +110,7 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         "application/rdf+xml": None,
         "application/json": None,
     }
-    components = (
+    components: tuple[type[UIResourceComponent[Any]], ...] = (
         PermissionsComponent,
         VocabularySearchComponent,
         CustomFieldsComponent,
