@@ -51,7 +51,7 @@ class Vocabulary(
     _hierarchy_cache: HierarchyObject
     _parent_cache: ParentObject
 
-    pid = PIDField(
+    pid = PIDField(  # ty: ignore[invalid-assignment] # TODO: find out why
         "id",
         provider=VocabularyIdProvider,
         context_cls=VocabularyPIDFieldContext,

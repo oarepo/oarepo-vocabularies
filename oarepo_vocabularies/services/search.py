@@ -156,6 +156,7 @@ class VocabularyIdsParam(ParamInterpreter):
         return search.filter(Bool(should=search_filters, minimum_should_match=1))
 
 
+# TODO: check if we should inherit from vocab search options instead of generic invenio search options!
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
