@@ -536,6 +536,93 @@ msgstr ""
 msgid "Search..."
 msgstr ""
 
+#: oarepo_vocabularies/ui/resources/resource.py:58
+msgid "User does not have permission to create vocabulary item."
+msgstr ""
+
+#: oarepo_vocabularies/ui/resources/resource.py:129
+msgid "User does not have permission to update vocabulary item."
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesBreadcrumb.jinja:7
+msgid "unknown"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesDetail.jinja:48
+msgid "Record details"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesForm.jinja:24
+msgid "New item"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:15
+msgid "id"
+msgstr ""
+
+msgid "Exact match"
+msgstr ""
+
+msgid "Close match"
+msgstr ""
+
+msgid "Broad match"
+msgstr ""
+
+msgid "Narrow match"
+msgstr ""
+
+msgid "Related match"
+msgstr ""
+
+msgid "Mappings"
+msgstr ""
+
+msgid ""
+"Concepts in external vocabularies (e.g. COAR) that this item corresponds to,"
+" with the kind of SKOS relation."
+msgstr ""
+
+msgid "Add mapping"
+msgstr ""
+
+msgid "Relation"
+msgstr ""
+
+msgid "Scheme"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Vocabulary item saved successfully. Redirecting..."
+msgstr ""
+
+msgid "Error saving vocabulary item"
+msgstr ""
+
+msgid "Vocabulary item could not be saved due to validation errors: "
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/manage.html:7
+msgid "Record management"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/technical_metadata.html:9
+msgid "Upload information"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/technical_metadata.html:12
+msgid "Technical metadata"
+msgstr ""
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/technical_metadata.html:19
+msgid "Modified"
+msgstr ""
+
+msgid "Loading"
+msgstr ""
+
 #~ msgid "Export"
 #~ msgstr "Export"
 
