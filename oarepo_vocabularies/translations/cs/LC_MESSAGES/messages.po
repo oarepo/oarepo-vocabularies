@@ -221,7 +221,7 @@ msgid "newItemMessage"
 msgstr "Právě vytváříte položku nejvyšší úrovně"
 
 msgid "newChildItemMessage"
-msgstr "Nove dite"
+msgstr "Aktuálně vytváříte podřízenou položku pro:"
 
 msgid "newItem"
 msgstr "Nová položka"
@@ -536,3 +536,92 @@ msgstr "Vyberte položky"
 
 msgid "Search..."
 msgstr "Hledat..."
+
+#: oarepo_vocabularies/ui/resources/resource.py:58
+msgid "User does not have permission to create vocabulary item."
+msgstr "Uživatel nemá oprávnění vytvořit položku slovníku."
+
+#: oarepo_vocabularies/ui/resources/resource.py:129
+msgid "User does not have permission to update vocabulary item."
+msgstr "Uživatel nemá oprávnění upravit položku slovníku."
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesBreadcrumb.jinja:7
+msgid "unknown"
+msgstr "neznámé"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesDetail.jinja:48
+msgid "Record details"
+msgstr "Podrobnosti záznamu"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesForm.jinja:24
+msgid "New item"
+msgstr "Nová položka"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/VocabulariesMain.jinja:15
+msgid "id"
+msgstr "id"
+
+msgid "Exact match"
+msgstr "Přesná shoda"
+
+msgid "Close match"
+msgstr "Blízká shoda"
+
+msgid "Broad match"
+msgstr "Širší shoda"
+
+msgid "Narrow match"
+msgstr "Užší shoda"
+
+msgid "Related match"
+msgstr "Související shoda"
+
+msgid "Mappings"
+msgstr "Mapování"
+
+msgid ""
+"Concepts in external vocabularies (e.g. COAR) that this item corresponds to,"
+" with the kind of SKOS relation."
+msgstr ""
+"Pojmy v externích slovnících (např. COAR), kterým tato položka odpovídá, "
+"včetně druhu vztahu SKOS."
+
+msgid "Add mapping"
+msgstr "Přidat mapování"
+
+msgid "Relation"
+msgstr "Vztah"
+
+msgid "Scheme"
+msgstr "Schéma"
+
+msgid "Identifier"
+msgstr "Identifikátor"
+
+msgid "Vocabulary item saved successfully. Redirecting..."
+msgstr "Položka slovníku byla úspěšně uložena. Přesměrovávám..."
+
+msgid "Error saving vocabulary item"
+msgstr "Chyba při ukládání položky slovníku"
+
+msgid "Vocabulary item could not be saved due to validation errors: "
+msgstr "Položku slovníku nelze uložit kvůli chybám validace: "
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/manage.html:7
+msgid "Record management"
+msgstr "Správa záznamu"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/technical_metadata.html:9
+msgid "Upload information"
+msgstr "Informace o nahrání"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/technical_metadata.html:12
+msgid "Technical metadata"
+msgstr "Technická metadata"
+
+#: oarepo_vocabularies/ui/templates/semantic-ui/oarepo_vocabularies_ui/record_detail/side_bar/technical_metadata.html:19
+msgid "Modified"
+msgstr "Upraveno"
+
+msgid "Loading"
+msgstr "Načítání"
