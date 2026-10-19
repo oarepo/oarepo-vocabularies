@@ -28,15 +28,20 @@ const NewTopLevelItemMessage = () => (
   <VocabularyBreadcrumbMessage header={i18next.t("newItemMessage")} />
 );
 const NewChildItemMessage = ({ record, newChildItemParentId }) => {
+  const { config } = useFormConfig();
   const { data, isLoading, error } = useQuery({
     queryKey: ["item", newChildItemParentId],
-    queryFn: () => read(record.links?.parent),
+    // a new record has no links yet, so fall back to reading the parent from the vocabulary endpoint
+    queryFn: () =>
+      read(
+        record.links?.parent ?? `${config.createUrl}/${newChildItemParentId}`
+      ),
   });
 
   if (isLoading)
     return (
       <Dimmer active inverted>
-        <Loader inverted>{i18next("Loading")}</Loader>
+        <Loader inverted>{i18next.t("Loading")}</Loader>
       </Dimmer>
     );
 
@@ -105,13 +110,8 @@ export const CurrentLocationInformation = ({
   newChildItemParentId,
   isUpdateForm,
 }) => {
-  const { record } = useFormConfig();
-  if (!record?.hierarchy?.level) return null;
-
-  if (!isUpdateForm) {
-    if (!newChildItemParentId) {
-      return <NewTopLevelItemMessage />;
-    }
+  const { record, config } = useFormConfig();
+  if (!isUpdateForm && newChildItemParentId) {
     return (
       <NewChildItemMessage
         record={record}
@@ -119,6 +119,11 @@ export const CurrentLocationInformation = ({
       />
     );
   }
+  // "top-level item" means nothing in a flat vocabulary; child items show their ancestors regardless
+  const isTopLevel = !isUpdateForm || record?.hierarchy?.level === 1;
+  if (isTopLevel && !config.vocabularyProps?.hierarchical) return null;
+  if (!isUpdateForm) return <NewTopLevelItemMessage />;
+  if (!record?.hierarchy?.level) return null;
   return <EditMessage record={record} />;
 };
 

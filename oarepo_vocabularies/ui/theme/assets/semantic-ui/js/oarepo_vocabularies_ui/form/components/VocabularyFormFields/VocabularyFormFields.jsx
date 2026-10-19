@@ -6,6 +6,7 @@ import { TextField, MultiInput, FieldLabel } from "react-invenio-forms";
 import {
   PropFieldsComponent,
   VocabularyMultilingualInputField,
+  VocabularyMappingsField,
 } from "../../components";
 import { useFormConfig } from "@js/oarepo_ui/forms";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
@@ -18,7 +19,7 @@ export const VocabularyFormFields = () => {
   const { vocabularyProps, overridableIdPrefix, vocabularyType } = config;
 
   const hasPropFields = _has(vocabularyProps, "props");
-  const isUpdateForm = _has(config, "updateUrl");
+  const isUpdateForm = !config.createUrl;
   return (
     <Overridable
       id={buildUID(
@@ -38,6 +39,13 @@ export const VocabularyFormFields = () => {
           displayFirstInputRemoveButton={false}
           required
         />
+        <VocabularyMultilingualInputField
+          fieldPath="description"
+          label={i18next.t("Description")}
+          textFieldLabel={i18next.t("Description")}
+          labelIcon="pencil"
+          newItemInitialValue={{}}
+        />
         <TextField
           fieldPath="id"
           label={
@@ -46,6 +54,8 @@ export const VocabularyFormFields = () => {
           placeholder={i18next.t(
             "If you dont provide ID, random ID will be assigned."
           )}
+          // changing the id of an existing item would break records referencing it
+          disabled={isUpdateForm}
           required
         />
         <MultiInput
@@ -68,9 +78,8 @@ export const VocabularyFormFields = () => {
             "URL for the icon describing the vocabulary item."
           )}
         />
-        {hasPropFields && (
-          <PropFieldsComponent vocabularyProps={vocabularyProps} />
-        )}
+        <PropFieldsComponent vocabularyProps={vocabularyProps} />
+        <VocabularyMappingsField />
       </React.Fragment>
     </Overridable>
   );
