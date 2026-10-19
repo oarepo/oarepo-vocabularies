@@ -25,8 +25,8 @@ SPDX-License-Identifier: MIT
         {% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf %}
             {% for index in range(0, breadcrumbData.ancestorsOrSelf|length) %}
                 {% set ancestor = breadcrumbData.ancestorsOrSelf[index] %}
-                {% set titles = breadcrumbData.titles[index] %}
-                {% set title = titles.get(current_i18n.language) or titles.get("en") or titles.values()|first %}
+                {% set titles = breadcrumbData.titles[index] or {} %}
+                {% set title = titles.get(current_i18n.language) or titles.get("en") or titles.values()|first or ancestor %}
                 {% if loop.last %}
                     <div class="active section">{{ title }}</div>
                 {% else %}
