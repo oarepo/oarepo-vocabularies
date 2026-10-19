@@ -39,7 +39,7 @@ const overriddenComponents = {
 
 // HOC that will have access to the query results and wrap the app, so that I can render it conditionally only if there are hits
 const AppWrapper = withState(({ currentResultsState, children }) => {
-  return currentResultsState.data.total ? { children } : null;
+  return currentResultsState.data.total ? children : null;
 });
 
 export const App = ({ appConfig }) => {

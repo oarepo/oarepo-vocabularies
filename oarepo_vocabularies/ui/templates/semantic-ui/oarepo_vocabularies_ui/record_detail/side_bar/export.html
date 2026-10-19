@@ -1,0 +1,12 @@
+{#
+SPDX-FileCopyrightText: 2026 CESNET z.s.p.o.
+SPDX-License-Identifier: MIT
+#}
+{%- if extra_context.export_formats %}
+  <div class="sidebar-container">
+    <h2 class="ui medium top attached header mt-0">{{ _('Export') }}</h2>
+    <div id="export-record" class="ui segment bottom attached exports rdm-sidebar">
+      <div id="recordExportDownload" data-formats='{{ extra_context.export_formats | tojson }}'></div>
+    </div>
+  </div>
+{%- endif %}

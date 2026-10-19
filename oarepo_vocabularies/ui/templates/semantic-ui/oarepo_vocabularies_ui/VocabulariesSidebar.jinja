@@ -2,14 +2,7 @@
 SPDX-FileCopyrightText: 2023-2026 CESNET z.s.p.o.
 SPDX-License-Identifier: MIT
 #}
-{#def record, extra_context #}
-<div class="rel-mt-2">
-{%- if extra_context.permissions.can_update %}
-  <SidebarLink href={{record.links["edit_html"]}} icon="edit">{{ _('Edit')}}</SidebarLink>
-  {%if extra_context.vocabularyProps["hierarchical"] == True%}
-    <SidebarLink icon="plus" href={{ record.links["create"] ~ '?h-parent=' ~ record['id'] }}>
-      {{_('New child item')}}
-    </SidebarLink>
-  {%endif%}
-{%endif%}
-</div>
+{#def record, extra_context, d #}
+{%- for template_name in config.OAREPO_VOCABULARIES_UI_SIDEBAR_TEMPLATES -%}
+  {% include template_name %}
+{%- endfor -%}

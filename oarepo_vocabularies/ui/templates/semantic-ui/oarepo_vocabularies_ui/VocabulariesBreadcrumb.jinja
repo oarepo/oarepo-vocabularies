@@ -20,12 +20,13 @@ SPDX-License-Identifier: MIT
         {% set breadcrumbData = {
             "hierarchical": hierarchical,
             "ancestorsOrSelf": record.hierarchy.ancestors_or_self|reverse|list,
-            "titles": record.hierarchy.title|reverse|list,
+            "titles": record.hierarchy.titles|reverse|list,
         } %}
-        {% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf|length>1 %}
+        {% if breadcrumbData.hierarchical and breadcrumbData.ancestorsOrSelf %}
             {% for index in range(0, breadcrumbData.ancestorsOrSelf|length) %}
                 {% set ancestor = breadcrumbData.ancestorsOrSelf[index] %}
-                {% set title = breadcrumbData.titles[index] %}
+                {% set titles = breadcrumbData.titles[index] %}
+                {% set title = titles.get(current_i18n.language) or titles.get("en") or titles.values()|first %}
                 {% if loop.last %}
                     <div class="active section">{{ title }}</div>
                 {% else %}

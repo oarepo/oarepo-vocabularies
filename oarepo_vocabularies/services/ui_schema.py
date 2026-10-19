@@ -32,10 +32,10 @@ class LocalizedDateTime(ma.fields.Field):
         self.attribute = attribute
 
         self.formatters = {
-            "short": FormatDate(attribute=attribute, format="short"),
-            "medium": FormatDate(attribute=attribute, format="medium"),
-            "long": FormatDate(attribute=attribute, format="long"),
-            "full": FormatDate(attribute=attribute, format="full"),
+            "short": FormatDate(attribute=attribute, format="short", locale=get_locale),
+            "medium": FormatDate(attribute=attribute, format="medium", locale=get_locale),
+            "long": FormatDate(attribute=attribute, format="long", locale=get_locale),
+            "full": FormatDate(attribute=attribute, format="full", locale=get_locale),
         }
 
     @override
