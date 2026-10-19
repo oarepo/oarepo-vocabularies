@@ -44,7 +44,7 @@ request_vocabulary_args = request_parser(from_conf("request_type_args"), locatio
 class InvenioVocabulariesUIResource(RecordsUIResource):
     """Invenio Vocabularies UI Resource."""
 
-    api_service: VocabulariesService
+    api_service: VocabulariesService  # ty: ignore[invalid-property-type-override]
 
     @pass_route_args("vocabulary_type")
     @override

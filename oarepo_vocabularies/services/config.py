@@ -45,7 +45,7 @@ vocabularies_search_ui_endpoint = "oarepo_vocabularies_ui.search"
 class VocabularyMetadataSchema(ma.Schema):
     """Schema for vocabulary metadata records."""
 
-    class Meta:
+    class Meta:  # ty: ignore[invalid-attribute-override]
         """Meta class for the schema."""
 
         unknown = ma.INCLUDE
@@ -151,7 +151,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
     permission_policy_cls = PermissionPolicyFactory()  # ty: ignore[invalid-assignment]
 
     url_prefix = "/vocabularies/"
-    links_item: Mapping[str, EndpointLink] = {
+    links_item: Mapping[str, EndpointLink] = {  # ty: ignore[invalid-mutable-override]
         "self": EndpointLink(
             "vocabularies.read",
             vars=lambda record, _vars: _vars.update(
@@ -263,7 +263,7 @@ class VocabulariesConfig(VocabulariesServiceConfig):
         ),
     }
 
-    links_search: Mapping[str, EndpointLink] = {
+    links_search: Mapping[str, EndpointLink] = {  # ty: ignore[invalid-mutable-override]
         **pagination_endpoint_links("vocabularies.search", params=["type"]),
         **pagination_endpoint_links_html(vocabularies_search_ui_endpoint, params=["type"]),
     }
