@@ -20,10 +20,8 @@ if TYPE_CHECKING:
     from oarepo_vocabularies.services.service import VocabularyTypeService
 
 
-class VocabularyTypeUIResource(UIResource):
+class VocabularyTypeUIResource(UIResource[RecordsUIResourceConfig]):
     """Vocabulary Type UI Resource."""
-
-    config: RecordsUIResourceConfig
 
     def __init__(self, config: ResourceConfig, service: VocabularyTypeService) -> None:
         """Initialize the VocabularyTypeUIResource."""
