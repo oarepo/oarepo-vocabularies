@@ -5,7 +5,6 @@ import React from "react";
 import { Container, Grid, Ref, Sticky } from "semantic-ui-react";
 import { useFormConfig, FormFeedback, FormTitle } from "@js/oarepo_ui/forms";
 import { useLocation } from "react-router-dom";
-import _has from "lodash/has";
 import Overridable from "react-overridable";
 import { buildUID } from "react-searchkit";
 import {
@@ -24,7 +23,8 @@ export const FormAppLayout = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const newChildItemParentId = searchParams.get("h-parent");
-  const isUpdateForm = _has(config, "updateUrl");
+  // edit form gets createUrl=None from the backend
+  const isUpdateForm = !config.createUrl;
 
   return (
     <Container fluid>

@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 import {
-  DRAFT_HAS_VALIDATION_ERRORS,
   DRAFT_SAVE_FAILED,
   DRAFT_SAVE_STARTED,
   DRAFT_SAVE_SUCCEEDED,
 } from "@js/invenio_rdm_records/src/deposit/state/types";
+import { SET_VALIDATION_ERRORS } from "@js/oarepo_ui/forms/state/deposit/types";
+import _isEmpty from "lodash/isEmpty";
 import { i18next } from "@translations/oarepo_vocabularies_ui/i18next";
 
 export const createOrUpdate = (
@@ -56,13 +57,13 @@ export const createOrUpdate = (
       return response;
     } catch (error) {
       console.error("Draft save failed:", error);
-      if (error?.errors?.errors?.length > 0) {
+      // the api client throws field errors already deserialized (e.g. {mappings: [...]}),
+      // any other failure carries the raw backend response ({status, message})
+      if (!_isEmpty(error?.errors) && !error.errors.status) {
         dispatch({
-          type: DRAFT_HAS_VALIDATION_ERRORS,
+          type: SET_VALIDATION_ERRORS,
           payload: {
-            errors: config.recordSerializer.deserializeErrors(
-              error.errors.errors
-            ),
+            errors: error.errors,
             formFeedbackMessage: i18next.t(
               "Vocabulary item could not be saved due to validation errors: "
             ),

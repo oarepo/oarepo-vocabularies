@@ -11,3 +11,4 @@ export * from "./VocabularyFormFields";
 export * from "./VocabularyFormControlPanel";
 export * from "./VocabularyModalTrigger";
 export * from "./VocabularyField";
+export * from "./VocabularyMappingsField";
