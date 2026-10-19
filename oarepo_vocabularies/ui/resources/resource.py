@@ -8,7 +8,7 @@ from __future__ import annotations
 from functools import partial
 from typing import TYPE_CHECKING, cast, override
 
-from flask import g
+from flask import abort, current_app, g, url_for
 from flask_resources import from_conf, request_parser
 from flask_security import login_required
 from invenio_i18n import gettext as _
@@ -34,6 +34,8 @@ if TYPE_CHECKING:
     from invenio_records_resources.pagination import Pagination
     from invenio_records_resources.services.records.results import RecordItem
     from invenio_vocabularies.services import VocabulariesService
+
+    from oarepo_vocabularies.ui.resources.config import InvenioVocabulariesUIResourceConfig
 
 
 request_vocabulary_args = request_parser(from_conf("request_type_args"), location="view_args")
@@ -193,7 +195,6 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         **kwargs: Any,
     ) -> Any:
         """Record detail view."""
-        # TODO: look into exports
         if vocabulary_type is None or pid_value is None:
             raise KeyError("vocabulary_type and pid_value are required")
         api_record = self._get_record(pid_value, vocabulary_type=vocabulary_type)
@@ -220,6 +221,19 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         search_config(app_id="OarepoVocabularies.Search", headers={"Accept": "application/json"})
 
         extra_context.setdefault("search_app_config", search_config)
+        export_formats = cast("InvenioVocabulariesUIResourceConfig", self.config).export_formats
+        extra_context["export_formats"] = [
+            {
+                "name": name,
+                "export_url": url_for(
+                    "oarepo_vocabularies_ui.record_export",
+                    type=vocabulary_type,
+                    pid_value=pid_value,
+                    export_format=code,
+                ),
+            }
+            for code, (name, _, _) in export_formats.items()
+        ]
 
         render_kwargs: dict[str, Any] = {
             "record": api_record,
@@ -249,6 +263,35 @@ class InvenioVocabulariesUIResource(RecordsUIResource):
         return current_oarepo_ui.catalog.render(
             render_method,
             **render_kwargs,
+        )
+
+    @pass_route_args("vocabulary_type", "view", "record_export")
+    @override
+    def record_export(
+        self,
+        *args: Any,
+        vocabulary_type: str | None = None,
+        pid_value: str | None = None,
+        export_format: str | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Export a vocabulary item in one of the formats served by the vocabularies API."""
+        if vocabulary_type is None or pid_value is None or export_format is None:
+            raise KeyError("vocabulary_type, pid_value and export_format are required")
+        export_formats = cast("InvenioVocabulariesUIResourceConfig", self.config).export_formats
+        if export_format not in export_formats:
+            abort(404, f"No exporter for code {export_format}")
+        _, mimetype, extension = export_formats[export_format]
+        api_record = self._get_record(pid_value, vocabulary_type=vocabulary_type)
+        api_resource = current_app.extensions["invenio-vocabularies"].resource
+        serializer = api_resource.config.response_handlers[mimetype].serializer
+        return (
+            serializer.serialize_object(api_record.to_dict()),
+            200,
+            {
+                "Content-Type": mimetype,
+                "Content-Disposition": f'attachment; filename="{vocabulary_type}-{pid_value}.{extension}"',
+            },
         )
 
     @override

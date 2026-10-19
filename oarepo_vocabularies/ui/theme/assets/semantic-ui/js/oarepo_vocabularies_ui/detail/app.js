@@ -5,6 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import _camelCase from "lodash/camelCase";
 import { App } from "./DetailSearchApp";
+import { ExportDropdown } from "@js/invenio_app_rdm/landing_page/ExportDropdown";
 
 document.addEventListener("DOMContentLoaded", function () {
   const searchAppElement = document.querySelector(
@@ -23,5 +24,17 @@ document.addEventListener("DOMContentLoaded", function () {
     initialAppConfig.uiLinks = uiLinksConfig;
 
     ReactDOM.render(<App appConfig={initialAppConfig} />, searchAppElement);
+  }
+
+  const recordExportDownloadDiv = document.getElementById(
+    "recordExportDownload"
+  );
+  if (recordExportDownloadDiv) {
+    ReactDOM.render(
+      <ExportDropdown
+        formats={JSON.parse(recordExportDownloadDiv.dataset.formats)}
+      />,
+      recordExportDownloadDiv
+    );
   }
 });

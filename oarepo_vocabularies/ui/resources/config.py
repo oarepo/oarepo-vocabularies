@@ -125,6 +125,15 @@ class InvenioVocabulariesUIResourceConfig(RecordsUIResourceConfig):
         """UI serializer."""
         return VocabularyUIJSONSerializer()
 
+    # export format code -> (label, mimetype, file extension); serialized by the vocabularies API resource
+    export_formats: Mapping[str, tuple[str, str, str]] = {
+        "json": ("JSON", "application/json", "json"),
+        "jsonld": ("JSON-LD", "application/ld+json", "jsonld"),
+        "turtle": ("Turtle", "text/turtle", "ttl"),
+        "ntriples": ("N-Triples", "application/n-triples", "nt"),
+        "rdfxml": ("RDF/XML", "application/rdf+xml", "rdf"),
+    }
+
     request_form_config_view_args: type[ma.Schema] = ma.Schema.from_dict({"type_": ma.fields.Str(data_key="type")})
     request_search_args = VocabularySearchRequestArgsSchema
     request_vocabulary_type_args = VocabularyTypeValidationSchema

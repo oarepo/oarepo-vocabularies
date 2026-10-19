@@ -16,3 +16,10 @@ VOCABULARY_TYPE_UI_RESOURCE_CONFIG = (
 OAREPO_UI_LESS_COMPONENTS = [
     "dl_table",
 ]
+
+# templates of the vocabulary item detail page sidebar widgets, rendered in this order
+OAREPO_VOCABULARIES_UI_SIDEBAR_TEMPLATES = [
+    "oarepo_vocabularies_ui/record_detail/side_bar/manage.html",
+    "oarepo_vocabularies_ui/record_detail/side_bar/export.html",
+    "oarepo_vocabularies_ui/record_detail/side_bar/technical_metadata.html",
+]

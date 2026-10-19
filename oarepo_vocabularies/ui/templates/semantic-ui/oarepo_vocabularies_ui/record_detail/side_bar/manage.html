@@ -1,0 +1,20 @@
+{#
+SPDX-FileCopyrightText: 2026 CESNET z.s.p.o.
+SPDX-License-Identifier: MIT
+#}
+{%- if extra_context.permissions.can_update %}
+  <section id="record-manage-menu"
+           aria-label="{{ _('Record management') }}"
+           class="ui segment sidebar-container rdm-sidebar"
+  >
+    <a class="ui fluid left labeled icon blue button" href="{{ record.links['edit_html'] }}">
+      <i class="edit icon" aria-hidden="true"></i>{{ _('Edit') }}
+    </a>
+    {%- if extra_context.vocabularyProps.hierarchical %}
+      <a class="ui fluid left labeled icon blue button rel-mt-1"
+         href="{{ url_for('oarepo_vocabularies_ui.create', type=extra_context.vocabularyType) }}?h-parent={{ record.id | urlencode }}">
+        <i class="plus icon" aria-hidden="true"></i>{{ _('New child item') }}
+      </a>
+    {%- endif %}
+  </section>
+{%- endif %}

@@ -10,6 +10,11 @@ SPDX-License-Identifier: MIT
 <div class="vocabularies-main">
   <VocabulariesBreadcrumb extra_context={{extra_context}} record={{record}} d={{d.title}} vocabularySearchTitle={{vocabularySearchTitle}} hierarchical={{hierarchical}}/>
   <VocabularyTitle d={{d.title}} record={{record}} subheader={{vocabularySearchTitle}} />
+  {% if record.description %}
+  <section id="description" class="rel-mt-2" aria-label="{{ _('Description') }}">
+    <p>{{ ui_value(d.description, "l10n") }}</p>
+  </section>
+  {% endif %}
   <dl class="ui very basic table vocabularies-metadata">
     {% if record.id %}
     <dt>{{ _('id')|capitalize }}</dt>
@@ -19,7 +24,7 @@ SPDX-License-Identifier: MIT
     {% endif %}
     {{ catalog.render_first_existing(
       [
-          "VocabularyExtraInfo." + extra_context.vocabularyType,
+          "VocabularyExtraInfo." + extra_context.vocabularyType|replace(":", "_"),
           "EmptyComponent"
       ],
       record=record,
@@ -46,15 +51,11 @@ SPDX-License-Identifier: MIT
 
     {% for prop, val in (record.props or {}).items() %}
      {% if val %}
-      <dt>{{vocabularyMetadata.get("props", {}).get("label", None) or _("vocabulary." + prop)}}</dt>
+      {% set prop_label = vocabularyMetadata.get("props", {}).get(prop, {}).get("label") or _("vocabulary." + prop) %}
+      <dt>{{ prop if prop_label == "vocabulary." + prop else prop_label }}</dt>
       <dd>{{val}}</dd>
      {% endif %}
     {% endfor %}
-
-    <dt>{{_('Created')}} </dt>
-    <dd>{{ui_value(d.created, "l10n_short")}}</dd>
-    <dt>{{_('Updated')}} </dt>
-    <dd>{{ui_value(d.updated, "l10n_short")}}</dd>
 
 
 
@@ -67,6 +68,42 @@ SPDX-License-Identifier: MIT
     </dd>
     {% endif %}
   </dl>
+  {% if record.mappings %}
+  {% set relation_labels = {
+    "exactMatch": _("Exact match"),
+    "closeMatch": _("Close match"),
+    "broadMatch": _("Broad match"),
+    "narrowMatch": _("Narrow match"),
+    "relatedMatch": _("Related match"),
+  } %}
+  <section id="mappings" class="rel-mt-2" aria-labelledby="mappings-heading">
+    <h2 id="mappings-heading" class="ui medium header">{{ _("Mappings") }}</h2>
+    <table class="ui very basic compact unstackable table">
+      <thead>
+        <tr>
+          <th>{{ _("Relation") }}</th>
+          <th>{{ _("Identifier") }}</th>
+          <th>{{ _("Scheme") }}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for mapping in record.mappings %}
+        <tr>
+          <td><span title="skos:{{ mapping.relation }}">{{ relation_labels.get(mapping.relation, mapping.relation) }}</span></td>
+          <td>
+            {% if mapping.identifier.startswith("http") %}
+            <a href="{{ mapping.identifier }}" target="_blank" rel="noopener noreferrer">{{ mapping.identifier }}</a>
+            {% else %}
+            {{ mapping.identifier }}
+            {% endif %}
+          </td>
+          <td>{{ mapping.scheme }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
   {% set custom_field_config=config.get("VOCABULARIES_CF_UI", {}).get(vocabularyType, None) %}
   {%if custom_field_config %}
     <div class="ui vocabulary_cf">

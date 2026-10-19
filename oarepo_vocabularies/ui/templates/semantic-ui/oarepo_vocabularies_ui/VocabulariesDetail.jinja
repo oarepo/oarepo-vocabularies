@@ -15,14 +15,16 @@ SPDX-License-Identifier: MIT
 
 {%- block page_body %}
 
-<div class="ui main container">
-  <div class="ui relaxed grid">
-    <div class="two column row">
-      <article class="sixteen wide tablet twelve wide computer column main-record-content">
+{# Layout mirrors invenio_app_rdm/records/detail.html #}
+<div class="ui container">
+  <div class="ui relaxed grid mt-5">
+    <div class="two column row top-padded">
+      <article class="sixteen wide tablet eleven wide computer column main-record-content">
         {% block record_main_content %}
+          {# jinjax reads ":" as a component prefix separator, so types like "code:programmingLanguages" need it replaced #}
           {{ catalog.render_first_existing(
             [
-              "VocabulariesMain." + extra_context.vocabularyType,
+              "VocabulariesMain." + extra_context.vocabularyType|replace(":", "_"),
               "VocabulariesMain"
             ],
             record=record,
@@ -44,16 +46,17 @@ SPDX-License-Identifier: MIT
       {% block record_sidebar %}
 
         <aside
-          class="sixteen wide tablet four wide computer column sidebar"
+          class="sixteen wide tablet five wide computer column sidebar"
           aria-label="{{ _('Record details') }}"
         >
             {{ catalog.render_first_existing(
               [
-                "VocabulariesSidebar." + extra_context.vocabularyType,
+                "VocabulariesSidebar." + extra_context.vocabularyType|replace(":", "_"),
                 "VocabulariesSidebar"
               ],
               record=record,
               extra_context=extra_context,
+              d=d,
             ) }}
         </aside>
       {% endblock record_sidebar %}
@@ -64,8 +67,6 @@ SPDX-License-Identifier: MIT
 
 {%- block javascript %}
   {{ super() }}
-  {% if hierarchical %}
-    {{ webpack["oarepo_vocabularies_detail.js"] }}
-  {% endif %}
+  {{ webpack["oarepo_vocabularies_detail.js"] }}
   {{ webpack['oarepo_vocabularies_ui_components.js'] }}
 {%- endblock %}
