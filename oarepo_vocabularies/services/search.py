@@ -160,7 +160,7 @@ class VocabularyIdsParam(ParamInterpreter):
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
-    params_interpreters_cls: tuple[type[ParamInterpreter], ...] = (
+    params_interpreters_cls: tuple[partial[ParamInterpreter] | type[ParamInterpreter], ...] = (
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
         VocabularyIdsParam,
