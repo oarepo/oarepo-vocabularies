@@ -30,6 +30,7 @@ from oarepo_vocabularies.services.params import NewerThanParam, SKOSMappingParam
 
 if TYPE_CHECKING:
     from flask_principal import Identity
+    from invenio_records_resources.services.records.config import ParamInterpreterT
     from invenio_search import RecordsSearchV2
 
 TYPE_ID_FIELD = "type.id"
@@ -160,7 +161,7 @@ class VocabularyIdsParam(ParamInterpreter):
 class VocabularySearchOptions(InvenioSearchOptions):
     """Search options for vocabularies."""
 
-    params_interpreters_cls: tuple[partial[ParamInterpreter] | type[ParamInterpreter], ...] = (
+    params_interpreters_cls: tuple[ParamInterpreterT, ...] = (
         FilterParam.factory(param="tags", field="tags"),
         UpdatedAfterParam.factory(param="updated_after", field="updated"),
         VocabularyIdsParam,
