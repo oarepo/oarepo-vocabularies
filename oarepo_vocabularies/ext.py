@@ -120,6 +120,22 @@ class OARepoVocabularies:
             if k not in app.config["OAREPO_PERMISSIONS_PRESETS"]:
                 app.config["OAREPO_PERMISSIONS_PRESETS"][k] = config.OAREPO_VOCABULARIES_PERMISSIONS_PRESETS[k]
 
+        self.init_datastreams(app)
+
+    def init_datastreams(self, app: Flask) -> None:
+        """Register the datastream readers and writers contributed by this package."""
+        from oarepo_vocabularies.orcid import readers as orcid_readers
+        from oarepo_vocabularies.orcid import writers as orcid_writers
+
+        app.config["VOCABULARIES_DATASTREAM_READERS"] = {
+            **app.config.get("VOCABULARIES_DATASTREAM_READERS", {}),
+            **orcid_readers.VOCABULARIES_DATASTREAM_READERS,
+        }
+        app.config["VOCABULARIES_DATASTREAM_WRITERS"] = {
+            **app.config.get("VOCABULARIES_DATASTREAM_WRITERS", {}),
+            **orcid_writers.VOCABULARIES_DATASTREAM_WRITERS,
+        }
+
     def init_resource(self, app: Flask) -> None:
         """Initialize resources."""
         self.type_resource = app.config["OAREPO_VOCABULARY_TYPE_RESOURCE"](
