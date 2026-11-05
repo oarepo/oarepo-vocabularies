@@ -44,6 +44,13 @@ def enable_datastream_updates() -> None:
             arguments = original_affiliations_arguments(job_obj, since=since, **kwargs)
             writer = arguments["config"]["writers"][0]["args"]["writer"]
             writer.setdefault("args", {})["update"] = True
+            """
+            Note: when using write_many, invenio automatically uses the write_or_update method.
+            Since we are also patching the "update" variable, it is ok. But update = False would be ignored.
+            """
+
+            arguments["config"]["batch_size"] = 1000
+            arguments["config"]["write_many"] = True
             return arguments
 
         type.__setattr__(
@@ -64,6 +71,12 @@ def enable_datastream_updates() -> None:
             arguments = original_funders_arguments(job_obj, since=since, **kwargs)
             writer = arguments["config"]["writers"][0]["args"]["writer"]
             writer.setdefault("args", {})["update"] = True
+            """
+            Note: when using write_many, invenio automatically uses the write_or_update method.
+            Since we are also patching the "update" variable, it is ok. But update = False would be ignored.
+            """
+            arguments["config"]["batch_size"] = 1000
+            arguments["config"]["write_many"] = True
             return arguments
 
         type.__setattr__(
