@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oarepo-vocabularies"
-version = "10.5.0"
+version = "11.0.0"
 description = "Support for custom fields and hierarchy on Invenio vocabularies"
 authors = [
     { name = "Mirek Simek", email = "miroslav.simek@cesnet.cz" }
@@ -19,8 +19,8 @@ dependencies = [
     "tqdm",
     "pyld>=3.2.0,<4.0.0",
     "requests",
-    "oarepo-runtime>=7.0.0,<8.0.0",
-    "oarepo-ui>=13.0.0,<14.0.0",
+    "oarepo-runtime>=8.0.0,<9.0.0",
+    "oarepo-ui>=14.0.0,<15.0.0",
 
     # invenio dependencies
     "invenio-search>=3.0.0,<4.0.0",
