@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oarepo-vocabularies"
-version = "11.0.0"
+version = "12.0.0a1"
 description = "Support for custom fields and hierarchy on Invenio vocabularies"
 authors = [
     { name = "Mirek Simek", email = "miroslav.simek@cesnet.cz" }
